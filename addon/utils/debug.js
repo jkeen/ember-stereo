@@ -28,9 +28,6 @@ export default class Debug {
     }
   }
 
-
-  /**
-
   /**
   * Ends a console timer with a given name
   * @param {string} name - Name of the timer

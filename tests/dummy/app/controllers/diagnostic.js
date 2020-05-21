@@ -16,6 +16,22 @@ const AAC_STREAM = {
   }
 };
 
+const HLS_STREAM = {
+  title: 'HLS Stream',
+  url: 'https://hls-live.wnyc.org/wnycfm/playlist.m3u8',
+  expectedValues: {
+    url: 'https://hls-live.wnyc.org/wnycfm/playlist.m3u8',
+    duration: Infinity,
+    connectionName: "NativeAudio",
+    hasPlayed: false,
+    isStream: true,
+    isFastForwardable: false,
+    isRewindable: false,
+    position: 0
+  }
+}
+
+
 const MP3_ON_DEMAND = {
   title: 'MP3 On Demand',
   url: 'https://www.podtrac.com/pts/redirect.mp3/audio.wnyc.org/otm/otm04212017pod.mp3',
@@ -68,6 +84,7 @@ export default Controller.extend({
   init() {
     this.set('testSounds', [
       AAC_STREAM,
+      HLS_STREAM,
       STREAM_WITHOUT_EXTENSION,
       MP3_ON_DEMAND,
       HLS_LIVE_STREAM

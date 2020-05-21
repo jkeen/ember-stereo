@@ -1,6 +1,5 @@
 import EmberObject from '@ember/object';
-import DebugLogging from '../mixins/debug-logging';
-
+import { inject as service } from '@ember/service'
 /***
 * @class SharedAudioAccess
 * @constructor
@@ -19,8 +18,13 @@ import DebugLogging from '../mixins/debug-logging';
  */
 
 
-const SharedAudioAccess = EmberObject.extend(DebugLogging, {
+const SharedAudioAccess = EmberObject.extend({
   debugName: 'sharedAudioAccess',
+  debugLogger: service('hifi-debug'),
+
+  debug(message) {
+    this.debugLogger.log(this.debugName, message);
+  },
 
   unlock(andPlay) {
     let audioElement = this.get('audioElement');
@@ -81,4 +85,4 @@ const SharedAudioAccess = EmberObject.extend(DebugLogging, {
   }
 });
 
-export default SharedAudioAccess.create();
+export default SharedAudioAccess

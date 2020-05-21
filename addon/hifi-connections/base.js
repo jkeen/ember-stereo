@@ -6,9 +6,7 @@ import Mixin from '@ember/object/mixin';
 import { assert } from '@ember/debug';
 import EmberObject, { computed } from '@ember/object';
 import { getMimeType } from 'ember-hifi/utils/mime-types';
-import DebugLogging from '../mixins/debug-logging';
-
-
+import { inject as service } from '@ember/service';
 
 /**
 * This is the base sound object from which other sound objects are derived. 
@@ -20,7 +18,6 @@ import DebugLogging from '../mixins/debug-logging';
 let ClassMethods = Mixin.create({
   setup(config) {
     this.config = config;
-    this.debugEnabled = config.debugEnabled;
   },
 
   canPlay(url) {
@@ -70,7 +67,8 @@ let ClassMethods = Mixin.create({
   }
 });
 
-let Sound = EmberObject.extend(Evented, DebugLogging, {
+let Sound = EmberObject.extend(Evented, {
+  debugLogger: service('hifi-debug'),
   debugName: computed('url', 'connectionName', function() {
     var parser = document.createElement('a');
     parser.href = this.get('url');
@@ -109,6 +107,10 @@ let Sound = EmberObject.extend(Evented, DebugLogging, {
     }
   }),
 
+  debug(message) {
+    this.debugLogger.log(this.debugName, message);
+  },
+
   init: function() {
     let {
       audioLoading,
@@ -137,6 +139,7 @@ let Sound = EmberObject.extend(Evented, DebugLogging, {
       this.set('isPlaying', false);
       if (audioPaused) { audioPaused(this); }
     });
+
     this.on('audio-ended',    () => {
       this.set('isPlaying', false);
       if (audioEnded) { audioEnded(this); }
