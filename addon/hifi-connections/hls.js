@@ -76,6 +76,7 @@ let Sound = BaseSound.extend({
     video.addEventListener('pause',           ()  => this.trigger('audio-paused', this));
     video.addEventListener('durationchange',  ()  => this.trigger('audio-duration-changed', this));
     video.addEventListener('seeked',          ()  => this.trigger('audio-position-changed', this));
+    video.addEventListener('timeupdate',      ()  => this.trigger('audio-position-changed', this));
     video.addEventListener('progress',        ()  => this.trigger('audio-loading'));
     video.addEventListener('error',           (e) => this._onVideoError(e));
   },

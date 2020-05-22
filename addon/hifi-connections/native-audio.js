@@ -4,7 +4,7 @@ import Mixin from '@ember/object/mixin';
 import BaseSound from './base';
 import Ember from 'ember';
 // These are the events we're watching for
-const AUDIO_EVENTS = ['loadstart', 'durationchange', 'loadedmetadata', 'loadeddata', 'progress', 'canplay', 'canplaythrough', 'error', 'playing', 'pause', 'ended', 'emptied'];
+const AUDIO_EVENTS = ['loadstart', 'durationchange', 'loadedmetadata', 'loadeddata', 'progress', 'canplay', 'canplaythrough', 'error', 'playing', 'pause', 'ended', 'emptied', 'timeupdate'];
 
 // Ready state values
 // const HAVE_NOTHING = 0;
@@ -100,6 +100,9 @@ let Sound = BaseSound.extend({
       case 'ended':
         this._onAudioEnded();
         break;
+      case 'timeupdate':
+        this._onPositionChange();
+        break;
       case 'progress':
         this._onAudioProgress(e);
         break;
@@ -191,6 +194,10 @@ let Sound = BaseSound.extend({
 
   _onAudioProgress() {
     this.trigger('audio-loading', this._calculatePercentLoaded());
+  },
+
+  _onPositionChange() {
+    this.trigger('audio-position-changed', this);
   },
 
   _onAudioDurationChanged() {

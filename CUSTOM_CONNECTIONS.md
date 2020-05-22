@@ -76,7 +76,7 @@ let Sound = BaseSound.extend({
         sound.trigger('audio-ended', sound);
       },
       onseek: function() {
-        sound.trigger('audio-position-changed');
+        sound.trigger('audio-position-changed', sound);
       },
       onloading: function(percentLoaded) {
         sound.trigger('audio-loading', {percentLoaded: percentLoaded});
