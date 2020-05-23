@@ -11,12 +11,9 @@ Router.map(function() {
     /* Your docs routes go here */
     this.route('usage')
   });
-  // this.route('sound-objects');
-  // this.route('hifi-service');
-  // this.route('audio-connections');
-  // this.route('advanced-usage');
   this.route('diagnostic', function() {
     this.route('index')
+    this.route('sync')
   });
   this.route('not-found', { path: '/*path' });
 });

@@ -42,7 +42,6 @@ export const SERVICE_EVENT_MAP = [
   {event: 'pre-load' }
 ]
 
-
 /**
 * This is the hifi service class.
 *

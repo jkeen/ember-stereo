@@ -1,0 +1,15 @@
+<h1>The sounds that have the same URLs should all change to playing when one plays</h1>
+<div class="sync-grid">
+  <div>
+    {{#each (take 1 this.model.testSounds) as |testSound|}}
+      <SoundDisplay @url={{testSound.url}} @title={{testSound.title}}/>
+    {{/each}}
+  </div>
+  <div>
+    {{#each (take 1 this.model.testSounds) as |testSound|}}
+      <SoundDisplay @url={{testSound.url}} @title={{testSound.title}}/>
+    {{/each}}
+  </div>
+</div>
+
+

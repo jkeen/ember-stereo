@@ -5,9 +5,7 @@ import { inject as service } from '@ember/service'
 * @constructor
 */
 
-
 /**
-
  * This class handles sharing a single audio element between multiple sounds.
  * A desktop browser can generally handle multiple <audio> elements, but mobile
  * browsers require some extra consideration. Using a single element and switching

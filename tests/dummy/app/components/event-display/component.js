@@ -36,7 +36,7 @@ export default Component.extend({
       this.addServiceEvents(this.service);
     }
     else if (this.sound) {
-      this.addSoundEvents(this.sound);
+      this.addSoundEvents(this.sound)
     }
   },
 

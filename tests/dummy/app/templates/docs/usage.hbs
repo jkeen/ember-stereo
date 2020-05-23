@@ -1,0 +1,12 @@
+{{#docs-demo as |demo|}}
+  {{#demo.example name="button-playing.hbs"}}
+   <button 
+    class="{{if (is-playing 'https://fm939.wnyc.org/wnycfm.aac') 'is-playing'}}"
+    {{!-- {{action (hifi-play "https://fm939.wnyc.org/wnycfm.aac")}} --}}
+   >
+    Play
+   </button>
+  {{/demo.example}}
+
+  {{demo.snippet "button-playing.hbs"}}
+{{/docs-demo}}
