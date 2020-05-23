@@ -171,7 +171,7 @@ The `hifi` service and the `sound` objects are extended with [Ember.Evented](htt
 - `audio-will-rewind` (sound, {currentPosition, newPosition}) - fired before rewinding a sound
 - `audio-will-fast-forward` (sound, {currentPosition, newPosition}) - fired before fast-forwarding a sound
 - `audio-position-will-change` (sound, {currentPosition, newPosition}) - fired before audio position change
-
+- `audio-position-changed` (sound, {})
 ###### Hifi service events
 - `current-sound-changed` (currentSound, previousSound) - triggered when the current sound changes. On initial play, previousSound will be undefined.
 - `current-sound-interrupted` (currentSound, previousSound) - triggered when a sound has been playing and a new one takes its place by being played, pausing the first one

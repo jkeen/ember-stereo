@@ -27,8 +27,8 @@ export default Component.extend({
   connectionName: reads('sound.connectionName'),
   durationIsInfinity: equal('duration', Infinity),
 
-  isCurrentSound: computed('hifi.currentSound', function() {
-    return (this.hifi.currentSound && this.hifi.currentSound.url === this.sound.url);
+  isCurrentSound: computed('hifi.currentSound', 'sound', function() {
+    return (this.hifi.currentSound && this.sound && this.hifi.currentSound.url === this.sound.url);
   }),
 
   onRemoval: function() {},
@@ -50,36 +50,48 @@ export default Component.extend({
     this.set('sound', sound);
   }),
 
-  actions: {
-    async removeSound() {
-      this.onRemoval();
-      this.sound.stop();
-      this.hifiCache.remove(this.sound);
-    },
+  async removeSound() {
+    this.onRemoval();
+    this.hifiCache.remove(this.sound);
+    this.sound.stop();
+  },
 
-    async fastForward() {
-      this.sound.fastForward(3000);
-    },
+  async fastForward() {
+    this.sound.fastForward(3000);
+  },
 
-    async rewind() {
-      this.sound.rewind(3000);
-    },
+  async rewind() {
+    this.sound.rewind(3000);
+  },
 
-    async play() {
+  async play() {
+    if (this.isLoaded) {
       this.sound.play();
-    },
-
-    async stop() {
-      this.sound.stop();
-    },
-
-    async pause() {
-      this.sound.pause();
-    },
-
-    togglePause() {
-      this.sound.togglePause();
     }
+    else {
+      this.playSound.perform()
+    }
+  },
+
+  async stop() {
+    this.sound.stop();
+  },
+
+  async pause() {
+    this.sound.pause();
+  },
+
+  async togglePause() {
+    if (this.isLoaded && this.sound.isPlaying) {
+      await this.pause();
+    }
+    else if (this.isLoaded && !this.sound.isPlaying) {
+      await this.play()
+    }
+    else {
+      await this.playSound.perform();
+    }
+
   }
 
 });

@@ -6,7 +6,11 @@
   </div>
 
   <span class="sound-display-top-bar-connection-name">
-    {{connectionName}} Sound
+    {{#if connectionName}}
+      {{connectionName}} Sound
+    {{else}}
+      URL
+    {{/if}}
   </span>
 
   {{#if isCurrentSound}}
@@ -31,26 +35,28 @@
     </a>
 
     {{#if isRewindable}}
-      <button type="button" class="sound-control-button-item" {{action "rewind" 5000}}>
+      <button type="button" class="sound-control-button-item" {{action (action this.rewind 5000)}}>
         {{fa-icon "backward"}}
       </button>
     {{/if}}
 
-    <button type="button" class="sound-control-button-item" {{action "togglePause"}}>
+    <button type="button" class="sound-control-button-item" {{action (action this.togglePause)}}>
       {{#if sound.isPlaying}}
         {{fa-icon "pause" size="2x"}}
+      {{else if this.playSound.isRunning}}
+        {{fa-icon "circle-notch" size="2x" class="icon-spin"}}
       {{else}}
         {{fa-icon "play" size="2x"}}
       {{/if}}
     </button>
 
     {{#if isFastForwardable}}
-      <button type="button" class="sound-control-button-item" {{action "fastForward" 5000}}>
+      <button type="button" class="sound-control-button-item" {{action (action this.fastForward 5000)}}>
         {{fa-icon "forward"}}
       </button>
     {{/if}}
 
-    <button type="button" class="sound-control-button-item"  {{action "stop"}}>
+    <button type="button" class="sound-control-button-item" {{action (action this.stop)}}>
       {{fa-icon "stop"}}
     </button>
   </div>
