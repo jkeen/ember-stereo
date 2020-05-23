@@ -1,6 +1,6 @@
 <div class="sound-display-top-bar">
   <div class="sound-display-top-bar-actions">
-    <button type="button" class="sound-display-top-bar-remove-sound is-small" {{action "removeSound" this}}>
+    <button type="button" class="sound-display-top-bar-remove-sound is-small" {{action (action this.removeSound this)}}>
       {{fa-icon "times-circle"}}
     </button>
   </div>
@@ -65,10 +65,15 @@
 
 <div class="diagnostic-debug">
   <h3>Events</h3>
-  {{event-display class="diagnostic-debug-events" sound=sound}}
+  {{#if isLoaded}}
+    {{event-display class="diagnostic-debug-events" sound=sound}}
+  {{/if}}
 
   <h3>Properties</h3>
   <dl class="diagnostic-debug-list">
+    <dt>Id</dt>
+    <dd>{{sound.debugName}}</dd>
+
     <dt>isLoading</dt>
     <dd>{{sound.isLoading}}</dd>
 

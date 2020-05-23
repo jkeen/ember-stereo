@@ -1,47 +1,53 @@
-
-.test-sound + .test-sound  {
-  border-top: 1px solid #EEE;
+.test-sound {
+  padding: 2px 0;
+  font-size: 11px;
+  display: grid;
+  grid-template: "title url actions" auto /
+                 200px auto  min-content;
+  column-gap: 1em;
 }
 
-.test-sound {
-  padding: 10px 0;
+.test-sound input {
+  border: 1px solid #CCC;
+  width: 100%;
+  padding: 3px;
 }
 
 .test-sound-title {
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
-  font-size: 13px;
   font-weight: bold;
+  grid-area: title;
+  white-space: nowrap;
 
   .tag {
-    float: right;
+    background-color: #DDD;
+    border-radius: 4px;
+    color: white;
+    padding: 1px 5px;
+    line-height: 18px;
+    margin-left: 10px;
+    font-size: 10px;
+    text-transform: uppercase;
   }
 }
 
 .test-sound-title-url {
-  font-size: 12px;
+  grid-area: url;
+  display: flex;
+  flex-direction: row;
+  grid-area: url;
+  text-overflow: clip;
 }
 
 .test-sound-actions {
-  margin-top: 5px;
+  white-space: nowrap;
+  grid-area: actions;
 }
 
 .visual-sound-diagnostic {
 
 }
-
-.diagnostic-controls {
-  padding: 0 25px;
-  margin: 25px 0;
-
-  @include media(">=tablet") {
-    border-left: 1px dashed $sound-background-color;
-    padding-left: 10px;;
-  }
-}
-
-
 
 .test-sound {
 

@@ -1,15 +1,10 @@
-<div class="test-sound">
-  <div class="test-sound-title">
+<div class="sound test-sound">
+  <span class="test-sound-title">
     {{title}}
-    {{#if isStream}}
-      <span class="tag is-info is-small">Stream</span>
-    {{else}}
-      <span class="tag is-primary is-small">On Demand</span>
-    {{/if}}
-  </div>
-  <div class="test-sound-title-url">
+  </span>
+  <span class="test-sound-title-url">
     {{url}}
-  </div>
+  </span>
 
   <div class="test-sound-actions">
     <a href="#" class="button is-small is-outline {{if loadSound.isRunning "is-loading"}}" {{action (perform loadSound url)}}>Load</a>

@@ -1,31 +1,28 @@
 import { reads } from '@ember/object/computed';
 import Component from '@ember/component';
 import layout from './template';
-import { inject } from '@ember/service';
+import { inject as service } from '@ember/service';
 import { computed } from '@ember/object';
 import { task } from 'ember-concurrency';
 
 export default Component.extend({
   layout,
-
-  hifi: inject(),
-  classNames: ['sound', 'test-sound'],
-
+  tagName: '',
+  hifi: service(),
   isLoaded: computed('sound', 'sound.isLoading', function() {
     return (this.sound && !this.sound.isLoading)
   }),
 
   title: reads('item.title'),
+  url: reads('item.url'),
 
   isPlaying: reads('sound.isPlaying'),
-
-  url: reads('item.url'),
 
   isStream: reads('item.debug.expectedValues.isStream'),
   duration: reads('item.debug.expectedValues.duration'),
 
   playSound: task(function *() {
-    yield this.hifi.play(this.url, {
+    let { sound } = yield this.hifi.play(this.url, {
       metadata: {
         title: this.title,
         debug: {
@@ -33,10 +30,11 @@ export default Component.extend({
         }
       }
     });
+    this.set('sound', sound);
   }),
 
   loadSound: task(function *() {
-    yield this.hifi.load(this.url, {
+    let { sound } = yield this.hifi.load(this.url, {
       metadata: {
         title: this.title,
         debug: {
@@ -44,6 +42,7 @@ export default Component.extend({
         }
       }
     });
+    this.set('sound', sound);
   }),
 
 });

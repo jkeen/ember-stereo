@@ -12,45 +12,15 @@ export default Component.extend({
   hifi: service(),
   hifiCache: service(),
   classNames: ['diagnostic-controls'],
-  init() {
-    this.set('testSounds', this.testSounds);
-    this._super(...arguments);
-  },
 
   dormantItems: computed('testSounds', 'hifiCache.cachedCount', function() {
     return this.testSounds.filter(item => !this.hifiCache._cache[item.url])
   }),
 
-  loadAllTestSounds: task(function *() {
-    yield this.get('testSounds').forEach(item => {
-      this.hifi.load(item.url, {
-        metadata: {
-          title: item.title
-        }
-      });
-    })
-  }).drop(),
-
-  playAllTestSounds: task(function *() {
-    yield this.get('testSounds').forEach(item => {
-      this.hifi.play(item.url, {
-        metadata: {
-          title: item.title,
-          debug: {
-
-          }
-        }
-      });
-    })
-  }).drop(),
-
   playCustomSound: task(function *() {
     yield this.hifi.play(this.url, {
       metadata: {
-        title: this.title,
-        debug: {
-
-        }
+        title: this.title
       }
     });
   }).drop(),

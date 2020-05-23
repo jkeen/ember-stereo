@@ -86,10 +86,9 @@ export default Service.extend(Evented, {
   duration:          readOnly('currentSound.duration'),
   percentLoaded:     readOnly('currentSound.percentLoaded'),
   pollInterval:      reads('options.emberHifi.positionInterval'),
+  position:          alias('currentSound.position'),
 
   defaultVolume: 50,
-
-  position:          alias('currentSound.position'),
 
   volume: computed({
     get() {
@@ -125,7 +124,7 @@ export default Service.extend(Evented, {
     set(this, 'alwaysUseSingleAudioElement',  getWithDefault(this, 'options.emberHifi.alwaysUseSingleAudioElement', false));
     set(this, 'appEnvironment', getWithDefault(this, 'options.environment', 'development'));
     set(this, '_connections', {});
-    set(this, 'oneAtATime', OneAtATime.create());
+    set(this, 'oneAtATime', OneAtATime.create({container: getOwner(this)}));
     set(this, 'volume', 50);
     this._activateConnections(connections);
 

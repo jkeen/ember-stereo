@@ -34,19 +34,18 @@ export default Component.extend({
   onRemoval: function() {},
 
   didReceiveAttrs() {
-    if (this.sound) { // we were passed an already loaded sound
-      this.set('url', this.sound.url);
-      this.set('sound', this.sound);
+    if (!this.sound) {
+      this.loadSound.perform();
     }
   },
 
   playSound: task(function *() {
-    let { sound } = yield this.hifi.play(this.url);
+    let { sound } = yield this.hifi.play(this.url, { metadata: {title: this.title}});
     this.set('sound', sound);
   }),
 
   loadSound: task(function *() {
-    let { sound } = yield this.hifi.load(this.url);
+    let { sound } = yield this.hifi.load(this.url, { metadata: {title: this.title}});
     this.set('sound', sound);
   }),
 

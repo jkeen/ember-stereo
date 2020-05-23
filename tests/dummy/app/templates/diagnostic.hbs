@@ -1,21 +1,10 @@
-{{outlet}}
+{{#docs-viewer as |viewer|}}
+  {{#viewer.nav as |nav|}}
+    {{nav.section "Diagnostic"}}
+    {{nav.item "Main" "diagnostic.index"}}
+  {{/viewer.nav}}
 
-<div class="diagnostic">
-  <div class="diagnostic-display">
-    <div class="sound-container" data-title="Hifi Service">
-      {{service-display}}
-    </div>
-
-    <div class="sound-container" data-title="Hifi Connections">
-      <div class="service-display-connections">
-        {{#each connections as |connection|}}
-          {{connection-display connection=connection}}
-        {{/each}}
-      </div>
-    </div>
-
-    {{cached-sounds}}
-  </div>
-
-  {{diagnostic-controls class="diagnostic-controls" testSounds=testSounds}}
-</div>
+  {{#viewer.main}}
+    {{outlet}}
+  {{/viewer.main}}
+{{/docs-viewer}}

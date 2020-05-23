@@ -15,7 +15,9 @@ Router.map(function() {
   // this.route('hifi-service');
   // this.route('audio-connections');
   // this.route('advanced-usage');
-  this.route('diagnostic');
+  this.route('diagnostic', function() {
+    this.route('index')
+  });
   this.route('not-found', { path: '/*path' });
 });
 

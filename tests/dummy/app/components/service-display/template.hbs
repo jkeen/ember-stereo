@@ -18,7 +18,9 @@
       </a>
 
       <a href="#" class="service-display-button-item" {{action "togglePause"}}>
-        {{#if (and currentSound currentSound.isPlaying)}}
+        {{#if hifi.isLoading}}
+          {{fa-icon "circle-notch" size="2x" class="icon-spin"}}
+        {{else if (and currentSound currentSound.isPlaying)}}
           {{fa-icon "pause" size="2x"}}
         {{else}}
           {{fa-icon "play" size="2x"}}
