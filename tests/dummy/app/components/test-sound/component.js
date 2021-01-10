@@ -29,7 +29,7 @@ export default Component.extend({
           expectedValues: this.item.expectedValues
         }
       }
-    });
+    })
     this.set('sound', sound);
   }),
 
@@ -41,7 +41,9 @@ export default Component.extend({
           expectedValues: this.item.expectedValues
         }
       }
-    });
+    }).catch(e => {
+      debugger
+    })
     this.set('sound', sound);
   }),
 

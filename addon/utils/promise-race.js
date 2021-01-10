@@ -24,18 +24,14 @@ function start(params, callback) {
 
     (function tryNext(tryThis) {
       tryThis
-        .then(success => {
-          resolve({ success, failures });
-        })
+        .then(success => resolve({ success, failures }))
         .catch(failure => {
           if (failure) {
             failures.push(failure);
           }
           let nextParam = paramsToTry.shift();
           if (!nextParam) {
-            let error = new Error('All given promises failed.');
-            error.failures = failures;
-            reject(error);
+            return reject(failures);
           }
           else {
             return tryNext(promisifyCallback(callback, nextParam));

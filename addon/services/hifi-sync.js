@@ -1,8 +1,10 @@
 import Service from '@ember/service';
 import { inject as service } from '@ember/service';
+import debug from 'debug';
+const receiveLog = debug('ember-hifi:sync:receive');
+const sendLog = debug('ember-hifi:sync:send')
 export default Service.extend({
   hifi: service(),
-  debugLogger: service('hifi-debug'),
 
   init() {
     this.listeners = {};
@@ -31,16 +33,16 @@ export default Service.extend({
 
     this._subscribe(sound.url, (e) => {
       if (sound.isPlaying && !e.isPlaying) {
-        sound.set('isPlaying', false);
+        // sound.set('isPlaying', false);
       }
 
       else if (!sound.isPlaying && e.isPlaying) {
-        sound.set('isPlaying', true);
+        // sound.set('isPlaying', true);
         // sound.trigger('audio-played')
       }
 
       if (e.position && sound.position != e.position) {
-        sound.set('position', e.position);
+        // sound.set('position', e.position);
       }
     });
   },
@@ -67,6 +69,9 @@ export default Service.extend({
   // },
 
   _isSame(oldState, newState)  {
+    if (!oldState && newState) { return false }
+    if (oldState && !newState) { return false }
+    
     var aProps = Object.getOwnPropertyNames(newState);
     var bProps = Object.getOwnPropertyNames(oldState);
 
@@ -88,8 +93,7 @@ export default Service.extend({
   _publish(key, data) {
     const newState = this._serializeData(data);
     if (!this._isSame(this._state(key), JSON.parse(newState))) {
-
-      this.debugLogger.log(`sync:send`, `${key}: ${JSON.stringify(newState)}`)
+      sendLog(`${key}: ${JSON.stringify(newState)}`);
       localStorage.setItem(key, newState);
     }
 
@@ -117,7 +121,7 @@ export default Service.extend({
         if (e.key === key) {
           let data = this._deserializeData(e.newValue);
           if (data.fromTab !== this.tabId) { // ignore events from ourselves
-            this.debugLogger.log(`sync:receive`, `${key}: ${JSON.stringify(data)}`)
+            receiveLog(`${key}: ${JSON.stringify(newState)}`);
             this.listeners[key].forEach((v /*, _k */) => v(data))
           }
         }

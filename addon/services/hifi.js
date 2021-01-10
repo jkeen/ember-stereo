@@ -7,6 +7,8 @@ import Evented from '@ember/object/evented';
 import Service, { inject as service } from '@ember/service';
 import { assert } from '@ember/debug';
 import { bind } from "@ember/runloop";
+import debug from 'debug';
+const log = debug('ember-hifi');
 
 import {
   set,
@@ -50,10 +52,8 @@ export const SERVICE_EVENT_MAP = [
 */
 
 export default Service.extend(Evented, {
-  debugName: 'ember-hifi',
   poll:              service(),
   soundCache:        service('hifi-cache'),
-  debugLogger:       service('hifi-debug'),
 
   isMobileDevice:    computed({
     get() {
@@ -167,10 +167,11 @@ export default Service.extend(Evented, {
     let sharedAudioAccess = this._createAndUnlockAudio();
 
     options = assign({
-      debugName: `load-${Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 3)}`,
+      debugName: `ember-hifi:load-${Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 3)}`,
       metadata: {},
     }, options);
 
+    console.log(options);
     let promise = new RSVP.Promise((resolve, reject) => {
       return this._resolveUrls(urlsOrPromise).then(urlsToTry => {
         if (isEmpty(urlsToTry)) {
@@ -180,7 +181,7 @@ export default Service.extend(Evented, {
         this.trigger('pre-load', urlsToTry);
         let sound = this.get('soundCache').find(urlsToTry);
         if (sound) {
-          this.debugLogger.log('ember-hifi', 'retreived sound from cache');
+          log('retreived sound from cache');
           return resolve({sound});
         }
         else {
@@ -210,15 +211,16 @@ export default Service.extend(Evented, {
               return s;
             });
           }
-
           let search = this._findFirstPlayableSound(strategies, options);
+    
+
           search.then(results  => resolve({sound: results.success, failures: results.failures}));
-          search.catch(e => {
+          search.catch((failures) => {
             // reset the UI since trying to play that sound failed
             this.set('isLoading', false);
-            let err = new Error(`[ember-hifi] URL Promise failed because: ${e.message}`);
-            err.failures = e.failures;
-            reject(err);
+            // let err = new Error(`[ember-hifi] URL Promise failed because`);
+   
+            reject({failures});
           });
 
           return search;
@@ -275,7 +277,7 @@ export default Service.extend(Evented, {
     // We want to keep this chainable elsewhere
     return new RSVP.Promise((resolve, reject) => {
       load.then(({sound, failures}) => {
-        this.debugLogger.log("ember-hifi", "Finished load, trying to play sound");
+        log("Finished load, trying to play sound");
         sound.one('audio-played', () => resolve({sound, failures}));
 
         this._registerEvents(sound);
@@ -382,8 +384,12 @@ export default Service.extend(Evented, {
     this._registerEvents(sound);
     sound._setVolume(this.get('volume'));
     this.set('currentSound', sound);
-    this.debugLogger.log('ember-hifi', `setting current sound -> ${sound.get('url')}`);
+    log(`setting current sound -> ${sound.get('url')}`);
   },
+
+
+
+
 
 /* ------------------------ PRIVATE(ISH) METHODS ---------------------------- */
 /* -------------------------------------------------------------------------- */
@@ -580,12 +586,12 @@ export default Service.extend(Evented, {
     };
 
     if (urlsOrPromise && urlsOrPromise.then) {
-      this.debugLogger.log('ember-hifi', "#load passed URL promise");
+      log("#load passed URL promise");
     }
 
     return RSVP.Promise.resolve(urlsOrPromise).then(urls => {
       urls = prepare(urls);
-      this.debugLogger.log('ember-hifi', `given urls: ${urls.join(', ')}`);
+      log(`given urls: ${urls.join(', ')}`);
       return urls;
     });
   },
@@ -601,34 +607,28 @@ export default Service.extend(Evented, {
    */
 
   _findFirstPlayableSound(strategies, options) {
-    this.debugLogger.timeStart(options.debugName, "_findFirstPlayableSound");
+    log("start: _findFirstPlayableSound");
 
     let promise = PromiseRace.start(strategies, (strategy, returnSuccess, markAsFailure) => {
       let Connection = strategy.connection;
       let connectionOptions  = getProperties(strategy, 'url', 'connectionName', 'sharedAudioAccess', 'options');
       connectionOptions.container = getOwner(this);
       let sound = Connection.create(connectionOptions);
-      this.debugLogger.log('ember-hifi', `TRYING: [${strategy.connectionName}] -> ${strategy.url}`);
+      log(`TRYING: [${strategy.connectionName}] -> ${strategy.url}`);
 
       sound.one('audio-load-error', (error) => {
         strategy.error = error;
         markAsFailure(strategy);
-        this.debugLogger.log('ember-hifi', `FAILED: [${strategy.connectionName}] -> ${error} (${strategy.url})`);
+        log(`FAILED: [${strategy.connectionName}] -> ${error} (${strategy.url})`);
       });
 
       sound.one('audio-ready',      () => {
         returnSuccess(sound);
-        this.debugLogger.log('ember-hifi', `SUCCESS: [${strategy.connectionName}] -> (${strategy.url})`);
-      });
-    });
-    promise.catch(({failures}) => {
-      this.debugLogger.log('ember-hifi', `All promises failed:`);
-      failures.forEach(f => {
-        this.debugLogger.log('ember-hifi', `${f.connectionName}: ${f.error}`);
+        log(`SUCCESS: [${strategy.connectionName}] -> (${strategy.url})`);
       });
     });
 
-    promise.finally(() => this.debugLogger.timeEnd(options.debugName, "_findFirstPlayableSound"));
+    promise.finally(() => log(`finish: _findFirstPlayableSound`));
 
     return promise;
   },
@@ -663,7 +663,7 @@ export default Service.extend(Evented, {
 
   _prepareMobileStrategies(urlsToTry) {
     let strategies = this._prepareStandardStrategies(urlsToTry);
-    this.debugLogger.log("modifying standard strategy for to work best on mobile");
+    log("modifying standard strategy for to work best on mobile");
 
     let nativeStrategies  = emberArray(strategies).filter(s => (s.connectionKey === 'NativeAudio'));
     let otherStrategies   = emberArray(strategies).reject(s => (s.connectionKey === 'NativeAudio'));
@@ -727,7 +727,7 @@ export default Service.extend(Evented, {
           });
         }
       });
-      this.debugLogger.log(`Compatible connections for ${url}: ${connectionSuccesses.join(", ")}`);
+      log(`Compatible connections for ${url}: ${connectionSuccesses.join(", ")}`);
     });
     return strategies;
   },
@@ -761,14 +761,14 @@ export default Service.extend(Evented, {
   _attemptToPlaySound(sound, options) {
     if (this.get('isMobileDevice')) {
       let touchPlay = ()=> {
-        this.debugLogger.log(`triggering sound play from document touch`);
+        log(`triggering sound play from document touch`);
         sound.play();
       };
 
       document.addEventListener('touchstart', touchPlay, { passive: true });
 
       let blockCheck = later(() => {
-        this.debugLogger.log(`Looks like the mobile browser blocked an autoplay trying to play sound with url: ${sound.get('url')}`);
+        log(`Looks like the mobile browser blocked an autoplay trying to play sound with url: ${sound.get('url')}`);
       }, 2000);
 
       sound.one('audio-played', () => {

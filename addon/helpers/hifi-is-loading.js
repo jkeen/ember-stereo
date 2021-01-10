@@ -3,7 +3,8 @@ import { inject as service } from '@ember/service';
 
 export default Helper.extend({
   hifi: service(),
-  compute([url], metadata = {}) {
-    return this.hifi.play(url, { metadata });
+
+  compute(url) {
+    return this.hifi.isLoading && (this.hifi.currentSound.url == url);
   }
 });

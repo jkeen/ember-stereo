@@ -11,7 +11,7 @@ export default Helper.extend({
     return sound;
   }).drop(),
 
-  compute(url, metadata = {}) {
+  compute([url], metadata = {}) {
     return this.load.perform(url, { metadata }).then(r => r.sound)
   }
 });

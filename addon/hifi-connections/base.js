@@ -7,6 +7,7 @@ import { assert } from '@ember/debug';
 import EmberObject, { computed } from '@ember/object';
 import { getMimeType } from 'ember-hifi/utils/mime-types';
 import { inject as service } from '@ember/service';
+import debug from 'debug';
 
 /**
 * This is the base sound object from which other sound objects are derived. 
@@ -68,13 +69,12 @@ let ClassMethods = Mixin.create({
 });
 
 let Sound = EmberObject.extend(Evented, {
-  debugLogger: service('hifi-debug'),
   debugName: computed('url', 'connectionName', function() {
     var parser = document.createElement('a');
     parser.href = this.get('url');
     let parts = parser.pathname.split('/');
 
-    return `${this.get('connectionName')} (${parts[parts.length - 1]})`;
+    return `ember-hifi:${this.get('connectionName')} (${parts[parts.length - 1]})`;
   }),
 
   pollInterval:      1000,
@@ -107,8 +107,13 @@ let Sound = EmberObject.extend(Evented, {
     }
   }),
 
+  mimeType: computed('url', function() {
+    return getMimeType(this.url);
+  }),
+
   debug(message) {
-    this.debugLogger.log(this.debugName, message);
+    const log = debug(this.debugName);
+    log(message);
   },
 
   init: function() {
@@ -171,9 +176,9 @@ let Sound = EmberObject.extend(Evented, {
       if (audioLoading) { audioLoading(this, info && info.percentLoaded); }
     });
 
-    this._detectTimeouts();
-
+    
     try {
+      this._detectTimeouts();
       this.setup();
     }
     catch(e) {

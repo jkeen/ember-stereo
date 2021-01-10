@@ -3,6 +3,7 @@ import { run } from '@ember/runloop';
 import Mixin from '@ember/object/mixin';
 import BaseSound from './base';
 import Ember from 'ember';
+
 // These are the events we're watching for
 const AUDIO_EVENTS = ['loadstart', 'durationchange', 'loadedmetadata', 'loadeddata', 'progress', 'canplay', 'canplaythrough', 'error', 'playing', 'pause', 'ended', 'emptied', 'timeupdate'];
 
@@ -120,6 +121,7 @@ let Sound = BaseSound.extend({
     }
     else {
       let audioElement = (this.get('_audioElement') || document.createElement('audio'));
+
       this.set('_audioElement', audioElement);
 
       return audioElement;

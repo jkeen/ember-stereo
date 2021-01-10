@@ -16,7 +16,6 @@ module.exports = {
     }
 
     this.getHifiConnections();
-
     if (this.hifiConnections.includes('Howler')) {
       target.import({
         development: 'vendor/third-party/howler.js',
@@ -66,7 +65,7 @@ module.exports = {
     if (this.hifiConnections) {
       return;
     }
-
+    console.log(this.hifiConnections);
     this.hifiConnections = this.project.config(process.env.EMBER_ENV).emberHifi.connections.map((connection) => connection.name);
   },
 

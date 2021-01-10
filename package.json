@@ -39,7 +39,9 @@
     "ember-cli-htmlbars": "^4.3.1",
     "ember-copy": "^1.0.0",
     "ember-poll": "^1.4.0",
-    "hls.js": "^0.13.2",
+    "ember-auto-import": "^1.5.3",
+    "hls.js": "^0.14.16",
+    "debug": "4.3.2",
     "howler": "^2.0.5"
   },
   "devDependencies": {
@@ -51,7 +53,6 @@
     "babel-eslint": "^8.0.0",
     "broccoli-asset-rev": "3.0.0",
     "ember-animated": "^0.6.1",
-    "ember-auto-import": "^1.5.3",
     "ember-cli": "~3.18.0",
     "ember-cli-addon-docs": "^0.6.16",
     "ember-cli-addon-docs-yuidoc": "^0.2.1",
@@ -100,6 +101,9 @@
   },
   "ember": {
     "edition": "octane"
+  },
+  "resolutions": {
+    "whatwg-fetch": "3.3.1"
   },
   "ember-addon": {
     "configPath": "tests/dummy/config"

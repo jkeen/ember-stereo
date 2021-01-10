@@ -22,6 +22,8 @@ export default Component.extend({
       metadata: {
         title: this.title
       }
+    }).catch(({failures}) => {
+      console.error(failures);
     });
   }).drop(),
 
@@ -31,6 +33,8 @@ export default Component.extend({
         metadata: {
           title: this.title
         }
+      }).catch(({failures}) => {
+        console.error(failures);
       });
     }
     catch(e) {

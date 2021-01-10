@@ -1,5 +1,8 @@
 import EmberObject from '@ember/object';
-import { inject as service } from '@ember/service'
+import { inject as service } from '@ember/service';
+import debug from 'debug';
+const log = debug('ember-hifi:shared-audio-access');
+
 /***
 * @class SharedAudioAccess
 * @constructor
@@ -15,20 +18,16 @@ import { inject as service } from '@ember/service'
  * @class SharedAudioAccess
  */
 
-
 const SharedAudioAccess = EmberObject.extend({
-  debugName: 'sharedAudioAccess',
-  debugLogger: service('hifi-debug'),
-
+  // debugName: 'sharedAudioAccess',
   debug(message) {
-    this.debugLogger.log(this.debugName, message);
+    log(message);
   },
 
   unlock(andPlay) {
-    let audioElement = this.get('audioElement');
-    if (!audioElement) {
+    if (!this.audioElement) {
       this.debug('creating new audio element');
-      audioElement = this._createElement();
+      let audioElement = this._createElement();
       this.set('audioElement', audioElement);
 
       if (andPlay) {

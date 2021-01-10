@@ -1,6 +1,7 @@
 import Service from '@ember/service';
 import { A as emberArray, makeArray } from '@ember/array';
 import { inject as service } from '@ember/service';
+import debug from 'debug';
 
 /**
 * This class caches sound objects based on urls. You shouldn't have to interact with this class.
@@ -11,7 +12,6 @@ import { inject as service } from '@ember/service';
 
 export default Service.extend({
   debugName: 'hifi-cache',
-  debugLogger: service('hifi-debug'),
   cachedCount: 0,
 
   init() {
@@ -37,10 +37,10 @@ export default Service.extend({
     let foundSounds  = emberArray(sounds).compact();
 
     if (foundSounds.length > 0) {
-      this.debugLogger.log('hifi-cache', `cache hit for ${foundSounds[0].get('url')}`);
+      this.debug(`cache hit for ${foundSounds[0].get('url')}`);
     }
     else {
-      this.debugLogger.log('hifi-cache', `cache miss for ${keysToSearch.join(',')}`);
+      this.debug(`cache miss for ${keysToSearch.join(',')}`);
     }
 
     return foundSounds[0];
@@ -54,7 +54,7 @@ export default Service.extend({
   remove(sound) {
     if (this.isDestroyed) return;
 
-    this.debugLogger.log('hifi-cache', `removing sound from cache with url: ${sound.get('url')}`);
+    this.debug(`removing sound from cache with url: ${sound.get('url')}`);
 
     if (this._cache[sound.get('url')]) {
       delete this._cache[sound.get('url')]
@@ -71,12 +71,17 @@ export default Service.extend({
   cache(sound) {
     if (this.isDestroyed) return;
 
-    this.debugLogger.log('hifi-cache', `caching sound with url: ${sound.get('url')}`);
+    this.debug(`caching sound with url: ${sound.get('url')}`);
 
     if (!this._cache[sound.get('url')]) {
       this._cache[sound.get('url')] = sound;
       this.set('cachedCount', Object.keys(this._cache).length);
       this.notifyPropertyChange('_cache');
     }
-  }
+  },
+
+  debug(message) {
+    const log = debug(this.debugName);
+    log(message);
+  },
 });

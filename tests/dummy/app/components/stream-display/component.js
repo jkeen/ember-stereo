@@ -19,10 +19,8 @@ export default Component.extend({
     let title = this.get('stream.title');
 
     this.set('loading', true);
-    logger.timeStart(title, "loading");
 
     load.then(results => {
-      logger.log(title, "SUCCESS");
       let badMounts = [];
       makeArray(results.failures).forEach(f => badMounts.push(f.url));
       this.set('stream.badMounts', badMounts.uniq());
@@ -30,14 +28,12 @@ export default Component.extend({
     });
 
     load.catch(results => {
-      logger.log(title, "FAILURE");
       let badMounts = [];
       makeArray(results.failures).forEach(f => badMounts.push(f.url));
       this.set('stream.badMounts', badMounts.uniq());
     });
 
     load.finally(() => {
-      logger.timeEnd(title, "loading");
       this.set('loading', false);
     });
   },

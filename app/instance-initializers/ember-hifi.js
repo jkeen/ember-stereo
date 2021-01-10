@@ -2,6 +2,7 @@ import config from '../config/environment';
 import sharedAudioAccess from '../utils/shared-audio-access';
 
 export function initialize(application) {
+  debugger
   const { emberHifi, environment = 'development' } = config;
   const options = { emberHifi, environment };
   application.register('config:hifi', options, { instantiate: false });
