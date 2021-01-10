@@ -14,7 +14,6 @@ import {
   set,
   get,
   getProperties,
-  getWithDefault,
   computed
 } from '@ember/object';
 import { A as emberArray, makeArray } from '@ember/array';
@@ -116,14 +115,17 @@ export default Service.extend(Evented, {
    */
 
   init() {
-    const connections = getWithDefault(this, 'options.emberHifi.connections', emberArray());
+    const connections = get(this, 'options.emberHifi.connections');
+    if (!connections) {
+      connections = emberArray();
+    }
     const owner = getOwner(this);
 
     owner.registerOptionsForType('ember-hifi@hifi-connection', { instantiate: false });
     owner.registerOptionsForType('hifi-connection', { instantiate: false });
 
-    set(this, 'alwaysUseSingleAudioElement',  getWithDefault(this, 'options.emberHifi.alwaysUseSingleAudioElement', false));
-    set(this, 'appEnvironment', getWithDefault(this, 'options.environment', 'development'));
+    set(this, 'alwaysUseSingleAudioElement',  !!get(this, 'options.emberHifi.alwaysUseSingleAudioElement'));
+    set(this, 'appEnvironment', (get(this, 'options.environment') || 'development'));
     set(this, '_connections', {});
     set(this, 'oneAtATime', OneAtATime.create({container: getOwner(this)}));
     set(this, 'volume', 50);
@@ -188,8 +190,8 @@ export default Service.extend(Evented, {
           let strategies = [];
           if (options.useConnections) {
             // If the consumer has specified a connection to prefer, use it
-            let connectionNames  = options.useConnections;
-            strategies = this._prepareStrategies(urlsToTry, connectionNames);
+            let connectionKeys  = options.useConnections;
+            strategies = this._prepareStrategies(urlsToTry, connectionKeys);
           }
           else if (this.get('isMobileDevice')) {
             // If we're on a mobile device, we want to try NativeAudio first
@@ -212,7 +214,6 @@ export default Service.extend(Evented, {
             });
           }
           let search = this._findFirstPlayableSound(strategies, options);
-    
 
           search.then(results  => resolve({sound: results.success, failures: results.failures}));
           search.catch((failures) => {
@@ -705,15 +706,15 @@ export default Service.extend(Evented, {
    * @return {Array} {connection, url}
    */
 
-  _prepareStrategies(urlsToTry, connectionNames) {
-    connectionNames = makeArray(connectionNames);
+  _prepareStrategies(urlsToTry, connectionKeys) {
+    connectionKeys = makeArray(connectionKeys);
     let strategies = [];
     let connectionOptions = this.get('options.emberHifi.connections') || [];
     connectionOptions = emberArray(connectionOptions);
 
     urlsToTry.forEach(url => {
       let connectionSuccesses = [];
-      connectionNames.forEach(name => {
+      connectionKeys.forEach(name => {
         let connection = this.get(`_connections.${name}`);
         let config = connectionOptions.findBy('name', name);
         if (connection.canPlay(url)) {

@@ -1,14 +1,14 @@
 import { reads, equal } from '@ember/object/computed';
 import Component from '@ember/component';
 import layout from './template';
-import { inject } from '@ember/service';
+import { inject as service } from '@ember/service';
 import { computed } from '@ember/object';
 import { task } from 'ember-concurrency';
 
 export default Component.extend({
   layout,
-  hifi: inject(),
-  hifiCache: inject(),
+  hifi: service(),
+  hifiCache: service(),
   classNames: ['sound', 'sound-display', 'is-loaded'],
   classNameBindings: ['isCurrentSound', 'isPlaying', 'showDebugInfo'],
   attributeBindings:['connectionName:data-connection-name'],

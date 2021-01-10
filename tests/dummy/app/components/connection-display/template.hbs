@@ -1,8 +1,8 @@
 {{yield}}
 
-<a href="#" class="connection-display-title" {{action (toggle "enabled" this (not enabled))}}>
-  <div class="connection-toggle {{if enabled "is-enabled"}}">
-    {{#if enabled}}
+<a href="#" class="connection-display-title" {{action (toggle "enabled" this (not this.enabled))}}>
+  <div class="connection-toggle {{if this.enabled "is-enabled"}}">
+    {{#if this.enabled}}
       <span class="icon">
         {{fa-icon "check-square"}}
       </span>
@@ -12,18 +12,18 @@
       </span>
     {{/if}}
   </div>
-  {{connection}}
+  {{this.connection}}
 </a>
 
-{{#animated-beacon name=connectionName}}
+{{#animated-beacon name=this.connectionName}}
   <div class="connection-display-info">
-    {{#if canUseConnection}}
-      {{#if (or connection.acceptMimeTypes connection.rejectMimeTypes)}}
-        {{#each connection.acceptMimeTypes as |type|}}
+    {{#if this.canUseConnection}}
+      {{#if (or this.connection.acceptMimeTypes connection.rejectMimeTypes)}}
+        {{#each this.connection.acceptMimeTypes as |type|}}
           <span class="has-text-success">Accepts: {{type}}</span>
         {{/each}}
 
-        {{#each connection.rejectMimeTypes as |type|}}
+        {{#each this.connection.rejectMimeTypes as |type|}}
           <span class="has-text-danger">Rejects: {{type}}</span>
         {{/each}}
       {{else}}

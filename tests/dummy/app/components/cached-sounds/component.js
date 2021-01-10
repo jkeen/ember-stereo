@@ -32,12 +32,10 @@ export default Component.extend({
   //eslint-disable-next-line
   transition: function * (context) {
      let { keptSprites, removedSprites, insertedSprites, beacons } = context;
-     keptSprites.forEach(sprite => {
-       parallel(move(sprite), scale(sprite));
-     });
+     keptSprites.forEach(sprite => parallel(move(sprite), scale(sprite)));
 
      removedSprites.forEach(sprite => {
-       sprite.applyStyles({ 'z-index': 1});
+       sprite.applyStyles({ 'z-index': "1"});
        // It'd be great to rotate this thing -30degrees as it drops. But how
        sprite.endAtPixel({ y: 4000 });
        parallel(move(sprite, { easing: easeOut, duration: 1200}));

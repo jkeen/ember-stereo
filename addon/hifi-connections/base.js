@@ -72,8 +72,8 @@ let Sound = EmberObject.extend(Evented, {
   debugName: computed('url', 'connectionName', function() {
     var parser = document.createElement('a');
     parser.href = this.get('url');
-    let parts = parser.pathname.split('/');
 
+    let parts = parser.pathname.split('/');
     return `ember-hifi:${this.get('connectionName')} (${parts[parts.length - 1]})`;
   }),
 

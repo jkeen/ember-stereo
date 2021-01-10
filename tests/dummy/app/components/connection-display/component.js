@@ -4,7 +4,7 @@ import layout from './template';
 import { inject as service } from '@ember/service';
 import { computed } from '@ember/object';
 import { getMimeType } from 'ember-hifi/utils/mime-types';
-import { get, set, getWithDefault } from '@ember/object';
+import { get, set } from '@ember/object';
 
 export default Component.extend({
   layout,
@@ -81,10 +81,10 @@ export default Component.extend({
       }
 
       loadPromise.then(({sound}) => {
-        let results = getWithDefault(sound, 'metadata.debug.results', [])
+        let results = (get(sound, 'metadata.debug.results') || [])
 
-        set(result, 'thisConnection',  this.connection.toString())
-        set(result, 'connectionResult',  sound.connectionName)
+        set(result, 'thisConnection',  this.connection.toString());
+        set(result, 'connectionResult',  sound.connectionName);
         set(this, 'lastResult', result);
         set(result, 'didPlay', this.connection.toString() === sound.connectionName);
         results.push(result);

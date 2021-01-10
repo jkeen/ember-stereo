@@ -9,8 +9,8 @@
 This addon exposes a `hifi` service which produces `Sound` objects which represent a playable piece of audio.
 
 The `hifi` service makes it easy to play audio in the unfriendly landscape that is the current state of audio on the web. Forget worrying about formats and browsers and just give `hifi` a list of URLs to try and it'll play the first one that works.
-* Ember.js v3.12 or above
-* Ember CLI v2.13 or above
+
+* Ember.js v3.16 or above
 * Node.js v10 or above
 
 ## Installing The Addon
