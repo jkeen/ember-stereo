@@ -1,74 +1,113 @@
+import classic from 'ember-classic-decorator';
 import Service from '@ember/service';
 import { inject as service } from '@ember/service';
 import debug from 'debug';
-const receiveLog = debug('ember-hifi:sync:receive');
-const sendLog = debug('ember-hifi:sync:send')
-export default Service.extend({
-  hifi: service(),
+import Evented from '@ember/object/evented';
+import { next } from '@ember/runloop';
+import { throttle } from '@ember/runloop';
+@classic
+export default class HifiSync extends Service.extend(Evented) {
+  @service hifi;
+  @service('hifi-cache') cache;
 
   init() {
     this.listeners = {};
     this.tabId = Math.random().toString().slice(2,7);
-    this._super(...arguments);
-  },
+    super.init(...arguments);
 
-  isPlayingElsewhere(sound) {
-    let state = this._state(sound.url)
-    if (state && state.isPlaying == true) {
-      return true;
-    }
-  },
 
-  _sendUpdate(sound) {
-    this._publish(sound.url, {
-      isPlaying: sound.isPlaying,
-      position: sound.position
-    });
-  },
+    window.addEventListener('storage', (e) => this._notifyOfChanges());
+    window.addEventListener('beforeunload', () => this.cleanupStates());
+  }
+
+  _receiveLog() {
+    debug('ember-hifi:sync:receive')(...arguments);
+  }
+
+  _sendLog() {
+    debug('ember-hifi:sync:send')(...arguments);
+  }
+
+  sendLog() {
+    this._sendLog(...arguments);
+    // throttle(this, this._sendLog, m, 1000);
+  }
+
+  receiveLog() {
+    this._receiveLog(...arguments);
+    // throttle(this, this._receiveLog, m, 1000);
+  }
+
+  willDestroy() {
+    window.removeEventListener('storage', (e) => this._notifyOfChanges());
+  }
+  
+  _notifyOfChanges() {
+    debug('ember-hifi:sync')('notify of changes');
+    next(() => this.trigger('change'));
+  }
+  
+  isPlayingElsewhere(url) {
+    let state = this.getState(url)
+    return (state && state.isPlaying)
+  }
 
   handleSoundUpdates(sound) {
-    sound.on('audio-played',           () => this._sendUpdate(sound));
-    sound.on('audio-paused',           () => this._sendUpdate(sound));
-    sound.on('audio-position-changed', () => this._sendUpdate(sound));
+    sound.on('audio-played',           (s) => s.syncState());
+    sound.on('audio-paused',           (s) => s.syncState());
+    sound.on('audio-position-changed', (s) => s.syncState());
 
-    this._subscribe(sound.url, (e) => {
-      if (sound.isPlaying && !e.isPlaying) {
-        // sound.set('isPlaying', false);
-      }
+    // this.subscribe(sound.url, (e) => {
+    //   if (sound.isPlaying && !e.isPlaying) {
+    //     sound.set('isPlaying', false);
+    //   }
 
-      else if (!sound.isPlaying && e.isPlaying) {
-        // sound.set('isPlaying', true);
-        // sound.trigger('audio-played')
-      }
+    //   else if (!sound.isPlaying && e.isPlaying) {
+    //     sound.set('isPlaying', true);
+    //     // sound.trigger('audio-played')
+    //   }
 
-      if (e.position && sound.position != e.position) {
-        // sound.set('position', e.position);
-      }
-    });
-  },
+    //   if (e.position && sound.position != e.position) {
+    //     sound.set('position', e.position);
+    //   }
+    // });
+  }
+
+  register(url, callback) {
+    this.subscribe(url, callback);
+  }
 
   /* Pause other tabs */
   onPauseOtherTabs(callback) {
-    this._subscribe('hifi:system', (e) => {
+    this.subscribe('hifi:system', (e) => {
       if (e.action == 'pause') {
         callback();
       }
     })
-  },
+  }
 
   pauseOtherTabs() {
-    this._publish('hifi:system', { action: 'pause' });
-  },
+    this.broadcast('hifi:system', { action: 'pause' });
+  }
+
+
+  cleanupStates() {
+    let keys = Object.keys(localStorage).filter(s => this.getState(s)['fromTab'] == this.tabId);
+    keys.forEach(key => {
+      this.broadcast(key, {});
+      localStorage.removeItem(key)
+    })
+  }
 
   // _merge(key, hash) {
-  //   let state = this._state(key)
+  //   let state = this.getState(key)
   //   let data = Object.assign((state || {}), hash)
   //   this.debugLogger.log(`sync:send`, `${key}: ${JSON.stringify(data)}`)
 
-  //   this._publish(key, data);
+  //   this.broadcast(key, data);
   // },
 
-  _isSame(oldState, newState)  {
+  _isSame(oldState, newState) {
     if (!oldState && newState) { return false }
     if (oldState && !newState) { return false }
     
@@ -88,31 +127,30 @@ export default Service.extend({
     }
 
     return true;
-  },
+  }
 
-  _publish(key, data) {
+  broadcast(key, data) {
     const newState = this._serializeData(data);
-    if (!this._isSame(this._state(key), JSON.parse(newState))) {
-      sendLog(`${key}: ${JSON.stringify(newState)}`);
+    if (!this._isSame(this.getState(key), JSON.parse(newState))) {
+      this.sendLog(key, JSON.parse(newState));
       localStorage.setItem(key, newState);
     }
-
     // // Dispatch to local event listener as well
     // var event = new Event("storage");
     // event.key = key;
     // event.newValue = jsonData;
     // window.dispatchEvent(event);
-  },
+  }
 
-  _state(key){
+  getState(key) {
     const dataJSON = localStorage.getItem(key);
 
     if (dataJSON) {
       return this._deserializeData(dataJSON);
     }
-  },
+  }
 
-  _subscribe(key, callback) {
+  subscribe(key, callback) {
     if (!this.listeners[key]) {
       // Not yet any listener for this topic
       this.listeners[key] = [];
@@ -121,23 +159,23 @@ export default Service.extend({
         if (e.key === key) {
           let data = this._deserializeData(e.newValue);
           if (data.fromTab !== this.tabId) { // ignore events from ourselves
-            receiveLog(`${key}: ${JSON.stringify(newState)}`);
+            this.receiveLog(key, data);
             this.listeners[key].forEach((v /*, _k */) => v(data))
           }
         }
       }, false);
     }
     this.listeners[key].push(callback)
-  },
+  }
 
   _serializeData(data) {
     data.fromTab = this.tabId;
     return JSON.stringify(data);
-  },
+  }
 
   _deserializeData(payload) {
     var data = JSON.parse(payload);
 
     return data;
   }
-});
+}

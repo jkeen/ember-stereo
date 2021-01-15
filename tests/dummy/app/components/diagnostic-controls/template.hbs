@@ -17,8 +17,8 @@
   </div>
 
   {{#animated-container}}
-    {{#animated-each dormantItems use=transition duration=250 as |item|}}
-      {{test-sound item=item}}
+    {{#animated-each testSounds use=transition duration=250 as |item|}}
+      <TestSound @url={{item.url}} @title={{item.title}} @debug={{item.debug}}/>
     {{/animated-each}}
   {{/animated-container}}
 </div>

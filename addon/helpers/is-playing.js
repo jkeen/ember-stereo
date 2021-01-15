@@ -1,11 +1,48 @@
-import Helper from '@ember/component/helper';
+import classic from 'ember-classic-decorator';
 import { inject as service } from '@ember/service';
-import { computed, observer } from '@ember/object';
+import Helper from '@ember/component/helper';
+import debug from 'debug';
 
-export default Helper.extend({
-  hifi: service(),
+@classic
+export default class HifiIsPlaying extends Helper {
+  @service hifi;
 
-  compute(url) {
-    return this.hifi.isPlaying && (this.hifi.currentSound.url == url);
+  constructor() {
+    super(...arguments);
+    this.boundRecompute = () => this.recompute();
+
+    this.hifi.on('audio-played', this.boundRecompute);
+    this.hifi.on('audio-paused', this.boundRecompute);
+    this.hifi.on('current-sound-changed', this.boundRecompute);
+    this.hifi.on('current-sound-interrupted', this.boundRecompute);
+    this.hifi.on('audio-loading', this.boundRecompute);
+    this.hifi.on('audio-loaded', this.boundRecompute);
+    this.hifi.on('audio-ended', this.boundRecompute);
+
   }
-});
+
+  willDestroy() {
+    this.hifi.off('audio-played', this.boundRecompute);
+    this.hifi.off('audio-paused', this.boundRecompute);
+    this.hifi.off('current-sound-changed', this.boundRecompute);
+    this.hifi.off('current-sound-interrupted', this.boundRecompute);
+    this.hifi.off('audio-loading', this.boundRecompute);
+    this.hifi.off('audio-loaded', this.boundRecompute);
+    this.hifi.off('audio-ended', this.boundRecompute);
+  }
+
+  compute(compare) {
+    let result;
+    if (!compare.toString()) {
+      result = this.hifi.isPlaying;
+      debug(`ember-hifi:system`)(`is-playing = ${result}`);
+    }
+    else {
+      let sound = this.hifi.findLoaded(compare);
+      result = sound && sound.isPlaying;  
+      debug(`ember-hifi${(sound ? ':' + sound.url : '')}`)(`is-playing = ${result}`);
+    }
+
+    return result
+  }
+}

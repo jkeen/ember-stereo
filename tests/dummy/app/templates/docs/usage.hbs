@@ -1,7 +1,7 @@
-{{#docs-demo as |demo|}}
-  {{#demo.example name="hifi-play-decorator.hbs"}}
+<DocsDemo as |demo|>
+  <demo.example @name="hifi-play-decorator.hbs">
     {{#let "https://audio.wnyc.org/otm/otm04212017pod.mp3" as |url|}}
-      <button {{hifi-play url}}>
+      <button {{hifi-control url}}>
         {{#if (hifi-is-playing url)}}
           Pause
         {{else if (hifi-is-loading url)}}
@@ -10,17 +10,17 @@
           Play
         {{/if}}
       </button>
-      {{input type="range" value=this.hifi.position min=0 max=this.hifi.duration step=1000}}
+      <Input @type="range" @value={{this.hifi.position}} @min={{0}} @max={{this.hifi.duration}} @step={{1000}} />
     {{/let}}
-  {{/demo.example}}
+  </demo.example>
   {{demo.snippet "hifi-play-decorator.hbs"}}
   {{demo.snippet "application-controller.js"}}
-{{/docs-demo}}
+</DocsDemo>
 
 
-{{#docs-demo as |demo|}}
-  {{#demo.example name="hifi-play-decorator-promise.hbs"}}
-      <button {{hifi-play (perform this.loadAudioUrl this)}}>
+<DocsDemo as |demo|>
+  <demo.example @name="hifi-play-decorator-promise.hbs">
+      <button {{hifi-control (perform this.loadAudioUrl this)}}>
         {{!-- {{#if (hifi-is-playing this.loadAudio)}} --}}
           {{!-- Pause --}}
         {{!-- {{else if (hifi-is-loading this.loadAudio)}} --}}
@@ -29,7 +29,7 @@
           Play
         {{!-- {{/if}} --}}
       </button>
-  {{/demo.example}}
+  </demo.example>
   {{demo.snippet "hifi-play-decorator-promise.hbs"}}
   {{demo.snippet "hifi-play-decorator-promise.js"}}
-{{/docs-demo}}
+</DocsDemo>

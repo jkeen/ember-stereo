@@ -1,3 +1,4 @@
+import classic from 'ember-classic-decorator';
 import Service from '@ember/service';
 import { A as emberArray, makeArray } from '@ember/array';
 import { inject as service } from '@ember/service';
@@ -10,18 +11,19 @@ import debug from 'debug';
 * @constructor
 */
 
-export default Service.extend({
-  debugName: 'hifi-cache',
-  cachedCount: 0,
+@classic
+export default class HifiCache extends Service {
+  debugName = 'hifi-cache';
+  cachedCount = 0;
 
   init() {
     this.set('_cache', {});
-    this._super(...arguments);
-  },
+    super.init(...arguments);
+  }
 
   reset() {
     this.set('_cache', {});
-  },
+  }
 
   /**
    * find - finds sounds in the cache by urls
@@ -44,7 +46,7 @@ export default Service.extend({
     }
 
     return foundSounds[0];
-  },
+  }
 
   /**
    * remove - removes a sound from the cache
@@ -61,7 +63,7 @@ export default Service.extend({
       this.set('cachedCount', Object.keys(this._cache).length);
       this.notifyPropertyChange('_cache');
     }
-  },
+  }
 
   /**
    * cache - caches the sound by the url
@@ -78,10 +80,10 @@ export default Service.extend({
       this.set('cachedCount', Object.keys(this._cache).length);
       this.notifyPropertyChange('_cache');
     }
-  },
+  }
 
   debug(message) {
     const log = debug(this.debugName);
     log(message);
-  },
-});
+  }
+}

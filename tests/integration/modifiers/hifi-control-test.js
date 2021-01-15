@@ -1,14 +1,14 @@
 import { module, test } from 'qunit';
 import { setupRenderingTest } from 'ember-qunit';
 import { render } from '@ember/test-helpers';
-import hbs from 'htmlbars-inline-precompile';
+import { hbs } from 'ember-cli-htmlbars';
 
-module('Integration | Modifier | hifi-play', function(hooks) {
+module('Integration | Modifier | hifi-control', function(hooks) {
   setupRenderingTest(hooks);
 
   // Replace this with your real tests.
   test('it renders', async function(assert) {
-    await render(hbs`<div {{hifi-play}}></div>`);
+    await render(hbs`<div {{hifi-control}}></div>`);
 
     assert.ok(true);
   });

@@ -1,9 +1,16 @@
-import Helper from '@ember/component/helper';
+import classic from 'ember-classic-decorator';
 import { inject as service } from '@ember/service';
+import Helper from '@ember/component/helper';
+import { observer } from '@ember/object';
+@classic
+export default class HifiPlay extends Helper {
+  @service
+  hifi;
 
-export default Helper.extend({
-  hifi: service(),
   compute([url], metadata = {}) {
-    return this.hifi.play(url, { metadata });
+    return () => {
+      return this.hifi.play(url, { metadata }).then(result => result.sound);  
+    }
   }
-});
+}
+

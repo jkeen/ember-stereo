@@ -4,6 +4,7 @@ import layout from './template';
 import { inject as service } from '@ember/service';
 import { computed } from '@ember/object';
 import { task } from 'ember-concurrency';
+import { action } from '@ember/object'; 
 
 export default Component.extend({
   layout,
@@ -49,6 +50,7 @@ export default Component.extend({
     this.set('sound', sound);
   }),
 
+  @action
   async removeSound() {
     this.onRemoval();
     this.hifiCache.remove(this.sound);
@@ -81,10 +83,10 @@ export default Component.extend({
   },
 
   async togglePause() {
-    if (this.isLoaded && this.sound.isPlaying) {
+    if (this.sound.isPlaying) {
       await this.pause();
     }
-    else if (this.isLoaded && !this.sound.isPlaying) {
+    else if (!this.sound.isPlaying) {
       await this.play()
     }
     else {

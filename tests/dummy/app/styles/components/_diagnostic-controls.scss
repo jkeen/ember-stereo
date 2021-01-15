@@ -45,6 +45,10 @@
   grid-area: actions;
 }
 
+.test-sound-actions .button[data-hifi-state='playing'] {
+  background-color: green;
+}
+
 .visual-sound-diagnostic {
 
 }

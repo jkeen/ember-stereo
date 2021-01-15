@@ -8,6 +8,7 @@ import Service, { inject as service } from '@ember/service';
 import { assert } from '@ember/debug';
 import { bind } from "@ember/runloop";
 import debug from 'debug';
+import { next } from '@ember/runloop';
 const log = debug('ember-hifi');
 
 import {
@@ -49,63 +50,95 @@ export const SERVICE_EVENT_MAP = [
 * @class hifi
 * @constructor
 */
+export default class Hifi extends Service.extend(Evented) {
+  @service poll;
+  @service('hifi-cache') soundCache
+  @service hifiSync;
 
-export default Service.extend(Evented, {
-  poll:              service(),
-  soundCache:        service('hifi-cache'),
+  get isMobileDevice() {
+    return ('ontouchstart' in window);
+  }
+  set isMobileDevice(v) {
+    return v;
+  }
 
-  isMobileDevice:    computed({
-    get() {
-      return ('ontouchstart' in window);
-    },
-    set(k, v) { return v; }
-  }),
+  get useSharedAudioAccess() {
+    return this.isMobileDevice || this.alwaysUseSingleAudioElement;
+  }
 
-  useSharedAudioAccess: or('isMobileDevice', 'alwaysUseSingleAudioElement'),
+  currentSound = null;
 
-  currentSound:      null,
-  currentMetadata:   computed('currentSound.metadata', {
-    get() {
-      return this.get('currentSound.metadata');
-    },
-    set: (k, v) => v
-  }),
-  isPlaying:         readOnly('currentSound.isPlaying'),
-  isLoading:         computed('currentSound.isLoading', {
-    get() {
-      return this.get('currentSound.isLoading');
-    },
-    set(k, v) { return v; }
-  }),
+  get id3TagMetadata() {
+    return get(this, 'currentSound.id3TagMetadata');
+  }
 
-  isStream:          readOnly('currentSound.isStream'),
-  isFastForwardable: readOnly('currentSound.isFastForwardable'),
-  isRewindable:      readOnly('currentSound.isRewindable'),
-  isMuted:           equal('volume', 0),
-  duration:          readOnly('currentSound.duration'),
-  percentLoaded:     readOnly('currentSound.percentLoaded'),
-  pollInterval:      reads('options.emberHifi.positionInterval'),
-  position:          alias('currentSound.position'),
-  id3TagMetadata:    reads('currentSound.id3TagMetadata'),
+  get currentMetadata() {
+    return get(this, 'currentSound.metadata');
+  }
+  set currentMetadata(v) {
+    return v;
+  }
 
-  defaultVolume: 50,
+  get isPlaying() {
+    return get(this, 'currentSound.isPlaying'); 
+  }
 
-  volume: computed({
-    get() {
-      return this.get('currentSound.volume') || this.get('defaultVolume');
-    },
-    set(k, v) {
-      if (this.get('currentSound')) {
-        this.get('currentSound')._setVolume(v);
-      }
+  get isLoading() {
+    return get(this, 'currentSound.isLoading'); 
+  }
+  set isLoading(v) {
+    return v;
+  }
 
-      if (v > 0) {
-        this.set('unmuteVolume', v);
-      }
 
-      return v;
+  get isStream() {
+    return get(this, 'currentSound.isStream'); 
+  }
+
+  get isFastForwardable() {
+    return get(this, 'currentSound.isFastForwardable'); 
+  }
+
+  get isRewindable() {
+    return get(this, 'currentSound.isRewindable'); 
+  }
+
+  get isMuted() {
+    return this.volume === 0; 
+  }
+
+  get duration() {
+    return get(this, 'currentSound.duration'); 
+  }
+
+  get percentLoaded() {
+    return get(this, 'currentSound.percentLoaded'); 
+  }
+
+  get pollInterval() {
+    return get(this.options, 'emberHifi.positionInterval'); 
+  }
+
+  get position() {
+    return get(this, 'currentSound.position'); 
+  }
+
+  defaultVolume = 50;
+
+  get volume() {
+      return get(this, 'currentSound.volume') || get(this, 'defaultVolume');
+  }
+  set volume(v) {
+    if (this.currentSound) {
+      this.currentSound._setVolume(v);
     }
-  }),
+
+    if (v > 0) {
+      this.unmuteVolume = v;
+    }
+
+    return v;
+  }
 
   /**
    * When the Service is created, activate connections that were specified in the
@@ -141,9 +174,8 @@ export default Service.extend(Evented, {
       callback: bind(this, this._setCurrentPosition)
     });
 
-
-    this._super(...arguments);
-  },
+    super.init(...arguments);
+  }
 
   /**
    * Returns the list of activated and available connections
@@ -153,7 +185,29 @@ export default Service.extend(Evented, {
 
   availableConnections() {
     return Object.keys(this.get('_connections'));
-  },
+  }
+
+  /**
+   * Given a sound, a url, or an object with a URL property, return a sound ready for playing
+   *
+   * @method findLoaded
+   * @async
+   * @param identifier [..{Promise|String}]
+   * Provide an array of urls to try, or a promise that will resolve to an array of urls
+   * @return {Sound} A sound that's ready to be played, or an error
+   */
+
+  findLoaded(identifier) {
+    let sound;
+    if (identifier && identifier.url) {
+      sound = this.soundCache.find(identifier.url);
+    }
+    else if (identifier) {
+      sound = this.soundCache.find(identifier.toString());
+    }
+
+    return sound;
+  }
 
   /**
    * Given an array of URLS, return a sound ready for playing
@@ -173,7 +227,6 @@ export default Service.extend(Evented, {
       metadata: {},
     }, options);
 
-    console.log(options);
     let promise = new RSVP.Promise((resolve, reject) => {
       return this._resolveUrls(urlsOrPromise).then(urlsToTry => {
         if (isEmpty(urlsToTry)) {
@@ -252,7 +305,7 @@ export default Service.extend(Evented, {
     }));
 
     return promise;
-  },
+  }
 
   /**
    * Given an array of URLs, return a sound and play it.
@@ -265,7 +318,7 @@ export default Service.extend(Evented, {
    */
 
   play(urlsOrPromise, options = {}) {
-    if (this.get('isPlaying')) {
+    if (this.isPlaying) {
       this.trigger('current-sound-interrupted', get(this, 'currentSound'));
       this.pause();
     }
@@ -286,7 +339,7 @@ export default Service.extend(Evented, {
       });
       load.catch(reject);
     });
-  },
+  }
 
   /**
    * Pauses the current sound
@@ -297,7 +350,7 @@ export default Service.extend(Evented, {
   pause() {
     assert('[ember-hifi] Nothing is playing.', this.get('currentSound'));
     this.get('currentSound').pause();
-  },
+  }
 
   /**
    * Stops the current sound
@@ -308,7 +361,7 @@ export default Service.extend(Evented, {
   stop() {
     assert('[ember-hifi] Nothing is playing.', this.get('currentSound'));
     this.get('currentSound').stop();
-  },
+  }
 
   /**
    * Toggles play/pause state of the current sound
@@ -318,15 +371,14 @@ export default Service.extend(Evented, {
 
   togglePause() {
     assert('[ember-hifi] Nothing is playing.', this.get('currentSound'));
-
-    if (this.get('isPlaying')) {
+    if (this.isPlaying) {
       this.get('currentSound').pause();
     }
     else {
       this.set('isLoading', true);
       this.get('currentSound').play();
     }
-  },
+  }
 
   /**
    * Toggles mute state. Sets volume to zero on mute, resets volume to the last level it was before mute, unless
@@ -342,7 +394,7 @@ export default Service.extend(Evented, {
     else {
       this.set('volume', 0);
     }
-  },
+  }
 
   /**
    * Fast forwards current sound if able
@@ -354,7 +406,7 @@ export default Service.extend(Evented, {
   fastForward(duration) {
     assert('[ember-hifi] Nothing is playing.', this.get('currentSound'));
     this.get('currentSound').fastForward(duration);
-  },
+  }
 
   /**
    * Rewinds current sound if able
@@ -366,7 +418,7 @@ export default Service.extend(Evented, {
   rewind(duration) {
     assert('[ember-hifi] Nothing is playing.', this.get('currentSound'));
     this.get('currentSound').rewind(duration);
-  },
+  }
 
   /**
    * Set the current sound and wire up all the events the sound fires so they
@@ -386,7 +438,7 @@ export default Service.extend(Evented, {
     sound._setVolume(this.get('volume'));
     this.set('currentSound', sound);
     log(`setting current sound -> ${sound.get('url')}`);
-  },
+  }
 
 
 
@@ -415,7 +467,7 @@ export default Service.extend(Evented, {
         // TODO: why is this wrapped in a try catch?
       }
     }
-  },
+  }
 
   /**
    * Register events on a current sound. Audio events triggered on that sound
@@ -438,7 +490,7 @@ export default Service.extend(Evented, {
     })
 
     //window on close, send stop event to other tabs if playing?
-  },
+  }
 
   /**
    * Register events on a current sound. Audio events triggered on that sound
@@ -460,7 +512,7 @@ export default Service.extend(Evented, {
         sound.off(item.event, service, service[item.handler]);
       }
     });
-  },
+  }
 
   /**
    * Relays an audio event on the sound to an event on the service
@@ -471,8 +523,11 @@ export default Service.extend(Evented, {
    */
 
   _relayEvent(eventName, sound, info = {}) {
-    this.trigger(eventName, sound, info);
-  },
+    next(() => {
+      this.trigger(eventName, sound, info);
+      log(eventName, sound);
+    })
+  }
 
   /**
     Named functions so Ember Evented can successfully register/unregister them
@@ -480,31 +535,31 @@ export default Service.extend(Evented, {
 
   _relayPlayedEvent(sound) {
     this._relayEvent('audio-played', sound);
-  },
+  }
   _relayPausedEvent(sound) {
     this._relayEvent('audio-paused', sound);
-  },
+  }
   _relayEndedEvent(sound) {
     this._relayEvent('audio-ended', sound);
-  },
+  }
   _relayDurationChangedEvent(sound) {
     this._relayEvent('audio-duration-changed', sound);
-  },
+  }
   _relayPositionChangedEvent(sound) {
     this._relayEvent('audio-position-changed', sound);
-  },
+  }
   _relayLoadedEvent(sound) {
     this._relayEvent('audio-loaded', sound);
-  },
+  }
   _relayLoadingEvent(sound) {
     this._relayEvent('audio-loading', sound);
-  },
+  }
   _relayPositionWillChangeEvent(sound,  info = {}) {
     this._relayEvent('audio-position-will-change', sound, info);
-  },
+  }
   _relayWillRewindEvent(sound,  info) {
     this._relayEvent('audio-will-rewind', sound, info);
-  },
+  }
   _relayWillFastForwardEvent(sound, info) {
     this._relayEvent('audio-will-fast-forward', sound, info);
   },
@@ -532,7 +587,7 @@ export default Service.extend(Evented, {
     });
 
     return set(this, '_connections', activatedConnections);
-  },
+  }
 
  /**
   * Activates the a single connection
@@ -548,7 +603,7 @@ export default Service.extend(Evented, {
     assert('[ember-hifi] Could not find hifi connection ${name}.', name);
     Connection.setup(config);
     return Connection;
-  },
+  }
 
   /**
    * Looks up the connection from the container. Prioritizes the consuming app's
@@ -570,7 +625,7 @@ export default Service.extend(Evented, {
     assert(`[ember-hifi] Could not load hifi connection ${dasherizedConnectionName}`, (localConnection || availableConnection));
 
     return localConnection ? localConnection : availableConnection;
-  },
+  }
 
   /**
    * URLs given to load or play may be a promise, resolve this promise and get the urls
@@ -595,7 +650,7 @@ export default Service.extend(Evented, {
       log(`given urls: ${urls.join(', ')}`);
       return urls;
     });
-  },
+  }
 
   /**
    * Given an array of strategies with {connection, url} try the connection and url
@@ -632,7 +687,7 @@ export default Service.extend(Evented, {
     promise.finally(() => log(`finish: _findFirstPlayableSound`));
 
     return promise;
-  },
+  }
 
   /**
    * Given some urls, it prepares an array of connection and url pairs to try
@@ -671,7 +726,7 @@ export default Service.extend(Evented, {
     let orderedStrategies = nativeStrategies.concat(otherStrategies);
 
     return orderedStrategies;
-  },
+  }
 
   /**
    * Given a list of urls, prepare the strategy that we think will succeed best
@@ -692,7 +747,7 @@ export default Service.extend(Evented, {
 
   _prepareStandardStrategies(urlsToTry, options) {
     return this._prepareStrategies(urlsToTry, this.availableConnections(), options);
-  },
+  }
 
   /**
    * Given a list of urls and a list of connections, assemble array of
@@ -731,7 +786,7 @@ export default Service.extend(Evented, {
       log(`Compatible connections for ${url}: ${connectionSuccesses.join(", ")}`);
     });
     return strategies;
-  },
+  }
 
   /**
    * Creates an empty audio element and plays it to unlock audio on a mobile (iOS)
@@ -750,7 +805,7 @@ export default Service.extend(Evented, {
 
     let sharedAudioAccess = getOwner(this).lookup('hifi:sharedAudioAccess')
     return sharedAudioAccess.unlock(this.get('isMobileDevice'));
-  },
+  }
 
   /**
    * Attempts to play the sound after a load, which in certain cases can fail on mobile
@@ -779,4 +834,4 @@ export default Service.extend(Evented, {
     }
     sound.play(options);
   }
-});
+}

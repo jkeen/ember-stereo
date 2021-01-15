@@ -9,6 +9,7 @@ import { getMimeType } from 'ember-hifi/utils/mime-types';
 import { inject as service } from '@ember/service';
 import debug from 'debug';
 
+
 /**
 * This is the base sound object from which other sound objects are derived. 
 *
@@ -69,6 +70,7 @@ let ClassMethods = Mixin.create({
 });
 
 let Sound = EmberObject.extend(Evented, {
+  sync: service('hifi-sync'),
   debugName: computed('url', 'connectionName', function() {
     var parser = document.createElement('a');
     parser.href = this.get('url');
@@ -116,6 +118,17 @@ let Sound = EmberObject.extend(Evented, {
     log(message);
   },
 
+  syncState() {
+    this.sync.broadcast(this.url, {
+      isPlaying: this.isPlaying,
+      isLoaded: this.isLoaded,
+      isStream: this.isStream,
+      isFastForwardable: this.isFastForwardable,
+      isRewindable: this.isRewindable,
+      position: !this.isStream ? this.position : null
+    })
+  },
+
   init: function() {
     let {
       audioLoading,
@@ -138,21 +151,29 @@ let Sound = EmberObject.extend(Evented, {
 
       // recover lost isLoading update
       this.notifyPropertyChange('isLoading');
+      this.syncState()
+      this.debug('audio-played');
     });
 
     this.on('audio-paused',   () => {
       this.set('isPlaying', false);
       if (audioPaused) { audioPaused(this); }
+      this.syncState()
+      this.debug('audio-paused');
     });
 
     this.on('audio-ended',    () => {
       this.set('isPlaying', false);
       if (audioEnded) { audioEnded(this); }
+      this.syncState()
+      this.debug('audio-ended');
     });
 
     this.on('audio-ready',    () => {
       this.set('duration', this._audioDuration());
       if (audioReady) { audioReady(this); }
+      this.syncState()
+      this.debug('audio-ready');
     });
 
     this.on('audio-load-error', (e) => {
@@ -162,11 +183,14 @@ let Sound = EmberObject.extend(Evented, {
       }
       this.set('error', e);
       if (audioLoadError) { audioLoadError(this); }
+      this.syncState()
+      this.debug('audio-load-error');
     });
 
     this.on('audio-loaded', () => {
       this.set('isLoading', false);
       if (audioLoaded) { audioLoaded(this); }
+      this.debug('audio-loaded');
     });
 
     this.on('audio-loading', (info) => {
@@ -174,9 +198,10 @@ let Sound = EmberObject.extend(Evented, {
         this.set('percentLoaded', info.percentLoaded);
       }
       if (audioLoading) { audioLoading(this, info && info.percentLoaded); }
+      this.debug('audio-loading');
     });
 
-    
+  
     try {
       this._detectTimeouts();
       this.setup();

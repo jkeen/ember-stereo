@@ -10,7 +10,7 @@ module('Integration | Helper | hifi-play', function(hooks) {
   test('it renders', async function(assert) {
     this.set('inputValue', '1234');
 
-    await render(hbs`{{hifi-play inputValue}}`);
+    await render(hbs`{{hifi-control inputValue}}`);
 
     assert.equal(this.element.textContent.trim(), '1234');
   });

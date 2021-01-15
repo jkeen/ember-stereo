@@ -1,50 +1,56 @@
-import { reads } from '@ember/object/computed';
-import Component from '@ember/component';
-import layout from './template';
+import Component from '@glimmer/component';
 import { inject as service } from '@ember/service';
-import { computed } from '@ember/object';
-import { task } from 'ember-concurrency';
+import { task, timeout } from 'ember-concurrency-decorators';
+import { action } from '@ember/object';
+import debug from 'debug';
+import { get } from '@ember/object';
 
-export default Component.extend({
-  layout,
-  tagName: '',
-  hifi: service(),
-  isLoaded: computed('sound', 'sound.isLoading', function() {
+export default class TestSound extends Component {
+  @service hifi;
+
+  get isLoaded() {
     return (this.sound && !this.sound.isLoading)
-  }),
+  }
 
-  title: reads('item.title'),
-  url: reads('item.url'),
+  get isPlaying() {
+    return this.args.sound.isPlaying
+  }
 
-  isPlaying: reads('sound.isPlaying'),
+  get isStream() {
+    get(this.args, 'debug.expectedValues.isStream')
+  }
 
-  isStream: reads('item.debug.expectedValues.isStream'),
-  duration: reads('item.debug.expectedValues.duration'),
+  get duration() {
+    get(this.args, 'debug.expectedValues.duration')
+  }
 
-  playSound: task(function *() {
-    let { sound } = yield this.hifi.play(this.url, {
+  @action
+  async loadUrl() {
+    debug('ember-hifi:test-sound')('loading url');
+    return this.args.url
+  }
+
+  @task({restartable: true, maxConcurrency: 1})
+  * playSound() {
+    let { sound } = yield this.hifi.play(this.args.url, {
       metadata: {
-        title: this.title,
-        debug: {
-          expectedValues: this.item.expectedValues
-        }
+        title: this.args.title,
+        debug: this.args.debug
       }
     })
-    this.set('sound', sound);
-  }),
-
-  loadSound: task(function *() {
-    let { sound } = yield this.hifi.load(this.url, {
+    this.sound = sound;
+  }
+  
+  @task({restartable: true, maxConcurrency: 1})
+  * loadSound() {
+    let { sound } = yield this.hifi.load(this.args.url, {
       metadata: {
-        title: this.title,
-        debug: {
-          expectedValues: this.item.expectedValues
-        }
+        title: this.args.title,
+        debug: this.args.debug
       }
-    }).catch(e => {
-      debugger
     })
-    this.set('sound', sound);
-  }),
+    this.sound = sound;
+  }
 
-});
+}
+

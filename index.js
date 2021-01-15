@@ -65,7 +65,6 @@ module.exports = {
     if (this.hifiConnections) {
       return;
     }
-    console.log(this.hifiConnections);
     this.hifiConnections = this.project.config(process.env.EMBER_ENV).emberHifi.connections.map((connection) => connection.name);
   },
 

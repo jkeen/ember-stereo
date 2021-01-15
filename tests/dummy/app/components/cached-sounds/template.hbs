@@ -1,7 +1,7 @@
-{{#animated-container}}
+<AnimatedContainer>
   <div class="sound-container loaded" data-title="Loaded Sounds">
-    {{#animated-each loadedItems use=transition duration=250 as |item|}}
-      {{sound-display sound=item}}        
+    {{#animated-each this.loadedItems use=this.transition duration=250 as |item|}}
+      <SoundDisplay @sound={{item}}/>
     {{/animated-each}}
   </div>
-{{/animated-container}}
+</AnimatedContainer>

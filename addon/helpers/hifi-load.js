@@ -1,17 +1,16 @@
-import Helper from '@ember/component/helper';
+import classic from 'ember-classic-decorator';
 import { inject as service } from '@ember/service';
-import { task } from 'ember-concurrency'
+import Helper from '@ember/component/helper';
 
-
-export default Helper.extend({
-  hifi: service(),
-
-  load: task(function *(url, metadata = {}) {
-    let { sound } = yield this.hifi.load(url, { metadata });
-    return sound;
-  }).drop(),
+@classic
+export default class HifiLoad extends Helper {
+  @service
+  hifi;
 
   compute([url], metadata = {}) {
-    return this.load.perform(url, { metadata }).then(r => r.sound)
+    return () => {
+      return this.hifi.load(url, { metadata }).then(result => result.sound);
+    }
   }
-});
+}
+

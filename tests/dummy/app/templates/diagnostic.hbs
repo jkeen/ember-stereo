@@ -1,11 +1,11 @@
-{{#docs-viewer as |viewer|}}
-  {{#viewer.nav as |nav|}}
+<DocsViewer as |viewer|>
+  <viewer.nav as |nav|>
     {{nav.section "Diagnostic"}}
     {{nav.item "Main" "diagnostic.index"}}
     {{nav.item "Sync" "diagnostic.sync"}}
-  {{/viewer.nav}}
+  </viewer.nav>
 
-  {{#viewer.main}}
+  <viewer.main>
     {{outlet}}
-  {{/viewer.main}}
-{{/docs-viewer}}
+  </viewer.main>
+</DocsViewer>

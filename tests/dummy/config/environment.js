@@ -25,7 +25,7 @@ module.exports = function (environment) {
       defaultPrefix: 'fas'
     },
     emberHifi: {
-      debug: true
+      debug: true,
     }
   };
 

@@ -39,8 +39,9 @@ const MIME_TYPES = {
   "audio/ogg": {
     "source": "iana",
     "compressible": false,
-    "extensions": ["oga","ogg","spx"]
+    "extensions": ["oga","ogg","spx", "opus"]
   },
+  "audio/opus": {},
   "audio/flac": {
     "source": "iana",
     "extensions": ["flac"]

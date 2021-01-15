@@ -216,9 +216,9 @@ let Sound = BaseSound.extend({
     if (!this.get('video').src) {
       this.setup(); // the stream was stopped before
     }
-
     this.get('video').play();
 
+    this.debug('#play');
     if (this.get('loadStopped')) {
       this.get('hls').startLoad();
       this.set('loadStopped', false);
@@ -226,12 +226,14 @@ let Sound = BaseSound.extend({
   },
 
   pause() {
+    this.debug('#pause');
     this.get('video').pause();
     this.get('hls').stopLoad();
     this.set('loadStopped', true);
   },
 
   stop() {
+    this.debug('#stop');
     this.pause();
     this.get('video').removeAttribute('src')
   },

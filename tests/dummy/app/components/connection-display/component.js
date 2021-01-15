@@ -5,6 +5,7 @@ import { inject as service } from '@ember/service';
 import { computed } from '@ember/object';
 import { getMimeType } from 'ember-hifi/utils/mime-types';
 import { get, set } from '@ember/object';
+import deepSet from 'ember-deep-set';
 
 export default Component.extend({
   layout,
@@ -35,11 +36,18 @@ export default Component.extend({
     this.set('canUseConnection', this.connection.canUseConnection());
 
     let _canPlay = this.connection.canPlay;
-    this.connection.canPlay = (url) => {
+    this.connection.canPlay = async (urlOrPromise) => {
       if (!this.enabled) {
         return false; // we've disabled it in the diagnostic
       }
-      return _canPlay.call(this.connection, url)
+      if (typeof urlOrPromise === 'function') {
+        let url = await urlOrPromise;
+        return _canPlay.call(this.connection, url)
+      }
+      else {
+        return _canPlay.call(this.connection, urlOrPromise)
+      }
+
     }
   },
 
@@ -104,8 +112,8 @@ export default Component.extend({
           return result
         });
 
-        set(sound, 'metadata.debug.results', debugResults)
-        set(sound, 'metadata.debug.strategies', strategies);
+        deepSet(sound, 'metadata.debug.results', debugResults)
+        deepSet(sound, 'metadata.debug.strategies', strategies);
 
       })
     })

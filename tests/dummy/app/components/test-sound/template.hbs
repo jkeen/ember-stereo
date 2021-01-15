@@ -1,14 +1,16 @@
 <div class="sound test-sound">
   <span class="test-sound-title">
-    {{title}}
+    {{@title}}
   </span>
   <span class="test-sound-title-url">
-    {{url}}
+    {{@url}}
   </span>
 
   <div class="test-sound-actions">
-    <a href="#" class="button is-small is-outline {{if loadSound.isRunning "is-loading"}}" {{action (perform loadSound url)}}>Load</a>
-    <a href="#" class="button is-small is-outline {{if playSound.isRunning "is-loading"}}" {{action (perform playSound url)}}>Play</a>
+    <button class="button is-small is-outline {{if this.loadSound.isRunning "is-loading"}}" {{on 'click' (perform this.loadSound @url)}}>Load</button>
+
+    <button class="button is-small is-outline" {{hifi-control @url}}>Play</button>
+    <button class="button is-small is-outline" {{hifi-control this.loadUrl}}>Play via P</button>
   </div>
 </div>
 {{yield}}

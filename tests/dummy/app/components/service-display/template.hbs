@@ -13,37 +13,37 @@
 
   <div class="service-display-controls">
     <div class="service-display-buttons">
-      <a href="#" class="service-display-button-item" {{action "rewind" 5000}}>
+      <button class="service-display-button-item" {{on "click" (fn (hifi-rewind))}}>
         {{fa-icon "backward" size="2x"}}
-      </a>
+      </button>
 
-      <a href="#" class="service-display-button-item" {{action "togglePause"}}>
-        {{#if hifi.isLoading}}
+      <button class="service-display-button-item" {{on "click" (fn (hifi-toggle-play))}}>
+        {{#if (is-loading)}}
           {{fa-icon "circle-notch" size="2x" class="icon-spin"}}
-        {{else if (and currentSound currentSound.isPlaying)}}
+        {{else if (is-playing)}}
           {{fa-icon "pause" size="2x"}}
         {{else}}
           {{fa-icon "play" size="2x"}}
         {{/if}}
-      </a>
+      </button>
 
-      <a href="#" class="service-display-button-item" {{action "fastForward" 5000}}>
+      <button class="service-display-button-item" {{on "click" (fn (hifi-fast-forward))}}>
         {{fa-icon "forward" size="2x"}}
-      </a>
+      </button>
 
-      <a href="#" class="service-display-button-item" {{action "stop"}}>
+      <button class="service-display-button-item" {{on "click" (fn (hifi-stop))}}>
         {{fa-icon "stop" size="2x"}}
-      </a>
+      </button>
     </div>
     <div class="service-display-volume">
-      {{input type="range" value=hifi.volume min=0 max=100}}
+      {{input type="range" value=this.hifi.volume min=0 max=100}}
     </div>
 
   </div>
 </div>
 <div class="diagnostic-debug">
   <h3>Events</h3>
-  {{event-display service=hifi}}
+  <EventDisplay @service={{this.hifi}} />
 </div>
 <a href="#" class="diagnostic-debug-toggle" {{action (toggle "showDebugInfo" this)}}>
   {{#if showDebugInfo}}

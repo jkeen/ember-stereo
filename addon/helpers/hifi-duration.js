@@ -1,10 +1,12 @@
-import Helper from '@ember/component/helper';
+import classic from 'ember-classic-decorator';
 import { inject as service } from '@ember/service';
+import Helper from '@ember/component/helper';
 
-export default Helper.extend({
-  hifi: service(),
+@classic
+export default class HifiDuration extends Helper {
+  @service hifi;
 
-  compute(url) {
-    return this.hifi.isPlaying && (this.hifi.currentSound.url == url);
+  compute(compare) {
+    return this.hifi.isPlaying && (this.hifi.currentSound.url == compare);
   }
-});
+}

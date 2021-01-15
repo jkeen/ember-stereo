@@ -38,12 +38,18 @@ let Sound = BaseSound.extend({
     let audio = this.requestControl();
 
     audio.src = this.get('url');
+    audio.crossOrigin="anonymous";
+
+    this.context = new AudioContext();
+    this.track = context.createMediaElementSource(audio);
+    this.track.connect(this.context.destination);
+
     this._registerEvents(audio);
 
-    if (Ember.testing) {
-      console.warn('setting audio element volume to zero for testing, to get around autoplay restrictions'); // eslint-disable-line
-      audio.muted = true;
-    }
+    // if (Ember.testing) {
+    //   console.warn('setting audio element volume to zero for testing, to get around autoplay restrictions'); // eslint-disable-line
+    //   audio.muted = true;
+    // }
 
     audio.load();
   },
@@ -309,6 +315,7 @@ let Sound = BaseSound.extend({
   },
 
   play({position} = {}) {
+    this.debug('#play');
     let audio = this.requestControl();
 
     // since we clear the `src` attr on pause, restore it here
@@ -324,6 +331,7 @@ let Sound = BaseSound.extend({
   },
 
   pause() {
+    this.debug('#pause');
     let audio = this.audioElement();
 
     if (this.get('isStream')) {
@@ -335,6 +343,7 @@ let Sound = BaseSound.extend({
   },
 
   stop() {
+    this.debug('#stop');
     let audio = this.audioElement();
     audio.pause();
 

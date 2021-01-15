@@ -29,6 +29,21 @@ export const HLS_STREAM = {
   }
 }
 
+export const MP3_ON_DEMAND_2 = {
+  title: 'MP3 On Demand 2',
+  url: 'https://audio.wnyc.org/bl/bl011421dpod.mp3',
+  expectedValues: {
+    url: 'https://audio.wnyc.org/bl/bl011421dpod.mp3',
+    duration: Infinity,
+    connectionName: "NativeAudio",
+    hasPlayed: false,
+    isStream: false,
+    isFastForwardable: true,
+    isRewindable: true,
+    position: 0
+  }
+}
+
 export const MP3_ON_DEMAND = {
   title: 'MP3 On Demand',
   url: 'https://www.podtrac.com/pts/redirect.mp3/audio.wnyc.org/otm/otm04212017pod.mp3',
@@ -76,6 +91,7 @@ export const HLS_LIVE_STREAM = {
 export default [
   AAC_STREAM,
   HLS_STREAM,
+  MP3_ON_DEMAND_2,
   MP3_ON_DEMAND,
   HLS_LIVE_STREAM,
   STREAM_WITHOUT_EXTENSION

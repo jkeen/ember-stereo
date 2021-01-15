@@ -84,6 +84,7 @@ let Sound = BaseSound.extend({
   },
 
   play({position} = {}) {
+    this.debug('#play');
     if (typeof position !== 'undefined') {
       this._setPosition(position);
     }
@@ -91,10 +92,12 @@ let Sound = BaseSound.extend({
   },
 
   pause() {
+    this.debug('#pause');
     this.get('howl').pause();
   },
 
   stop() {
+    this.debug('#stop');
     this.get('howl').stop();
   }
 });

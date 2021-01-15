@@ -1,19 +1,19 @@
-{{diagnostic-controls class="diagnostic-controls" testSounds=model.testSounds}}
+<DiagnosticControls @class="diagnostic-controls" @testSounds={{@model.testSounds}} />
 
 <div class="diagnostic">
   <div class="diagnostic-display">
     <div class="sound-container" data-title="Hifi Service">
-      {{service-display}}
+      <ServiceDisplay />
     </div>
 
     <div class="sound-container" data-title="Hifi Connections">
       <div class="service-display-connections">
-        {{#each model.connections as |connection|}}
-          {{connection-display connection=connection}}
+        {{#each @model.connections as |connection|}}
+          <ConnectionDisplay @connection={{connection}} />
         {{/each}}
       </div>
     </div>
 
-    {{cached-sounds}}
+    <CachedSounds />
   </div>
 </div>
