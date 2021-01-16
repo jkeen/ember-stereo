@@ -36,13 +36,12 @@ export default Component.extend({
     this.set('canUseConnection', this.connection.canUseConnection());
 
     let _canPlay = this.connection.canPlay;
-    this.connection.canPlay = async (urlOrPromise) => {
+    this.connection.canPlay = (urlOrPromise) => {
       if (!this.enabled) {
         return false; // we've disabled it in the diagnostic
       }
       if (typeof urlOrPromise === 'function') {
-        let url = await urlOrPromise;
-        return _canPlay.call(this.connection, url)
+        return _canPlay.call(this.connection, urlOrPromise.then(url => url))
       }
       else {
         return _canPlay.call(this.connection, urlOrPromise)

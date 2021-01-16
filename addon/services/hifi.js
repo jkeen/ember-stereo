@@ -769,10 +769,11 @@ export default class Hifi extends Service.extend(Evented) {
 
     urlsToTry.forEach(url => {
       let connectionSuccesses = [];
-      connectionKeys.forEach(name => {
+      connectionKeys.forEach(async name => {
         let connection = this.get(`_connections.${name}`);
         let config = connectionOptions.findBy('name', name);
-        if (connection.canPlay(url)) {
+        let canPlay = connection.canPlay(url);
+        if (canPlay) {
           connectionSuccesses.push(name);
           strategies.push({
             connectionName:  connection.toString(),
