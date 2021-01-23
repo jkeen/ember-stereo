@@ -105,6 +105,10 @@
   min-height: 100px;
 }
 
+.sound-display-waveform {
+  height: 40px;
+}
+
 .sound-control-buttons {
   display: flex;
   flex-direction: row;
@@ -148,6 +152,10 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
+
+  .waveform {
+    height: 15px;
+  }
 
   .progress {
     margin: 5px 0;

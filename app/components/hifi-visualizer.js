@@ -1,0 +1,1 @@
+export { default } from 'ember-hifi/components/hifi-visualizer';

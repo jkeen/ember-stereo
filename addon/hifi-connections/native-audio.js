@@ -3,7 +3,7 @@ import { run } from '@ember/runloop';
 import Mixin from '@ember/object/mixin';
 import BaseSound from './base';
 import Ember from 'ember';
-
+import classic from 'ember-classic-decorator';
 // These are the events we're watching for
 const AUDIO_EVENTS = ['loadstart', 'durationchange', 'loadedmetadata', 'loadeddata', 'progress', 'canplay', 'canplaythrough', 'error', 'playing', 'pause', 'ended', 'emptied', 'timeupdate'];
 
@@ -14,18 +14,6 @@ const HAVE_CURRENT_DATA = 2;
 // const HAVE_FUTURE_DATA = 3;
 // const HAVE_ENOUGH_DATA = 4;
 
-let ClassMethods = Mixin.create({
-  canPlayMimeType(mimeType) {
-    let audio = new Audio();
-    // it returns "probably" and "maybe". Both are worth trying. Empty is bad.
-    return (audio.canPlayType(mimeType) !== "");
-  },
-
-  toString() {
-    return 'Native Audio';
-  }
-});
-
 /**
 * This class connects with the native audio element to create sounds.
 *
@@ -33,16 +21,32 @@ let ClassMethods = Mixin.create({
 * @extends BaseSound
 * @constructor
 */
-let Sound = BaseSound.extend({
+@classic
+export default class NativeAudioSound extends BaseSound {
+  static canPlayMimeType(mimeType) {
+    let audio = new Audio();
+    // it returns "probably" and "maybe". Both are worth trying. Empty is bad.
+    return (audio.canPlayType(mimeType) !== "");
+  }
+
+  static toString() {
+    return 'Native Audio';
+  }
+
   setup() {
     let audio = this.requestControl();
 
     audio.src = this.get('url');
     audio.crossOrigin="anonymous";
 
-    this.context = new AudioContext();
-    this.track = context.createMediaElementSource(audio);
-    this.track.connect(this.context.destination);
+    // try {
+    //   this.context =  new (window.AudioContext || window.webkitAudioContext)
+    //   this.track = context.createMediaElementSource(audio);
+    //   this.track.connect(this.context.destination);  
+    // }
+    // catch(e) {
+
+    // }
 
     this._registerEvents(audio);
 
@@ -52,17 +56,17 @@ let Sound = BaseSound.extend({
     }
 
     audio.load();
-  },
+  }
 
   _registerEvents(audio) {
     AUDIO_EVENTS.forEach(eventName => {
       audio.addEventListener(eventName, e => run(() => this._handleAudioEvent(eventName, e)));
     });
-  },
+  }
 
   _unregisterEvents(audio) {
     AUDIO_EVENTS.forEach(eventName => audio.removeEventListener(eventName));
-  },
+  }
 
   _handleAudioEvent(eventName, e) {
     if (!this.urlsAreEqual(e.target.src, this.get('url')) && e.target.src !== '') {
@@ -114,7 +118,7 @@ let Sound = BaseSound.extend({
         this._onAudioProgress(e);
         break;
     }
-  },
+  }
 
   audioElement() {
     // If we have control, return the shared element
@@ -132,7 +136,7 @@ let Sound = BaseSound.extend({
 
       return audioElement;
     }
-  },
+  }
 
   releaseControl() {
     if (!this.get('sharedAudioAccess')) {
@@ -148,7 +152,7 @@ let Sound = BaseSound.extend({
 
     // save current state of audio element to the internal element that won't be played
     this._saveState(this.get('sharedAudioAccess.audioElement'));
-  },
+  }
 
   _saveState(audio) {
     this.debug('Saving audio state');
@@ -167,7 +171,7 @@ let Sound = BaseSound.extend({
 
     shadowAudio.volume = audio.volume;
     this.debug('Saved audio state');
-  },
+  }
 
   requestControl() {
     if (this.get('sharedAudioAccess')) {
@@ -175,7 +179,7 @@ let Sound = BaseSound.extend({
     } else {
       return this.audioElement();
     }
-  },
+  }
 
   restoreState() {
     let sharedElement     = this.audioElement();
@@ -198,29 +202,29 @@ let Sound = BaseSound.extend({
         this.debug(e);
       }
     }
-  },
+  }
 
   _onAudioProgress() {
-    this.trigger('audio-loading', this._calculatePercentLoaded());
-  },
+    this.trigger('audio-loading', this, this._calculatePercentLoaded());
+  }
 
   _onPositionChange() {
     this.trigger('audio-position-changed', this);
-  },
+  }
 
   _onAudioDurationChanged() {
     this.trigger('audio-duration-changed', this);
-  },
+  }
 
   _onAudioPlayed() {
     if (!this.get('isPlaying')) {
       this.trigger('audio-played', this);
     }
-  },
+  }
 
   _onAudioEnded() {
     this.trigger('audio-ended', this);
-  },
+  }
 
   _onAudioError(error) {
     let message = "";
@@ -244,20 +248,20 @@ let Sound = BaseSound.extend({
 
     this.debug(`audio element threw error ${message}`);
     this.trigger('audio-load-error', message);
-  },
+  }
 
   _onAudioEmptied() {
     this.trigger('audio-paused', this);
-  },
+  }
 
   _onAudioPaused() {
     this.trigger('audio-paused', this);
-  },
+  }
 
   _onAudioReady() {
     this.trigger('audio-ready', this);
     this.trigger('audio-loaded', this);
-  },
+  }
 
   _calculatePercentLoaded() {
     let audio = this.audioElement();
@@ -280,7 +284,7 @@ let Sound = BaseSound.extend({
     else {
       return 0;
     }
-  },
+  }
 
   /* Public interface */
 
@@ -296,23 +300,23 @@ let Sound = BaseSound.extend({
     }
 
     return audio.duration * 1000;
-  },
+  }
 
   _currentPosition() {
     let audio = this.audioElement();
     return audio.currentTime * 1000;
-  },
+  }
 
   _setPosition(position) {
     let audio = this.audioElement();
     audio.currentTime = (position / 1000);
     return this._currentPosition();
-  },
+  }
 
   _setVolume(volume) {
     let audio = this.audioElement();
     audio.volume = (volume/100);
-  },
+  }
 
   play({position} = {}) {
     this.debug('#play');
@@ -328,7 +332,7 @@ let Sound = BaseSound.extend({
 
     this.debug('telling audio to play');
     return audio.play().catch(e => this._onAudioError(e));
-  },
+  }
 
   pause() {
     this.debug('#pause');
@@ -340,7 +344,7 @@ let Sound = BaseSound.extend({
     else {
       audio.pause();
     }
-  },
+  }
 
   stop() {
     this.debug('#stop');
@@ -352,13 +356,13 @@ let Sound = BaseSound.extend({
     // NOTE: this fires an `'emptied'` event, which we treat the same way as `'pause'`
     audio.removeAttribute('src');
     audio.load();
-  },
+  }
 
   loadAudio(audio) {
     if (!this.urlsAreEqual(audio.src, this.get('url'))) {
       audio.setAttribute('src', this.get('url'));
     }
-  },
+  }
 
   urlsAreEqual(url1, url2) {
     // GOTCHA: audio.src is a fully qualified URL, and this.get('url') may be a relative url
@@ -370,15 +374,11 @@ let Sound = BaseSound.extend({
     parser2.href = url2;
 
     return (parser1.href === parser2.href);
-  },
+  }
 
   teardown() {
     let audio = this.requestControl();
     this.trigger('_will_destroy');
     this._unregisterEvents(audio);
   }
-});
-
-Sound.reopenClass(ClassMethods);
-
-export default Sound;
+}

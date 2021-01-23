@@ -7,9 +7,9 @@ export default class HifiLoad extends Helper {
   @service
   hifi;
 
-  compute([url], metadata = {}) {
+  compute([urls], metadata = {}) {
     return () => {
-      return this.hifi.load(url, { metadata }).then(result => result.sound);
+      return this.hifi.load(urls, { metadata }).then(result => result.sound);
     }
   }
 }

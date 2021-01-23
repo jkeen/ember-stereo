@@ -7,16 +7,19 @@ export default class HifiTogglePlay extends Helper {
   @service
   hifi;
 
-  compute([url], metadata = {}) {
+  compute([compare], metadata = {}) {
     return () => {
-      if (!url) {
+      if (!compare) {
         this.hifi.togglePause();
       }
       else {
-        let sound = this.hifi.findLoaded(url)
+        let sound = this.hifi.findLoaded(compare)
         if (sound) {
           return sound.togglePause();
-        }  
+        }
+        else {
+          return false;
+        }
       }
     }
   }

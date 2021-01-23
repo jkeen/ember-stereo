@@ -10,13 +10,15 @@ export default class HifiSync extends Service.extend(Evented) {
   @service hifi;
   @service('hifi-cache') cache;
 
+  prefix = 'hifi:sync:'
+
   init() {
     this.listeners = {};
     this.tabId = Math.random().toString().slice(2,7);
     super.init(...arguments);
 
 
-    window.addEventListener('storage', (e) => this._notifyOfChanges());
+    window.addEventListener('storage', (e) => this._notifyOfChanges(e));
     window.addEventListener('beforeunload', () => this.cleanupStates());
   }
 
@@ -39,64 +41,64 @@ export default class HifiSync extends Service.extend(Evented) {
   }
 
   willDestroy() {
-    window.removeEventListener('storage', (e) => this._notifyOfChanges());
+    window.removeEventListener('storage', (e) => this._notifyOfChanges(e));
   }
   
-  _notifyOfChanges() {
+  _notifyOfChanges(e) {
+    if (!e.key && e.storageArea) { // a key was deleted
+      Object.keys(e.storageArea).forEach(key => {
+        let listenerKey = key.replace(this.prefix, '');
+        next(() => {
+          this.trigger(listenerKey, {});
+        });
+      })
+    }
+    else if (e.key.startsWith(this.prefix)) {
+      let listenerKey = e.key.replace(this.prefix, '');
+      let data = this._deserializeData(e.newValue);
+      
+      next(() => {
+        this.trigger(listenerKey, data);
+      });
+    }
     debug('ember-hifi:sync')('notify of changes');
-    next(() => this.trigger('change'));
   }
   
   isPlayingElsewhere(url) {
+    // TODO: use same logic as findLoaded
+
+
+
     let state = this.getState(url)
-    return (state && state.isPlaying)
+    return (state && state.isPlaying && state.fromTab != this.tabId)
   }
 
   handleSoundUpdates(sound) {
     sound.on('audio-played',           (s) => s.syncState());
     sound.on('audio-paused',           (s) => s.syncState());
     sound.on('audio-position-changed', (s) => s.syncState());
-
-    // this.subscribe(sound.url, (e) => {
-    //   if (sound.isPlaying && !e.isPlaying) {
-    //     sound.set('isPlaying', false);
-    //   }
-
-    //   else if (!sound.isPlaying && e.isPlaying) {
-    //     sound.set('isPlaying', true);
-    //     // sound.trigger('audio-played')
-    //   }
-
-    //   if (e.position && sound.position != e.position) {
-    //     sound.set('position', e.position);
-    //   }
-    // });
   }
 
-  register(url, callback) {
-    this.subscribe(url, callback);
+  play(url) {
+    this.broadcast('system:play', { url: url, time: new Date() });
   }
 
-  /* Pause other tabs */
-  onPauseOtherTabs(callback) {
-    this.subscribe('hifi:system', (e) => {
-      if (e.action == 'pause') {
-        callback();
-      }
-    })
+  pause() {
+    this.broadcast('system:pause', { time: new Date() });
   }
-
-  pauseOtherTabs() {
-    this.broadcast('hifi:system', { action: 'pause' });
-  }
-
 
   cleanupStates() {
-    let keys = Object.keys(localStorage).filter(s => this.getState(s)['fromTab'] == this.tabId);
-    keys.forEach(key => {
-      this.broadcast(key, {});
-      localStorage.removeItem(key)
-    })
+    try {
+      let keys = Object.keys(localStorage)
+      keys.forEach(key => {
+        let state = this.getState(key.replace(this.prefix, ''));
+        if (state && state.fromTab == this.tabId) {
+          localStorage.setItem(key, JSON.stringify({}));
+          localStorage.removeItem(key)
+        }
+      })  
+    }
+    catch(e) {}
   }
 
   // _merge(key, hash) {
@@ -129,11 +131,11 @@ export default class HifiSync extends Service.extend(Evented) {
     return true;
   }
 
-  broadcast(key, data) {
+  broadcast(key, data) { 
     const newState = this._serializeData(data);
     if (!this._isSame(this.getState(key), JSON.parse(newState))) {
       this.sendLog(key, JSON.parse(newState));
-      localStorage.setItem(key, newState);
+      this._writeKey(key, newState);
     }
     // // Dispatch to local event listener as well
     // var event = new Event("storage");
@@ -143,29 +145,19 @@ export default class HifiSync extends Service.extend(Evented) {
   }
 
   getState(key) {
-    const dataJSON = localStorage.getItem(key);
+    const dataJSON = this._readKey(key);
 
     if (dataJSON) {
       return this._deserializeData(dataJSON);
     }
   }
 
-  subscribe(key, callback) {
-    if (!this.listeners[key]) {
-      // Not yet any listener for this topic
-      this.listeners[key] = [];
+  _readKey(key) {
+    return localStorage.getItem(`${this.prefix}${key}`);
+  }
 
-      window.addEventListener('storage', (e) => {
-        if (e.key === key) {
-          let data = this._deserializeData(e.newValue);
-          if (data.fromTab !== this.tabId) { // ignore events from ourselves
-            this.receiveLog(key, data);
-            this.listeners[key].forEach((v /*, _k */) => v(data))
-          }
-        }
-      }, false);
-    }
-    this.listeners[key].push(callback)
+  _writeKey(key, data) {
+    localStorage.setItem(`${this.prefix}${key}`, data);
   }
 
   _serializeData(data) {

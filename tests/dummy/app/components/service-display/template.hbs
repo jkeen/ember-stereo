@@ -14,25 +14,25 @@
   <div class="service-display-controls">
     <div class="service-display-buttons">
       <button class="service-display-button-item" {{on "click" (fn (hifi-rewind))}}>
-        {{fa-icon "backward" size="2x"}}
+        <FaIcon @icon=backward @size="2x"/>
       </button>
 
       <button class="service-display-button-item" {{on "click" (fn (hifi-toggle-play))}}>
         {{#if (is-loading)}}
-          {{fa-icon "circle-notch" size="2x" class="icon-spin"}}
+          <FaIcon @icon=circle-notch @size="2x" class="icon-spin"/>
         {{else if (is-playing)}}
-          {{fa-icon "pause" size="2x"}}
+          <FaIcon @icon=pause @size="2x"/>
         {{else}}
-          {{fa-icon "play" size="2x"}}
+          <FaIcon @icon=play @size="2x"/>
         {{/if}}
       </button>
 
       <button class="service-display-button-item" {{on "click" (fn (hifi-fast-forward))}}>
-        {{fa-icon "forward" size="2x"}}
+        <FaIcon @icon=forward @size="2x"/>
       </button>
 
       <button class="service-display-button-item" {{on "click" (fn (hifi-stop))}}>
-        {{fa-icon "stop" size="2x"}}
+        <FaIcon @icon=stop @size="2x"/>
       </button>
     </div>
     <div class="service-display-volume">

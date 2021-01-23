@@ -16,35 +16,33 @@ export default class HifiControlModifier extends Modifier {
   }
 
   @action async onClick() {
-    if (this.sound) {
+    if (this.hifiSync.isPlayingElsewhere(this.urlOrPromise)) {
+      this.hifiSync.pause();
+      this.remotelyPaused = true;
+    }
+    else if (this.remotelyPaused) {
+      // remotely play
+      this.hifiSync.play(this.urlOrPromise);
+      this.remotelyPaused = false;
+    }
+    else if (this.sound) {
       this.sound.togglePause();
     }
     else {
       if (typeof this.urlOrPromise == 'function') {
-        if (this.sound) {
-          this.sound.togglePause();
-        }
-        else {
-          let result = await this.hifi.play(this.urlOrPromise());
-          this.sound = result.sound
-        }
+        let result = await this.hifi.play(this.urlOrPromise());
+        this.sound = result.sound
       }
       else {
-        if (this.sound) {
-          this.sound.togglePause();
-        }
-        else {
-          let result = await this.hifi.play(this.urlOrPromise);
-          this.sound = result.sound
-        }
-      }
+        let result = await this.hifi.play(this.urlOrPromise);
+        this.sound = result.sound
+      }  
     }
     
     this.onStateChange(this.sound);
   }
 
   async didReceiveArguments() {
-    this.hifiSync.subscribe(this.urlOrPromise, (e) => this.onStateChange(e));
     this.element.setAttribute('data-hifi-state', 'unplayed');
     let state = this.hifiSync.getState(this.urlOrPromise);
     this.onStateChange(state);
@@ -82,6 +80,9 @@ export default class HifiControlModifier extends Modifier {
   }
 
   async didInstall() {
+    if (this.urlOrPromise) {
+      this.hifiSync.on(this.urlOrPromise, (e) => this.onStateChange(e));
+    }
     this.element.addEventListener('click', this.onClick, true);
 
     this.hifi.on('new-load-request', this.onNewLoadRequest)
@@ -89,6 +90,9 @@ export default class HifiControlModifier extends Modifier {
   }
 
   willRemove() {
+    if (this.urlOrPromise) {
+      this.hifiSync.off(this.urlOrPromise, (e) => this.onStateChange(e));
+    }
     this.element.removeEventListener('click', this.onClick, true);
   }
 }

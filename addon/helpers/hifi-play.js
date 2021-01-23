@@ -7,9 +7,9 @@ export default class HifiPlay extends Helper {
   @service
   hifi;
 
-  compute([url], metadata = {}) {
+  compute([urls], metadata = {}) {
     return () => {
-      return this.hifi.play(url, { metadata }).then(result => result.sound);  
+      return this.hifi.play(urls, { metadata }).then(result => result.sound);  
     }
   }
 }

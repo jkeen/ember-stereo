@@ -1,46 +1,74 @@
+
 import classic from 'ember-classic-decorator';
-import { inject as service } from '@ember/service';
-import Helper from '@ember/component/helper';
-import debug from 'debug';
-
+import HifiBaseIsHelper from './hifi-base-is-helper';
+import { makeArray } from '@ember/array';
 @classic
-export default class HifiIsLoading extends Helper {
-  @service
-  hifi;
+export default class HifiIsLoading extends HifiBaseIsHelper {
+  name = 'is-loading'
+  listen = ['audio-loaded', 'audio-loading', 'current-sound-changed']
 
-  constructor() {
-    super(...arguments);
-    this.boundRecompute = () => this.recompute();
+  init() {
+    super.init(...arguments);
 
-    this.hifi.on('audio-played', this.boundRecompute);
-    this.hifi.on('audio-loading', this.boundRecompute);
-    this.hifi.on('audio-loaded', this.boundRecompute);
-    this.hifi.on('new-load-request', this.boundRecompute);
-    this.hifi.on('pre-load', this.boundRecompute);
-    this.hifi.on('current-sound-changed', this.boundRecompute);
+    this.boundOnNewLoadRequest = (args) => this.onNewLoadRequest(args);
+    this.boundOnPreloadRequest = (args) => this.onPreloadRequest(args);
+
+    this.hifi.on('new-load-request', this.boundOnNewLoadRequest);
+    this.hifi.on('pre-load', this.boundOnPreloadRequest);
+  }
+
+  onNewLoadRequest({loadPromise, urlsOrPromise}) {
+    if (this.compare && makeArray(this.compare).some(u => u && urlsOrPromise == u.toString())) {
+      console.log('new load req match, setting is loading = true')
+      this.updateResult(true);
+      if (loadPromise) {
+        loadPromise.then(() => {
+          this.updateResult(false);
+        })  
+      }
+    }
+    else if (!this.compare.toString()) {
+      this.updateResult(true);
+      if (loadPromise) {
+        loadPromise.then(() => {
+          this.updateResult(false);
+        })  
+      }
+    }
+  }
+
+  onPreloadRequest({loadPromise, urlsOrPromise}) {
+    if (this.compare && this.compare.some(u => u && urlsOrPromise == u.toString())) {
+      console.log('preload match, setting is loading = true')
+      this.updateResult(true);
+      if (loadPromise) {
+        loadPromise.then(() => {
+          this.updateResult(false);
+        })  
+      }
+    }
+    else if (!this.compare.toString()) {
+      this.updateResult(true);
+      if (loadPromise) {
+        loadPromise.then(() => {
+          this.updateResult(false);
+        })
+      }
+    }
   }
 
   willDestroy() {
-    this.hifi.off('audio-played', this.boundRecompute);
-    this.hifi.off('audio-loading', this.boundRecompute);
-    this.hifi.off('audio-loaded', this.boundRecompute);
-    this.hifi.off('new-load-request', this.boundRecompute);
-    this.hifi.off('pre-load', this.boundRecompute);
-    this.hifi.off('current-sound-changed', this.boundRecompute);
+    super.willDestroy(...arguments);
+
+    this.hifi.off('new-load-request', this.boundOnNewLoadRequest);
+    this.hifi.off('pre-load', this.boundOnPreloadRequest);
   }
 
-  compute(compare) {
+  checkSystem() {
+    return this.hifi.isLoading;
+  }
 
-    if (!compare.toString()) {
-      let result = this.hifi.isLoading;
-      debug('ember-hifi:system')(`is-loading = ${result}`);
-    }
-    else {
-      let sound = this.hifi.findLoaded(compare);
-      let result = sound && sound.isLoading;
-      debug(`ember-hifi${(sound ? ':' + sound.url : '')}`)(`is-loading = ${result}`);
-
-      return result;
-    }
+  checkSound(sound) {
+    return sound && sound.isLoading;
   }
 }

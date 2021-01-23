@@ -31,7 +31,7 @@
 </div>
 
 <div class="sound-display-controls">
-  {{sound-display/position sound=@sound}}
+  <SoundDisplay::Position @sound={{@sound}}/>
   <div class="sound-control-buttons">
     <a class="sound-control-button-item">
 
@@ -45,13 +45,13 @@
 
     <button type="button" class="sound-control-button-item" {{hifi-control this.url}}>
       {{#if (is-loading this.url)}}
-        {{fa-icon "circle-notch" size="2x" class="icon-spin"}}
+        <FaIcon @icon=circle-notch @size="2x" class="icon-spin"/>
       {{else if (is-playing this.url)}}
-        {{fa-icon "pause" size="2x"}}
+        <FaIcon @icon=pause @size="2x"/>
       {{else if (is-playing-elsewhere this.url)}}
-        {{fa-icon "pause" size="2x"}}
+        <FaIcon @icon=pause @size="2x"/>
       {{else}}
-        {{fa-icon "play" size="2x"}}
+        <FaIcon @icon=play @size="2x"/>
       {{/if}}
     </button>
 
@@ -65,6 +65,7 @@
       {{fa-icon "stop"}}
     </button>
   </div>
+  <canvas class="sound-display-waveform" {{hifi-visualizer sound type="wave" colors=(array 'aqua' '#2f374a')}}></canvas>
 </div>
 {{!-- 
 

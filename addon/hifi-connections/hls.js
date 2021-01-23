@@ -1,20 +1,6 @@
-import Mixin from '@ember/object/mixin';
 import BaseSound from './base';
 import HLS from 'hls';
-
-let ClassMethods = Mixin.create({
-  acceptMimeTypes:  ['application/vnd.apple.mpegurl'],
-
-  canUseConnection(/* audioUrl */) {
-    // We basically never want to use this on a mobile device
-    return HLS.isSupported();
-  },
-
-  toString() {
-    return 'HLS';
-  }
-});
-
+import classic from 'ember-classic-decorator';
 
 /**
 * This class connects with HLS.js to create sounds.
@@ -23,10 +9,21 @@ let ClassMethods = Mixin.create({
 * @extends BaseSound
 * @constructor
 */
-let Sound = BaseSound.extend({
-  loaded: false,
-  mediaRecoveryAttempts: 0,
-  id3TagMetadata: null,
+@classic
+export default class HLSSound extends BaseSound {
+  static acceptMimeTypes = ['application/vnd.apple.mpegurl']
+  static canUseConnection() {
+    // We basically never want to use this on a mobile device
+    return HLS.isSupported();
+  }
+
+  static toString() {
+    return 'HLS';
+  }
+
+  loaded = false
+  mediaRecoveryAttempts = 0
+  id3TagMetadata = null
 
   setup() {
     let hls   = new HLS({debug: false, startFragPrefetch: true});
@@ -37,7 +34,7 @@ let Sound = BaseSound.extend({
     hls.attachMedia(video);
     this._setupHLSEvents(hls);
     this._setupPlayerEvents(video);
-  },
+  }
 
   _setupHLSEvents(hls) {
     hls.on(HLS.Events.MEDIA_ATTACHED, () => {
@@ -78,7 +75,7 @@ let Sound = BaseSound.extend({
         }
       });
     });
-  },
+  }
 
   _setupPlayerEvents(video) {
     video.addEventListener('playing',         () => {
@@ -96,7 +93,7 @@ let Sound = BaseSound.extend({
     video.addEventListener('timeupdate',      ()  => this.trigger('audio-position-changed', this));
     video.addEventListener('progress',        ()  => this.trigger('audio-loading'));
     video.addEventListener('error',           (e) => this._onVideoError(e));
-  },
+  }
 
   _checkIfAudioIsReady() {
     if (!this.get('loaded')) {
@@ -108,14 +105,14 @@ let Sound = BaseSound.extend({
       this.get('video').volume = 0;
       this.get('video').play();
     }
-  },
+  }
 
   _signalAudioIsReady() {
     this.debug('Test succeeded, signaling audio-ready');
     this.set('loaded', true);
     this.get('video').pause();
     this.trigger('audio-ready');
-  },
+  }
 
   _onVideoError(e) {
     switch (e.target.error.code) {
@@ -139,7 +136,7 @@ let Sound = BaseSound.extend({
         this._giveUpAndDie("unknown error");
         break;
     }
-  },
+  }
 
   _onHLSError(error, data) {
     if (data.fatal) {
@@ -156,7 +153,7 @@ let Sound = BaseSound.extend({
           break;
       }
     }
-  },
+  }
 
   _tryToRecoverFromMediaError(error) {
     let mediaRecoveryAttempts = this.get('mediaRecoveryAttempts');
@@ -179,12 +176,16 @@ let Sound = BaseSound.extend({
     }
 
     this.incrementProperty('mediaRecoveryAttempts');
-  },
+  }
 
   _giveUpAndDie(error) {
     this.get('hls').destroy();
     this.trigger('audio-load-error', error);
-  },
+  }
+
+  audioElement() {
+    return this.video;
+  }
 
 
   /* Public interface to sound */
@@ -196,21 +197,21 @@ let Sound = BaseSound.extend({
     else {
       return this.get('video').duration * 1000;
     }
-  },
+  }
 
   _currentPosition() {
     return this.get('video').currentTime * 1000;
-  },
+  }
 
   _setPosition(position) {
     this.get('video').currentTime = (position / 1000);
 
     return position;
-  },
+  }
 
   _setVolume(volume) {
     this.get('video').volume = (volume/100);
-  },
+  }
 
   play() {
     if (!this.get('video').src) {
@@ -223,26 +224,22 @@ let Sound = BaseSound.extend({
       this.get('hls').startLoad();
       this.set('loadStopped', false);
     }
-  },
+  }
 
   pause() {
     this.debug('#pause');
     this.get('video').pause();
     this.get('hls').stopLoad();
     this.set('loadStopped', true);
-  },
+  }
 
   stop() {
     this.debug('#stop');
     this.pause();
     this.get('video').removeAttribute('src')
-  },
+  }
 
   teardown() {
     this.get('hls').destroy();
   }
-});
-
-Sound.reopenClass(ClassMethods);
-
-export default Sound;
+}

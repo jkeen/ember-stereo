@@ -118,6 +118,10 @@ let Sound = EmberObject.extend(Evented, {
     log(message);
   },
 
+  onSyncChanged(data) {
+    console.log('on sync changed', data);
+  },
+
   syncState() {
     this.sync.broadcast(this.url, {
       isPlaying: this.isPlaying,
@@ -127,6 +131,39 @@ let Sound = EmberObject.extend(Evented, {
       isRewindable: this.isRewindable,
       position: !this.isStream ? this.position : null
     })
+  },
+
+  audioContext() {
+    if (!this._audioContext) {
+      let element = this.audioElement();
+      element.crossOrigin = "anonymous";
+      this._audioContext =  new (window.AudioContext || window.webkitAudioContext)  
+    }
+
+    return this._audioContext;
+  },
+
+  audioMediaSource() {
+    if (!this._audioMediaSource) {
+      this._audioMediaSource = this.audioContext().createMediaElementSource(this.audioElement());
+    }
+
+    return this._audioMediaSource;
+  },
+
+  audioAnalyser() {
+    if (!this._audioAnalyser) {
+      this._audioAnalyser = this.audioContext().createAnalyser();
+      this._audioAnalyser.fftSize = 2048;
+    }
+
+    return this._audioAnalyser;
+  },
+
+  startAnalysing() {
+    this.audioMediaSource().connect(this.audioAnalyser());
+    this.audioMediaSource().connect(this.audioContext().destination);
+    return new Uint8Array(this.audioAnalyser().frequencyBinCount);
   },
 
   init: function() {
@@ -202,6 +239,8 @@ let Sound = EmberObject.extend(Evented, {
     });
 
   
+    this.sync.on(`change:${this.url}`, this.onSyncChanged);
+
     try {
       this._detectTimeouts();
       this.setup();

@@ -65,7 +65,18 @@ module.exports = {
     if (this.hifiConnections) {
       return;
     }
-    this.hifiConnections = this.project.config(process.env.EMBER_ENV).emberHifi.connections.map((connection) => connection.name);
+
+    let projectConfig = this.project.config(process.env.EMBER_ENV)
+    let hifiConfig = projectConfig.emberHifi;
+
+    if (hifiConfig && hifiConfig.connections) {
+      this.hifiConnections = hifiConfig.connections.map((connection) => connection.name);
+    }
+    else {
+      // Default
+      this.hifiConnections = ["NativeAudio", "HLS", "Howler"]
+    }
+
   },
 
   isDevelopingAddon: function() {

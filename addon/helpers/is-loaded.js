@@ -1,37 +1,21 @@
 import classic from 'ember-classic-decorator';
-import { inject as service } from '@ember/service';
-import Helper from '@ember/component/helper';
-import debug from 'debug';
+import HifiBaseIsHelper from './hifi-base-is-helper';
 
 @classic
-export default class HifiIsLoaded extends Helper {
-  @service
-  hifi;
+export default class HifiIsLoaded extends HifiBaseIsHelper {
+  name = 'is-loaded'
+  listen = ['audio-loaded', 'audio-loading', 'audio-ended']
 
-  @service
-  hifiCache;
-
-  constructor() {
-    super(...arguments);
-    this.boundRecompute = () => this.recompute();
-
-    this.hifi.on('audio-loading', this.boundRecompute);
-    this.hifi.on('audio-loaded', this.boundRecompute);
-    this.hifi.on('audio-ended', this.boundRecompute);
+  checkSystem() {
+    if (this.hifi.currentSound) {
+      return this.checkSound(this.hifi.currentSound);
+    }
+    else {
+      return false;
+    }
   }
 
-  willDestroy() {
-    this.hifi.off('audio-loading', this.boundRecompute);
-    this.hifi.off('audio-loaded', this.boundRecompute);
-    this.hifi.off('audio-ended', this.boundRecompute);
-  }
-
-  compute(compare) {
-    let sound = this.hifi.findLoaded(compare);
-
-    let result = !!sound;
-
-    debug(`ember-hifi:${compare}`)(`is-loaded: ${result}`);
-    return result;
+  checkSound(sound) {
+    return !!sound;
   }
 }

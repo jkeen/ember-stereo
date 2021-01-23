@@ -6,16 +6,21 @@ export default class HifiRewind extends Helper {
   @service
   hifi;
 
-  compute([url], metadata = {}) {
+  compute([compare], options = {}) {
+    let increment = parseInt((options["increment"] || 5000), 10);
+
     return () => {
-      if (url) {
-        let sound = this.hifi.findLoaded(url)
+      if (compare) {
+        let sound = this.hifi.findLoaded(compare)
         if (sound) {
-          sound.rewind(5000);
-        }  
+          return sound.rewind(increment);
+        }
+        else {
+          return false;
+        }
       }
       else if (this.hifi.currentSound) {
-        this.hifi.rewind(5000)
+        this.hifi.rewind(increment)
       }
     }
   }

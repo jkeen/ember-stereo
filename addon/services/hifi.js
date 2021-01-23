@@ -23,6 +23,18 @@ import OneAtATime from '../helpers/one-at-a-time';
 import RSVP from 'rsvp';
 import PromiseRace from '../utils/promise-race';
 
+const DEFAULT_CONNECTIONS = [
+  {
+    name: "NativeAudio"
+  },
+  {
+    name: "Howler"
+  },
+  {
+    name: "HLS"
+  }
+]
+
 export const EVENT_MAP = [
   {event: 'audio-played',               handler: '_relayPlayedEvent'},
   {event: 'audio-paused',               handler: '_relayPausedEvent'},
@@ -148,9 +160,9 @@ export default class Hifi extends Service.extend(Evented) {
    */
 
   init() {
-    const connections = get(this, 'options.emberHifi.connections');
+    var connections = get(this, 'options.emberHifi.connections');
     if (!connections) {
-      connections = emberArray();
+      connections = emberArray(DEFAULT_CONNECTIONS);
     }
     const owner = getOwner(this);
 
@@ -197,14 +209,19 @@ export default class Hifi extends Service.extend(Evented) {
    * @return {Sound} A sound that's ready to be played, or an error
    */
 
-  findLoaded(identifier) {
-    let sound;
-    if (identifier && identifier.url) {
-      sound = this.soundCache.find(identifier.url);
-    }
-    else if (identifier) {
-      sound = this.soundCache.find(identifier.toString());
-    }
+  findLoaded(identifiers) {
+    var sound;
+
+    makeArray(identifiers).forEach(identifier => {
+      if (!sound) {
+        if (identifier && identifier.url) {
+          sound = this.soundCache.find(identifier.url);
+        }
+        else if (identifier) {
+          sound = this.soundCache.find(identifier.toString());
+        } 
+      }
+    })
 
     return sound;
   }

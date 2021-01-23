@@ -38,15 +38,18 @@
     "test:ember-compatibility": "ember try:each"
   },
   "dependencies": {
+    "@foobar404/wave": "^1.2.7",
     "debug": "4.3.2",
     "ember-auto-import": "^1.10.1",
     "ember-classic-decorator": "^2.0.0",
     "ember-cli-babel": "^7.23.0",
     "ember-cli-htmlbars": "^5.3.1",
     "ember-copy": "^1.0.0",
+    "ember-modifier": "^2.1.1",
+    "@ember/render-modifiers": "^1.0.2",
     "ember-poll": "^1.4.0",
-    "hls.js": "^0.14.16",
-    "howler": "^2.0.5"
+    "hls.js": "1.0.0-beta.3",
+    "howler": "^2.2.1"
   },
   "devDependencies": {
     "@ember/optional-features": "^2.0.0",
@@ -58,6 +61,7 @@
     "babel-eslint": "^8.0.0",
     "broccoli-asset-rev": "3.0.0",
     "ember-animated": "^0.10.1",
+    "ember-ast-hot-load": "^1.2.3",
     "ember-cli": "~3.24.0",
     "ember-cli-addon-docs": "^1.0.0",
     "ember-cli-addon-docs-yuidoc": "^1.0.0",
@@ -86,7 +90,6 @@
     "ember-hammertime": "^1.2.4",
     "ember-load-initializers": "^2.1.2",
     "ember-maybe-import-regenerator": "^0.1.6",
-    "ember-modifier": "^2.1.1",
     "ember-page-title": "^6.0.3",
     "ember-qunit": "^5.1.1",
     "ember-resolver": "^8.0.2",
