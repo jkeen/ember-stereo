@@ -10,7 +10,7 @@ module.exports = function(deployTarget) {
     'git-ci': {
       userName: 'deploy',
       userEmail: 'deploy@circleci',
-      deployKeyPath: '/home/circleci/.ssh/id_rsa_efadfb72b41fef800a764826cf29417a',
+      deployKeyPath: '/home/circleci/.ssh/id_rsa_11a220e35b2e16b1d43e05e51c5f4c26',
     },
     // include other plugin configuration that applies to all deploy targets here
   };
