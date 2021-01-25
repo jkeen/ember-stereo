@@ -17,7 +17,6 @@ export default class HifiSync extends Service.extend(Evented) {
     this.tabId = Math.random().toString().slice(2,7);
     super.init(...arguments);
 
-
     window.addEventListener('storage', (e) => this._notifyOfChanges(e));
     window.addEventListener('beforeunload', () => this.cleanupStates());
   }
@@ -66,8 +65,6 @@ export default class HifiSync extends Service.extend(Evented) {
   
   isPlayingElsewhere(url) {
     // TODO: use same logic as findLoaded
-
-
 
     let state = this.getState(url)
     return (state && state.isPlaying && state.fromTab != this.tabId)

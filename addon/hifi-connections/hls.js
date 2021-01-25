@@ -26,7 +26,7 @@ export default class HLSSound extends BaseSound {
   id3TagMetadata = null
 
   setup() {
-    let hls   = new HLS({debug: false, startFragPrefetch: true});
+    let hls   = new HLS({debug: true, startFragPrefetch: true});
     let video = document.createElement('video');
 
     this.set('video', video);
@@ -37,6 +37,23 @@ export default class HLSSound extends BaseSound {
   }
 
   _setupHLSEvents(hls) {
+    hls.on(HLS.Events.MEDIA_ATTACHING, () => {
+      this.debug('media attaching');
+    });
+    // hls.on(HLS.Events.MEDIA_DETACHING, () => {
+    //   this.debug('media detaching');
+    // });
+    // hls.on(HLS.Events.MEDIA_DETACHED, () => {
+    //   this.debug('media detached');
+    // });
+
+    // hls.on(HLS.Events.BUFFER_RESET, () => {
+    //   this.debug('buffer reset');
+    //   this._checkIfAudioIsReady();
+    // });
+
+    // hls.on(HLS.Events.ERROR, (e, data) => this._onHLSError(e, data));
+
     hls.on(HLS.Events.MEDIA_ATTACHED, () => {
       this.debug('media attached');
       hls.loadSource(this.get('url'));
@@ -140,9 +157,9 @@ export default class HLSSound extends BaseSound {
 
   _onHLSError(error, data) {
     if (data.fatal) {
+      this.debug(data);
       switch(data.type) {
         case HLS.ErrorTypes.NETWORK_ERROR:
-          this.debug(data);
           this._giveUpAndDie(`${data.details}`);
           break;
         case HLS.ErrorTypes.MEDIA_ERROR:

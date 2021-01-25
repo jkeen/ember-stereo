@@ -21,7 +21,6 @@ function start(params, callback) {
   return new RSVP.Promise((resolve, reject) => {
     let paramsToTry = copy(params);
     var failures = [];
-
     (function tryNext(tryThis) {
       tryThis
         .then(success => resolve({ success, failures }))

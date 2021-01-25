@@ -14,7 +14,7 @@ module('Unit | Connection | HLS', function(hooks) {
 
   hooks.beforeEach(function() {
     sandbox = sinon.createSandbox({
-      useFakeServer: sinon.fakeServerWithClock
+      useFakeServer: true
     });
 
     sandbox.server.respondWith(goodUrl, function (xhr) {
@@ -132,7 +132,10 @@ module('Unit | Connection | HLS', function(hooks) {
   test("If we 404, we give up", function(assert) {
     assert.expect(2);
     let done = assert.async();
-    let sound  = this.owner.factoryFor('ember-hifi@hifi-connection:hls').create({url: badUrl, timeout: false});
+    let sound  = this.owner.factoryFor('ember-hifi@hifi-connection:hls').create({
+      url: badUrl,
+      timeout: 1
+    });
 
     sound.on('audio-load-error', function() {
       assert.ok(true, "should have triggered audio load error");

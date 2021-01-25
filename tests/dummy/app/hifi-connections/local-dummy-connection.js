@@ -1,14 +1,20 @@
 import BaseSound from 'ember-hifi/hifi-connections/base';
-
-export default BaseSound.extend({
-  toString() {
+import classic from 'ember-classic-decorator';
+@classic
+export default class LocalDummySound extends BaseSound {
+  static toString() {
     return 'Local Dummy Connection';
-  },
+  }
 
-  init           : function() {},
-  willDestroy    : function() {},
-  currentPosition: function() {},
-  play           : function() {},
-  pause          : function() {},
-  _setVolume     : function() {}
-});
+  init() {}
+
+  willDestroy() {}
+
+  currentPosition() {}
+
+  play() {}
+
+  pause() {}
+
+  _setVolume() {}
+}

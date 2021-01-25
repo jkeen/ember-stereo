@@ -49,6 +49,7 @@ module('Unit | Service | hifi', function(hooks) {
         connections: hifiConnections
       }
     };
+    
 
     const soundCacheStub = Service.extend({
       find() {
@@ -247,7 +248,9 @@ module('Unit | Service | hifi', function(hooks) {
 
   test('Calling setCurrentSound multiple times will not register duplicate events on the sound', async function(assert) {
     assert.expect(2);
-    const service = this.owner.factoryFor('service:hifi').create({ options: chooseActiveConnections('NativeAudio') });
+    const service = this.owner.factoryFor('service:hifi').create({ 
+      options: chooseActiveConnections('NativeAudio') 
+    });
     stubConnectionCreateWithSuccess(service, "NativeAudio", sandbox);
 
     let { sound } = await service.load("/test/yes.mp3");
@@ -390,15 +393,16 @@ module('Unit | Service | hifi', function(hooks) {
   });
 
   test('toggleMute returns sound to previous level', function(assert) {
+    require('debug').enable('ember-hifi:*')
     const service = this.owner.factoryFor('service:hifi').create({ options });
-    assert.equal(service.get('volume'), service.get('defaultVolume'), "service should have default volume");
-    service.set('volume', 55);
-    service.toggleMute();
-
+    assert.equal(service.get('volume'), service.defaultVolume, "service should have default volume");
+    service.set('volume', 75);
+    assert.equal(service.get('volume'), 75, "volume should be 75");
+    service.toggleMute(); // muted
     assert.equal(service.get('volume'), 0, "volume should be zero");
     assert.equal(service.get('isMuted'), true, "volume should be muted");
-    service.toggleMute();
-    assert.equal(service.get('volume'), 55, "volume should be reset to previous level");
+    service.toggleMute(); // unmuted
+    assert.equal(service.get('volume'), 75, "volume should be reset to previous level");
   });
 
   test("consumer can specify the connection to use with a particular url", async function(assert) {
@@ -575,8 +579,8 @@ module('Unit | Service | hifi', function(hooks) {
     });
 
     assert.deepEqual(actualOrder, correctOrder, "Custom strategy should have been used");
-    let sharedAudioAccesss = A(A(strategies).map(s => s.sharedAudioAccess)).compact();
-    assert.equal(sharedAudioAccesss.length, strategies.length, "audio element should have been included with the strategies");
+    let sharedAudioAccesses = A(A(strategies).map(s => s.sharedAudioAccess)).compact();
+    assert.equal(sharedAudioAccesses.length, strategies.length, "audio element should have been included with the strategies");
   });
 
   test('you can specify alwaysUseSingleAudioElement in config to always use a single audio element', function(assert) {
@@ -642,19 +646,21 @@ module('Unit | Service | hifi', function(hooks) {
     let s1url       = "/assets/silence.mp3";
     let s2url       = "/assets/silence2.mp3";
 
+    service.set('alwaysUseSingleAudioElement', true);
     service.set('isMobileDevice', true);
 
     let { sound: silence1 } = await service.load(s1url);
     let sharedAccess = silence1.get('sharedAudioAccess');
-    assert.equal(sharedAccess.get('audioElement'), silence1.audioElement(), "sound should be using shared element");
+    assert.equal(sharedAccess.audioElement, silence1.audioElement(), "sound should be using shared element");
 
     // TROUBLE ***
     silence1.one('audio-ended', async function() {
       assert.ok("audio ended event was fired");
 
       let { sound: silence2 } = await service.play(s2url)
-      assert.equal(sharedAccess.get('audioElement'), silence2.audioElement(), "second sound should be using shared element");
+      assert.equal(sharedAccess.audioElement, silence2.audioElement(), "second sound should be using shared element");
 
+      silence2.stop();
       done();
     });
 

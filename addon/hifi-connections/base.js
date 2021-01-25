@@ -2,27 +2,27 @@ import { equal, not } from '@ember/object/computed';
 import { next, later, cancel } from '@ember/runloop';
 import Evented from '@ember/object/evented';
 import { A } from '@ember/array';
-import Mixin from '@ember/object/mixin';
 import { assert } from '@ember/debug';
 import EmberObject, { computed } from '@ember/object';
 import { getMimeType } from 'ember-hifi/utils/mime-types';
 import { inject as service } from '@ember/service';
 import debug from 'debug';
-
-
+import classic from 'ember-classic-decorator';
+import { tracked } from '@glimmer/tracking';
+// import Evented from 'ember-hifi/utils/evented';
 /**
 * This is the base sound object from which other sound objects are derived. 
 *
 * @class BaseSound
 * @constructor
 */
-
-let ClassMethods = Mixin.create({
-  setup(config) {
+@classic
+export default class BaseSound extends EmberObject.extend(Evented) {
+  static setup(config) {
     this.config = config;
-  },
+  }
 
-  canPlay(url) {
+  static canPlay(url) {
     let usablePlatform = this.canUseConnection(url);
     if (!usablePlatform) {
       return false;
@@ -47,13 +47,13 @@ let ClassMethods = Mixin.create({
     else {
       throw new Error('URL must be a string or object with a mimeType property');
     }
-  },
+  }
 
-  canUseConnection() {
+  static canUseConnection() {
     return true;
-  },
+  }
 
-  canPlayMimeType(mimeType) {
+  static canPlayMimeType(mimeType) {
     let mimeTypeWhiteList = this.acceptMimeTypes;
     let mimeTypeBlackList = this.rejectMimeTypes;
 
@@ -67,71 +67,81 @@ let ClassMethods = Mixin.create({
       return true; // assume true
     }
   }
-});
+  // @service('hifi-sync') sync;
 
-let Sound = EmberObject.extend(Evented, {
-  sync: service('hifi-sync'),
-  debugName: computed('url', 'connectionName', function() {
+  @computed('url', 'connectionName')
+  get debugName() {
     var parser = document.createElement('a');
     parser.href = this.get('url');
 
     let parts = parser.pathname.split('/');
-    return `ember-hifi:${this.get('connectionName')} (${parts[parts.length - 1]})`;
-  }),
+    return `ember-hifi:${this.get('connectionName') || this.constructor.toString()} (${parts[parts.length - 1]})`;
+  }
 
-  pollInterval:      1000,
-  timeout:           30000,
+  pollInterval = 1000
+  timeout   = 30000
 
-  hasPlayed:         false,
-  isLoading:         false,
-  isPlaying:         false,
-  isErrored:         computed('error', function() {
+  hasPlayed = false
+  isLoading = false
+  isPlaying = false
+
+  @computed('error')
+  get isErrored() {
     return !!this.get('error');
-  }),
-  error:             null,
+  }
 
-  isStream:          equal('duration', Infinity),
-  isFastForwardable: not('isStream'),
-  isRewindable:      not('isStream'),
+  error = null
 
-  duration:          0,
-  percentLoaded:     0,
+  get isStream() {
+    return this.duration == Infinity;
+  } 
+
+  get isFastForwardable() {
+    return !this.isStream;
+  } 
+
+  get isRewindable() {
+    return !this.isStream;
+  } 
+
+  duration = 0
+  percentLoaded = 0
 
   // _position is updated by the service on the currently playing sound
-  position:          computed('_position', {
-    get() {
-      return this._currentPosition();
-    },
-    set(k, v) {
-      this.trigger('audio-position-will-change', this, {currentPosition: this._currentPosition(), newPosition: v});
+  @computed('_position')
+  get position() {
+    return this._currentPosition();
+  }
+  set position(v) {
+    this.trigger('audio-position-will-change', this, { currentPosition: this._currentPosition(), newPosition: v });
 
-      return this._setPosition(v);
-    }
-  }),
+    return this._setPosition(v);
+  }
 
-  mimeType: computed('url', function() {
+  @computed('url') 
+  get mimeType() {
     return getMimeType(this.url);
-  }),
+  }
 
   debug(message) {
     const log = debug(this.debugName);
     log(message);
-  },
+  }
 
   onSyncChanged(data) {
     console.log('on sync changed', data);
-  },
+  }
 
   syncState() {
-    this.sync.broadcast(this.url, {
-      isPlaying: this.isPlaying,
-      isLoaded: this.isLoaded,
-      isStream: this.isStream,
-      isFastForwardable: this.isFastForwardable,
-      isRewindable: this.isRewindable,
-      position: !this.isStream ? this.position : null
-    })
-  },
+    // this.sync.broadcast(this.url, {
+    //   isPlaying: this.isPlaying,
+    //   isLoaded: this.isLoaded,
+    //   isStream: this.isStream,
+    //   isFastForwardable: this.isFastForwardable,
+    //   isRewindable: this.isRewindable,
+    //   position: !this.isStream ? this.position : null
+    // })
+  }
 
   audioContext() {
     if (!this._audioContext) {
@@ -141,7 +151,7 @@ let Sound = EmberObject.extend(Evented, {
     }
 
     return this._audioContext;
-  },
+  }
 
   audioMediaSource() {
     if (!this._audioMediaSource) {
@@ -149,7 +159,7 @@ let Sound = EmberObject.extend(Evented, {
     }
 
     return this._audioMediaSource;
-  },
+  }
 
   audioAnalyser() {
     if (!this._audioAnalyser) {
@@ -158,15 +168,15 @@ let Sound = EmberObject.extend(Evented, {
     }
 
     return this._audioAnalyser;
-  },
+  }
 
   startAnalysing() {
     this.audioMediaSource().connect(this.audioAnalyser());
     this.audioMediaSource().connect(this.audioContext().destination);
     return new Uint8Array(this.audioAnalyser().frequencyBinCount);
-  },
+  }
 
-  init: function() {
+  init() {
     let {
       audioLoading,
       audioLoaded,
@@ -238,8 +248,7 @@ let Sound = EmberObject.extend(Evented, {
       this.debug('audio-loading');
     });
 
-  
-    this.sync.on(`change:${this.url}`, this.onSyncChanged);
+    // this.sync.on(`change:${this.url}`, this.onSyncChanged);
 
     try {
       this._detectTimeouts();
@@ -251,7 +260,7 @@ let Sound = EmberObject.extend(Evented, {
         if (audioLoadError) { audioLoadError(this); }
       });
     }
-  },
+  }
 
   _detectTimeouts() {
     if (this.get('timeout')) {
@@ -262,7 +271,7 @@ let Sound = EmberObject.extend(Evented, {
       this.on('audio-ready',      () => cancel(timeout));
       this.on('audio-load-error', () => cancel(timeout));
     }
-  },
+  }
 
   fastForward(duration) {
     let audioLength     = this._audioDuration();
@@ -271,14 +280,14 @@ let Sound = EmberObject.extend(Evented, {
 
     this.trigger('audio-will-fast-forward', this, {currentPosition, newPosition});
     this._setPosition(newPosition);
-  },
+  }
 
   rewind(duration) {
     let currentPosition = this._currentPosition();
     let newPosition     = Math.max((currentPosition - duration), 0);
     this.trigger('audio-will-rewind', this, {currentPosition, newPosition});
     this._setPosition(newPosition);
-  },
+  }
 
 
   togglePause() {
@@ -288,50 +297,46 @@ let Sound = EmberObject.extend(Evented, {
     else {
       this.play();
     }
-  },
+  }
 
   /* To be defined on the subclass */
   setup() {
     assert("[ember-hifi] #setup interface not implemented", false);
-  },
+  }
 
   _setVolume() {
     assert("[ember-hifi] #_setVolume interface not implemented", false);
-  },
+  }
 
   _audioDuration() {
     assert("[ember-hifi] #_audioDuration interface not implemented", false);
-  },
+  }
 
   _currentPosition() {
     assert("[ember-hifi] #_currentPosition interface not implemented", false);
-  },
+  }
 
   _setPosition() {
     assert("[ember-hifi] #_setPosition interface not implemented", false);
-  },
+  }
 
   play() {
     assert("[ember-hifi] #play interface not implemented", false);
-  },
+  }
 
   pause() {
     assert("[ember-hifi] #pause interface not implemented", false);
-  },
+  }
 
   stop() {
     assert("[ember-hifi] #stop interface not implemented", false);
-  },
+  }
 
   teardown() {
     // optionally implemented in subclasses
-  },
+  }
 
   willDestroy() {
     this.teardown();
   }
-});
-
-Sound.reopenClass(ClassMethods);
-
-export default Sound;
+}

@@ -11,9 +11,14 @@ const badUrl  = "http://example.org/there-aint-nothing-here.aac";
 module('Unit | Connection | Native Audio', function(hooks) {
   setupTest(hooks);
 
+  var sharedAudioAccess;
+
   hooks.beforeEach(function() {
     // The use of this singleton here really messes with testing, so we need to reset it
-    SharedAudioAccess._reset();
+    // SharedAudioAccess._reset();
+
+    sharedAudioAccess = new SharedAudioAccess()
+    sharedAudioAccess.unlock();
 
     sandbox = sinon.createSandbox({
       useFakeServer: sinon.fakeServerWithClock
@@ -33,7 +38,7 @@ module('Unit | Connection | Native Audio', function(hooks) {
 
   test("If we 404, we give up", function(assert) {
     let done  = assert.async();
-    let sharedAudioAccess = SharedAudioAccess.unlock();
+    sharedAudioAccess.unlock();
     let sound = this.owner.factoryFor('ember-hifi@hifi-connection:native-audio').create({url: badUrl, timeout: false, sharedAudioAccess});
 
     assert.expect(1);
@@ -45,8 +50,9 @@ module('Unit | Connection | Native Audio', function(hooks) {
 
   test("If passed a shared audio element on initialize, use it instead of creating one", async function(assert) {
     let testFlag = "hey, it's me";
-    let sharedAudioAccess = SharedAudioAccess.unlock();
-    sharedAudioAccess.get('audioElement').testFlag = testFlag;
+    
+    let sharedAudioAccess = (new SharedAudioAccess).unlock();
+    sharedAudioAccess.audioElement.testFlag = testFlag;
 
     let sound = this.owner.factoryFor('ember-hifi@hifi-connection:native-audio').create({url: goodUrl, sharedAudioAccess, timeout: false});
     await sound.play();
@@ -62,7 +68,7 @@ module('Unit | Connection | Native Audio', function(hooks) {
   });
 
   test("If it's a stream, we stop on pause", async function(assert) {
-    let sharedAudioAccess = SharedAudioAccess.unlock();
+    let sharedAudioAccess = (new SharedAudioAccess).unlock();
     let sound   = this.owner.factoryFor('ember-hifi@hifi-connection:native-audio').create({url: goodUrl, timeout: false, duration: Infinity, sharedAudioAccess});
     let stopSpy = sinon.spy(sound, 'stop');
     let loadSpy = sinon.spy(sound.get('sharedAudioAccess').requestControl(sound), 'load');
@@ -80,6 +86,7 @@ module('Unit | Connection | Native Audio', function(hooks) {
   test("Don't fire audio-played events on position changes", async function(assert) {
     let sound = this.owner.factoryFor('ember-hifi@hifi-connection:native-audio').create({url: '/assets/silence.mp3', timeout: false});
     let count = 0;
+    require('debug').enable("ember-hifi:*");
 
     sound.on('audio-played', function() {
       count++
@@ -95,7 +102,7 @@ module('Unit | Connection | Native Audio', function(hooks) {
   });
 
   test("stopping an audio stream still sends the pause event", async function(assert) {
-    let sharedAudioAccess = SharedAudioAccess.unlock();
+    let sharedAudioAccess = (new SharedAudioAccess).unlock();
 
     let sound   = this.owner.factoryFor('ember-hifi@hifi-connection:native-audio').create({url: '/assets/silence.mp3', timeout: false, duration: Infinity, sharedAudioAccess});
     assert.expect(2);
@@ -111,14 +118,14 @@ module('Unit | Connection | Native Audio', function(hooks) {
   });
 
   test("can play an mp3 twice in a row using a shared audio element", function(assert) {
-    let sharedAudioAccess = SharedAudioAccess.unlock();
+    let sharedAudioAccess = (new SharedAudioAccess).unlock();
 
     let sound = this.owner.factoryFor('ember-hifi@hifi-connection:native-audio').create({url: goodUrl, timeout: false, sharedAudioAccess});
     sound.on('audio-ended', () => assert.ok('ended was called'));
     sound.play();
 
     assert.equal(sound.audioElement().src, goodUrl, "audio src attribute is set");
-    assert.equal(sound.audioElement(), sharedAudioAccess.get('audioElement'), "internal audio tag is shared audio tag");
+    assert.equal(sound.audioElement(), sharedAudioAccess.audioElement, "internal audio tag is shared audio tag");
 
     var event = document.createEvent('HTMLEvents');
     event.initEvent('ended', true, false);
@@ -126,7 +133,7 @@ module('Unit | Connection | Native Audio', function(hooks) {
     sound.play();
 
     assert.equal(sound.audioElement().src, goodUrl, "audio src attribute is set");
-    assert.equal(sound.audioElement(), sharedAudioAccess.get('audioElement'), "internal audio tag is shared audio tag");
+    assert.equal(sound.audioElement(), sharedAudioAccess.audioElement, "internal audio tag is shared audio tag");
   });
 
   test("can play an mp3 twice in a row using internal element", function(assert) {
@@ -149,7 +156,6 @@ module('Unit | Connection | Native Audio', function(hooks) {
   test('switching sounds with a shared audio element saves the current state', function(assert) {
     let url1 = '/assets/silence.mp3';
     let url2 = '/assets/silence2.mp3';
-    let sharedAudioAccess = SharedAudioAccess.unlock();
 
     let sound1 = NativeAudio.create({url: url1, timeout: false, sharedAudioAccess});
     let sound2 = NativeAudio.create({url: url2, timeout: false, sharedAudioAccess});
@@ -193,28 +199,26 @@ module('Unit | Connection | Native Audio', function(hooks) {
 
   test('on setup the sound has control of the shared audio element', function(assert) {
     let url1 = '/assets/silence.mp3';
-    let sharedAudioAccess = SharedAudioAccess.unlock();
+    let sharedAudioAccess = (new SharedAudioAccess).unlock();
 
     let sound = NativeAudio.create({url: url1, timeout: false, sharedAudioAccess});
     sinon.stub(sound, 'debug');
 
-    assert.equal(sound.audioElement(), sharedAudioAccess.get('audioElement'), "sound should have control on setup");
+    assert.equal(sound.audioElement(), sharedAudioAccess.audioElement, "sound should have control on setup");
   });
 
   test('on play the sound gains control of the shared audio element', function(assert) {
     let url1 = '/assets/silence.mp3';
-    let sharedAudioAccess = SharedAudioAccess.unlock();
+    let sharedAudioAccess = (new SharedAudioAccess).unlock();
 
     let sound = NativeAudio.create({url: url1, timeout: false, sharedAudioAccess});
     sinon.stub(sound, 'debug');
 
     sound.play();
-    assert.equal(sound.audioElement(), sharedAudioAccess.get('audioElement'), "sound should have control on setup");
+    assert.equal(sound.audioElement(), sharedAudioAccess.audioElement, "sound should have control on setup");
   });
 
   test('sound does not have control of the shared audio element when another is playing', function(assert) {
-    let sharedAudioAccess = SharedAudioAccess.unlock();
-
     let sound1 = NativeAudio.create({url: "/assets/silence.mp3", timeout: false, sharedAudioAccess});
     let sound2 = NativeAudio.create({url: "/assets/silence2.mp3", timeout: false, sharedAudioAccess});
 
@@ -224,12 +228,10 @@ module('Unit | Connection | Native Audio', function(hooks) {
     sound1.play();
     sound2.play();
 
-    assert.notEqual(sound1.audioElement(), sharedAudioAccess.get('audioElement'), "sound should have control while another sound is playing");
+    assert.notEqual(sound1.audioElement(), sharedAudioAccess.audioElement, "sound should have control while another sound is playing");
   });
 
   test("when using a shared audio element we set preload=none on the shadow element", function(assert) {
-    let sharedAudioAccess = SharedAudioAccess.unlock();
-
     let sound  = this.owner.factoryFor('ember-hifi@hifi-connection:native-audio').create({url: '/assets/silence2.mp3', timeout: false, duration: Infinity, sharedAudioAccess});
 
     sound.play();
@@ -242,7 +244,6 @@ module('Unit | Connection | Native Audio', function(hooks) {
     // let done = assert.async();
     let url1 = '/assets/silence.mp3';
     let url2 = '/assets/silence2.mp3';
-    let sharedAudioAccess = SharedAudioAccess.unlock();
 
     let sound1 = NativeAudio.create({url: url1, timeout: false, sharedAudioAccess});
     let sound2 = NativeAudio.create({url: url2, timeout: false, sharedAudioAccess});

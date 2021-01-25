@@ -1,4 +1,3 @@
-import { or, readOnly, equal, reads, alias } from '@ember/object/computed';
 import { later, cancel } from '@ember/runloop';
 import { isEmpty } from '@ember/utils';
 import { assign } from '@ember/polyfills';
@@ -9,6 +8,9 @@ import { assert } from '@ember/debug';
 import { bind } from "@ember/runloop";
 import debug from 'debug';
 import { next } from '@ember/runloop';
+import SharedAudioAccess from 'ember-hifi/utils/shared-audio-access';
+import { tracked } from '@glimmer/tracking';
+
 const log = debug('ember-hifi');
 
 import {
@@ -17,6 +19,7 @@ import {
   getProperties,
   computed
 } from '@ember/object';
+import { or, readOnly, equal, reads, alias } from '@ember/object/computed';
 import { A as emberArray, makeArray } from '@ember/array';
 import { dasherize } from '@ember/string';
 import OneAtATime from '../helpers/one-at-a-time';
@@ -68,9 +71,10 @@ export default class Hifi extends Service.extend(Evented) {
   @service hifiSync;
 
   get isMobileDevice() {
-    return ('ontouchstart' in window);
+    return this._isMobileDevice || ('ontouchstart' in window);
   }
   set isMobileDevice(v) {
+    this._isMobileDevice = v;
     return v;
   }
 
@@ -102,7 +106,6 @@ export default class Hifi extends Service.extend(Evented) {
     return v;
   }
 
-
   get isStream() {
     return get(this, 'currentSound.isStream'); 
   }
@@ -128,29 +131,55 @@ export default class Hifi extends Service.extend(Evented) {
   }
 
   get pollInterval() {
-    return get(this.options, 'emberHifi.positionInterval'); 
+    return this._pollInterval || get(this.options, 'emberHifi.positionInterval'); 
+  }
+  set pollInterval(p) {
+    this._pollInterval = p;
   }
 
   get position() {
     return get(this, 'currentSound.position'); 
   }
+  set position(v) {
+    return set(this, 'currentSound.position', v); 
+  }
 
   defaultVolume = 50;
-
+  _volume = this.defaultVolume;
   get volume() {
-      return get(this, 'currentSound.volume') || get(this, 'defaultVolume');
+    return this._volume;
   }
   set volume(v) {
     if (this.currentSound) {
+      debug(`setting current sound volume = ${v}`)
       this.currentSound._setVolume(v);
     }
-
-    if (v > 0) {
-      this.unmuteVolume = v;
-    }
+    this._volume = v;
+    debug(`setting volume = ${v}`)
 
     return v;
   }
+
+  /**
+   * Toggles mute state. Sets volume to zero on mute, resets volume to the last level it was before mute, unless
+   * unless the last level was zero, in which case it sets it to the default volume
+   *
+   * @method toggleMute
+   */
+
+  toggleMute() {
+    if (this.isMuted) {
+      this.volume = this.unmuteVolume;
+      this.unmuteVolume = undefined;
+    }
+    else {
+      if (this.volume > 0) {
+        this.unmuteVolume = this.volume;
+      }
+      this.volume = 0;
+    }
+  }
+
 
   /**
    * When the Service is created, activate connections that were specified in the
@@ -165,23 +194,23 @@ export default class Hifi extends Service.extend(Evented) {
       connections = emberArray(DEFAULT_CONNECTIONS);
     }
     const owner = getOwner(this);
-
     owner.registerOptionsForType('ember-hifi@hifi-connection', { instantiate: false });
     owner.registerOptionsForType('hifi-connection', { instantiate: false });
 
-    set(this, 'alwaysUseSingleAudioElement',  !!get(this, 'options.emberHifi.alwaysUseSingleAudioElement'));
-    set(this, 'appEnvironment', (get(this, 'options.environment') || 'development'));
-    set(this, '_connections', {});
-    set(this, 'oneAtATime', OneAtATime.create({container: getOwner(this)}));
-    set(this, 'volume', 50);
-    this._activateConnections(connections);
+    this.alwaysUseSingleAudioElement = !!get(this, 'options.emberHifi.alwaysUseSingleAudioElement')
+    this.sharedAudioAccess = new SharedAudioAccess();
+    this.appEnvironment = get(this, 'options.environment') || 'development';
+    this._connections = {};
+    this.oneAtATime = new OneAtATime();
+    this.volume = 50;
 
-    this.set('isReady', true);
+    this._activateConnections(connections);
+    this.isReady = true;
 
     // Polls the current sound for position. We wanted to make it easy/flexible
     // for connection authors, and since we only play one sound at a time, we don't
     // need other non-active sounds telling us position info
-    this.get('poll').addPoll({
+    this.poll.addPoll({
       interval: get(this, 'pollInterval') || 500,
       callback: bind(this, this._setCurrentPosition)
     });
@@ -237,7 +266,7 @@ export default class Hifi extends Service.extend(Evented) {
    */
 
   load(urlsOrPromise, options) {
-    let sharedAudioAccess = this._createAndUnlockAudio();
+    var sharedAudioAccess = this._createAndUnlockAudio();
 
     options = assign({
       debugName: `ember-hifi:load-${Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 3)}`,
@@ -263,7 +292,7 @@ export default class Hifi extends Service.extend(Evented) {
             let connectionKeys  = options.useConnections;
             strategies = this._prepareStrategies(urlsToTry, connectionKeys);
           }
-          else if (this.get('isMobileDevice')) {
+          else if (this.isMobileDevice) {
             // If we're on a mobile device, we want to try NativeAudio first
             strategies  = this._prepareMobileStrategies(urlsToTry);
           }
@@ -271,7 +300,7 @@ export default class Hifi extends Service.extend(Evented) {
             strategies  = this._prepareStandardStrategies(urlsToTry);
           }
 
-          if (this.get('useSharedAudioAccess')) {
+          if (this.useSharedAudioAccess) {
             // If we're on a mobile device or have specified to always use a single audio element,
             // pass in sharedAudioAccess into each connection.
 
@@ -398,22 +427,6 @@ export default class Hifi extends Service.extend(Evented) {
   }
 
   /**
-   * Toggles mute state. Sets volume to zero on mute, resets volume to the last level it was before mute, unless
-   * unless the last level was zero, in which case it sets it to the default volume
-   *
-   * @method toggleMute
-   */
-
-  toggleMute() {
-    if (this.get('isMuted')) {
-      this.set('volume', this.get('unmuteVolume'));
-    }
-    else {
-      this.set('volume', 0);
-    }
-  }
-
-  /**
    * Fast forwards current sound if able
    *
    * @method fastForward
@@ -452,13 +465,10 @@ export default class Hifi extends Service.extend(Evented) {
     }
     this._unregisterEvents(this.get('currentSound'));
     this._registerEvents(sound);
-    sound._setVolume(this.get('volume'));
+    sound._setVolume(this.volume);
     this.set('currentSound', sound);
     log(`setting current sound -> ${sound.get('url')}`);
   }
-
-
-
 
 
 /* ------------------------ PRIVATE(ISH) METHODS ---------------------------- */
@@ -540,10 +550,10 @@ export default class Hifi extends Service.extend(Evented) {
    */
 
   _relayEvent(eventName, sound, info = {}) {
-    next(() => {
+    // next(() => {
       this.trigger(eventName, sound, info);
       log(eventName, sound);
-    })
+    // })
   }
 
   /**
@@ -579,10 +589,10 @@ export default class Hifi extends Service.extend(Evented) {
   }
   _relayWillFastForwardEvent(sound, info) {
     this._relayEvent('audio-will-fast-forward', sound, info);
-  },
+  }
   _relayMetadataChangedEvent(sound, info) {
     this._relayEvent('audio-metadata-changed', sound, info);
-  },
+  }
   /**
    * Activates the connections as specified in the config options
    *
@@ -821,8 +831,7 @@ export default class Hifi extends Service.extend(Evented) {
      // IE desktop browsers can't deal with that and will suddenly
      // play the loading audio before it's ready
 
-    let sharedAudioAccess = getOwner(this).lookup('hifi:sharedAudioAccess')
-    return sharedAudioAccess.unlock(this.get('isMobileDevice'));
+    return this.sharedAudioAccess.unlock(this.isMobileDevice);
   }
 
   /**
@@ -833,7 +842,7 @@ export default class Hifi extends Service.extend(Evented) {
    */
 
   _attemptToPlaySound(sound, options) {
-    if (this.get('isMobileDevice')) {
+    if (this.isMobileDevice) {
       let touchPlay = ()=> {
         log(`triggering sound play from document touch`);
         sound.play();

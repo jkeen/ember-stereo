@@ -4,39 +4,39 @@ import EmberObject from '@ember/object';
 import { A as emberArray } from '@ember/array';
 import classic from 'ember-classic-decorator';
 
-@classic
-export default class OneAtATime extends EmberObject.extend(Evented) {
-  @service('hifi-sync')
-  sync;
 
-  init() {
-    this.set('sounds', emberArray());
+export default class OneAtATime {
+  // @service('hifi-sync')
+  // sync;
 
-    this.sync.on('system:pause', () => {
-      this.get('sounds').forEach(this._pauseSound);
-    })
+  constructor() {
+    this.sounds = emberArray();
 
-    this.sync.on('system:play', (data) => {
-      let sound = this.get('sounds').filter(s => s.url == data.url)[0]
-      if (sound) {
-        sound.play();
-      }
-    })
+    // this.sync.on('system:pause', () => {
+    //   this.sounds.forEach(this._pauseSound);
+    // })
+
+    // this.sync.on('system:play', (data) => {
+    //   let sound = this.sounds.filter(s => s.url == data.url)[0]
+    //   if (sound) {
+    //     sound.play();
+    //   }
+    // })
   }
 
   register(sound) {
-    let sounds = this.get("sounds");
+    let sounds = this.sounds;
     sound.on('audio-played', () => this.pauseAll(sound));
     if (!sounds.includes(sound)) {
       sounds.pushObject(sound);
     }
 
-    this.sync.handleSoundUpdates(sound);
+    // this.sync.handleSoundUpdates(sound);
   }
 
   pauseAll(sound) {
-    this.get('sounds').without(sound).forEach(this._pauseSound);
-    this.sync.pause();
+    this.sounds.without(sound).forEach(this._pauseSound);
+    // this.sync.pause();
   }
 
   _pauseSound(s) { 

@@ -18,17 +18,22 @@ const log = debug('ember-hifi:shared-audio-access');
  * @class SharedAudioAccess
  */
 
-const SharedAudioAccess = EmberObject.extend({
+export default class SharedAudioAccess {
   // debugName: 'sharedAudioAccess',
+
+  // constructor() {
+  //   this.unlock();
+  // }
+  
   debug(message) {
     log(message);
-  },
+  }
 
   unlock(andPlay) {
     if (!this.audioElement) {
       this.debug('creating new audio element');
       let audioElement = this._createElement();
-      this.set('audioElement', audioElement);
+      this.audioElement = audioElement;
 
       if (andPlay) {
         this.debug(`telling blank audio element to play`);
@@ -36,10 +41,10 @@ const SharedAudioAccess = EmberObject.extend({
       }
     }
     return this;
-  },
+  }
 
   requestControl(who) {
-    let owner = this.get('owner');
+    let owner = this.owner;
 
     if ((owner !== who) && owner) {
       who.debug("I need audio control");
@@ -47,39 +52,35 @@ const SharedAudioAccess = EmberObject.extend({
     }
 
     if (owner) {
-      if ( !(owner.get('isDestroyed') || owner.get('isDestroying')) ) {
-        owner.releaseControl();
-        if ((owner !== who) && owner) {
-          owner.debug("I've released audio control");
-        }
+      owner.releaseControl();
+      if ((owner !== who) && owner) {
+        owner.debug("I've released audio control");
       }
     }
 
-    this.set('owner', who);
+    this.owner = who;
     if (owner !== who) {
       who.debug("I have control now");
     }
-    return this.get('audioElement');
-  },
+    return this.audioElement;
+  }
 
   hasControl(who) {
-    return (this.get('owner') === who);
-  },
+    return (this.owner === who);
+  }
 
   releaseControl(who) {
     if (this.hasControl(who)) {
-      this.set('owner', null);
+      this.owner = null;
     }
-  },
+  }
 
   _createElement() {
     return document.createElement('audio');
-  },
+  }
 
   _reset() {
-    this.set('owner', null);
-    this.set('audioElement', null);
+    this.owner = null;
+    this.audioElement = null;
   }
-});
-
-export default SharedAudioAccess
+}

@@ -22,7 +22,7 @@ const HAVE_CURRENT_DATA = 2;
 * @constructor
 */
 @classic
-export default class NativeAudioSound extends BaseSound {
+export default class NativeAudioConnection extends BaseSound {
   static canPlayMimeType(mimeType) {
     let audio = new Audio();
     // it returns "probably" and "maybe". Both are worth trying. Empty is bad.
@@ -36,18 +36,8 @@ export default class NativeAudioSound extends BaseSound {
   setup() {
     let audio = this.requestControl();
 
-    audio.src = this.get('url');
+    audio.src = this.url;
     audio.crossOrigin="anonymous";
-
-    // try {
-    //   this.context =  new (window.AudioContext || window.webkitAudioContext)
-    //   this.track = context.createMediaElementSource(audio);
-    //   this.track.connect(this.context.destination);  
-    // }
-    // catch(e) {
-
-    // }
-
     this._registerEvents(audio);
 
     if (Ember.testing) {
@@ -69,7 +59,7 @@ export default class NativeAudioSound extends BaseSound {
   }
 
   _handleAudioEvent(eventName, e) {
-    if (!this.urlsAreEqual(e.target.src, this.get('url')) && e.target.src !== '') {
+    if (!this.urlsAreEqual(e.target.src, this.url) && e.target.src !== '') {
       // This event is not for us if our srcs aren't equal
 
       // but if the target src is empty it means we've been stopped and in
@@ -127,12 +117,12 @@ export default class NativeAudioSound extends BaseSound {
     let sharedAudioAccess  = this.get('sharedAudioAccess');
 
     if (sharedAudioAccess && sharedAudioAccess.hasControl(this)) {
-      return sharedAudioAccess.get('audioElement');
+      return sharedAudioAccess.audioElement;
     }
     else {
-      let audioElement = (this.get('_audioElement') || document.createElement('audio'));
+      let audioElement = (this._audioElement || document.createElement('audio'));
 
-      this.set('_audioElement', audioElement);
+      this._audioElement = audioElement;
 
       return audioElement;
     }
@@ -149,7 +139,6 @@ export default class NativeAudioSound extends BaseSound {
     }
 
     this.get('sharedAudioAccess').releaseControl(this);
-
     // save current state of audio element to the internal element that won't be played
     this._saveState(this.get('sharedAudioAccess.audioElement'));
   }
@@ -157,7 +146,7 @@ export default class NativeAudioSound extends BaseSound {
   _saveState(audio) {
     this.debug('Saving audio state');
     let shadowAudio = document.createElement('audio');
-    this.set('_audioElement', shadowAudio);
+    this._audioElement = shadowAudio;
     shadowAudio.preload = 'none';
     shadowAudio.src = audio.src;
 
@@ -183,7 +172,7 @@ export default class NativeAudioSound extends BaseSound {
 
   restoreState() {
     let sharedElement     = this.audioElement();
-    let internalElement   = this.get('_audioElement');
+    let internalElement   = this._audioElement;
 
     if (this.get('sharedAudioAccess') && internalElement) {
       this.debug('Restoring audio state…');
@@ -314,6 +303,7 @@ export default class NativeAudioSound extends BaseSound {
   }
 
   _setVolume(volume) {
+    this.debug(`_setVolume: ${volume}`);
     let audio = this.audioElement();
     audio.volume = (volume/100);
   }
@@ -359,13 +349,13 @@ export default class NativeAudioSound extends BaseSound {
   }
 
   loadAudio(audio) {
-    if (!this.urlsAreEqual(audio.src, this.get('url'))) {
-      audio.setAttribute('src', this.get('url'));
+    if (!this.urlsAreEqual(audio.src, this.url)) {
+      audio.setAttribute('src', this.url);
     }
   }
 
   urlsAreEqual(url1, url2) {
-    // GOTCHA: audio.src is a fully qualified URL, and this.get('url') may be a relative url
+    // GOTCHA: audio.src is a fully qualified URL, and this.url may be a relative url
     // So when comparing, make sure we're dealing in absolutes
 
     let parser1 = document.createElement('a');

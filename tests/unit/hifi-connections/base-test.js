@@ -9,6 +9,7 @@ module('Unit | Connection | base', function(hooks) {
   hooks.beforeEach(function() {
     baseSound = this.owner.factoryFor('ember-hifi@hifi-connection:base').create({
       setup() {},
+      _currentPosition() {},
       timeout: false,
     });
   });

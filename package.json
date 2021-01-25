@@ -38,6 +38,7 @@
     "test:ember-compatibility": "ember try:each"
   },
   "dependencies": {
+    "@ember/render-modifiers": "^1.0.2",
     "@foobar404/wave": "^1.2.7",
     "debug": "4.3.2",
     "ember-auto-import": "^1.10.1",
@@ -46,7 +47,6 @@
     "ember-cli-htmlbars": "^5.3.1",
     "ember-copy": "^1.0.0",
     "ember-modifier": "^2.1.1",
-    "@ember/render-modifiers": "^1.0.2",
     "ember-poll": "^1.4.0",
     "hls.js": "1.0.0-beta.3",
     "howler": "^2.2.1"
@@ -65,6 +65,7 @@
     "ember-cli": "~3.24.0",
     "ember-cli-addon-docs": "^1.0.0",
     "ember-cli-addon-docs-yuidoc": "^1.0.0",
+    "ember-cli-bundle-analyzer": "^0.2.2",
     "ember-cli-code-coverage": "^v1.0.0-beta.8",
     "ember-cli-dependency-checker": "^3.2.0",
     "ember-cli-deploy": "^1.0.2",

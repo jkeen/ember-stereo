@@ -2,21 +2,21 @@ import { next, bind } from '@ember/runloop';
 import Mixin from '@ember/object/mixin';
 import Ember from 'ember';
 import BaseSound from './base';
-let ClassMethods = Mixin.create({
-  setup() {},
-  canPlay: () => true,
-  canUseConnection: () => true,
-  canPlayMimeType: () => true,
-  toString() {
+import classic from 'ember-classic-decorator';
+@classic
+export default class DummyConnection extends BaseSound {
+  static setup() {}
+  static canPlay = () => true
+  static canUseConnection = () => true
+  static canPlayMimeType = () => true
+  static toString() {
     return 'Dummy Connection';
   }
-});
 
+  debugName = 'dummyConnection'
+  _position=  0
+  _tickInterval = 50
 
-let DummyConnection = BaseSound.extend({
-  debugName: 'dummyConnection',
-  _position: 0,
-  _tickInterval: 50,
   setup() {
     let {result} = this.getInfoFromUrl();
     if (result === 'bad') {
@@ -25,13 +25,13 @@ let DummyConnection = BaseSound.extend({
     else {
       next(() => this.trigger('audio-ready', this));
     }
-  },
+  }
 
-  stopTicking: function() {
+  stopTicking() {
     window.clearTimeout(this.tick);
-  },
+  }
 
-  startTicking: function() {
+  startTicking() {
     if (!Ember.Test.checkWaiters || Ember.Test.checkWaiters()) {
       this.tick = window.setTimeout(bind(() => {
         this._setPosition((this._currentPosition() || 0) + this.get('_tickInterval'));
@@ -40,9 +40,9 @@ let DummyConnection = BaseSound.extend({
     } else {
       this.stopTicking();
     }
-  },
+  }
 
-  getInfoFromUrl: function() {
+  getInfoFromUrl() {
     if (!this.get('url')) {
       return {};
     }
@@ -69,7 +69,7 @@ let DummyConnection = BaseSound.extend({
     else {
       return {result:'good', length:1000, name:'default'};
     }
-  },
+  }
 
   play({position} = {}) {
     if (typeof position !== 'undefined') {
@@ -77,15 +77,18 @@ let DummyConnection = BaseSound.extend({
     }
     this.trigger('audio-played', this);
     this.startTicking();
-  },
+  }
+
   pause() {
     this.trigger('audio-paused', this);
     this.stopTicking();
-  },
+  }
+
   stop() {
     this.trigger('audio-paused', this);
     this.stopTicking();
-  },
+  }
+
   _setPosition(duration) {
     duration = Math.max(0, duration);
     duration = Math.min(this._audioDuration(), duration);
@@ -99,13 +102,16 @@ let DummyConnection = BaseSound.extend({
     }
 
     return duration;
-  },
+  }
+
   _currentPosition() {
     return this.get('_position');
-  },
+  }
+
   _setVolume(v) {
     this.set('volume', v);
-  },
+  }
+
   _audioDuration() {
     let {result, length} = this.getInfoFromUrl();
 
@@ -119,9 +125,6 @@ let DummyConnection = BaseSound.extend({
     else {
       return parseInt(length, 10);
     }
-  },
-});
+  }
+}
 
-DummyConnection.reopenClass(ClassMethods);
-
-export default DummyConnection;

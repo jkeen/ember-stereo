@@ -17,7 +17,7 @@ module('Unit | Helper | one at a time', function() {
 
   test("only one sound should play at a time", function(assert) {
     assert.expect(3);
-    let oneAtATime = OneAtATime.create();
+    let oneAtATime = new OneAtATime;
 
     let sound1 = Sound.create();
     let sound2 = Sound.create();

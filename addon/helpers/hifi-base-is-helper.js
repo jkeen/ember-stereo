@@ -12,10 +12,11 @@ export default class HifiBaseListenHelper extends Helper {
 
   init() {
     super.init(...arguments);
-    this.boundRecompute = () => this.check();
+    this.boundRecompute = (s) => this.check(s);
+
     this.listen.forEach(eventName => {
       this.hifi.on(eventName, this.boundRecompute);
-    })  
+    })
   }
 
   willDestroy() {
@@ -24,14 +25,25 @@ export default class HifiBaseListenHelper extends Helper {
     })  
   }
 
-  check() {
+  check(sound) {
     let result;
+    
+
     if (this.compare == 'system') {
       result = this.checkSystem()
       debug(`ember-hifi:helpers:${this.name}`)(`system check=${result}`); 
     }
     else {
-      let sound = this.hifi.findLoaded(this.compare);
+      if (sound) {
+        if (sound.url != this.compare.toString()) {
+          return;
+        }
+        sound = this.hifi.findLoaded(this.compare);
+      }
+      else {
+        sound = this.hifi.findLoaded(this.compare);
+      }
+
       result = this.checkSound(sound);
       if (sound && sound.url) {
         debug(`ember-hifi:helpers:${this.name}`)(`${sound.url} check=${result}`); 

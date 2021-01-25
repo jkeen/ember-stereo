@@ -25,7 +25,7 @@ module('Unit | Utility | promise try', function() {
     PromiseRace.start(params, function(nextParam, returnSuccess, markFailure) {
       paramsTried.push(nextParam);
       markFailure(nextParam);
-    }).catch(({failures}) => {
+    }).catch((failures) => {
       assert.equal(params.length, 6, "it should not have modified the params passed in");
       assert.equal(paramsTried.length, params.length, "should have tried all the parameters");
       assert.deepEqual(failures, params, "all params should be recorded as failures");
