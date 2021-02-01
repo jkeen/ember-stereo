@@ -53,7 +53,7 @@ import flashLibrary from 'your-third-party-library'
 
 let Sound = BaseSound.extend({
   setup() {
-    let url   = this.get('url');
+    let url   = this.url;
     let sound = this;
 
     let flashSound = new flashLibrary({
@@ -83,7 +83,7 @@ let Sound = BaseSound.extend({
       }
     })
 
-    this.set('flashSound', flashSound);
+    this.flashSound = flashSound;
   }
 ```
 

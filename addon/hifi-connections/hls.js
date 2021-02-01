@@ -1,15 +1,14 @@
 import BaseSound from './base';
 import HLS from 'hls';
-import classic from 'ember-classic-decorator';
-
+import { tracked } from '@glimmer/tracking';
 /**
 * This class connects with HLS.js to create sounds.
 *
 * @class HLS
-* @extends BaseSound
+* @extends HLSSound
 * @constructor
 */
-@classic
+
 export default class HLSSound extends BaseSound {
   static acceptMimeTypes = ['application/vnd.apple.mpegurl']
   static canUseConnection() {
@@ -21,16 +20,17 @@ export default class HLSSound extends BaseSound {
     return 'HLS';
   }
 
-  loaded = false
-  mediaRecoveryAttempts = 0
-  id3TagMetadata = null
+  @tracked live = false
+  @tracked loaded = false
+  @tracked mediaRecoveryAttempts = 0
+  @tracked id3TagMetadata = null
 
   setup() {
     let hls   = new HLS({debug: true, startFragPrefetch: true});
     let video = document.createElement('video');
 
-    this.set('video', video);
-    this.set('hls', hls);
+    this.video = video;
+    this.hls = hls;
     hls.attachMedia(video);
     this._setupHLSEvents(hls);
     this._setupPlayerEvents(video);
@@ -56,16 +56,16 @@ export default class HLSSound extends BaseSound {
 
     hls.on(HLS.Events.MEDIA_ATTACHED, () => {
       this.debug('media attached');
-      hls.loadSource(this.get('url'));
+      hls.loadSource(this.url);
 
       hls.on(HLS.Events.MANIFEST_PARSED, (e, data) => {
         this.debug(`manifest parsed and loaded, found ${data.levels.length} quality level(s)`);
-        this.set('manifest', data);
+        this.manifest = data;
       });
 
       hls.on(HLS.Events.LEVEL_LOADED, (e, data) => {
         this.debug(`level ${data.level} loaded`);
-        this.set('live', data.details.live)
+        this.live = data.details.live;
         this._checkIfAudioIsReady();
       });
 
@@ -76,19 +76,18 @@ export default class HLSSound extends BaseSound {
 
       hls.on(HLS.Events.ERROR, (e, data) => this._onHLSError(e, data));
 
-      var self = this;
       hls.on(HLS.Events.FRAG_CHANGED, (e, f) => {
         let newId3TagMetadata = {
           title: f.frag.title
         }
 
-        if (JSON.stringify(self.get('id3TagMetadata')) !== JSON.stringify(newId3TagMetadata)) {
+        if (JSON.stringify(this.id3TagMetadata) !== JSON.stringify(newId3TagMetadata)) {
           this.debug('hls metadata changed');
           this.trigger('audio-metadata-changed', this, {
-            old: self.get('id3TagMetadata'),
+            old: this.id3TagMetadata,
             new: newId3TagMetadata
           });
-          self.set('id3TagMetadata', newId3TagMetadata);
+          this.id3TagMetadata = newId3TagMetadata;
         }
       });
     });
@@ -96,7 +95,7 @@ export default class HLSSound extends BaseSound {
 
   _setupPlayerEvents(video) {
     video.addEventListener('playing',         () => {
-      if (this.get('loaded')) {
+      if (this.loaded) {
         this.trigger('audio-played', this);
       }
       else {
@@ -113,21 +112,21 @@ export default class HLSSound extends BaseSound {
   }
 
   _checkIfAudioIsReady() {
-    if (!this.get('loaded')) {
+    if (!this.loaded) {
       // The only reliable way to check if this thing is actually ready
       // is to play it. If we get a play signal we're golden, but if we
       // get an error, we're outta here
 
       this.debug('Testing if audio is ready');
-      this.get('video').volume = 0;
-      this.get('video').play();
+      this.video.volume = 0;
+      this.video.play();
     }
   }
 
   _signalAudioIsReady() {
     this.debug('Test succeeded, signaling audio-ready');
-    this.set('loaded', true);
-    this.get('video').pause();
+    this.loaded = true;
+    this.video.pause();
     this.trigger('audio-ready');
   }
 
@@ -173,8 +172,8 @@ export default class HLSSound extends BaseSound {
   }
 
   _tryToRecoverFromMediaError(error) {
-    let mediaRecoveryAttempts = this.get('mediaRecoveryAttempts');
-    let hls = this.get('hls');
+    let mediaRecoveryAttempts = this.mediaRecoveryAttempts;
+    let hls = this.hls;
 
     switch(mediaRecoveryAttempts) {
       case 0:
@@ -192,11 +191,11 @@ export default class HLSSound extends BaseSound {
         break;
     }
 
-    this.incrementProperty('mediaRecoveryAttempts');
+    this.mediaRecoveryAttempts = this.mediaRecoveryAttempts + 1;
   }
 
   _giveUpAndDie(error) {
-    this.get('hls').destroy();
+    this.hls.destroy();
     this.trigger('audio-load-error', error);
   }
 
@@ -208,55 +207,55 @@ export default class HLSSound extends BaseSound {
   /* Public interface to sound */
 
   _audioDuration() {
-    if (this.get('live')) {
+    if (this.live) {
       return Infinity
     }
     else {
-      return this.get('video').duration * 1000;
+      return this.video.duration * 1000;
     }
   }
 
   _currentPosition() {
-    return this.get('video').currentTime * 1000;
+    return this.video.currentTime * 1000;
   }
 
   _setPosition(position) {
-    this.get('video').currentTime = (position / 1000);
+    this.video.currentTime = (position / 1000);
 
     return position;
   }
 
   _setVolume(volume) {
-    this.get('video').volume = (volume/100);
+    this.video.volume = (volume/100);
   }
 
   play() {
-    if (!this.get('video').src) {
+    if (!this.video.src) {
       this.setup(); // the stream was stopped before
     }
-    this.get('video').play();
+    this.video.play();
 
     this.debug('#play');
-    if (this.get('loadStopped')) {
-      this.get('hls').startLoad();
-      this.set('loadStopped', false);
+    if (this.loadStopped) {
+      this.hls.startLoad();
+      this.loadStopped = false;
     }
   }
 
   pause() {
     this.debug('#pause');
-    this.get('video').pause();
-    this.get('hls').stopLoad();
-    this.set('loadStopped', true);
+    this.video.pause();
+    this.hls.stopLoad();
+    this.loadStopped = true;
   }
 
   stop() {
     this.debug('#stop');
     this.pause();
-    this.get('video').removeAttribute('src')
+    this.video.removeAttribute('src')
   }
 
   teardown() {
-    this.get('hls').destroy();
+    this.hls.destroy();
   }
 }

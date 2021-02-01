@@ -3,26 +3,26 @@ import Service from '@ember/service';
 import { A as emberArray, makeArray } from '@ember/array';
 import { inject as service } from '@ember/service';
 import debug from 'debug';
-
+import { tracked } from '@glimmer/tracking';
 /**
 * This class caches sound objects based on urls. You shouldn't have to interact with this class.
 *
 * @class hifi-cache
+* @private
 * @constructor
 */
 
 @classic
-export default class HifiCache extends Service {
+export default class HifiCache  {
   debugName = 'hifi-cache';
-  cachedCount = 0;
+  @tracked cachedCount = 0;
 
-  init() {
-    this.set('_cache', {});
-    super.init(...arguments);
+  constructor() {
+    this._cache = {};
   }
 
   reset() {
-    this.set('_cache', {});
+    this._cache = {};
   }
 
   /**
@@ -33,13 +33,13 @@ export default class HifiCache extends Service {
    */
   find(urls) {
     urls = makeArray(urls);
-    let cache = this.get('_cache');
+    let cache = this._cache;
     let keysToSearch = emberArray(urls).map(url => (url.url || url));
     let sounds       = emberArray(keysToSearch).map(url => cache[url]);
     let foundSounds  = emberArray(sounds).compact();
 
     if (foundSounds.length > 0) {
-      this.debug(`cache hit for ${foundSounds[0].get('url')}`);
+      this.debug(`cache hit for ${foundSounds[0].url}`);
     }
     else {
       this.debug(`cache miss for ${keysToSearch.join(',')}`);
@@ -56,12 +56,11 @@ export default class HifiCache extends Service {
   remove(sound) {
     if (this.isDestroyed) return;
 
-    this.debug(`removing sound from cache with url: ${sound.get('url')}`);
+    this.debug(`removing sound from cache with url: ${sound.url}`);
 
-    if (this._cache[sound.get('url')]) {
-      delete this._cache[sound.get('url')]
-      this.set('cachedCount', Object.keys(this._cache).length);
-      this.notifyPropertyChange('_cache');
+    if (this._cache[sound.url]) {
+      delete this._cache[sound.url]
+      this.cachedCount = Object.keys(this._cache).length
     }
   }
 
@@ -73,12 +72,11 @@ export default class HifiCache extends Service {
   cache(sound) {
     if (this.isDestroyed) return;
 
-    this.debug(`caching sound with url: ${sound.get('url')}`);
+    this.debug(`caching sound with url: ${sound.url}`);
 
-    if (!this._cache[sound.get('url')]) {
-      this._cache[sound.get('url')] = sound;
-      this.set('cachedCount', Object.keys(this._cache).length);
-      this.notifyPropertyChange('_cache');
+    if (!this._cache[sound.url]) {
+      this._cache[sound.url] = sound;
+      this.cachedCount = Object.keys(this._cache).length;
     }
   }
 

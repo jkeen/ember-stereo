@@ -4,78 +4,58 @@ import Helper from '@ember/component/helper';
 import debug from 'debug';
 import { tracked } from '@glimmer/tracking';
 import { once } from '@ember/runloop';
-
+import { dedupeTracked } from 'tracked-toolbox';
+import hasEqualUrls from 'ember-hifi/utils/has-equal-urls';
+import { getOwner } from '@ember/application';
 @classic
 export default class HifiBaseListenHelper extends Helper {
   @service hifi;
-  @tracked result = false;
 
-  init() {
-    super.init(...arguments);
-    this.boundRecompute = (s) => this.check(s);
+  @tracked sound = null;
+  @tracked compare = null;
+  @tracked result = false
+  registered = false
 
-    this.listen.forEach(eventName => {
-      this.hifi.on(eventName, this.boundRecompute);
-    })
+  registerListeners(compare) {
+    this.boundRecompute = (e) => this.recompute(e);
+
+    if (!this.registered) {
+      this.registered = compare;
+      this.hifi.on('new-load-request', ({loadPromise, urlsOrPromise}) => {
+        if (hasEqualUrls(urlsOrPromise, this.registered)) {
+          loadPromise.then(({sound}) => this.boundRecompute(this.registered));
+        }
+      })
+
+      this.listen.forEach(eventName => {
+        this.hifi.on(eventName, (sound) => {
+          if (sound && hasEqualUrls(sound.url, this.registered)) {
+            debug(`ember-hifi:helpers:${this.name}`)(`${this.registered} recompute`);
+            this.sound = sound;
+            this.boundRecompute(this.registered);
+          }
+          else if (sound && this.registered == 'system') {
+            this.boundRecompute(this.registered);
+          }
+        })
+      })
+    }
   }
 
-  willDestroy() {
-    this.listen.forEach(eventName => {
-      this.hifi.off(eventName, this.boundRecompute);
-    })  
-  }
-
-  check(sound) {
-    let result;
-    
-
-    if (this.compare == 'system') {
-      result = this.checkSystem()
-      debug(`ember-hifi:helpers:${this.name}`)(`system check=${result}`); 
+  compute(compare = 'system') {
+    if (compare.toString().trim().length == 0) {
+      compare = 'system';
+    }
+    this.registerListeners(compare);
+    if (compare == 'system') {
+      this.result = this.checkSystem();
+      debug(`ember-hifi:helpers:${this.name}:system`)(`render = ${this.result}`); 
     }
     else {
-      if (sound) {
-        if (sound.url != this.compare.toString()) {
-          return;
-        }
-        sound = this.hifi.findLoaded(this.compare);
-      }
-      else {
-        sound = this.hifi.findLoaded(this.compare);
-      }
-
-      result = this.checkSound(sound);
-      if (sound && sound.url) {
-        debug(`ember-hifi:helpers:${this.name}`)(`${sound.url} check=${result}`); 
-      }
-      else {
-        debug(`ember-hifi:helpers:${this.name}`)(`sound check=${result}`); 
-      }
+      let sound = this.hifi.findLoaded(compare);
+      this.result = this.checkSound(sound);
+      debug(`ember-hifi:helpers:${this.name}`)(`${compare} render=${this.result}`); 
     }
-
-    once(() => {
-      this.updateResult(result);
-    });
-  }
-
-  updateResult(newResult) {
-    if (newResult != this.result) {
-      this.result = newResult;
-    }  
-  }
-
-  compute(compare) {
-    if (!this.compare) {
-      if (!compare) { 
-        this.compare = 'system';
-      }
-      else {
-        this.compare = compare;
-      }
-      this.check();
-    }
-
-    debug(`ember-hifi:helpers:${this.name}`)(`${this.compare} render=${this.result}`); 
 
     return this.result;
   }

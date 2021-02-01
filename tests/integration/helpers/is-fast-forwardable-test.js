@@ -8,10 +8,16 @@ module('Integration | Helper | is-fast-forwardable', function(hooks) {
 
   // TODO: Replace this with your real tests.
   test('it renders', async function(assert) {
-    this.set('inputValue', '1234');
+    let service = this.owner.lookup('service:hifi')
+    service.loadConnections([{name: 'DummyConnection'}]);
 
-    await render(hbs`{{is-fast-forwardable inputValue}}`);
+    this.set('url', '/good/10/fastforwardable-test.mp3')
+    await service.play(this.url)
+    await render(hbs`{{#if (is-rewindable this.url)}}is-fastforwardable{{else}}is-not-fastforwardable{{/if}}`);
+    assert.equal(service.isRewindable, true);
+    assert.equal(this.element.textContent.trim(), 'is-fastforwardable');
 
-    assert.equal(this.element.textContent.trim(), '1234');
+    this.set('url', '/good/stream/stream.mp3')
+    assert.equal(this.element.textContent.trim(), 'is-not-fastforwardable');
   });
 });

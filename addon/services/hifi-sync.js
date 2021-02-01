@@ -8,7 +8,6 @@ import { throttle } from '@ember/runloop';
 @classic
 export default class HifiSync extends Service.extend(Evented) {
   @service hifi;
-  @service('hifi-cache') cache;
 
   prefix = 'hifi:sync:'
 

@@ -81,7 +81,7 @@ export default class HifiControlModifier extends Modifier {
 
   async didInstall() {
     if (this.urlOrPromise) {
-      this.hifiSync.on(this.urlOrPromise, (e) => this.onStateChange(e));
+      // this.hifiSync.on(this.urlOrPromise, (e) => this.onStateChange(e));
     }
     this.element.addEventListener('click', this.onClick, true);
 

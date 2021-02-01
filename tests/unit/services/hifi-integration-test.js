@@ -72,7 +72,7 @@ module('Unit | Service | hifi integration test.js', function(hooks) {
     let hifi = service.get('hifi');
 
     hifi.load('/good/2500/test').then(({sound}) => {
-      assert.equal(sound.get('duration'), 2500);
+      assert.equal(sound.duration, 2500);
     });
   });
 
@@ -81,7 +81,7 @@ module('Unit | Service | hifi integration test.js', function(hooks) {
     let hifi = service.get('hifi');
 
     hifi.load('http://test.example').then(({sound}) => {
-      assert.equal(sound.get('duration'), 1000);
+      assert.equal(sound.duration, 1000);
     });
   });
 
@@ -90,14 +90,14 @@ module('Unit | Service | hifi integration test.js', function(hooks) {
     let hifi = service.get('hifi');
 
     hifi.load('/good/stream/test').then(({sound}) => {
-      assert.equal(sound.get('duration'), Infinity, "duration should be infinity");
-      assert.equal(sound.get('isStream'), true, "should be stream");
+      assert.equal(sound.duration, Infinity, "duration should be infinity");
+      assert.equal(sound.isStream, true, "should be stream");
     })
   });
 
   test('it simulates play', function(assert) {
     registerWaiter(this, function() {
-      return this.sound && this.sound.get('_tickInterval') * ticks === this.sound._currentPosition();
+      return this.sound && this.sound._tickInterval * ticks === this.sound._currentPosition();
     });
     let done = assert.async();
     assert.expect(3);
@@ -107,11 +107,11 @@ module('Unit | Service | hifi integration test.js', function(hooks) {
 
     hifi.play('/good/1500/test/yes').then(({sound}) => {
       this.sound = sound;
-      let tickInterval = sound.get('_tickInterval');
+      let tickInterval = sound._tickInterval;
       assert.equal(sound._currentPosition(), 0, "initial position should be 0");
       later(() => {
         assert.equal(sound._currentPosition(), tickInterval * ticks, `position should be ${tickInterval * ticks}`);
-        assert.equal(sound.get('isPlaying'), true, "should be playing");
+        assert.equal(sound.isPlaying, true, "should be playing");
         done();
         sound.stop();
       }, (tickInterval * (ticks + 1)))
@@ -151,7 +151,7 @@ module('Unit | Service | hifi integration test.js', function(hooks) {
     let hifi = service.get('hifi');
 
     hifi.one('audio-ended', (sound) => {
-      assert.equal(sound.get('position'), 1000, "sound should be at the end");
+      assert.equal(sound.position, 1000, "sound should be at the end");
     });
 
     hifi.play('/good/1000/test').then(() => {

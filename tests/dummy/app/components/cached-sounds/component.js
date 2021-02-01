@@ -10,10 +10,9 @@ export default Component.extend({
   layout,
 
   hifi: service(),
-  hifiCache: service(),
 
-  loadedSoundCountSentence: computed('hifiCache.cachedCount', function() {
-    let count = this.hifiCache.cachedCount
+  loadedSoundCountSentence: computed('hifi.soundCache.cachedCount', function() {
+    let count = this.hifi.soundCache.cachedCount
     if (count === 1) {
       return "1 Loaded Sound";
     }
@@ -25,8 +24,8 @@ export default Component.extend({
     }
   }),
 
-  loadedItems: computed('hifiCache.cachedCount', function() {
-    return Object.values(this.hifiCache._cache); // animated each gets messed up unless you do this thing
+  loadedItems: computed('hifi.soundCache.cachedCount', function() {
+    return Object.values(this.hifi.soundCache._cache); // animated each gets messed up unless you do this thing
   }),
 
   //eslint-disable-next-line
@@ -50,7 +49,7 @@ export default Component.extend({
 
    actions: {
      fetchSound(url) {
-       return this.hifiCache.find(url);
+       return this.hifi.soundCache.find(url);
      }
    }
 });

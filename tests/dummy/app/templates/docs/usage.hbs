@@ -1,23 +1,102 @@
+
+
+The following examples all use the following URL <a href={{this.onDemandUrl}}>{{this.onDemandUrl}}</a>
+
 <DocsDemo as |demo|>
   <demo.example @name="hifi-helpers.hbs">
-    {{#let "https://audio.wnyc.org/otm/otm04212017pod.mp3" as |url|}}
-      <button {{hifi-control url}}>
-        {{#if (is-playing url)}}
-          Pause
-        {{else if (is-loading url)}}
-          Loading
-        {{else}}
-          Play
-        {{/if}}
-      </button>
-    {{/let}}
+    <button type="button" {{hifi-control this.onDemandUrl}}>
+      {{#if (is-playing this.onDemandUrl)}}
+        Pause
+      {{else if (is-loading this.onDemandUrl)}}
+        Loading
+      {{else}}
+        Play
+      {{/if}}
+    </button>
+
+    <button type="button" {{on 'click' (hifi-load this.onDemandUrl)}}>
+      {{#if (is-loaded this.onDemandUrl)}}
+        Loaded
+      {{else if (is-loading this.onDemandUrl)}}
+        Loaded
+      {{else}}
+        Load
+      {{/if}}
+    </button>
   </demo.example>
   {{demo.snippet "hifi-helpers.hbs"}}
+  {{demo.snippet "application-controller.js"}}
 </DocsDemo>
 
+
+
 <DocsDemo as |demo|>
-  <demo.example @name="hifi-control-decorator.hbs">
-    {{#let "https://audio.wnyc.org/bl/bl011421dpod.mp3" as |url|}}
+  <demo.example @name="hifi-helpers-stream.hbs">
+    <button type="button" {{hifi-control this.streamUrl}}>
+      {{#if (is-playing this.streamUrl)}}
+        Pause
+      {{else if (is-loading this.streamUrl)}}
+        Loading
+      {{else}}
+        Play
+      {{/if}}
+    </button>
+
+    <button type="button" {{on 'click' (hifi-load this.streamUrl)}}>
+      {{#if (is-loaded this.streamUrl)}}
+        Loaded
+      {{else if (is-loading this.streamUrl)}}
+        Loaded
+      {{else}}
+        Load
+      {{/if}}
+    </button>
+  </demo.example>
+  {{demo.snippet "hifi-helpers-stream.hbs"}}
+  {{demo.snippet "application-controller.js"}}
+</DocsDemo>
+
+
+<DocsDemo as |demo|>
+  <demo.example @name="hifi-duration-and-position.hbs">
+    <div class="position-display" style="display: grid; grid-template-columns: min-content auto min-content; align-items: center; grid-gap: 10px;">
+      <span>
+        {{hifi-position this.onDemandUrl format='time'}}
+      </span>
+      <div style="background-color: #DDD; padding: 5px; ">
+        <div style="width: {{hifi-position this.onDemandUrl format='percent'}}%; background-color: red; height: 5px;"></div>
+      </div>
+      <span>
+        {{hifi-duration this.onDemandUrl format='time'}}
+      </span>
+    </div>
+  </demo.example>
+  {{demo.snippet "hifi-duration-and-position.hbs"}}
+  {{demo.snippet "application-controller.js"}}
+</DocsDemo>
+
+Currently Playing Sound Display
+<DocsDemo as |demo|>
+  <demo.example @name="hifi-duration-and-position-cs.hbs">
+    <div class="position-display" style="display: grid; grid-template-columns: min-content auto min-content; align-items: center; grid-gap: 10px;">
+      <span>
+        {{hifi-position format='time'}}
+      </span>
+      <div style="background-color: #DDD; padding: 5px; ">
+        <div style="width: {{hifi-position format='percent'}}%; background-color: red; height: 5px;"></div>
+      </div>
+      <span>
+        {{hifi-duration format='time'}}
+      </span>
+    </div>
+  </demo.example>
+  {{demo.snippet "hifi-duration-and-position-cs.hbs"}}
+  {{demo.snippet "application-controller.js"}}
+</DocsDemo>
+{{!-- 
+<DocsDemo as |demo|>
+  <demo.example @name="hifi-play-decorator-promise.hbs">
+      {{#let (perform this.loadAudioUrl this) as |url|}}
       <button {{hifi-control url}}>
         {{#if (is-playing url)}}
           Pause
@@ -27,23 +106,8 @@
           Play
         {{/if}}
       </button>
-    {{/let}}
-  </demo.example>
-  {{demo.snippet "hifi-control-decorator.hbs"}}
-</DocsDemo>
-
-<DocsDemo as |demo|>
-  <demo.example @name="hifi-play-decorator-promise.hbs">
-      <button {{hifi-control (perform this.loadAudioUrl this)}}>
-        {{!-- {{#if (hifi-is-playing this.loadAudio)}} --}}
-          {{!-- Pause --}}
-        {{!-- {{else if (hifi-is-loading this.loadAudio)}} --}}
-          {{!-- Loading --}}
-        {{!-- {{else}} --}}
-          Play
-        {{!-- {{/if}} --}}
-      </button>
+      {{/let}}
   </demo.example>
   {{demo.snippet "hifi-play-decorator-promise.hbs"}}
   {{demo.snippet "hifi-play-decorator-promise.js"}}
-</DocsDemo>
+</DocsDemo> --}}

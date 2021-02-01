@@ -6,12 +6,15 @@ import { hbs } from 'ember-cli-htmlbars';
 module('Integration | Helper | is-loaded', function(hooks) {
   setupRenderingTest(hooks);
 
-  // TODO: Replace this with your real tests.
   test('it renders', async function(assert) {
-    this.set('inputValue', '1234');
+    let service = this.owner.lookup('service:hifi')
+    service.loadConnections([{name: 'DummyConnection'}]);
 
-    await render(hbs`{{is-loaded inputValue}}`);
-
-    assert.equal(this.element.textContent.trim(), '1234');
+    this.set('url', '/good/10/silence.mp3')
+    await render(hbs`{{#if (is-loaded this.url)}}is-loaded{{else}}is-not-loaded{{/if}}`);
+    assert.equal(this.element.textContent.trim(), 'is-not-loaded');
+    service.load(this.url);
+    assert.equal(this.element.textContent.trim(), 'is-loaded');
   });
+
 });

@@ -10,7 +10,6 @@ import deepSet from 'ember-deep-set';
 export default Component.extend({
   layout,
   hifi: service(),
-  hifiCache: service(),
   classNames: ['connection-display'],
   classNameBindings:['lastResultWasOurs', 'lastResultCouldHaveBeenOurs'],
 

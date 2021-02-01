@@ -32,6 +32,7 @@
 
 <div class="sound-display-controls">
   <SoundDisplay::Position @sound={{@sound}}/>
+
   <div class="sound-control-buttons">
     <a class="sound-control-button-item">
 
@@ -39,30 +40,28 @@
 
     {{#if (is-rewindable this.url)}}
       <button type="button" class="sound-control-button-item" {{on 'click' (fn (hifi-rewind this.url increment=5000))}}>
-        {{fa-icon "backward"}}
+        <FaIcon @icon="backward"/>
       </button>
     {{/if}}
 
     <button type="button" class="sound-control-button-item" {{hifi-control this.url}}>
       {{#if (is-loading this.url)}}
-        <FaIcon @icon=circle-notch @size="2x" class="icon-spin"/>
+        <FaIcon @icon="circle-notch" @size="2x" class="icon-spin"/>
       {{else if (is-playing this.url)}}
-        <FaIcon @icon=pause @size="2x"/>
-      {{else if (is-playing-elsewhere this.url)}}
-        <FaIcon @icon=pause @size="2x"/>
+        <FaIcon @icon="pause" @size="2x"/>
       {{else}}
-        <FaIcon @icon=play @size="2x"/>
+        <FaIcon @icon="play" @size="2x"/>
       {{/if}}
     </button>
 
     {{#if (is-fast-forwardable this.url)}}
       <button type="button" class="sound-control-button-item" {{on 'click' (fn (hifi-fast-forward this.url increment=5000))}}>
-        {{fa-icon "forward"}}
+         <FaIcon @icon="forward"/>
       </button>
     {{/if}}
 
     <button type="button" class="sound-control-button-item"  {{on 'click' (fn (hifi-stop this.url))}}>
-      {{fa-icon "stop"}}
+      <FaIcon @icon="stop"/>
     </button>
   </div>
   <canvas class="sound-display-waveform" {{hifi-visualizer sound type="wave" colors=(array 'aqua' '#2f374a')}}></canvas>

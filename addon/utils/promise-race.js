@@ -1,5 +1,6 @@
 import { copy } from 'ember-copy';
-import RSVP from 'rsvp';
+import { Promise } from 'rsvp';
+
 /**
  * Given an array of params, this will go through the list one-by-one and call your
  * callback function until your function calls returnSuccess, at which point the
@@ -18,7 +19,7 @@ import RSVP from 'rsvp';
  */
 
 function start(params, callback) {
-  return new RSVP.Promise((resolve, reject) => {
+  return new Promise((resolve, reject) => {
     let paramsToTry = copy(params);
     var failures = [];
     (function tryNext(tryThis) {
@@ -41,7 +42,7 @@ function start(params, callback) {
 }
 
 function promisifyCallback(callback, nextParam) {
-  return new RSVP.Promise((returnSuccess, markFailure) => {
+  return new Promise((returnSuccess, markFailure) => {
     callback(nextParam, returnSuccess, markFailure);
   });
 }

@@ -3,6 +3,7 @@ import Mixin from '@ember/object/mixin';
 import Ember from 'ember';
 import BaseSound from './base';
 import classic from 'ember-classic-decorator';
+import { tracked } from '@glimmer/tracking';
 @classic
 export default class DummyConnection extends BaseSound {
   static setup() {}
@@ -34,20 +35,20 @@ export default class DummyConnection extends BaseSound {
   startTicking() {
     if (!Ember.Test.checkWaiters || Ember.Test.checkWaiters()) {
       this.tick = window.setTimeout(bind(() => {
-        this._setPosition((this._currentPosition() || 0) + this.get('_tickInterval'));
+        this._setPosition((this._currentPosition() || 0) + this._tickInterval);
         this.startTicking();
-      }), this.get('_tickInterval'));
+      }), this._tickInterval);
     } else {
       this.stopTicking();
     }
   }
 
   getInfoFromUrl() {
-    if (!this.get('url')) {
+    if (!this.url) {
       return {};
     }
-    else if (this.get('url').startsWith('/')) {
-      let [, result, length, name] = this.get('url').split('/');
+    else if (this.url.startsWith('/')) {
+      let [, result, length, name] = this.url.split('/');
       /*eslint no-console: 0 */
       if (!(result && length && name)) {
         console.error('[dummy-connection] url format should be "/:result/:length/:name"');
@@ -55,12 +56,12 @@ export default class DummyConnection extends BaseSound {
       else {
         if (!(length === 'stream' || parseInt(length) > 0)) {
           console.error('[dummy-connection] url format should be "/:result/:length/:name"');
-          console.error(`[dummy-connection] length should be an integer or "stream". Was given ${this.get('url')}`);
+          console.error(`[dummy-connection] length should be an integer or "stream". Was given ${this.url}`);
         }
 
         if (!(result === 'good' || result === 'bad')) {
           console.error('[dummy-connection] url format should be "/:result/:length/:name"');
-          console.error(`[dummy-connection] status should be 'good' or 'bad'. Was given ${this.get('url')}`);
+          console.error(`[dummy-connection] status should be 'good' or 'bad'. Was given ${this.url}`);
         }
       }
 
@@ -73,7 +74,7 @@ export default class DummyConnection extends BaseSound {
 
   play({position} = {}) {
     if (typeof position !== 'undefined') {
-      this.set('_position', position);
+      this._position = position;
     }
     this.trigger('audio-played', this);
     this.startTicking();
@@ -92,7 +93,7 @@ export default class DummyConnection extends BaseSound {
   _setPosition(duration) {
     duration = Math.max(0, duration);
     duration = Math.min(this._audioDuration(), duration);
-    this.set('_position', duration);
+    this._position = duration;
 
     if (duration >= this._audioDuration()) {
       next(() => {
@@ -109,7 +110,7 @@ export default class DummyConnection extends BaseSound {
   }
 
   _setVolume(v) {
-    this.set('volume', v);
+    this.volume = v;
   }
 
   _audioDuration() {

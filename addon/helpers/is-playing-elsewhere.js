@@ -26,27 +26,27 @@ export default class HifiIsPlayingElsewhere extends Helper {
     this.hifi.off('current-sound-changed', this.boundRecompute);
   }
 
-  listenForChanges(compare) {
-    if (this.compare != compare) {
-      if (this.compare) {
-        makeArray(this.compare).forEach(url => {
+  listenForChanges(identifier) {
+    if (this.identifier != identifier) {
+      if (this.identifier) {
+        makeArray(this.identifier).forEach(url => {
           try {
             this.hifiSync.off(url.toString(), this.boundRecompute);
           } catch(e) {}
         })
       }
-      this.compare = compare;
-      makeArray(compare).forEach(url => {
+      this.identifier = identifier;
+      makeArray(identifier).forEach(url => {
         this.hifiSync.on(url.toString(), () => this.recompute())
       });
     }
   }
 
-  compute(compare) {
-    this.listenForChanges(compare);
-    let result = this.hifiSync.isPlayingElsewhere(compare);
+  compute([identifier]) {
+    this.listenForChanges(identifier);
+    let result = this.hifiSync.isPlayingElsewhere(identifier);
     if (result) {
-      debug(`ember-hifi:${compare.toString()}`)(`is-playing-elsewhere = ${result}`);
+      debug(`ember-hifi:${identifier.toString()}`)(`is-playing-elsewhere = ${result}`);
 
       return result;  
     }

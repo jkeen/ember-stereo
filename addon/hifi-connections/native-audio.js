@@ -114,7 +114,7 @@ export default class NativeAudioConnection extends BaseSound {
     // If we have control, return the shared element
     // if we don't have control, return the internal cloned element
 
-    let sharedAudioAccess  = this.get('sharedAudioAccess');
+    let sharedAudioAccess  = this.sharedAudioAccess;
 
     if (sharedAudioAccess && sharedAudioAccess.hasControl(this)) {
       return sharedAudioAccess.audioElement;
@@ -129,18 +129,18 @@ export default class NativeAudioConnection extends BaseSound {
   }
 
   releaseControl() {
-    if (!this.get('sharedAudioAccess')) {
+    if (!this.sharedAudioAccess) {
       return;
     }
 
-    if (this.get('isPlaying')) {
+    if (this.isPlaying) {
       // send a pause event so anyone subscribed to hifi's relayed events gets the message
       this._onAudioPaused(this);
     }
 
-    this.get('sharedAudioAccess').releaseControl(this);
+    this.sharedAudioAccess.releaseControl(this);
     // save current state of audio element to the internal element that won't be played
-    this._saveState(this.get('sharedAudioAccess.audioElement'));
+    this._saveState(this.sharedAudioAccess.audioElement);
   }
 
   _saveState(audio) {
@@ -163,8 +163,8 @@ export default class NativeAudioConnection extends BaseSound {
   }
 
   requestControl() {
-    if (this.get('sharedAudioAccess')) {
-      return this.get('sharedAudioAccess').requestControl(this);
+    if (this.sharedAudioAccess) {
+      return this.sharedAudioAccess.requestControl(this);
     } else {
       return this.audioElement();
     }
@@ -174,7 +174,7 @@ export default class NativeAudioConnection extends BaseSound {
     let sharedElement     = this.audioElement();
     let internalElement   = this._audioElement;
 
-    if (this.get('sharedAudioAccess') && internalElement) {
+    if (this.sharedAudioAccess && internalElement) {
       this.debug('Restoring audio state…');
       try {
         // restore the state of the shared element from the dummy element
@@ -206,7 +206,7 @@ export default class NativeAudioConnection extends BaseSound {
   }
 
   _onAudioPlayed() {
-    if (!this.get('isPlaying')) {
+    if (!this.isPlaying) {
       this.trigger('audio-played', this);
     }
   }
@@ -328,7 +328,7 @@ export default class NativeAudioConnection extends BaseSound {
     this.debug('#pause');
     let audio = this.audioElement();
 
-    if (this.get('isStream')) {
+    if (this.isStream) {
       this.stop(); // we don't want to the stream to continue loading while paused
     }
     else {

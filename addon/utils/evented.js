@@ -25,6 +25,11 @@ export default class {
         return this;
     }
 
+    one(name, target, method) {
+      this.eventManager.one(name, target, method);
+      return this;
+    }
+
     /**
      * Checks if subscriptions exist for the given name
      * @param name

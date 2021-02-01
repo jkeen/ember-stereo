@@ -21,7 +21,7 @@ export default class HowlerSound extends BaseSound {
   }
 
   setup() {
-    let urls = makeArray(this.get('url'));
+    let urls = makeArray(this.url);
     let sound = this;
     let options = Object.assign({
       src:      urls,
@@ -30,8 +30,8 @@ export default class HowlerSound extends BaseSound {
       html5:    true,
       volume:   1,
       onload: function() {
-        sound.set('url', this._src);
-        sound.set('howl', this);
+        sound.url = this._src;
+        sound.howl = this;
         sound.trigger('audio-loaded', sound);
         sound.trigger('audio-ready', sound);
       },
@@ -55,7 +55,7 @@ export default class HowlerSound extends BaseSound {
       onseek: function() {
         sound.trigger('audio-position-changed', sound);
       }
-    }, this.get('options'));
+    }, this.options);
 
     this.howl = new Howl(options);
   }

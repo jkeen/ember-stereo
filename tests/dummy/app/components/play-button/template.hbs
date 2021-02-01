@@ -4,14 +4,14 @@
   {{/if}}
 
   <div class="hifi-play-button-bg"></div>
-  {{#if (is-loading @url)}}
-    <FaIcon @icon=circle-notch @size="2x" class="icon-spin"/>
-  {{else if (is-playing @url)}}
-    <FaIcon @icon=pause @size="2x"/>
+  {{#if (is-playing @url)}}
+    <FaIcon @icon="pause" @size="2x"/>
   {{else if (is-playing-elsewhere @url)}}
-    <FaIcon @icon=pause @size="2x"/>
+    <FaIcon @icon="pause" @size="2x"/>
+  {{else if (is-loading @url)}}
+    <FaIcon @icon="circle-notch" @size="2x" class="icon-spin"/>
   {{else}}
-    <FaIcon @icon=play @size="2x"/>
+    <FaIcon @icon="play" @size="2x"/>
   {{/if}}
 
 </button>

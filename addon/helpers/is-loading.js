@@ -2,73 +2,94 @@
 import classic from 'ember-classic-decorator';
 import HifiBaseIsHelper from './hifi-base-is-helper';
 import { makeArray } from '@ember/array';
+import hasEqualUrls from 'ember-hifi/utils/has-equal-urls';
+import { dedupeTracked } from 'tracked-toolbox';
+
+
+/**
+  A helper to detect if a sound is loading.
+  ```hbs
+    {{#if (is-loading this.url)}}
+      <p>This url is currently loading</p>
+    {{else}}
+      <p>This url is not currently loading</p>
+    {{/if}}
+  ```
+
+  Can also look for any system-level loading event by passing in no argument
+  ```hbs
+    {{#if (is-loading)}}
+      <p>Something is loading</p>
+    {{else}}
+      <p>Something is not loading</p>
+    {{/if}}
+  ```
+
+  @class {{is-loading}}
+  @type Helper
+  @param {String} url
+*/
 @classic
 export default class HifiIsLoading extends HifiBaseIsHelper {
   name = 'is-loading'
-  listen = ['audio-loaded', 'audio-loading', 'current-sound-changed']
+  listen = ['audio-loading']
 
-  init() {
-    super.init(...arguments);
+  @dedupeTracked isLoading = false;
 
-    this.boundOnNewLoadRequest = (args) => this.onNewLoadRequest(args);
-    this.boundOnPreloadRequest = (args) => this.onPreloadRequest(args);
+  registerListeners(identifier) {
+    this.boundRecompute = (e) => this.recompute(e);
+    if (!this.registered) {
+      super.registerListeners(identifier)
 
-    this.hifi.on('new-load-request', this.boundOnNewLoadRequest);
-    this.hifi.on('pre-load', this.boundOnPreloadRequest);
+      this.hifi.on('pre-load', (e) => this.onPreloadRequest(e));
+      this.hifi.on('new-load-request', (e) => this.onNewLoadRequest(e));
+    }
   }
 
   onNewLoadRequest({loadPromise, urlsOrPromise}) {
-    if (this.compare && makeArray(this.compare).some(u => u && urlsOrPromise == u.toString())) {
-      console.log('new load req match, setting is loading = true')
-      this.updateResult(true);
-      if (loadPromise) {
-        loadPromise.then(() => {
-          this.updateResult(false);
-        })  
-      }
+    if (hasEqualUrls(this.registered, urlsOrPromise)) {
+      this.handleLoadPromise(...arguments);
     }
-    else if (!this.compare.toString()) {
-      this.updateResult(true);
-      if (loadPromise) {
-        loadPromise.then(() => {
-          this.updateResult(false);
-        })  
-      }
+    else if (this.registered == 'system') {
+      this.handleLoadPromise(...arguments);
+    }
+  }
+
+  handleLoadPromise({loadPromise, urlsOrPromise}) {
+    this.isLoading = true;
+    this.boundRecompute(this.registered);
+    if (loadPromise) {
+      loadPromise.finally(() => {
+        this.isLoading = false;
+        this.boundRecompute(this.registered)
+      })
     }
   }
 
   onPreloadRequest({loadPromise, urlsOrPromise}) {
-    if (this.compare && this.compare.some(u => u && urlsOrPromise == u.toString())) {
-      console.log('preload match, setting is loading = true')
-      this.updateResult(true);
-      if (loadPromise) {
-        loadPromise.then(() => {
-          this.updateResult(false);
-        })  
-      }
+    if (hasEqualUrls(this.registered, urlsOrPromise)) {
+      this.handleLoadPromise(...arguments);
     }
-    else if (!this.compare.toString()) {
-      this.updateResult(true);
-      if (loadPromise) {
-        loadPromise.then(() => {
-          this.updateResult(false);
-        })
-      }
+    else if (this.registered == 'system') {
+      this.handleLoadPromise(...arguments);
     }
-  }
-
-  willDestroy() {
-    super.willDestroy(...arguments);
-
-    this.hifi.off('new-load-request', this.boundOnNewLoadRequest);
-    this.hifi.off('pre-load', this.boundOnPreloadRequest);
   }
 
   checkSystem() {
-    return this.hifi.isLoading;
+    return this.hifi.isLoading || this.isLoading;
   }
 
   checkSound(sound) {
-    return sound && sound.isLoading;
+    return !!(sound && sound.isLoading) || this.isLoading;
   }
+
+
+  /**
+    returns the state
+    @method compute
+    @param {String} [url]
+    @return {boolean}
+  */
+
+  /* inherited */
 }

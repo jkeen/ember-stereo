@@ -14,8 +14,6 @@ export function numericDuration([duration]) {
   else {
     return minutes + ":" + seconds;
   }
-
-
 }
 
 export default helper(numericDuration);

@@ -9,7 +9,6 @@ import { action } from '@ember/object';
 export default Component.extend({
   layout,
   hifi: service(),
-  hifiCache: service(),
   classNames: ['sound', 'sound-display', 'is-loaded'],
   classNameBindings: ['isCurrentSound', 'isPlaying', 'showDebugInfo'],
   attributeBindings:['connectionName:data-connection-name'],
@@ -53,7 +52,7 @@ export default Component.extend({
   @action
   async removeSound() {
     this.onRemoval();
-    this.hifiCache.remove(this.sound);
+    this.hifi.soundCache.remove(this.sound);
     this.sound.stop();
   },
 

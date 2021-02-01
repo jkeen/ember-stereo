@@ -10,11 +10,10 @@ export default Component.extend({
   layout,
 
   hifi: service(),
-  hifiCache: service(),
   classNames: ['diagnostic-controls'],
 
-  dormantItems: computed('testSounds', 'hifiCache.cachedCount', function() {
-    return this.testSounds.filter(item => !this.hifiCache._cache[item.url])
+  dormantItems: computed('testSounds', 'hifi.soundCache.cachedCount', function() {
+    return this.testSounds.filter(item => !this.hifi.soundCache._cache[item.url])
   }),
 
   playCustomSound: task(function *() {

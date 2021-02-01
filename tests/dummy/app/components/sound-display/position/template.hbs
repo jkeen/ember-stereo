@@ -2,7 +2,7 @@
 <div class="progress {{if durationIsInfinity "is-indeterminate" ""}} {{if sound.isPlaying "is-playing" ""}}">
   <div class="progress-track js-progress-track">
     <div class="progress-track-downloaded" style={{downloadPercentageStyle}}></div>
-    <div class="progress-track-played" style={{playedPercentageStyle}}></div>
+    <div class="progress-track-played" style="width: {{hifi-position sound.url format='percent'}}%"></div>
   </div>
   {{#if sound}}
     {{component "sound-display/position/play-head" positionStyle=playHeadPositionStyle duration=duration
@@ -13,18 +13,14 @@
 <div class="sound-display-control-position-info">
   <span class="sound-display-control-position-info-positon">
     {{#if sound}}
-      {{numeric-duration sound.position}}
+      {{hifi-position sound.url format='time'}}
     {{else}}
       &nbsp;
     {{/if}}
   </span>
   <span class="sound-display-control-position-info-duration">
     {{#if sound}}
-      {{#if durationIsInfinity}}
-        {{fa-icon "infinity"}}
-      {{else}}
-        {{numeric-duration sound.duration}}
-      {{/if}}
+      {{hifi-duration sound.url format='time'}}
     {{else}}
       &nbsp;
     {{/if}}

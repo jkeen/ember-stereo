@@ -79,7 +79,7 @@ module('Unit | Connection | Howler', function(hooks) {
   test("If we 404, we give up", function(assert) {
     assert.expect(1);
     let done = assert.async();
-    let sound = this.owner.factoryFor('ember-hifi@hifi-connection:howler').create({url: badUrl});
+    let sound = new (this.owner.factoryFor('ember-hifi@hifi-connection:howler').class)({url: badUrl})
 
     sound.on('audio-load-error', function() {
       assert.ok(true, "should have triggered audio load error");
@@ -91,20 +91,19 @@ module('Unit | Connection | Howler', function(hooks) {
     assert.expect(2);
     let done = assert.async();
     let url   = "/assets/silence.mp3";
-    let sound = this.owner.factoryFor('ember-hifi@hifi-connection:howler').create({
-      url: url,
+    let sound = new (this.owner.factoryFor('ember-hifi@hifi-connection:howler').class)({
+      url: url, 
       audioReady: function() {
         sound.set('position', 9 * 1000);
         sound.play();
       },
       audioEnded: function() {
         assert.ok('service fires audio-ended');
-        assert.notOk(sound.get('isPlaying'), 'isPlaying should be false');
+        assert.notOk(sound.isPlaying, 'isPlaying should be false');
         sound.off('audio-ended');
         done();
       }
-    });
-
+    })
 
     sound.setup();
   });

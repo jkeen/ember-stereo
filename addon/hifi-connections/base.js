@@ -1,7 +1,7 @@
 import { equal, not } from '@ember/object/computed';
 import { next, later, cancel } from '@ember/runloop';
-import Evented from '@ember/object/evented';
 import { A } from '@ember/array';
+import { getProperties } from '@ember/object';
 import { assert } from '@ember/debug';
 import EmberObject, { computed } from '@ember/object';
 import { getMimeType } from 'ember-hifi/utils/mime-types';
@@ -9,7 +9,7 @@ import { inject as service } from '@ember/service';
 import debug from 'debug';
 import classic from 'ember-classic-decorator';
 import { tracked } from '@glimmer/tracking';
-// import Evented from 'ember-hifi/utils/evented';
+import Evented from 'ember-hifi/utils/evented';
 /**
 * This is the base sound object from which other sound objects are derived. 
 *
@@ -17,7 +17,7 @@ import { tracked } from '@glimmer/tracking';
 * @constructor
 */
 @classic
-export default class BaseSound extends EmberObject.extend(Evented) {
+export default class BaseSound extends Evented {
   static setup(config) {
     this.config = config;
   }
@@ -69,28 +69,30 @@ export default class BaseSound extends EmberObject.extend(Evented) {
   }
   // @service('hifi-sync') sync;
 
-  @computed('url', 'connectionName')
+  @tracked url
+  @tracked pollInterval = 1000
+  @tracked timeout   = 30000
+  @tracked connectionName
+
+  @tracked hasPlayed = false
+  @tracked isLoading = false
+  @tracked isPlaying = false
+  @tracked error = null;
+  @tracked duration = 0
+  @tracked percentLoaded = 0
+
   get debugName() {
     var parser = document.createElement('a');
-    parser.href = this.get('url');
+    parser.href = this.url;
 
     let parts = parser.pathname.split('/');
-    return `ember-hifi:${this.get('connectionName') || this.constructor.toString()} (${parts[parts.length - 1]})`;
+    return `ember-hifi:${this.connectionName || this.constructor.toString()} (${parts[parts.length - 1]})`;
   }
 
-  pollInterval = 1000
-  timeout   = 30000
 
-  hasPlayed = false
-  isLoading = false
-  isPlaying = false
-
-  @computed('error')
   get isErrored() {
-    return !!this.get('error');
+    return !!this.error;
   }
-
-  error = null
 
   get isStream() {
     return this.duration == Infinity;
@@ -104,11 +106,8 @@ export default class BaseSound extends EmberObject.extend(Evented) {
     return !this.isStream;
   } 
 
-  duration = 0
-  percentLoaded = 0
 
   // _position is updated by the service on the currently playing sound
-  @computed('_position')
   get position() {
     return this._currentPosition();
   }
@@ -118,7 +117,6 @@ export default class BaseSound extends EmberObject.extend(Evented) {
     return this._setPosition(v);
   }
 
-  @computed('url') 
   get mimeType() {
     return getMimeType(this.url);
   }
@@ -176,7 +174,14 @@ export default class BaseSound extends EmberObject.extend(Evented) {
     return new Uint8Array(this.audioAnalyser().frequencyBinCount);
   }
 
-  init() {
+  constructor(args = {}) {
+    super(...arguments);
+
+    this.url = args.url;
+    this.connectionName = args.connectionName;
+    this.options = args.options;
+    this.sharedAudioAccess = args.sharedAudioAccess;
+
     let {
       audioLoading,
       audioLoaded,
@@ -185,70 +190,71 @@ export default class BaseSound extends EmberObject.extend(Evented) {
       audioPaused,
       audioEnded,
       audioLoadError
-    } = this.getProperties('audioLoading', 'audioLoaded', 'audioReady', 'audioPlayed', 'audioPaused', 'audioEnded', 'audioLoadError');
-    this.set('isLoading', true);
+    } = getProperties(this, 'audioLoading', 'audioLoaded', 'audioReady', 'audioPlayed', 'audioPaused', 'audioEnded', 'audioLoadError');
+    this.isLoading = true;
 
     this.on('audio-played',    () => {
-      this.set('hasPlayed', true);
-      this.set('isLoading', false);
-      this.set('isPlaying', true);
-      this.set('error', null);
+      this.hasPlayed = true
+      this.isLoading = false
+      this.isPlaying = true
+      this.error = null
 
       if (audioPlayed) { audioLoading(this); }
 
       // recover lost isLoading update
-      this.notifyPropertyChange('isLoading');
       this.syncState()
-      this.debug('audio-played');
+      this.debug(`audio-played ${this.isPlaying}`);
     });
 
     this.on('audio-paused',   () => {
-      this.set('isPlaying', false);
+      this.isPlaying = false;
       if (audioPaused) { audioPaused(this); }
       this.syncState()
       this.debug('audio-paused');
     });
 
     this.on('audio-ended',    () => {
-      this.set('isPlaying', false);
+      this.isPlaying = false;
       if (audioEnded) { audioEnded(this); }
       this.syncState()
       this.debug('audio-ended');
     });
 
     this.on('audio-ready',    () => {
-      this.set('duration', this._audioDuration());
+      this.duration = this._audioDuration();
       if (audioReady) { audioReady(this); }
       this.syncState()
       this.debug('audio-ready');
     });
 
     this.on('audio-load-error', (e) => {
-      if (this.get('hasPlayed')) {
-        this.set('isLoading', false);
-        this.set('isPlaying', false);
+      if (this.hasPlayed) {
+        this.isLoading = false;
+        this.isPlaying = false;
       }
-      this.set('error', e);
+      this.error = e;
       if (audioLoadError) { audioLoadError(this); }
       this.syncState()
       this.debug('audio-load-error');
     });
 
     this.on('audio-loaded', () => {
-      this.set('isLoading', false);
+      this.isLoading = false;
       if (audioLoaded) { audioLoaded(this); }
       this.debug('audio-loaded');
     });
 
     this.on('audio-loading', (info) => {
       if (info && info.percentLoaded) {
-        this.set('percentLoaded', info.percentLoaded);
+        this.percentLoaded = info.percentLoaded;
       }
       if (audioLoading) { audioLoading(this, info && info.percentLoaded); }
       this.debug('audio-loading');
     });
 
     // this.sync.on(`change:${this.url}`, this.onSyncChanged);
+
+
 
     try {
       this._detectTimeouts();
@@ -263,10 +269,10 @@ export default class BaseSound extends EmberObject.extend(Evented) {
   }
 
   _detectTimeouts() {
-    if (this.get('timeout')) {
+    if (this.timeout) {
       let timeout = later(() => {
           this.trigger('audio-load-error', "request timed out");
-      }, this.get('timeout'));
+      }, this.timeout);
 
       this.on('audio-ready',      () => cancel(timeout));
       this.on('audio-load-error', () => cancel(timeout));

@@ -6,12 +6,17 @@ import { hbs } from 'ember-cli-htmlbars';
 module('Integration | Helper | is-rewindable', function(hooks) {
   setupRenderingTest(hooks);
 
-  // TODO: Replace this with your real tests.
   test('it renders', async function(assert) {
-    this.set('inputValue', '1234');
+    let service = this.owner.lookup('service:hifi')
+    service.loadConnections([{name: 'DummyConnection'}]);
 
-    await render(hbs`{{is-rewindable inputValue}}`);
+    this.set('url', '/good/10/rewindable-test.mp3')
+    await service.play(this.url)
+    await render(hbs`{{#if (is-rewindable this.url)}}is-rewindable{{else}}is-not-rewindable{{/if}}`);
+    assert.equal(service.isRewindable, true);
+    assert.equal(this.element.textContent.trim(), 'is-rewindable');
 
-    assert.equal(this.element.textContent.trim(), '1234');
+    this.set('url', '/good/stream/stream.mp3')
+    assert.equal(this.element.textContent.trim(), 'is-not-rewindable');
   });
 });
