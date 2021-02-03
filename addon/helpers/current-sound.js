@@ -1,5 +1,5 @@
 import { helper } from '@ember/component/helper';
 
-export default helper(function findSound(params/*, hash*/) {
+export default helper(function currentSound(params/*, hash*/) {
   return params;
 });

@@ -4,20 +4,21 @@ import { A as emberArray, makeArray } from '@ember/array';
 import { inject as service } from '@ember/service';
 import debug from 'debug';
 import { tracked } from '@glimmer/tracking';
+import urlToIdentifier from 'ember-hifi/utils/url-to-identifier';
 /**
 * This class caches sound objects based on urls. You shouldn't have to interact with this class.
 *
-* @class hifi-cache
+* @class sound-cache
 * @private
 * @constructor
 */
 
 @classic
-export default class HifiCache  {
-  debugName = 'hifi-cache';
+export default class SoundCache  {
   @tracked cachedCount = 0;
 
-  constructor() {
+  constructor(name = 'hifi-cache') {
+    this.name = name;
     this._cache = {};
   }
 
@@ -34,15 +35,15 @@ export default class HifiCache  {
   find(urls) {
     urls = makeArray(urls);
     let cache = this._cache;
-    let keysToSearch = emberArray(urls).map(url => (url.url || url));
+    let keysToSearch = emberArray(urls).map(url => urlToIdentifier((url.url || url)));
     let sounds       = emberArray(keysToSearch).map(url => cache[url]);
     let foundSounds  = emberArray(sounds).compact();
 
     if (foundSounds.length > 0) {
-      this.debug(`cache hit for ${foundSounds[0].url}`);
+      debug(this.name)(`cache hit for ${foundSounds[0].url}`);
     }
     else {
-      this.debug(`cache miss for ${keysToSearch.join(',')}`);
+      debug(this.name)(`cache miss for ${keysToSearch.join(',')}`);
     }
 
     return foundSounds[0];
@@ -56,7 +57,7 @@ export default class HifiCache  {
   remove(sound) {
     if (this.isDestroyed) return;
 
-    this.debug(`removing sound from cache with url: ${sound.url}`);
+    debug(this.name)(`removing sound from cache with url: ${sound.url}`);
 
     if (this._cache[sound.url]) {
       delete this._cache[sound.url]
@@ -71,17 +72,13 @@ export default class HifiCache  {
    */
   cache(sound) {
     if (this.isDestroyed) return;
+    let identifier = urlToIdentifier(sound.url)
 
-    this.debug(`caching sound with url: ${sound.url}`);
+    debug(this.name)(`caching sound with url: ${identifier}`);
 
-    if (!this._cache[sound.url]) {
-      this._cache[sound.url] = sound;
+    if (!this._cache[identifier]) {
+      this._cache[identifier] = sound;
       this.cachedCount = Object.keys(this._cache).length;
     }
-  }
-
-  debug(message) {
-    const log = debug(this.debugName);
-    log(message);
   }
 }

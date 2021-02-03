@@ -9,14 +9,20 @@ export default class Router extends AddonDocsRouter {
 Router.map(function() {
   docsRoute(this, function() {
     /* Your docs routes go here */
+    this.route('install')
+    this.route('concepts')
     this.route('usage')
-    this.route('state-helpers');
-    this.route('action-helpers');
+    this.route('autoplay')
+    this.route('playing-sounds');
+    this.route('trying-multiple-formats');
+    this.route('handling-errors');
+    this.route('events');
   });
+
   this.route('diagnostic', function() {
     this.route('index')
     this.route('sync')
   });
   this.route('not-found', { path: '/*path' });
-  
+
 });

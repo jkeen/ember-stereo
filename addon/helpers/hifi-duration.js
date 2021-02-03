@@ -1,9 +1,7 @@
 import classic from 'ember-classic-decorator';
 import { inject as service } from '@ember/service';
 import Helper from '@ember/component/helper';
-import { tracked } from '@glimmer/tracking';
 import { dedupeTracked } from 'tracked-toolbox';
-import { throttle } from '@ember/runloop';
 import hasEqualUrls from 'ember-hifi/utils/has-equal-urls';
 import {numericDuration} from './numeric-duration';
 import debug from 'debug';
@@ -29,34 +27,25 @@ export default class HifiDuration extends Helper {
   default = 'N/A'
   @dedupeTracked result;
 
-  registerListeners([identifier], {load, format}) {
-    this.boundRecompute = (e) => this.recompute(e)
+  handleEvent(sound) {
+    if (hasEqualUrls(sound.url, this.registered)) {
+      this.recompute();
+    }
+    else if (sound && this.registered == 'system') {
+      this.recompute();
+    }
+  }
 
+  registerListeners([identifier], {load, format}) {
     if (!this.registered) {
       this.registered = identifier;
 
-      this.hifi.on('audio-loaded', (sound) => {
-        if (hasEqualUrls(sound.url, this.registered)) {
-          throttle(this.registered, this.boundRecompute, 1000);
-        }
-        else if (sound && this.registered == 'system') {
-          throttle(this.registered, this.boundRecompute, 1000);
-        }
-      });
-
-      this.hifi.on('audio-duration-changed', (sound) => {
-        if (hasEqualUrls(sound.url, this.registered)) {
-          throttle(this.registered, this.boundRecompute, 1000);
-        }
-        else if (sound && this.registered == 'system') {
-          throttle(this.registered, this.boundRecompute, 1000);
-        }
+      this.listen.forEach(eventName => {
+        this.hifi.on(eventName, this.handleEvent.bind(this))
       });
 
       if (load) {
-        this.hifi.load(identifier).then(() => {
-          this.boundRecompute(identifier);
-        })
+        this.hifi.load(identifier).then(() => this.boundRecompute(identifier));
       }
     }
   }
@@ -78,9 +67,8 @@ export default class HifiDuration extends Helper {
   * @param {Boolean} options.load load the sound if it's not loaded?
   */
   compute([identifier = 'system'], {format = false, load = false, defaultValue}) {
+    let result;
     this.registerListeners([identifier], {format, defaultValue, load});
-
-    let result = this.result;
 
     let sound = this.findSound(identifier)
     if (sound) {
@@ -89,23 +77,23 @@ export default class HifiDuration extends Helper {
 
     if (result === Infinity) {
       //this is a stream
-      this.result = defaultValue || "∞";
+      result = defaultValue || "∞";
     }
     else {
       if (format == 'time') {
         if (sound) {
-          this.result = numericDuration([result])
+          result = numericDuration([result])
         }
         else {
-          this.result = defaultValue || '00:00';
+          result = defaultValue || '00:00';
         }
       }
       else {
-        this.result = result || defaultValue;
+        result = result || defaultValue;
       }
     }
 
-
+    this.result = result;
     debug(`ember-hifi:helpers:${this.name}:${identifier}:${format}`)(`render = ${this.result}`); 
     return this.result;
   }

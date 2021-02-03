@@ -1,12 +1,13 @@
 import classic from 'ember-classic-decorator';
 import { inject as service } from '@ember/service';
 import Helper from '@ember/component/helper';
-import { observer } from '@ember/object';
 
 /**
   A helper to fast forward a sound by x.
   ```hbs
-   {{hifi-fast-forward this.url increment=5000}}
+   <button {{on 'click' (hifi-fast-forward this.url increment=5000)}}>
+    Fast Forward
+  </button>
   ```
   @class HifiFastForward
   @type Helper

@@ -71,7 +71,7 @@ export default class NativeAudioConnection extends BaseSound {
 
     switch(eventName) {
       case 'loadeddata':
-        var audio = this.audioElement();
+        var audio = this.audioElement;
         // Firefox doesn't fire a 'canplay' event until after you call *play* on
         // the audio, but it does fire 'loadeddata' when it's ready
         if (audio.readyState >= HAVE_CURRENT_DATA) {
@@ -110,7 +110,7 @@ export default class NativeAudioConnection extends BaseSound {
     }
   }
 
-  audioElement() {
+  get audioElement() {
     // If we have control, return the shared element
     // if we don't have control, return the internal cloned element
 
@@ -166,12 +166,12 @@ export default class NativeAudioConnection extends BaseSound {
     if (this.sharedAudioAccess) {
       return this.sharedAudioAccess.requestControl(this);
     } else {
-      return this.audioElement();
+      return this.audioElement;
     }
   }
 
   restoreState() {
-    let sharedElement     = this.audioElement();
+    let sharedElement     = this.audioElement;
     let internalElement   = this._audioElement;
 
     if (this.sharedAudioAccess && internalElement) {
@@ -253,7 +253,7 @@ export default class NativeAudioConnection extends BaseSound {
   }
 
   _calculatePercentLoaded() {
-    let audio = this.audioElement();
+    let audio = this.audioElement;
 
     if (audio && audio.buffered && audio.buffered.length) {
       let ranges = audio.buffered;
@@ -278,7 +278,7 @@ export default class NativeAudioConnection extends BaseSound {
   /* Public interface */
 
   _audioDuration() {
-    let audio = this.audioElement();
+    let audio = this.audioElement;
 
     if (audio.duration > 172800000) {
       // if audio is longer than 3 days in milliseconds,
@@ -292,19 +292,19 @@ export default class NativeAudioConnection extends BaseSound {
   }
 
   _currentPosition() {
-    let audio = this.audioElement();
+    let audio = this.audioElement;
     return audio.currentTime * 1000;
   }
 
   _setPosition(position) {
-    let audio = this.audioElement();
+    let audio = this.audioElement;
     audio.currentTime = (position / 1000);
     return this._currentPosition();
   }
 
   _setVolume(volume) {
     this.debug(`_setVolume: ${volume}`);
-    let audio = this.audioElement();
+    let audio = this.audioElement;
     audio.volume = (volume/100);
   }
 
@@ -326,7 +326,7 @@ export default class NativeAudioConnection extends BaseSound {
 
   pause() {
     this.debug('#pause');
-    let audio = this.audioElement();
+    let audio = this.audioElement;
 
     if (this.isStream) {
       this.stop(); // we don't want to the stream to continue loading while paused
@@ -338,7 +338,7 @@ export default class NativeAudioConnection extends BaseSound {
 
   stop() {
     this.debug('#stop');
-    let audio = this.audioElement();
+    let audio = this.audioElement;
     audio.pause();
 
     // calling pause halts playback but does not stop downloading streaming

@@ -7,6 +7,7 @@ import { observer } from '@ember/object';
   A helper to load a sound
   ```hbs
     <button {{on 'click' (hifi-play this.url)}}>
+      Play
     </button>
   ```
   @class HifiPlay

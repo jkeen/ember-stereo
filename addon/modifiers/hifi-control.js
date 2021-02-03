@@ -15,7 +15,15 @@ export default class HifiControlModifier extends Modifier {
     return this.args.named;
   }
 
-  @action async onClick() {
+  get eventName() {
+    return this.args.named.on || 'click'
+  }
+
+  get metadata() {
+    return this.args.named.metadata || {}
+  }
+
+  @action async handleAction() {
     if (this.hifiSync.isPlayingElsewhere(this.urlOrPromise)) {
       this.hifiSync.pause();
       this.remotelyPaused = true;
@@ -30,11 +38,11 @@ export default class HifiControlModifier extends Modifier {
     }
     else {
       if (typeof this.urlOrPromise == 'function') {
-        let result = await this.hifi.play(this.urlOrPromise());
+        let result = await this.hifi.play(this.urlOrPromise(), {metadata: this.metadata});
         this.sound = result.sound
       }
       else {
-        let result = await this.hifi.play(this.urlOrPromise);
+        let result = await this.hifi.play(this.urlOrPromise, {metadata: this.metadata});
         this.sound = result.sound
       }  
     }
@@ -48,13 +56,6 @@ export default class HifiControlModifier extends Modifier {
     this.onStateChange(state);
 
     this.sound = this.hifi.findLoaded(this.urlOrPromise);
-
-    // let { sound } = await this.hifi.load(this.url);
-    // this.sound = sound;
-  }
-
-  didUpdateArguments() {
-
   }
 
   onStateChange(sound) {
@@ -71,19 +72,11 @@ export default class HifiControlModifier extends Modifier {
     }
   }
 
-  onNewLoadRequest() {
-
-  }
-
-  onPreload() {
-
-  }
-
   async didInstall() {
-    if (this.urlOrPromise) {
-      // this.hifiSync.on(this.urlOrPromise, (e) => this.onStateChange(e));
+    if (this.urlOrPromise && this.options.preload) {
+      this.hifi.load(this.urlOrPromise, {metadata: this.metadata});
     }
-    this.element.addEventListener('click', this.onClick, true);
+    this.element.addEventListener(this.eventName, this.handleAction, true);
 
     this.hifi.on('new-load-request', this.onNewLoadRequest)
     this.hifi.on('pre-load', this)
@@ -91,9 +84,9 @@ export default class HifiControlModifier extends Modifier {
 
   willRemove() {
     if (this.urlOrPromise) {
-      this.hifiSync.off(this.urlOrPromise, (e) => this.onStateChange(e));
+      // this.hifiSync.off(this.urlOrPromise, (e) => this.onStateChange(e));
     }
-    this.element.removeEventListener('click', this.onClick, true);
+    this.element.removeEventListener(this.eventName, this.handleAction, true);
   }
 }
 

@@ -6,6 +6,7 @@ import Helper from '@ember/component/helper';
   A helper to load a sound
   ```hbs
     <button {{on 'click' (hifi-load this.url)}}>
+      Load
     </button>
   ```
   @class HifiLoad

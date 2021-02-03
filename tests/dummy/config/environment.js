@@ -26,6 +26,12 @@ module.exports = function (environment) {
     },
     emberHifi: {
       debug: true,
+      alwaysUseSharedAudioElement: true,
+      connections: [
+        {name: 'NativeAudio'},
+        {name: 'Howler'},
+        {name: 'HLS'}
+      ]
     }
   };
 

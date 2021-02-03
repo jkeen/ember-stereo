@@ -3,7 +3,8 @@ import { isEmpty } from '@ember/utils';
 import { assign } from '@ember/polyfills';
 import { getOwner } from '@ember/application';
 import Evented from '@ember/object/evented';
-import SoundCache from 'ember-hifi/utils/hifi-cache';
+import SoundCache from 'ember-hifi/utils/sound-cache';
+import ErrorCache from 'ember-hifi/utils/error-cache';
 import Service, { inject as service } from '@ember/service';
 import { assert } from '@ember/debug';
 import { bind } from "@ember/runloop";
@@ -13,7 +14,6 @@ import SharedAudioAccess from 'ember-hifi/utils/shared-audio-access';
 import { Promise } from 'rsvp';
 
 const log = debug('ember-hifi');
-
 import {
   set,
   get,
@@ -23,20 +23,12 @@ import {
 import { or, readOnly, equal, reads, alias } from '@ember/object/computed';
 import { A as emberArray, makeArray } from '@ember/array';
 import { dasherize } from '@ember/string';
-import OneAtATime from '../helpers/one-at-a-time';
+import OneAtATime from '../utils/one-at-a-time';
 import RSVP from 'rsvp';
 import PromiseRace from '../utils/promise-race';
 import { tracked } from '@glimmer/tracking';
 const DEFAULT_CONNECTIONS = [
-  {
-    name: "NativeAudio"
-  },
-  {
-    name: "Howler"
-  },
-  {
-    name: "HLS"
-  }
+  { name: "NativeAudio" }
 ]
 
 export const EVENT_MAP = [
@@ -69,6 +61,45 @@ export const SERVICE_EVENT_MAP = [
 export default class Hifi extends Service.extend(Evented) {
   @service poll;
   @service hifiSync;
+
+
+  /**
+   * When the Service is created, activate connections that were specified in the
+   * configuration. This config is injected into the Service as `options`.
+   *
+   * @method init
+   */
+
+  init() {
+    const owner = getOwner(this);
+    owner.registerOptionsForType('ember-hifi@hifi-connection', { instantiate: false });
+    owner.registerOptionsForType('hifi-connection', { instantiate: false });
+
+    this.loadConnections();
+
+    this.alwaysUseSingleAudioElement = !!get(this, 'options.emberHifi.alwaysUseSingleAudioElement')
+    this.appEnvironment              = get(this, 'options.environment') || 'development';
+    this.defaultVolume               = get(this, 'options.emberHifi.initialVolume') || 100;
+    this.sharedAudioAccess           = new SharedAudioAccess();
+    this.oneAtATime                  = new OneAtATime();
+    this.soundCache                  = new SoundCache(this);
+    this.errorCache                  = new ErrorCache(this);
+
+    this.volume                      = this.defaultVolume;
+    // this.volume                      = get(this, 'options.emberHifi.initialVolume') || 100;
+    this.isReady                     = true;
+
+    // Polls the current sound for position. We wanted to make it easy/flexible
+    // for connection authors, and since we only play one sound at a time, we don't
+    // need other non-active sounds telling us position info
+    this.poll.addPoll({
+      interval: get(this, 'pollInterval') || 500,
+      callback: bind(this, this._setCurrentPosition)
+    });
+
+    super.init(...arguments);
+  }
+
 
   get isMobileDevice() {
     return this._isMobileDevice || ('ontouchstart' in window);
@@ -144,7 +175,6 @@ export default class Hifi extends Service.extend(Evented) {
     return set(this, 'currentSound.position', v); 
   }
 
-  defaultVolume = 50;
   _volume = this.defaultVolume;
   get volume() {
     return this._volume;
@@ -156,6 +186,7 @@ export default class Hifi extends Service.extend(Evented) {
     }
     this._volume = v;
     debug(`setting volume = ${v}`)
+    this.trigger('volume-change', v);
 
     return v;
   }
@@ -180,39 +211,12 @@ export default class Hifi extends Service.extend(Evented) {
     }
   }
 
-
   /**
-   * When the Service is created, activate connections that were specified in the
-   * configuration. This config is injected into the Service as `options`.
+   * Returns the list of activated and available connections
    *
-   * @method init
+   * @method loadConnections
+   * @return {Array}
    */
-
-  init() {
-    const owner = getOwner(this);
-    owner.registerOptionsForType('ember-hifi@hifi-connection', { instantiate: false });
-    owner.registerOptionsForType('hifi-connection', { instantiate: false });
-
-    this.loadConnections();
-
-    this.alwaysUseSingleAudioElement = !!get(this, 'options.emberHifi.alwaysUseSingleAudioElement')
-    this.appEnvironment              = get(this, 'options.environment') || 'development';
-    this.sharedAudioAccess           = new SharedAudioAccess();
-    this.oneAtATime                  = new OneAtATime();
-    this.soundCache                  = new SoundCache();
-    this.volume                      = 50;
-    this.isReady                     = true;
-
-    // Polls the current sound for position. We wanted to make it easy/flexible
-    // for connection authors, and since we only play one sound at a time, we don't
-    // need other non-active sounds telling us position info
-    this.poll.addPoll({
-      interval: get(this, 'pollInterval') || 500,
-      callback: bind(this, this._setCurrentPosition)
-    });
-
-    super.init(...arguments);
-  }
 
   loadConnections(connections = get(this, 'options.emberHifi.connections')) {
     if (!connections) {
@@ -273,10 +277,8 @@ export default class Hifi extends Service.extend(Evented) {
   load(urlsOrPromise, options) {
     var sharedAudioAccess = this._createAndUnlockAudio();
 
-    options = assign({
-      debugName: `ember-hifi:load-${Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 3)}`,
-      metadata: {},
-    }, options);
+    options = assign({ metadata: {} }, options);
+    this.set('isLoading', true);
 
     let promise = new Promise((resolve, reject) => {
       return this._resolveUrls(urlsOrPromise).then(urlsToTry => {
@@ -296,11 +298,14 @@ export default class Hifi extends Service.extend(Evented) {
 
           search.then(results  => resolve({sound: results.success, failures: results.failures}));
           search.catch((failures) => {
-            // reset the UI since trying to play that sound failed
             this.isLoading = false;
+
+            this.errorCache.cache(urlsToTry, failures);
+            // reset the UI since trying to play that sound failed
+            console.log(this.errorCache.find(urlsToTry));
             // let err = new Error(`[ember-hifi] URL Promise failed because`);
-   
-            reject({failures});
+
+            // reject({failures});
           });
 
           return search;

@@ -34,10 +34,9 @@ export default class HifiVisualizerModifier extends Modifier {
     this.sound = this.hifi.findLoaded(this.soundIdentifier);
 
     if (this.sound) {
-      var audioElement = this.sound.audioElement()
-      var audioContext = this.sound.audioContext();
-      if (audioElement) {
-
+      var audioElement = this.sound.audioElement;
+      var audioContext = this.sound.audioContext;
+      if (audioElement && audioContext) {
         if (this.draw) {
           this.runCustom()
         }
@@ -61,7 +60,7 @@ export default class HifiVisualizerModifier extends Modifier {
       var loopingFunction = () => {
         if (this.sound) {
           this.loopHandler = requestAnimationFrame(loopingFunction);
-          this.sound.audioAnalyser().getByteFrequencyData(data);
+          this.sound.audioAnalyser.getByteFrequencyData(data);
           this.draw(data, this.element, this.options, frameCount)
           frameCount++;
           return  
@@ -88,7 +87,7 @@ export default class HifiVisualizerModifier extends Modifier {
       var loopingFunction = () => {
         if (this.sound) {
           this.loopHandler = requestAnimationFrame(loopingFunction);
-          this.sound.audioAnalyser().getByteFrequencyData(data);
+          this.sound.audioAnalyser.getByteFrequencyData(data);
           this.wave.visualize(data, canvas.id, options, frameCount)
           frameCount++;
           return  

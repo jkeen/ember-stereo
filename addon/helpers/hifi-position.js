@@ -6,7 +6,6 @@ import hasEqualUrls from 'ember-hifi/utils/has-equal-urls';
 import { dedupeTracked } from 'tracked-toolbox';
 import { throttle } from '@ember/runloop';
 import {numericDuration} from './numeric-duration';
-import { next } from '@ember/runloop';
 import debug from 'debug';
 /**
   A helper to get a sound's position.
@@ -25,31 +24,26 @@ export default class HifiPosition extends Helper {
   @service hifi;
 
   name = 'hifi-position';
+  listen = ['audio-position-changed', 'audio-position-will-change']
   default = 0
   @dedupeTracked result;
+
+  handleEvent(sound) {
+    if (hasEqualUrls(sound.url, this.registered)) {
+      throttle(this.registered, this.recompute.bind(this), 1000);
+    }
+    else if (sound && this.registered == 'system') {
+      throttle(this.registered, this.recompute.bind(this), 1000);
+    }
+  }
 
   registerListeners([identifier], {format}) {
     if (!this.registered) {
       this.registered = identifier;
-      this.boundRecompute = (e) => this.recompute(e)
 
-      this.hifi.on('audio-position-changed', (sound) => {
-        if (hasEqualUrls(sound.url, this.registered)) {
-          throttle(this.registered, this.boundRecompute, 1000);
-        }
-        else if (sound && this.registered == 'system') {
-          throttle(this.registered, this.boundRecompute, 1000);
-        }
+      this.listen.forEach(eventName => {
+        this.hifi.on(eventName, this.handleEvent.bind(this))
       });
-
-      this.hifi.on('audio-position-will-change', (sound, {currentPosition, newPosition}) => {
-        if (hasEqualUrls(sound.url, this.registered)) {
-          throttle(this.registered, this.boundRecompute, 1000);
-        }
-        else if (sound && this.registered == 'system') {
-          throttle(this.registered, this.boundRecompute, 1000);
-        }
-      })
     }
   }
 
@@ -72,9 +66,9 @@ export default class HifiPosition extends Helper {
   */
 
   compute([identifier='system'], {format=false, defaultValue}) {
+    let result;
     this.registerListeners([identifier], {format, defaultValue});
 
-    let result = this.result;
     let sound = this.findSound(identifier)
     if (sound) {
       result = sound.position;
@@ -82,24 +76,25 @@ export default class HifiPosition extends Helper {
 
     if (format == 'percent' || format == 'percentage') {
       if (sound) {
-        this.result = ((sound.position / sound.duration) * 100);
+        result = ((sound.position / sound.duration) * 100);
       }
       else {
-        this.result = defaultValue || 0;
+        result = defaultValue || 0;
       }
     }
     else if (format == 'time') {
       if (sound) {
-        this.result = numericDuration([result])
+        result = numericDuration([result])
       }
       else {
-        this.result = defaultValue || "00:00";
+        result = defaultValue || "00:00";
       }
     }
     else {
-      this.result = result;
+      result = result;
     }
 
+    this.result = result;
     debug(`ember-hifi:helpers:${this.name}:${identifier}:${format}`)(`render = ${this.result}`); 
     return this.result;
   }

@@ -1,5 +1,11 @@
 # ember-hifi Changelog
 
+### 2.0
+
+- [IMPROVEMENT] Added helpers and modifiers to operate hifi only from templates
+- [CHANGE] Default volume is now 100
+- [CHANGE] Audio errors no longer throw errors that need to be caught, instead they are surfaced on the hifi service, or through the `{{is-errored}}` and `{{hifi-error-details}}`
+
 ### 1.18 (September 29, 2020)
 
 - [IMPROVEMENT] Trigger an event when an HLS stream's ID3 timed metadata changes (#89)

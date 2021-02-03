@@ -199,7 +199,7 @@ export default class HLSSound extends BaseSound {
     this.trigger('audio-load-error', error);
   }
 
-  audioElement() {
+  get audioElement() {
     return this.video;
   }
 

@@ -14,6 +14,8 @@ The following examples all use the following URL <a href={{this.onDemandUrl}}>{{
       {{/if}}
     </button>
 
+    {{hifi-error-details this.onDemandUrl}}
+
     <button type="button" {{on 'click' (hifi-load this.onDemandUrl)}}>
       {{#if (is-loaded this.onDemandUrl)}}
         Loaded
@@ -30,9 +32,48 @@ The following examples all use the following URL <a href={{this.onDemandUrl}}>{{
 
 
 
+
+Different browsers support different audio formats, so hifi lets you try multiple urls, playing the first one that succeeds. 
+
+
+<DocsDemo as |demo|>
+  <demo.example @name="hifi-helpers-multiple-sounds.hbs">
+    {{#let (array
+      this.onDemandOgg
+      this.onDemandUrl
+    ) as |urls| }}
+
+
+    <button type="button" {{hifi-control urls}}>
+      {{#if (is-playing urls)}}
+        Pause
+      {{else if (is-loading urls)}}
+        Loading
+      {{else}}
+        Play
+      {{/if}}
+    </button>
+
+    {{hifi-error-details urls}}
+
+    <button type="button" {{on 'click' (hifi-load urls)}}>
+      {{#if (is-loaded urls)}}
+        Loaded
+      {{else if (is-loading urls)}}
+        Loaded
+      {{else}}
+        Load
+      {{/if}}
+    </button>
+    {{/let}}
+  </demo.example>
+  {{demo.snippet "hifi-helpers-multiple-sounds.hbs"}}
+  {{demo.snippet "application-controller.js"}}
+</DocsDemo>
+
 <DocsDemo as |demo|>
   <demo.example @name="hifi-helpers-stream.hbs">
-    <button type="button" {{hifi-control this.streamUrl}}>
+    <button type="button" {{hifi-control this.streamUrl preload=true metadata=(hash title='Streaming Audio')}}>
       {{#if (is-playing this.streamUrl)}}
         Pause
       {{else if (is-loading this.streamUrl)}}
@@ -93,6 +134,22 @@ Currently Playing Sound Display
   {{demo.snippet "hifi-duration-and-position-cs.hbs"}}
   {{demo.snippet "application-controller.js"}}
 </DocsDemo>
+
+Volume Control
+<DocsDemo as |demo|>
+  <demo.example @name="hifi-volume.hbs">
+    <input type="range" {{hifi-volume initialVolume='100'}} />
+
+  </demo.example>
+  {{demo.snippet "hifi-volume.hbs"}}
+  {{demo.snippet "application-controller.js"}}
+</DocsDemo>
+
+
+
+
+
+
 {{!-- 
 <DocsDemo as |demo|>
   <demo.example @name="hifi-play-decorator-promise.hbs">
