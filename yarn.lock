@@ -1337,11 +1337,6 @@
     minimatch "^3.0.4"
     strip-json-comments "^3.1.1"
 
-"@foobar404/wave@^1.2.7":
-  version "1.2.7"
-  resolved "https://registry.yarnpkg.com/@foobar404/wave/-/wave-1.2.7.tgz#d17160c495f9fac9ba2139190349f4586b8882fc"
-  integrity sha512-ynWWvfP4Dw1dUe4IupRiJGrh0nSfiYtBnY2ZU4CzGYUMvT9LVWMmpSvDjptgkl5whcwNBjGhVM1Gq1b1J/Z3TA==
-
 "@fortawesome/ember-fontawesome@^0.2.2":
   version "0.2.2"
   resolved "https://registry.yarnpkg.com/@fortawesome/ember-fontawesome/-/ember-fontawesome-0.2.2.tgz#7d1d1817f999e82ef3dfe64475a3e02cfbe266e7"

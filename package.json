@@ -39,7 +39,6 @@
   },
   "dependencies": {
     "@ember/render-modifiers": "^1.0.2",
-    "@foobar404/wave": "^1.2.7",
     "debug": "4.3.2",
     "ember-auto-import": "^1.10.1",
     "ember-classic-decorator": "^2.0.0",

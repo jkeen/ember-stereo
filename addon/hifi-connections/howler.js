@@ -66,11 +66,6 @@ export default class HowlerSound extends BaseSound {
     }
   }
 
-  get audioContext() {
-    return Howler.ctx
-  }
-  
-
   get audioElement() {
     let sounds = get(this, 'howl._sounds');
 

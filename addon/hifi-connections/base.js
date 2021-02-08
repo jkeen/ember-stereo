@@ -119,18 +119,6 @@ export default class Sound extends Evented {
     return getMimeType(this.url);
   }
 
-  get useWebAudio() {
-    var AudioContext = window.AudioContext       // Default
-                    || window.webkitAudioContext // Safari and old versions of Chrome
-                    || false; 
-
-    return this._useWebAudio || !!AudioContext;
-  }
-  set useWebAudio(v) {
-    this._useWebAudio = v;
-    return v;
-  }
-
   debug(message) {
     const log = debug(this.debugName);
     log(message);
@@ -149,49 +137,6 @@ export default class Sound extends Evented {
     //   isRewindable: this.isRewindable,
     //   position: !this.isStream ? this.position : null
     // })
-  }
-
-  get audioContext() {
-    if (!this._audioContext && this.useWebAudio) {
-      let element = this.audioElement;
-      element.crossOrigin = "anonymous";
-      var AudioContext = window.AudioContext       // Default
-                      || window.webkitAudioContext // Safari and old versions of Chrome
-                      || false;
-
-      if (AudioContext) {
-        this._audioContext =  new AudioContext();
-      }
-    }
-
-    return this._audioContext;
-  }
-
-  get audioMediaSource() {
-    if (!this._audioMediaSource && this.useWebAudio) {
-      this._audioMediaSource = this.audioContext.createMediaElementSource(this.audioElement);
-    }
-
-    return this._audioMediaSource;
-  }
-
-  get audioAnalyser() {
-    if (!this._audioAnalyser && this.useWebAudio) {
-      this._audioAnalyser = this.audioContext.createAnalyser();
-      this._audioAnalyser.fftSize = 2048;
-    }
-
-    return this._audioAnalyser;
-  }
-
-  startAnalysing() {
-    if (this.useWebAudio) {
-      this.audioMediaSource.connect(this.audioAnalyser);
-      this.audioMediaSource.connect(this.audioContext.destination);
-      let data = new Uint8Array(this.audioAnalyser.frequencyBinCount);
-
-      return data;
-    }
   }
 
   constructor(args = {}) {
@@ -273,8 +218,6 @@ export default class Sound extends Evented {
     });
 
     // this.sync.on(`change:${this.url}`, this.onSyncChanged);
-
-    this.useWebAudio = !!this.audioContext;
 
     try {
       this._detectTimeouts();

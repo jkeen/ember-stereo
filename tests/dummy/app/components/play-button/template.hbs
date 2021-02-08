@@ -1,8 +1,4 @@
 <button class="hifi-play-button" {{hifi-control @url}}>
-  {{#if (is-playing @url)}}
-    <HifiVisualizer @url={{@url}}  @type='dualbars' @colors={{array 'aqua' 'aqua'}} {{did-insert this.resizeCanvas 1}}/>
-  {{/if}}
-
   <div class="hifi-play-button-bg"></div>
   {{#if (is-playing @url)}}
     <FaIcon @icon="pause" @size="2x"/>
