@@ -51,7 +51,7 @@ Optional (but nice to have) events:
 ```javascript
 import flashLibrary from 'your-third-party-library'
 
-let Sound = BaseSound.extend({
+let FlashConnection = BaseSound.extend({
   setup() {
     let url   = this.url;
     let sound = this;

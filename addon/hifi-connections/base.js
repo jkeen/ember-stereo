@@ -11,11 +11,11 @@ import Evented from 'ember-hifi/utils/evented';
 /**
 * This is the base sound object from which other sound objects are derived. 
 *
-* @class BaseSound
+* @class Sound
 * @constructor
 */
 @classic
-export default class BaseSound extends Evented {
+export default class Sound extends Evented {
   static setup(config) {
     this.config = config;
   }

@@ -26,10 +26,10 @@ export default class HLSSound extends BaseSound {
   @tracked id3TagMetadata = null
 
   setup() {
-    let hls   = new HLS({debug: true, startFragPrefetch: true});
     let video = document.createElement('video');
-
     this.video = video;
+    let hls   = new HLS({debug: true, startFragPrefetch: true});
+
     this.hls = hls;
     hls.attachMedia(video);
     this._setupHLSEvents(hls);
@@ -107,7 +107,7 @@ export default class HLSSound extends BaseSound {
     video.addEventListener('durationchange',  ()  => this.trigger('audio-duration-changed', this));
     video.addEventListener('seeked',          ()  => this.trigger('audio-position-changed', this));
     video.addEventListener('timeupdate',      ()  => this.trigger('audio-position-changed', this));
-    video.addEventListener('progress',        ()  => this.trigger('audio-loading'));
+    video.addEventListener('progress',        ()  => this.trigger('audio-loading', this));
     video.addEventListener('error',           (e) => this._onVideoError(e));
   }
 
@@ -231,6 +231,7 @@ export default class HLSSound extends BaseSound {
 
   play() {
     if (!this.video.src) {
+      this.trigger('audio-loading', this)
       this.setup(); // the stream was stopped before
     }
     this.video.play();

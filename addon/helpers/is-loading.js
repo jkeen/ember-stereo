@@ -42,16 +42,20 @@ export default class HifiIsLoading extends Helper {
   @dedupeTracked isLoading = false;
   @tracked sound = null;
   @tracked compare = null;
-  @tracked result = false
   registered = false
 
   handleEvent(sound, value) {
     if (sound && hasEqualUrls(sound.url, this.registered)) {
-      this.isLoading = value //&& !sound.isPlaying;
+      if (sound.isPlaying) {
+        this.isLoading = false
+      }
+      else {
+        this.isLoading = value;
+      }
       this.boundRecompute(this.registered)
     }
     else if (this.registered == 'system') {
-      this.isLoading = value //&& !this.hifi.isPlaying;;
+      this.isLoading = value;
       this.boundRecompute(this.registered)
     }
   }
@@ -61,9 +65,9 @@ export default class HifiIsLoading extends Helper {
     if (!this.registered) {
       this.registered = identifier;
 
-      this.hifi.on('audio-load-error', (sound) => this.handleEvent(sound, false))
-      this.hifi.on('audio-paused', (sound) => this.handleEvent(sound, false))
-      this.hifi.on('audio-played', (sound) => this.handleEvent(sound, false))
+      // this.hifi.on('audio-load-error', (sound) => this.handleEvent(sound, false))
+      // this.hifi.on('audio-paused', (sound) => this.handleEvent(sound, false))
+      // this.hifi.on('audio-played', (sound) => this.handleEvent(sound, false))
       this.hifi.on('audio-loading', (sound) => this.handleEvent(sound, true))
       this.hifi.on('pre-load', (e) => this.onPreloadRequest(e))
       this.hifi.on('new-load-request', (e) => this.onNewLoadRequest(e))
@@ -114,6 +118,25 @@ export default class HifiIsLoading extends Helper {
   }
 
 
+  get context() {
+    if (this.registered == 'system') {
+      return this.hifi;
+    }
+    else {
+      return this.hifi.findLoaded(this.registered);
+    }
+  }
+
+  get result() {
+    let context = this.context;
+    if (context) {
+      return context.isLoading || this.isLoading
+    }
+    else {
+      return this.isLoading;
+    }
+  }
+
   /**
     returns the state
     @method compute
@@ -126,8 +149,7 @@ export default class HifiIsLoading extends Helper {
       compare = 'system';
     }
     this.registerListeners(compare);
-    this.result = this.isLoading;
-    debug(`ember-hifi:helpers:${this.name}:system`)(`render = ${this.result}`); 
+    debug(`ember-hifi:helpers:${this.name}:${this.registered}`)(`render = ${this.result}`); 
   
     return this.result;
   }
