@@ -1,5 +1,9 @@
 
 export default function urlToIdentifier(url) {
+  if (url && url.url) {
+    url = url.url;
+  }
+
   let parser1 = document.createElement('a');
   parser1.href = url;
 
