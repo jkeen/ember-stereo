@@ -121,7 +121,6 @@ export default class NativeAudioConnection extends BaseSound {
     }
     else {
       let audioElement = (this._audioElement || document.createElement('audio'));
-
       this._audioElement = audioElement;
 
       return audioElement;
