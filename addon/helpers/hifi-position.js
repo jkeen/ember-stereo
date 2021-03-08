@@ -22,39 +22,10 @@ import debug from 'debug';
 @classic
 export default class HifiPosition extends Helper {
   @service hifi;
+  sound;
+  result;
 
-  name = 'hifi-position';
-  listen = ['audio-position-changed', 'audio-position-will-change']
   default = 0
-  @dedupeTracked result;
-
-  handleEvent(sound) {
-    if (hasEqualUrls(sound.url, this.registered)) {
-      throttle(this.registered, this.recompute.bind(this), 1000);
-    }
-    else if (sound && this.registered == 'system') {
-      throttle(this.registered, this.recompute.bind(this), 1000);
-    }
-  }
-
-  registerListeners([identifier], {format}) {
-    if (!this.registered) {
-      this.registered = identifier;
-
-      this.listen.forEach(eventName => {
-        this.hifi.on(eventName, this.handleEvent.bind(this))
-      });
-    }
-  }
-
-  findSound(identifier) {
-    if (identifier == 'system') {
-      return this.hifi.currentSound;
-    }
-    else {
-      return this.hifi.findLoaded(identifier);
-    }
-  }
 
   /**
     returns the position in milliseconds
@@ -65,37 +36,52 @@ export default class HifiPosition extends Helper {
     @return {Float}
   */
 
-  compute([identifier='system'], {format=false, defaultValue}) {
-    let result;
-    this.registerListeners([identifier], {format, defaultValue});
+  compute([identifier='system'], {format=false, defaultValue}) {   
+    if (identifier !== this.identifier) {
+      this.identifier = identifier || 'system';
+      if (this.identifier == 'system') {
+        this.sound = this.hifi.currentSound;
+      }
+      else if (this.identifier !== 'system') {
+        let sound = this.hifi.findLoaded(this.identifier)
+        if (sound) {
+          this.sound = sound;
+        }
+        else {
+          this.hifi.on('new-load-request', async ({loadPromise, urlsOrPromise, options}) => {
+            let isEqual = await hasEqualUrls(this.identifier, urlsOrPromise);
+            if (isEqual) {
+              loadPromise.then(({sound}) => this.sound = sound);
+            }
+          });
+        }
+      }
+    }
 
-    let sound = this.findSound(identifier)
-    if (sound) {
-      result = sound.position;
+    let result = defaultValue;
+
+    if (this.sound) {
+      this.result = this.sound.position;
     }
 
     if (format == 'percent' || format == 'percentage') {
-      if (sound) {
-        result = ((sound.position / sound.duration) * 100);
+      if (this.sound) {
+        this.result = ((this.sound.position / this.sound.duration) * 100);
       }
       else {
-        result = defaultValue || 0;
+        this.result = defaultValue || 0;
       }
     }
     else if (format == 'time') {
-      if (sound) {
-        result = numericDuration([result])
+      if (this.sound) {
+        this.result = numericDuration([this.result])
       }
       else {
-        result = defaultValue || "00:00";
+        this.result = defaultValue || "00:00";
       }
     }
-    else {
-      result = result;
-    }
 
-    this.result = result;
-    debug(`ember-hifi:helpers:${this.name}:${identifier}:${format}`)(`render = ${this.result}`); 
-    return this.result;
+    debug(`ember-hifi:helpers:hifi-position:${identifier}:${format}`)(`render = ${this.result}`); 
+    return this.result
   }
 }

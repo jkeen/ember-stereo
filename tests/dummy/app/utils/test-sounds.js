@@ -88,11 +88,23 @@ export const HLS_LIVE_STREAM = {
   }
 }
 
+export const KOOP_STREAM = {
+  title: "KOOP",
+  url: "https://streaming.koop.org/stream.mp3"
+}
+
+export const INVALID_STREAM = {
+  title: "Invalid Stream",
+  url: "https://streaming.koop.org/streamz.mp3"
+}
+
 export default [
   AAC_STREAM,
   HLS_STREAM,
   MP3_ON_DEMAND_2,
   MP3_ON_DEMAND,
   HLS_LIVE_STREAM,
-  STREAM_WITHOUT_EXTENSION
+  STREAM_WITHOUT_EXTENSION,
+  KOOP_STREAM,
+  INVALID_STREAM
 ]

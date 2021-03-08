@@ -1,8 +1,8 @@
 import classic from 'ember-classic-decorator';
 import { inject as service } from '@ember/service';
 import Helper from '@ember/component/helper';
-import { dedupeTracked } from 'tracked-toolbox';
 import hasEqualUrls from 'ember-hifi/utils/has-equal-urls';
+import { dedupeTracked } from 'tracked-toolbox';
 import {numericDuration} from './numeric-duration';
 import debug from 'debug';
 
@@ -21,43 +21,9 @@ import debug from 'debug';
 @classic
 export default class HifiDuration extends Helper {
   @service hifi;
+  @dedupeTracked sound;
 
-  name = 'hifi-duration';
-  listen = ['audio-duration-changed', 'audio-loaded'];
   default = 'N/A'
-  @dedupeTracked result;
-
-  handleEvent(sound) {
-    if (hasEqualUrls(sound.url, this.registered)) {
-      this.recompute();
-    }
-    else if (sound && this.registered == 'system') {
-      this.recompute();
-    }
-  }
-
-  registerListeners([identifier], {load, format}) {
-    if (!this.registered) {
-      this.registered = identifier;
-
-      this.listen.forEach(eventName => {
-        this.hifi.on(eventName, this.handleEvent.bind(this))
-      });
-
-      if (load) {
-        this.hifi.load(identifier).then(() => this.boundRecompute(identifier));
-      }
-    }
-  }
-
-  findSound(identifier) {
-    if (identifier == 'system') {
-      return this.hifi.currentSound;
-    }
-    else {
-      return this.hifi.findLoaded(identifier);
-    }
-  }
 
   /**
     @method compute
@@ -67,34 +33,53 @@ export default class HifiDuration extends Helper {
   * @param {Boolean} options.load load the sound if it's not loaded?
   */
   compute([identifier = 'system'], {format = false, load = false, defaultValue}) {
-    let result;
-    this.registerListeners([identifier], {format, defaultValue, load});
+    if (identifier !== this.identifier) {
+      this.identifier = identifier || 'system';
+      if (this.identifier == 'system') {
+        this.sound = this.hifi.currentSound;
+      }
+      else if (this.identifier !== 'system') {
+        let sound = this.hifi.findLoaded(this.identifier)
+        if (sound) {
+          this.sound = sound;
+        }
+        else {
 
-    let sound = this.findSound(identifier)
-    if (sound) {
-      result = sound.duration;
+          if (load) {
+            this.hifi.load(({sound}) => this.sound = sound);
+          }
+          else {
+            this.hifi.on('new-load-request', async ({loadPromise, urlsOrPromise, options}) => {
+              let isEqual = await hasEqualUrls(this.identifier, urlsOrPromise);
+              if (isEqual) {
+                loadPromise.then(({sound}) => this.sound = sound);
+              }
+            });
+          }
+        }
+      }
     }
-
-    if (result === Infinity) {
+    
+    let result = defaultValue;
+    if (this.sound?.duration === Infinity) {
       //this is a stream
       result = defaultValue || "∞";
     }
     else {
       if (format == 'time') {
-        if (sound) {
-          result = numericDuration([result])
+        if (this.sound) {
+          result = numericDuration([this.sound?.duration])
         }
         else {
           result = defaultValue || '00:00';
         }
       }
       else {
-        result = result || defaultValue;
+        result = this.sound?.duration || defaultValue;
       }
     }
 
-    this.result = result;
-    debug(`ember-hifi:helpers:${this.name}:${identifier}:${format}`)(`render = ${this.result}`); 
-    return this.result;
+    debug(`ember-hifi:helpers:hifi-duration:${identifier}:${format}`)(`render = ${result}`); 
+    return result;
   }
 }

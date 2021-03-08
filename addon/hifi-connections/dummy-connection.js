@@ -4,6 +4,7 @@ import Ember from 'ember';
 import BaseSound from './base';
 import classic from 'ember-classic-decorator';
 import { tracked } from '@glimmer/tracking';
+import { get } from '@ember/object';
 @classic
 export default class DummyConnection extends BaseSound {
   static setup() {}
@@ -24,7 +25,10 @@ export default class DummyConnection extends BaseSound {
       next(() => this.trigger('audio-load-error', this));
     }
     else {
-      next(() => this.trigger('audio-ready', this));
+      next(() => {
+        this.trigger('audio-loaded', this)
+        this.trigger('audio-ready', this)
+      });
     }
   }
 
@@ -106,7 +110,7 @@ export default class DummyConnection extends BaseSound {
   }
 
   _currentPosition() {
-    return this.get('_position');
+    return this._position
   }
 
   _setVolume(v) {

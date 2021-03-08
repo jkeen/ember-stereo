@@ -133,7 +133,7 @@ module('Unit | Service | hifi', function(hooks) {
 
   test('it returns a list of the available connections', function(assert) {
     const service = (this.owner.factoryFor('service:hifi').create)({ options });
-    assert.deepEqual(service.availableConnections(), ["Howler", "NativeAudio", "LocalDummyConnection"]);
+    assert.deepEqual(service.availableConnections, ["Howler", "NativeAudio", "LocalDummyConnection"]);
   });
 
   test('#load tries the first connection that says it can handle the url', async function(assert) {

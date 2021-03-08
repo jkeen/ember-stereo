@@ -4,6 +4,7 @@ import { dedupeTracked } from 'tracked-toolbox';
 import hasEqualUrls from 'ember-hifi/utils/has-equal-urls';
 import { inject as service } from '@ember/service';
 import debug from 'debug';
+import { makeArray } from '@ember/array';
 /**
   A helper to display error details.
   ```hbs
@@ -15,69 +16,56 @@ import debug from 'debug';
   @param {String} url
 */
 
+const UNINITIALIZED = Object.freeze({});
+
 @classic
 export default class HifiIsErrored extends Helper {
   @service hifi;
-
-  name = 'is-errored';
-  listen = ['audio-load-error', 'audio-loaded'];
-  @dedupeTracked result;
-
-  registerListeners([identifier]) {
-    this.boundRecompute = (e) => this.recompute(e)
-
-    if (!this.registered) {
-      this.registered = identifier;
-
-      this.hifi.on('audio-loaded', (sound) => {
-        if (hasEqualUrls(sound.url, this.registered)) {
-          this.boundRecompute()
-        }
-        else if (sound && this.registered == 'system') {
-          this.boundRecompute()
-        }
-      });
-
-      this.hifi.on('audio-load-error', (sound) => {
-        if (hasEqualUrls(sound.url, this.registered)) {
-          this.boundRecompute()
-        }
-        else if (sound && this.registered == 'system') {
-          this.boundRecompute()
-        }
-      });
-    }
-  }
-
+  
+  identifier = UNINITIALIZED;
+  @dedupeTracked result = UNINITIALIZED
+  
   /**
-    @method compute
-    @param {String} [url]
-  * @param {Object} options
-  * @param {String} options.format time, ms, s,
-  * @param {Boolean} options.load load the sound if it's not loaded?
+  returns the state
+  @method compute
+  @param {String} [url]
+  @return {boolean}
   */
-  compute([identifier = 'system'], {connectionName = 'NativeAudio'}) {
-    this.registerListeners([identifier]);
 
-    let result = this.result;
-    let errors = this.hifi.errorCache.find(identifier);
+  compute([identifier], {connectionName = 'NativeAudio'}) {
+    if (identifier !== this.identifier) {
+      this.result = UNINITIALIZED; // if identifier changes, reinitialize sound
+      this.identifier = identifier || 'system';
+      if (this.identifier !== 'system') {
+        let result = this.hifi.errorCache.find(this.identifier)
+        if (result) {
+          this.result = makeArray(error);
+        }
+        else {
+          this.hifi.on('audio-load-error', async (sound) => {
+            let isEqual = await hasEqualUrls(this.identifier, sound.url);
+            if (isEqual) {
+              this.result = makeArray(sound.errors)
+            }
+          });
+        }
+      }
+    }
 
-    if (!errors) { return }
-
-    if (errors.length === 1) {
-      let error = errors[0];
-      if (error[connectionName]) {
-        this.result = error[connectionName];
-        debug(`ember-hifi:helpers:${this.name}:${identifier}`)(`render = ${this.result}`); 
+    if (!this.result) { return }
+    
+    if (this.result.length === 1) {
+      var error = this.result[0];
+      if (connectionName && error[connectionName]) {
+        debug(`ember-hifi:helpers:error-details:${identifier}`)(`render = ${error[connectionName]}`); 
+        return error[connectionName];
       }
       else {
-        this.result = error[Object.keys(error)[0]];
+        return error[Object.keys(error)[0]];
       }
     }
-    else {
-
+    else if (this.result.length > 0) {
+      return this.result
     }
-
-    return this.result;
   }
 }

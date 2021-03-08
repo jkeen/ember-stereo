@@ -74,7 +74,11 @@ export default class Sound extends Evented {
 
   @tracked hasPlayed = false
   @tracked isLoading = false
+  @tracked isLoaded  = false
   @tracked isPlaying = false
+  @tracked isErrored = false;
+  @tracked isReady   = false
+  @tracked _position;
   @tracked error = null;
   @tracked duration = 0
   @tracked percentLoaded = 0
@@ -104,10 +108,9 @@ export default class Sound extends Evented {
     return !this.isStream;
   } 
 
-
   // _position is updated by the service on the currently playing sound
   get position() {
-    return this._currentPosition();
+    return this._position;
   }
   set position(v) {
     this.trigger('audio-position-will-change', this, { currentPosition: this._currentPosition(), newPosition: v });
@@ -186,6 +189,7 @@ export default class Sound extends Evented {
     });
 
     this.on('audio-ready',    () => {
+      this.isReady = true;
       this.duration = this._audioDuration();
       if (audioReady) { audioReady(this); }
       this.syncState()
@@ -205,6 +209,7 @@ export default class Sound extends Evented {
 
     this.on('audio-loaded', () => {
       this.isLoading = false;
+      this.isLoaded = true;
       if (audioLoaded) { audioLoaded(this); }
       this.debug('audio-loaded');
     });

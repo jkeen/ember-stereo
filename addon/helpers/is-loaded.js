@@ -1,5 +1,5 @@
 import classic from 'ember-classic-decorator';
-import HifiBaseIsHelper from './hifi-base-is-helper';
+import HifiBaseIsHelper from './-is-helper';
 
 /**
   A helper to detect if a sound is loaded.
@@ -20,35 +20,18 @@ import HifiBaseIsHelper from './hifi-base-is-helper';
     {{/if}}
   ```
 
-  @class HifiIsLoaded
+  @class {{is-loaded}}
   @type Helper
   @param {String} url
 */
-
 @classic
 export default class HifiIsLoaded extends HifiBaseIsHelper {
-  name = 'is-loaded'
-  listen = ['audio-loaded', 'audio-loading', 'audio-ended']
-
-  checkSystem() {
-    if (this.hifi.currentSound) {
-      return this.checkSound(this.hifi.currentSound);
+  get result() {
+    if (this.identifier == 'system') {
+      return !!this.hifi.currentSound;
     }
     else {
-      return false;
+      return this.sound?.isLoaded;
     }
   }
-
-  checkSound(sound) {
-    return !!sound;
-  }
-
-  /**
-    returns the state
-    @method compute
-    @param {String} [url]
-    @return {boolean}
-  */
-
-  /* inherited */
 }

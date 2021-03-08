@@ -34,7 +34,6 @@ export default class HifiControlModifier extends Modifier {
 
     this.hifi.on('volume-change', this.onVolumeChange.bind(this));
 
-    // debugger
     if (this.options.initialVolume) {
       this.hifi.volume = this.options.initialVolume;
     }

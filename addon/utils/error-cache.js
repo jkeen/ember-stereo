@@ -37,7 +37,7 @@ export default class ErrorCache  {
   find(urls) {
     urls = makeArray(urls);
     let cache = this._cache;
-    let keysToSearch = emberArray(urls).map(url => (url.url || url));
+    let keysToSearch = emberArray(urls).map(urlToIdentifier);
     let errors       = emberArray(keysToSearch).map(url => cache[url]);
     let foundErrors  = emberArray(errors).compact();
 
@@ -47,22 +47,6 @@ export default class ErrorCache  {
     }
     else {
       debug(this.name)(`cache miss for ${keysToSearch.join(',')}`);
-    }
-  }
-
-  /**
-   * remove - removes a sound from the cache
-   *
-   * @param {Sound} sound
-   */
-  remove(sound) {
-    if (this.isDestroyed) return;
-
-    debug(this.name)(`removing sound from cache with url: ${sound.url}`);
-
-    if (this._cache[sound.url]) {
-      delete this._cache[sound.url]
-      this.cachedCount = Object.keys(this._cache).length
     }
   }
 

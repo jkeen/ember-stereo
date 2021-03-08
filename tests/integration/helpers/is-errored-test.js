@@ -8,10 +8,13 @@ module('Integration | Helper | is-errored', function(hooks) {
 
   // TODO: Replace this with your real tests.
   test('it renders', async function(assert) {
-    this.set('inputValue', '1234');
+    let service = this.owner.lookup('service:hifi')
+    service.loadConnections([{name: 'DummyConnection'}]);
 
-    await render(hbs`{{is-errored inputValue}}`);
-
-    assert.equal(this.element.textContent.trim(), '1234');
+    this.set('url', '/bad/10/silence.mp3')
+    await render(hbs`{{#if (is-errored this.url)}}is-errored{{else}}is-not-errored{{/if}}`);
+    assert.equal(this.element.textContent.trim(), 'is-not-errored', 'helper reports no error');
+    await service.load(this.url);
+    assert.equal(this.element.textContent.trim(), 'is-errored', 'helper reports error');
   });
 });

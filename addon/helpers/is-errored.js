@@ -29,39 +29,15 @@ import debug from 'debug';
   @param {String} url
 */
 
+const UNINITIALIZED = Object.freeze({});
+
 @classic
 export default class HifiIsErrored extends Helper {
   @service hifi;
 
   name = 'is-errored';
-  listen = ['audio-load-error', 'audio-loaded'];
-  @dedupeTracked result;
-
-  registerListeners([identifier], {load, format}) {
-    this.boundRecompute = (e) => this.recompute(e)
-
-    if (!this.registered) {
-      this.registered = identifier;
-
-      this.hifi.on('audio-loaded', (sound) => {
-        if (hasEqualUrls(sound.url, this.registered)) {
-          this.boundRecompute()
-        }
-        else if (sound && this.registered == 'system') {
-          this.boundRecompute()
-        }
-      });
-
-      this.hifi.on('audio-load-error', (sound) => {
-        if (hasEqualUrls(sound.url, this.registered)) {
-          this.boundRecompute()
-        }
-        else if (sound && this.registered == 'system') {
-          this.boundRecompute()
-        }
-      });
-    }
-  }
+  @dedupeTracked result = false;
+  identifier = UNINITIALIZED;
 
   /**
     @method compute
@@ -70,14 +46,23 @@ export default class HifiIsErrored extends Helper {
   * @param {String} options.format time, ms, s,
   * @param {Boolean} options.load load the sound if it's not loaded?
   */
-  compute([identifier = 'system'], {format = false, load = false, defaultValue}) {
-    this.registerListeners([identifier], {format, defaultValue, load});
+  compute([identifier = 'system'], {connectionName}) {
+    if (identifier !== this.identifier) {
+      this.result = UNINITIALIZED; // if identifier changes, reinitialize sound
+      this.identifier = identifier || 'system';
+      if (this.identifier !== 'system') {
+        let error = this.hifi.errorCache.find(this.identifier)
+        if (error) {
+          this.result = true;
+        }
+        else {
+          this.hifi.on('audio-load-error', async (sound) => {
+            this.result = await hasEqualUrls(this.identifier, sound.url);      
+          });
+        }
+      }
+    }
 
-    let result = this.result;
-    let error = this.hifi.errorCache.find(identifier);
-    this.result = !!error;
-
-    debug(`ember-hifi:helpers:${this.name}:${identifier}:${format}`)(`render = ${this.result}`); 
-    return this.result;
+    return this.result === true;
   }
 }

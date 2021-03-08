@@ -1,6 +1,6 @@
 import { module, test } from 'qunit';
 import { setupRenderingTest } from 'ember-qunit';
-import { render } from '@ember/test-helpers';
+import { render, waitUntil } from '@ember/test-helpers';
 import { hbs } from 'ember-cli-htmlbars';
 import sinon from 'sinon';
 
@@ -17,9 +17,7 @@ module('Integration | Helper | is-loading', function(hooks) {
     let sound = new Connection({url: this.url})
 
     const setTimeoutPromise = new Promise((resolve) => {
-      console.log('waiting 1');
       setTimeout(() => {
-        console.log('waiting')
         resolve({ success: sound })
       }, 300);
     });
@@ -27,7 +25,17 @@ module('Integration | Helper | is-loading', function(hooks) {
     sinon.stub(service, '_findFirstPlayableSound').returns(setTimeoutPromise)
     await render(hbs`{{#if (is-loading this.url)}}is-loading{{else}}is-not-loading{{/if}}`);
     assert.equal(this.element.textContent.trim(), 'is-not-loading');
-    service.load(this.url).then(() => done());
+
+    service.load(this.url).then(async (sound) => {
+      await waitUntil(() => {
+        return this.element.textContent.trim() == 'is-not-loading'
+      }, { timeout: 2000 });
+      assert.equal(this.element.textContent.trim(), 'is-not-loading');
+      done();
+    });
+    await waitUntil(() => {
+      return this.element.textContent.trim() == 'is-loading'
+    }, { timeout: 2000 });
     assert.equal(this.element.textContent.trim(), 'is-loading');
   });
 });

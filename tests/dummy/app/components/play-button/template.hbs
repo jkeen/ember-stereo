@@ -1,6 +1,8 @@
 <button class="hifi-play-button" {{hifi-control @url}}>
   <div class="hifi-play-button-bg"></div>
-  {{#if (is-playing @url)}}
+  {{#if (is-errored @url)}}
+    <FaIcon @icon="bomb" @size="2x"/>
+  {{else if (is-playing @url)}}
     <FaIcon @icon="pause" @size="2x"/>
   {{else if (is-playing-elsewhere @url)}}
     <FaIcon @icon="pause" @size="2x"/>
@@ -11,5 +13,7 @@
   {{/if}}
 
 </button>
+
+{{hifi-error-details @url}}
 
 {{!--  --}}

@@ -16,13 +16,13 @@ function stubConnectionCreateWithSuccess(service, connectionName, sandbox = sino
   let connectionSpy = sinon.createStubInstance(Connection)
   
   connectionSpy.callsFake(()=> {
-      let sound = new BaseSound(Object.assign({}, dummyOps, options));
-      sandbox.stub(sound, 'play').callsFake(() => sound.trigger('audio-played'));
-      sandbox.stub(sound, 'pause').callsFake(() => sound.trigger('audio-paused'));
-  
-      next(() => sound.trigger('audio-ready'));
-      return sound;
-    });
+    let sound = new BaseSound(Object.assign({}, dummyOps, options));
+    sandbox.stub(sound, 'play').callsFake(() => sound.trigger('audio-played'));
+    sandbox.stub(sound, 'pause').callsFake(() => sound.trigger('audio-paused'));
+
+    next(() => sound.trigger('audio-ready'));
+    return sound;
+  });
 
   // let connectionSpy = sandbox.stub(Connection).callsFake(function(options) {
   //   let sound = new BaseSound(Object.assign({}, dummyOps, options));

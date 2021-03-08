@@ -13,7 +13,7 @@ module('Integration | Helper | is-loaded', function(hooks) {
     this.set('url', '/good/10/silence.mp3')
     await render(hbs`{{#if (is-loaded this.url)}}is-loaded{{else}}is-not-loaded{{/if}}`);
     assert.equal(this.element.textContent.trim(), 'is-not-loaded');
-    service.load(this.url);
+    await service.load(this.url);
     assert.equal(this.element.textContent.trim(), 'is-loaded');
   });
 
