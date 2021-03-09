@@ -87,6 +87,8 @@ export default Component.extend({
       }
 
       loadPromise.then(({sound}) => {
+        if (!sound) return;
+
         let results = (get(sound, 'metadata.debug.results') || [])
 
         set(result, 'thisConnection',  this.connection.toString());
@@ -112,7 +114,6 @@ export default Component.extend({
 
         deepSet(sound, 'metadata.debug.results', debugResults)
         deepSet(sound, 'metadata.debug.strategies', strategies);
-
       })
     })
   }

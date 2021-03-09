@@ -18,7 +18,7 @@ module('Integration | Helper | is-loading', function(hooks) {
 
     const setTimeoutPromise = new Promise((resolve) => {
       setTimeout(() => {
-        resolve({ success: sound })
+        resolve({ sound })
       }, 300);
     });
 

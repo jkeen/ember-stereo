@@ -103,18 +103,7 @@ module('Unit | Service | hifi', function(hooks) {
     };
   }
 
-  function createService() {
-
-  }
-
-  function creareServiceWithConnectionStubs(stubs) {
-    (this.owner.factoryFor('service:hifi').create)({ options: chooseActiveConnections('LocalDummyConnection') });
-  }
-
-  test('it activates local connections', function(assert) {
-
-
-    
+  test('it activates local connections', function(assert) { 
     options.config = {'foo': 'bar'};
     let service = (this.owner.factoryFor('service:hifi').create)({ options: chooseActiveConnections('LocalDummyConnection') });
 
@@ -154,7 +143,7 @@ module('Unit | Service | hifi', function(hooks) {
     let nativeCreateSpy       = sandbox.stub(NativeAudio, 'constructor').callsFake(() =>  new DummyConnection(...arguments));
     let howlerCreateSpy       = sandbox.stub(Howler, 'constructor').returns(sandbox.createStubInstance(Howler));
     let localCreateSpy        = sandbox.stub(LocalDummyConnection, 'constructor').returns(sandbox.createStubInstance(LocalDummyConnection));
-
+    
     await service.load(testUrl);
 
     sound.trigger('audio-ready');
@@ -448,7 +437,7 @@ module('Unit | Service | hifi', function(hooks) {
     let LocalDummyConnection = get(service, `_connections.LocalDummyConnection`);
 
     let mimeTypeSpy = sandbox.stub(LocalDummyConnection, 'canPlayMimeType').returns(true);
-    let createSpy   = sandbox.stub(LocalDummyConnection, 'create').callsFake(function() {
+    let createSpy   = sandbox.stub(LocalDummyConnection, 'constructor').callsFake(function() {
       let sound = new BaseSound(Object.assign({}, dummyOps, options));
       next(() => sound.trigger('audio-ready'));
       return sound;

@@ -1,6 +1,6 @@
 import { module, test } from 'qunit';
 import { setupRenderingTest } from 'ember-qunit';
-import { render } from '@ember/test-helpers';
+import { render, settled } from '@ember/test-helpers';
 import { hbs } from 'ember-cli-htmlbars';
 
 module('Integration | Helper | is-loaded', function(hooks) {
@@ -14,6 +14,7 @@ module('Integration | Helper | is-loaded', function(hooks) {
     await render(hbs`{{#if (is-loaded this.url)}}is-loaded{{else}}is-not-loaded{{/if}}`);
     assert.equal(this.element.textContent.trim(), 'is-not-loaded');
     await service.load(this.url);
+    await settled();
     assert.equal(this.element.textContent.trim(), 'is-loaded');
   });
 

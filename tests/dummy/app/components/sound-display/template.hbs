@@ -34,9 +34,7 @@
   <SoundDisplay::Position @sound={{@sound}}/>
 
   <div class="sound-control-buttons">
-    <a class="sound-control-button-item">
-
-    </a>
+    <a class="sound-control-button-item"></a>
 
     {{#if (is-rewindable this.url)}}
       <button type="button" class="sound-control-button-item" {{on 'click' (fn (hifi-rewind this.url increment=5000))}}>

@@ -13,13 +13,10 @@ function stubConnectionCreateWithSuccess(service, connectionName, sandbox = sino
   let Connection =  get(service, `_connections.${connectionName}`);
   sandbox.stub(Connection, 'canPlay').returns(true);
 
-  let connectionSpy = sinon.createStubInstance(Connection)
-  
-  connectionSpy.callsFake(()=> {
+  let connectionSpy = sandbox.stub(Connection, 'constructor').callsFake(function(options) {
     let sound = new BaseSound(Object.assign({}, dummyOps, options));
-    sandbox.stub(sound, 'play').callsFake(() => sound.trigger('audio-played'));
-    sandbox.stub(sound, 'pause').callsFake(() => sound.trigger('audio-paused'));
-
+    sandbox.stub(sound, 'play').callsFake(() => next(() => sound.trigger('audio-played')));
+    sandbox.stub(sound, 'pause').callsFake(() => next(() => sound.trigger('audio-paused')));
     next(() => sound.trigger('audio-ready'));
     return sound;
   });
@@ -40,7 +37,7 @@ function stubConnectionCreateWithFailure(service, connectionName, sandbox = sino
   let Connection =  get(service, `_connections.${connectionName}`);
   sandbox.stub(Connection, 'canPlay').returns(true);
 
-  let connectionSpy = sandbox.stub(Connection, 'create').callsFake(function(options) {
+  let connectionSpy = sandbox.stub(Connection, 'constructor').callsFake(function(options) {
     let sound = new BaseSound(Object.assign({}, dummyOps, options));
     next(() => sound.trigger('audio-load-error'));
     return sound;
