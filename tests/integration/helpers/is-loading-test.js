@@ -22,7 +22,7 @@ module('Integration | Helper | is-loading', function(hooks) {
       }, 300);
     });
 
-    sinon.stub(service, '_findFirstPlayableSound').returns(setTimeoutPromise)
+    sinon.stub(service.tryLoadingSound, 'perform').returns(setTimeoutPromise)
     await render(hbs`{{#if (is-loading this.url)}}is-loading{{else}}is-not-loading{{/if}}`);
     assert.equal(this.element.textContent.trim(), 'is-not-loading', 'helper reports not loading');
 

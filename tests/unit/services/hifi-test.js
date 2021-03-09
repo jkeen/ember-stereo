@@ -477,7 +477,7 @@ module('Unit | Service | hifi', function(hooks) {
     stubConnectionCreateWithSuccess(service, "Howler", sandbox);
 
     let strategySpy       = sandbox.spy(service, '_prepareStandardStrategies');
-    let findAudioSpy      = sandbox.spy(service, '_findFirstPlayableSound');
+    let findAudioSpy      = sandbox.spy(service, 'tryLoadingSound.perform');
 
     await service.load(urls)
     assert.equal(strategySpy.callCount, 1, "Standard strategy should have been used");
@@ -513,7 +513,7 @@ module('Unit | Service | hifi', function(hooks) {
     stubConnectionCreateWithSuccess(service, "Howler", sandbox);
 
     let strategySpy       = sandbox.spy(service, '_prepareMobileStrategies');
-    let findAudioSpy      = sandbox.spy(service, '_findFirstPlayableSound');
+    let findAudioSpy      = sandbox.spy(service, 'tryLoadingSound.perform');
 
     service.set('isMobileDevice', true);
 
@@ -555,7 +555,7 @@ module('Unit | Service | hifi', function(hooks) {
 
     let strategySpy       = sandbox.spy(service, '_prepareMobileStrategies');
     let customStrategySpy = sandbox.spy(service, '_prepareStrategies');
-    let findAudioSpy      = sandbox.spy(service, '_findFirstPlayableSound');
+    let findAudioSpy      = sandbox.spy(service, 'tryLoadingSound.perform');
 
     service.set('isMobileDevice', true);
 
@@ -600,7 +600,7 @@ module('Unit | Service | hifi', function(hooks) {
     stubConnectionCreateWithSuccess(service, "LocalDummyConnection", sandbox);
     stubConnectionCreateWithSuccess(service, "Howler", sandbox);
 
-    let findAudioSpy      = sandbox.spy(service, '_findFirstPlayableSound');
+    let findAudioSpy      = sandbox.spy(service, 'tryLoadingSound.perform');
 
     service.set('isMobileDevice', false);
     service.set('alwaysUseSingleAudioElement', true);

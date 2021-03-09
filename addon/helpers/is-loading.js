@@ -62,13 +62,16 @@ export default class HifiIsLoading extends Helper {
           this.hifi.on('new-load-request', async ({loadPromise, urlsOrPromise, options}) => {
             let isEqual = await hasEqualUrls(this.identifier, urlsOrPromise)
             if (isEqual) {
+              console.log('is-loading | is-equal')
               this.result = true;
               loadPromise.then(({sound, failures}) => {
                 if (sound) {
                   this.result = sound.isLoading
+                  console.log('is-loading | found-sound')
                 }
                 else if (failures) {
                   this.result = false;
+                  console.log('is-loading | failed-sound')
                 }                
               });
             }

@@ -5,6 +5,7 @@ import { assert } from '@ember/debug';
 import { getMimeType } from 'ember-hifi/utils/mime-types';
 import debug from 'debug';
 import { tracked } from '@glimmer/tracking';
+import { dedupeTracked } from 'tracked-toolbox';
 import Evented from 'ember-hifi/utils/evented';
 /**
  * This is the base sound object from which other sound objects are derived.

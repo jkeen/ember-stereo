@@ -2,7 +2,7 @@ import { later, cancel } from '@ember/runloop';
 import { isEmpty } from '@ember/utils';
 import { assign } from '@ember/polyfills';
 import { getOwner } from '@ember/application';
-import { race, waitForEvent } from 'ember-concurrency';
+import { race, waitForProperty, waitForEvent, didCancel } from 'ember-concurrency';
 import { task } from 'ember-concurrency-decorators';
 import Evented from '@ember/object/evented';
 import SoundCache from 'ember-hifi/utils/sound-cache';
@@ -130,10 +130,7 @@ export default class Hifi extends Service.extend(Evented) {
   }
 
   get isLoading() {
-    return this._isLoading || false;
-  }
-  set isLoading(v) {
-    this._isLoading = v;
+    return this.loadTask.isRunning;
   }
 
   get isStream() {
@@ -263,23 +260,18 @@ export default class Hifi extends Service.extend(Evented) {
 
   @task
   * waitForSuccess(strategy, sound) {
-    if (!sound.isReady) {
-      yield waitForEvent(sound, 'audio-ready');
-    }
-
+    yield waitForProperty(sound, 'isReady');
     debug('ember-hifi')(`SUCCESS: [${strategy.connectionName}] -> (${strategy.url})`);
     return { sound }
   }
 
   @task
   * waitForFailure(strategy, sound) {
-    if (!sound.isErrored) {
-      yield waitForEvent(sound, 'audio-load-error');
-    }
-    debug('ember-hifi')(`FAILED: [${strategy.connectionName}] -> ${error} (${strategy.url})`);
+    yield waitForProperty(sound, 'isErrored');
+    debug('ember-hifi')(`FAILED: [${strategy.connectionName}] -> ${sound.error} (${strategy.url})`);
     this._unregisterEvents(sound);
-    strategy.error = error;
-    return { error }
+    strategy.error = sound.error;
+    return { error: sound.error }
   }
 
   @task({ enqueue: true, maxConcurrency: 1 })
@@ -295,14 +287,23 @@ export default class Hifi extends Service.extend(Evented) {
       this.waitForFailure.perform(strategy, newSound)
     ]);
   }
+  
+  /**
+   * Given an array of URLS, return a sound ready for playing
+   *
+   * @method loadTask
+   * @async
+   * @param urlsOrPromise [..{Promise|String}]
+   * Provide an array of urls to try, or a promise that will resolve to an array of urls
+   * @return {Sound} A sound that's ready to be played, or an error
+   */
 
-  @task({ restartable: true })
+  @task({ enqueue: true })
   * loadTask(urlsOrPromise, options) {
+    options = assign({ metadata: {} }, options);
+ 
     var sharedAudioAccess = this._createAndUnlockAudio();
-
-    options = assign({ metadata: {}, sharedAudioAccess }, options);
-    this.isLoading = true;
-
+    let urlsToTry = yield this._resolveUrls(urlsOrPromise);
     this.trigger('pre-load', urlsToTry);
     var sound = this.soundCache.find(urlsToTry);
     if (sound) {
@@ -311,8 +312,8 @@ export default class Hifi extends Service.extend(Evented) {
     }
     else {
       var strategies = this._prepareAllStrategies(urlsToTry, options);
-      var tasks = []
       var success = false
+      let failures = []
       while (strategies.length > 0 && !success) {
         let strategy = strategies.shift()
         let result = yield this.tryLoadingSound.perform(strategy);
@@ -321,39 +322,56 @@ export default class Hifi extends Service.extend(Evented) {
           success = true;
         }
         if (result.error) {
-          console.error(result.error);
+          failures.push(strategy);
+          this.errorCache.cache({url: strategy, error: strategy.error, connectionKey: strategy.connectionKey})
         }
       }
 
-      if (sound) {
-        // this.trigger('new-load-request', {loadPromise:this.loadTask.last, urlsOrPromise, options});
-        sound.on('audio-played', () => {
-          let previousSound = this.currentSound;
-          let currentSound  = sound;
-
-          if (previousSound !== currentSound) {
-            if (previousSound && get(previousSound, 'isPlaying')) {
-              this.trigger('current-sound-interrupted', previousSound);
-            }
-
-            this.trigger('current-sound-changed', currentSound, previousSound);
-            this.setCurrentSound(sound);
-          }
-        })
-        // set current sound metadata
-        sound.metadata = options.metadata
-        this.soundCache.cache(sound);
-
-        // On audio-played this pauses all the other sounds. One at a time!
-        this.oneAtATime.register(sound)
-
+      if (success && sound) {
+        this._handleLoadSuccess({sound, options});
+      }
+      else {
+        this._handleLoadFailure({urlsToTry, failures})
       }
 
-      return { sound };
+      return { sound, failures };
     }
   }
 
+  _handleLoadFailure({urlsToTry, failures}) {
+    let nativeAudioFailure = failures.find(f => f.connectionKey == 'NativeAudio')
+    let errorMessage = ""
+    if (nativeAudioFailure) {
+      errorMessage = nativeAudioFailure.error;
+    }
+    else {
+      errorMessage = failures.map(f => f.error).filter(f => f.toString().length > 0)[0]
+    }
 
+    this.trigger('audio-load-error', { url: urlsToTry, failures: failures, message: errorMessage })
+  }
+
+  _handleLoadSuccess({sound, options}) {
+    sound.on('audio-played', () => {
+      let previousSound = this.currentSound;
+      let currentSound  = sound;
+
+      if (previousSound !== currentSound) {
+        if (previousSound && get(previousSound, 'isPlaying')) {
+          this.trigger('current-sound-interrupted', previousSound);
+        }
+
+        this.trigger('current-sound-changed', currentSound, previousSound);
+        this.setCurrentSound(sound);
+      }
+    })
+    // set current sound metadata
+    sound.metadata = options.metadata
+    this.soundCache.cache(sound);
+
+    // On audio-played this pauses all the other sounds. One at a time!
+    this.oneAtATime.register(sound)
+  }
 
   /**
    * Given an array of URLS, return a sound ready for playing
@@ -366,7 +384,51 @@ export default class Hifi extends Service.extend(Evented) {
    */
 
   load(urlsOrPromise, options) {
-    return this.loadTask.perform(urlsOrPromise, options);
+    try {
+      let promise = this.loadTask.perform(urlsOrPromise, options);
+      this.trigger('new-load-request', {loadPromise: promise, urlsOrPromise, options});
+
+      return promise;    
+    }
+    catch(e) {
+      if (!didCancel(e)) {
+        // re-throw the non-cancelation error
+        throw e;
+      }
+    }
+  }
+
+  /**
+   * Given an array of URLs, return a sound and play it.
+   *
+   * @method playTass
+   * @async
+   * @param urlsOrPromise [..{Promise|String}]
+   * Provide an array of urls to try, or a promise that will resolve to an array of urls
+   * @return {Sound, failures} A sound that's playing, or an error
+   */
+
+  @task({maxConcurrency: 1, restartable: true})
+  * playTask(urlsOrPromise, options = {}) {
+    if (this.isPlaying) {
+      this.trigger('current-sound-interrupted', this.currentSound);
+      this.pause();
+    }
+    // update the UI immediately while `.load` figures out which sound is playable
+    this.set('currentMetadata', options.metadata);
+
+    let loadPromise = this.loadTask.perform(urlsOrPromise, options);
+    this.trigger('new-load-request', {loadPromise, urlsOrPromise, options});
+
+    let { sound, failures } = yield loadPromise;
+
+    if (sound) {
+      this._registerEvents(sound);
+      this._attemptToPlaySound(sound, options);
+      yield waitForProperty(sound, 'isPlaying')
+    }
+
+    return {sound, failures}
   }
 
   /**
@@ -379,27 +441,16 @@ export default class Hifi extends Service.extend(Evented) {
    * @return {Sound} A sound that's playing, or an error
    */
 
-  @task
-  * playTask(urlsOrPromise, options = {}) {
-    if (this.isPlaying) {
-      this.trigger('current-sound-interrupted', this.currentSound);
-      this.pause();
+  play(urlsOrPromise, options = {}) {
+    try {
+      return this.playTask.perform(urlsOrPromise, options)
     }
-    // update the UI immediately while `.load` figures out which sound is playable
-    this.set('currentMetadata', options.metadata);
-
-    let { sound, failures } = yield this.loadTask.perform(urlsOrPromise, options);
-
-    if (sound) {
-      this._registerEvents(sound);
-      this._attemptToPlaySound(sound, options);
-      yield waitForEvent(sound, 'audio-played')
+    catch(e) {
+      if (!didCancel(e)) {
+        // re-throw the non-cancelation error
+        throw e;
+      }
     }
-    return {sound, failures}
-  }
-
-  async play(urlsOrPromise, options = {}) {
-    return this.playTask.perform(urlsOrPromise, options)
   }
 
   /**
@@ -434,8 +485,8 @@ export default class Hifi extends Service.extend(Evented) {
     assert('[ember-hifi] Nothing is playing.', this.currentSound);
     if (this.isPlaying) {
       this.currentSound.pause();
-    } else {
-      this.isLoading = true;
+    }
+    else {
       this.currentSound.play();
     }
   }
@@ -479,7 +530,6 @@ export default class Hifi extends Service.extend(Evented) {
     }
     this._unregisterEvents(this.currentSound);
     this._registerEvents(sound);
-
     sound._setVolume(this.volume);
     this.currentSound = sound;
     debug('ember-hifi')(`setting current sound -> ${sound.url}`);
@@ -743,73 +793,6 @@ export default class Hifi extends Service.extend(Evented) {
     debug('ember-hifi')(`given urls: ${urls.join(', ')}`);
     return urls;
   }
-
-  /**
-   * Given an array of strategies with {connection, url} try the connection and url
-   * return the first thing that works
-   *
-   * @method _findFirstPlayableSound
-   * @param {Array} urlsToTry
-   * @private
-   * @return {Promise.<Sound|error>} A sound that's ready to be played, or an error with a failures property
-   */
-
-  _findFirstPlayableSound(strategies, options) {
-    debug('ember-hifi')('start: _findFirstPlayableSound');
-
-    let promise = PromiseRace.start(
-      strategies,
-      (strategy, returnSuccess, markAsFailure) => {
-        let Connection = strategy.connection;
-        let connectionOptions = getProperties(
-          strategy,
-          'url',
-          'connectionName',
-          'sharedAudioAccess',
-          'options'
-        );
-        connectionOptions.container = getOwner(this);
-        let sound = new Connection(connectionOptions);
-
-        this._registerEvents(sound);
-
-        debug('ember-hifi')(
-          `TRYING: [${strategy.connectionName}] -> ${strategy.url}`
-        );
-
-        sound.one('audio-load-error', (error) => {
-          strategy.error = error;
-          this._unregisterEvents(sound);
-          markAsFailure(strategy);
-          debug('ember-hifi')(
-            `FAILED: [${strategy.connectionName}] -> ${error} (${strategy.url})`
-          );
-        });
-
-        sound.one('audio-ready', () => {
-          returnSuccess(sound);
-          debug('ember-hifi')(
-            `SUCCESS: [${strategy.connectionName}] -> (${strategy.url})`
-          );
-        });
-      }
-    );
-
-    promise.finally(() =>
-      debug('ember-hifi')(`finish: _findFirstPlayableSound`)
-    );
-
-    return promise;
-  }
-
-  /**
-   * Given some urls, it prepares an array of connection and url pairs to try
-   *
-   * @method _prepareParamsForLoadWorkingAudio
-   * @param {Array} urlsToTry
-   * @private
-   * @return {Array} {connection, url}
-   */
 
   /**
    * Take our standard strategy and reorder it to prioritize native audio
