@@ -51,32 +51,15 @@ export default class ErrorCache  {
   }
 
   /**
-   * cache - caches the sound by the url
+   * cache - caches the errors on connection/url
    *
    * @param  {Sound} sound
    */
-  cache(urls, failures) {    
-    urls = makeArray(urls);
-
-    urls.forEach(url => {
-      let identifier = urlToIdentifier(url)
-      makeArray(failures).forEach(failure => {
-        if (identifier == urlToIdentifier(failure.url)) {
-          if (!this._cache[identifier]) {
-            this._cache[identifier] = {}
-          }
-
-          this._cache[identifier][failure.connectionKey] = failure.error
-        }
-      })
-    })
-
-    urls.forEach(url => {
-      let identifier = urlToIdentifier(url);
-      this.hifi.trigger('audio-load-error', {
-        url: identifier,
-        errors: this._cache[identifier]
-      })
-    })
+  cache({url, error, connectionKey}) {    
+    let identifier = urlToIdentifier(url)
+    if (!this._cache[identifier]) {
+      this._cache[identifier] = {}
+    }
+    this._cache[identifier][connectionKey] = error
   }
 }

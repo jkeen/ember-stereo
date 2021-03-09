@@ -45,7 +45,7 @@ export default class HifiIsErrored extends Helper {
           this.hifi.on('audio-load-error', async (sound) => {
             let isEqual = await hasEqualUrls(this.identifier, sound.url);
             if (isEqual) {
-              this.result = makeArray(sound.errors)
+              this.result = this.hifi.errorCache.find(this.identifier)
             }
           });
         }

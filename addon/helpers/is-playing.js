@@ -4,7 +4,6 @@ import HifiBaseIsHelper from './-is-helper';
 import hasEqualUrls from 'ember-hifi/utils/has-equal-urls';
 import { dedupeTracked } from 'tracked-toolbox';
 import { tracked } from '@glimmer/tracking';
-
 import debug from 'debug';
 
 /**
@@ -35,9 +34,11 @@ Can also look for any system-level play event by passing in no argument
 export default class HifiIsPlaying extends HifiBaseIsHelper {
   get result() {
     if (this.identifier == 'system') {
+      debug(`ember-hifi:helpers:is-playing:${this.identifier}`)(`render = ${this.hifi.isPlaying}`)
       return this.hifi.isPlaying;
     }
     else {
+      debug(`ember-hifi:helpers:is-playing:${this.identifier}`)(`render = ${this.sound?.isPlaying}`)
       return this.sound?.isPlaying;
     }
   }

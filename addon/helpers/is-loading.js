@@ -5,7 +5,7 @@ import Helper from '@ember/component/helper';
 import { tracked } from '@glimmer/tracking';
 import hasEqualUrls from 'ember-hifi/utils/has-equal-urls';
 import { dedupeTracked } from 'tracked-toolbox';
-
+import debug from 'debug';
 
 /**
   A helper to detect if a sound is loading.
@@ -76,6 +76,8 @@ export default class HifiIsLoading extends Helper {
         }
       }
     }
+
+    debug(`ember-hifi:helpers:is-loading:${this.identifier}`)(`render = ${this.result}`)
     return this.result;
   }
 }

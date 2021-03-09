@@ -1,5 +1,6 @@
 import classic from 'ember-classic-decorator';
 import HifiBaseIsHelper from './-is-helper';
+import debug from 'debug';
 
 /**
   A helper to detect if a sound is rewindable.
@@ -29,9 +30,11 @@ import HifiBaseIsHelper from './-is-helper';
 export default class HifiIsRewindable extends HifiBaseIsHelper {
   get result() {
     if (this.identifier === 'system') {
+      debug(`ember-hifi:helpers:is-rewindable:${this.identifier}`)(`render = ${this.hifi.isRewindable}`)
       return this.hifi.isRewindable;
     }
     else {
+      debug(`ember-hifi:helpers:is-rewindable:${this.identifier}`)(`render = ${this.hifi.isRewindable}`)
       return this.sound?.isRewindable;
     }
   }

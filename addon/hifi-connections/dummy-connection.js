@@ -22,10 +22,12 @@ export default class DummyConnection extends BaseSound {
   setup() {
     let {result} = this.getInfoFromUrl();
     if (result === 'bad') {
-      next(() => this.trigger('audio-load-error', this));
+      next(() => {
+        this.trigger('audio-load-error', this)
+      })
     }
     else {
-      next(() => {
+      next(() => { 
         this.trigger('audio-loaded', this)
         this.trigger('audio-ready', this)
       });
@@ -80,17 +82,17 @@ export default class DummyConnection extends BaseSound {
     if (typeof position !== 'undefined') {
       this._position = position;
     }
-    this.trigger('audio-played', this);
+    next(() => this.trigger('audio-played', this));
     this.startTicking();
   }
 
   pause() {
-    this.trigger('audio-paused', this);
+    next(() => this.trigger('audio-paused', this));
     this.stopTicking();
   }
 
   stop() {
-    this.trigger('audio-paused', this);
+    next(() => this.trigger('audio-paused', this));
     this.stopTicking();
   }
 
@@ -119,7 +121,6 @@ export default class DummyConnection extends BaseSound {
 
   _audioDuration() {
     let {result, length} = this.getInfoFromUrl();
-
     if (result === 'bad') {
       return;
     }

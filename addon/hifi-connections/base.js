@@ -91,11 +91,6 @@ export default class Sound extends Evented {
     return `ember-hifi:${this.connectionName || this.constructor.toString()} (${parts[parts.length - 1]})`;
   }
 
-
-  get isErrored() {
-    return !!this.error;
-  }
-
   get isStream() {
     return this.duration == Infinity;
   } 
@@ -201,6 +196,7 @@ export default class Sound extends Evented {
         this.isLoading = false;
         this.isPlaying = false;
       }
+      this.isErrored = true;
       this.error = e;
       if (audioLoadError) { audioLoadError(this); }
       this.syncState()

@@ -127,6 +127,7 @@ export default class HLSSound extends BaseSound {
     this.debug('Test succeeded, signaling audio-ready');
     this.loaded = true;
     this.video.pause();
+    this.trigger('audio-loaded');
     this.trigger('audio-ready');
   }
 

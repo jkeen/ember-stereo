@@ -1,5 +1,6 @@
 import classic from 'ember-classic-decorator';
 import HifiBaseIsHelper from './-is-helper';
+import debug from 'debug';
 
 /**
   A helper to detect if a sound is fast-forwardable.
@@ -29,9 +30,11 @@ import HifiBaseIsHelper from './-is-helper';
 export default class HifiIsFastForwardable extends HifiBaseIsHelper {
   get result() {
     if (this.identifier === 'system') {
+      debug(`ember-hifi:helpers:is-fastforwardable:${this.identifier}`)(`render = ${this.hifi.isFastForwardable}`)
       return this.hifi.isFastForwardable;
     }
     else {
+      debug(`ember-hifi:helpers:is-fastforwardable:${this.identifier}`)(`render = ${this.sound?.isFastForwardable}`)
       return this.sound?.isFastForwardable;
     }
   }
