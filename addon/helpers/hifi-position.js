@@ -1,12 +1,11 @@
 import classic from 'ember-classic-decorator';
 import { inject as service } from '@ember/service';
 import Helper from '@ember/component/helper';
-import { tracked } from '@glimmer/tracking';
 import hasEqualUrls from 'ember-hifi/utils/has-equal-urls';
-import { dedupeTracked } from 'tracked-toolbox';
-import { throttle } from '@ember/runloop';
 import {numericDuration} from './numeric-duration';
 import debug from 'debug';
+import {tracked} from '@glimmer/tracking';
+
 /**
   A helper to get a sound's position.
   ```hbs
@@ -23,7 +22,7 @@ import debug from 'debug';
 export default class HifiPosition extends Helper {
   @service hifi;
   sound;
-  result;
+  @tracked result;
 
   default = 0
 
@@ -36,7 +35,7 @@ export default class HifiPosition extends Helper {
     @return {Float}
   */
 
-  compute([identifier='system'], {format=false, defaultValue}) {   
+  compute([identifier='system'], {format=false, defaultValue}) { 
     if (identifier !== this.identifier) {
       this.identifier = identifier || 'system';
       if (this.identifier == 'system') {
@@ -57,29 +56,32 @@ export default class HifiPosition extends Helper {
         }
       }
     }
-
-    let result = defaultValue;
-
-    if (this.sound) {
-      this.result = this.sound.position;
-    }
+    let result;
 
     if (format == 'percent' || format == 'percentage') {
       if (this.sound) {
-        this.result = ((this.sound.position / this.sound.duration) * 100);
+        result = ((this.sound.position / this.sound.duration) * 100);
       }
       else {
-        this.result = defaultValue || 0;
+        result = defaultValue || 0;
       }
     }
     else if (format == 'time') {
-      if (this.sound) {
-        this.result = numericDuration([this.result])
+      if (this.sound?.position) {
+        result = numericDuration([this.sound.position])
       }
       else {
-        this.result = defaultValue || "00:00";
+        result = defaultValue || "00:00";
       }
     }
+    else if (this.sound?.position === undefined && defaultValue) {
+      result = defaultValue;
+    }
+    else {
+      result = this.sound?.position;
+    }
+
+    this.result = result;
 
     debug(`ember-hifi:helpers:hifi-position:${identifier}:${format}`)(`render = ${this.result}`); 
     return this.result

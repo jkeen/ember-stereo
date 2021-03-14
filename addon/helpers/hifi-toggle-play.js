@@ -18,7 +18,7 @@ export default class HifiTogglePlay extends Helper {
           return sound.togglePause();
         }
         else {
-          return false;
+          return this.hifi.play(compare);
         }
       }
     }

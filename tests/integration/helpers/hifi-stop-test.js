@@ -6,12 +6,12 @@ import { hbs } from 'ember-cli-htmlbars';
 module('Integration | Helper | hifi-stop', function(hooks) {
   setupRenderingTest(hooks);
 
-  // TODO: Replace this with your real tests.
-  test('it renders', async function(assert) {
-    this.set('inputValue', '1234');
-
-    await render(hbs`{{hifi-stop inputValue}}`);
-
-    assert.equal(this.element.textContent.trim(), '1234');
+  test('it renders position of sound if loaded', async function(assert) {
+    let service = this.owner.lookup('service:hifi');
+    service.loadConnections([{ name: 'DummyConnection' }]);
+    this.url = '/good/1000/silence.mp3';
+    assert.equal(service.isPlaying, false, 'not playing');
+    await render(hbs`{{hifi-play this.url}}`);
+    assert.equal(service.isPlaying, false, 'is playing');
   });
 });

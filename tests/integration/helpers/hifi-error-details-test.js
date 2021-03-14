@@ -6,12 +6,19 @@ import { hbs } from 'ember-cli-htmlbars';
 module('Integration | Helper | hifi-error-details', function(hooks) {
   setupRenderingTest(hooks);
 
-  // TODO: Replace this with your real tests.
-  test('it renders', async function(assert) {
-    this.set('inputValue', '1234');
+  test('it renders error of errored sound', async function(assert) {
+    let service = this.owner.lookup('service:hifi');
+    service.loadConnections([{name: 'DummyConnection'}]);
+    this.url = '/bad/10/silence.mp3';
+    try {
+      await service.load(this.url);
+    }
+    catch(e) {
+      // TODO: should this really be an error thrown? 
+    }
+    await render(hbs`{{hifi-error-details this.url}}`);
 
-    await render(hbs`{{hifi-error-details inputValue}}`);
-
-    assert.equal(this.element.textContent.trim(), '1234');
+    assert.equal(this.element.textContent.trim(), 'failed to load');
   });
+
 });

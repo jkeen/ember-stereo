@@ -53,7 +53,6 @@ export default class HifiIsErrored extends Helper {
     }
 
     if (!this.result) { return }
-    
     if (this.result.length === 1) {
       var error = this.result[0];
       if (connectionName && error[connectionName]) {

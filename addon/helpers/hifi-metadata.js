@@ -1,5 +1,5 @@
 import classic from 'ember-classic-decorator';
-import HifiBaseIsHelper from './hifi-base-is-helper';
+import HifiBaseIsHelper from './-is-helper';
 import debug from 'debug'
 import { get } from '@ember/object';
 /**

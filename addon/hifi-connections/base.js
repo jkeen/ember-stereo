@@ -3,18 +3,15 @@ import { A } from '@ember/array';
 import { getProperties } from '@ember/object';
 import { assert } from '@ember/debug';
 import { getMimeType } from 'ember-hifi/utils/mime-types';
-import { inject as service } from '@ember/service';
 import debug from 'debug';
-import classic from 'ember-classic-decorator';
 import { tracked } from '@glimmer/tracking';
 import Evented from 'ember-hifi/utils/evented';
 /**
-* This is the base sound object from which other sound objects are derived. 
-*
-* @class Sound
-* @constructor
+ * This is the base sound object from which other sound objects are derived.
+ *
+ * @class Sound
+ * @constructor
 */
-@classic
 export default class Sound extends Evented {
   static setup(config) {
     this.config = config;
@@ -78,7 +75,7 @@ export default class Sound extends Evented {
   @tracked isPlaying = false
   @tracked isErrored = false;
   @tracked isReady   = false
-  @tracked _position;
+  @tracked _position = 0;
   @tracked error = null;
   @tracked duration = 0
   @tracked percentLoaded = 0
@@ -110,7 +107,7 @@ export default class Sound extends Evented {
   set position(v) {
     this.trigger('audio-position-will-change', this, { currentPosition: this._currentPosition(), newPosition: v });
 
-    return this._setPosition(v);
+    this._setPosition(v);
   }
 
   get mimeType() {

@@ -13,29 +13,29 @@ module('Integration | Helper | is-loading', function(hooks) {
     service.loadConnections([{name: 'DummyConnection'}]);
 
     let Connection = service._connections['DummyConnection']
-    this.set('url', '/good/10/silence.mp3')
+    this.set('url', '/good/3/silence.mp3')
     let sound = new Connection({url: this.url})
 
     const setTimeoutPromise = new Promise((resolve) => {
       setTimeout(() => {
-        resolve({ sound })
+        resolve({ success: sound })
       }, 300);
     });
 
     sinon.stub(service, '_findFirstPlayableSound').returns(setTimeoutPromise)
     await render(hbs`{{#if (is-loading this.url)}}is-loading{{else}}is-not-loading{{/if}}`);
-    assert.equal(this.element.textContent.trim(), 'is-not-loading');
+    assert.equal(this.element.textContent.trim(), 'is-not-loading', 'helper reports not loading');
 
-    service.load(this.url).then(async (sound) => {
+    service.load(this.url).then(async () => {
       await waitUntil(() => {
         return this.element.textContent.trim() == 'is-not-loading'
-      }, { timeout: 2000 });
-      assert.equal(this.element.textContent.trim(), 'is-not-loading');
+      }, { timeout: 5000 });
+      assert.equal(this.element.textContent.trim(), 'is-not-loading', 'helper reports loading');
       done();
     });
     await waitUntil(() => {
       return this.element.textContent.trim() == 'is-loading'
-    }, { timeout: 2000 });
-    assert.equal(this.element.textContent.trim(), 'is-loading');
+    });
+    assert.equal(this.element.textContent.trim(), 'is-loading', 'helper reports not loading when finished');
   });
 });

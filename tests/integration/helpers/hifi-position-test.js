@@ -5,13 +5,36 @@ import { hbs } from 'ember-cli-htmlbars';
 
 module('Integration | Helper | hifi-position', function(hooks) {
   setupRenderingTest(hooks);
+  test('it renders position of sound if loaded', async function(assert) {
+    let service = this.owner.lookup('service:hifi');
+    service.loadConnections([{ name: 'DummyConnection' }]);
+    this.url = '/good/10/silence.mp3';
+    await service.load(this.url);
+    await render(hbs`{{hifi-position this.url}}`);
 
-  // Replace this with your real tests.
-  test('it renders', async function(assert) {
-    this.set('inputValue', '1234');
+    assert.equal(this.element.textContent.trim(), '0');
+  });
 
-    await render(hbs`{{hifi-position inputValue}}`);
+  test('it renders formatted position of sound if loaded', async function (assert) {
+    let service = this.owner.lookup('service:hifi');
+    service.loadConnections([{ name: 'DummyConnection' }]);
+    this.url = '/good/10/silence.mp3';
+    await service.load(this.url);
+    await render(hbs`{{hifi-position this.url format='time'}}`);
+    assert.equal(this.element.textContent.trim(), '00:00');
 
-    assert.equal(this.element.textContent.trim(), '1234');
+    await render(hbs`{{hifi-position this.url format='percentage'}}`);
+    assert.equal(this.element.textContent.trim(), '0');
+
+    await render(hbs`{{hifi-position this.url format='percent'}}`);
+    assert.equal(this.element.textContent.trim(), '0');
+  });
+  test('it renders nothing if not loaded', async function (assert) {
+    let service = this.owner.lookup('service:hifi');
+    service.loadConnections([{ name: 'DummyConnection' }]);
+    this.url = '/good/10/silence.mp3';
+    await render(hbs`{{hifi-position this.url}}`);
+
+    assert.equal(this.element.textContent.trim(), '');
   });
 });

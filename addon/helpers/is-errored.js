@@ -51,13 +51,13 @@ export default class HifiIsErrored extends Helper {
       this.result = UNINITIALIZED; // if identifier changes, reinitialize sound
       this.identifier = identifier || 'system';
       if (this.identifier !== 'system') {
-        let error = this.hifi.errorCache.find(this.identifier)
+        let error = this.hifi.errorCache.find(this.identifier);
         if (error) {
           this.result = true;
         }
         else {
           this.hifi.on('audio-load-error', async (sound) => {
-            this.result = await hasEqualUrls(this.identifier, sound.url);      
+            this.result = await hasEqualUrls(this.identifier, sound.url);
           });
         }
       }

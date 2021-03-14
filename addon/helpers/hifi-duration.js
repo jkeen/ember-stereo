@@ -59,7 +59,7 @@ export default class HifiDuration extends Helper {
         }
       }
     }
-    
+
     let result = defaultValue;
     if (this.sound?.duration === Infinity) {
       //this is a stream
@@ -67,7 +67,7 @@ export default class HifiDuration extends Helper {
     }
     else {
       if (format == 'time') {
-        if (this.sound) {
+        if (this.sound?.duration) {
           result = numericDuration([this.sound?.duration])
         }
         else {
