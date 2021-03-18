@@ -29,5 +29,4 @@ module('Integration | Helper | hifi-fast-forward', function(hooks) {
     await click('button');
     assert.equal(sound.position, 1500, 'position is 1500');
   });
-
 });

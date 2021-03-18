@@ -7,7 +7,6 @@ import { tracked } from '@glimmer/tracking';
 import { get } from '@ember/object';
 @classic
 export default class DummyConnection extends BaseSound {
-  static setup() {}
   static canPlay = () => true;
   static canUseConnection = () => true;
   static canPlayMimeType = () => true;
@@ -20,16 +19,16 @@ export default class DummyConnection extends BaseSound {
   _tickInterval = 50;
 
   setup() {
-    let { result } = this.getInfoFromUrl();
+    let { result, error } = this.getInfoFromUrl();
     if (result === 'bad') {
       next(() => {
-        this.trigger('audio-load-error', this);
+        this.trigger('audio-load-error', {sound: this, error: (error || 'failed to load')});
       });
     } 
     else {
       next(() => {
-        this.trigger('audio-loaded', this);
-        this.trigger('audio-ready', this);
+        this.trigger('audio-loaded', {sound: this});
+        this.trigger('audio-ready', {sound: this});
       });
     }
   }
@@ -58,14 +57,17 @@ export default class DummyConnection extends BaseSound {
     if (!this.url) {
       return {};
     } else if (this.url.startsWith('/')) {
-      let [, result, length, name] = this.url.split('/');
+      let [, result, lengthOrError, name] = this.url.split('/');
       /*eslint no-console: 0 */
-      if (!(result && length && name)) {
+      if (!(result && lengthOrError && name)) {
         console.error(
-          '[dummy-connection] url format should be "/:result/:length/:name"'
+          '[dummy-connection] url format should be "/good/:length/:name"',
+          '[dummy-connection] url format should be "/bad/:error/:name"'
         );
-      } else {
-        if (!(length === 'stream' || parseInt(length) > 0)) {
+      } 
+      else {
+        
+        if (result === 'good' && !(lengthOrError === 'stream' || parseInt(lengthOrError) > 0)) {
           console.error(
             '[dummy-connection] url format should be "/:result/:length/:name"'
           );
@@ -84,27 +86,39 @@ export default class DummyConnection extends BaseSound {
         }
       }
 
-      return { result, length, name };
+
+      if (result === 'bad') {
+        return { result, length: 1000, error: lengthOrError, name };
+      }
+      else {
+        return { result, length: lengthOrError, name };
+      }
     } else {
       return { result: 'good', length: 1000, name: 'default' };
     }
   }
 
   play({ position } = {}) {
-    if (typeof position !== 'undefined') {
-      this._position = position;
-    }
-    next(() => this.trigger('audio-played', this));
-    this.startTicking();
+    return new Promise((resolve) => {
+      if (typeof position !== 'undefined') {
+        this._position = position;
+      }
+      next(() => {
+        this.trigger('audio-played', {sound: this})
+        resolve();
+      });
+      this.startTicking();
+    })
+
   }
 
   pause() {
-    next(() => this.trigger('audio-paused', this));
+    next(() => this.trigger('audio-paused', {sound: this}));
     this.stopTicking();
   }
 
   stop() {
-    next(() => this.trigger('audio-paused', this));
+    next(() => this.trigger('audio-paused', {sound: this}));
     this.stopTicking();
   }
 
@@ -115,7 +129,7 @@ export default class DummyConnection extends BaseSound {
 
     if (duration >= this._audioDuration()) {
       next(() => {
-        this.trigger('audio-ended', this);
+        this.trigger('audio-ended', {sound: this});
         this.stopTicking();
       });
     }

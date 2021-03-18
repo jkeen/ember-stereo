@@ -27,11 +27,10 @@ module('Unit | Service | hifi integration test.js', function(hooks) {
     window.onerror = originalOnError;
   });
 
-  test('playing good url works', function(assert) {
+  test('playing good url works', async function(assert) {
     let service = this.owner.factoryFor('service:audio').create({})
-    service.playGood().then(({sound}) => {
-      assert.ok(sound);
-    });
+    let { sound } = await service.playGood()
+    assert.ok(sound);
   });
 
   // TODO: figure out how to effectively handle these errors. 
@@ -67,32 +66,29 @@ module('Unit | Service | hifi integration test.js', function(hooks) {
     }
   });
 
-  test('it sets fixed duration correctly', function(assert) {
-    let service = this.owner.factoryFor('service:audio').create({});
-    let hifi = service.get('hifi');
+  test('it sets fixed duration correctly', async function(assert) {
+    let hifi = this.owner.lookup('service:hifi');
+    hifi.loadConnections([{name: 'DummyConnection'}]);
 
-    hifi.load('/good/2500/test').then(({sound}) => {
-      assert.equal(sound.duration, 2500);
-    });
+    let { sound } = await hifi.load('/good/2500/test')
+    assert.equal(sound.duration, 2500);
   });
 
-  test('by default it succeeds and pretends its a 1 second long file', function(assert) {
-    let service = this.owner.factoryFor('service:audio').create({});
-    let hifi = service.get('hifi');
+  test('by default it succeeds and pretends its a 1 second long file', async function(assert) {
+    let hifi = this.owner.lookup('service:hifi');
+    hifi.loadConnections([{name: 'DummyConnection'}]);
 
-    hifi.load('http://test.example').then(({sound}) => {
-      assert.equal(sound.duration, 1000);
-    });
+    let { sound } = await hifi.load('http://test.example')
+    assert.equal(sound.duration, 1000);
   });
 
-  test('it sets stream duration correctly', function(assert) {
-    let service = this.owner.factoryFor('service:audio').create({});
-    let hifi = service.get('hifi');
+  test('it sets stream duration correctly', async function(assert) {
+    let hifi = this.owner.lookup('service:hifi');
+    hifi.loadConnections([{name: 'DummyConnection'}]);
 
-    hifi.load('/good/stream/test').then(({sound}) => {
-      assert.equal(sound.duration, Infinity, "duration should be infinity");
-      assert.equal(sound.isStream, true, "should be stream");
-    })
+    let { sound } = await hifi.load('/good/stream/test')
+    assert.equal(sound.duration, Infinity, "duration should be infinity");
+    assert.equal(sound.isStream, true, "should be stream");
   });
 
   test('it simulates play', function(assert) {
@@ -118,19 +114,17 @@ module('Unit | Service | hifi integration test.js', function(hooks) {
     });
   });
 
-  test('it can not rewind before 0', function(assert) {
+  test('it can not rewind before 0', async function(assert) {
     let done = assert.async();
-    let service = this.owner.factoryFor('service:audio').create({});
-    let hifi = service.get('hifi');
+    let hifi = this.owner.lookup('service:hifi');
 
-    hifi.one('audio-will-rewind', (sound, {newPosition}) => {
-      assert.equal(newPosition, 0, "sound should be at the end");
-    });
-
-    hifi.play('/good/1000/test').then(() => {
-      hifi.rewind(5000);
+    hifi.one('audio-will-rewind', ({newPosition}) => {
+      assert.equal(newPosition, 0, "sound should be at the start");
       done();
     });
+
+    await hifi.play('/good/10000/test')
+    hifi.rewind(5000);
   });
 
   test('it can not fast forward past duration', function(assert) {
@@ -147,16 +141,15 @@ module('Unit | Service | hifi integration test.js', function(hooks) {
 
   test('it sends an audio-ended event when the sound ends',function(assert) {
     let done = assert.async();
-    let service = this.owner.factoryFor('service:audio').create({});
-    let hifi = service.get('hifi');
+    let hifi = this.owner.lookup('service:hifi');
 
-    hifi.one('audio-ended', (sound) => {
+    hifi.one('audio-ended', ({sound}) => {
       assert.equal(sound.position, 1000, "sound should be at the end");
+      done();
     });
 
     hifi.play('/good/1000/test').then(() => {
-      hifi.set('position', 5000);
-      done();
+      hifi.set('position', 15000);
     })
   });
 });

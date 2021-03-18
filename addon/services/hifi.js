@@ -14,6 +14,7 @@ import debug from 'debug';
 import { next } from '@ember/runloop';
 import SharedAudioAccess from 'ember-hifi/utils/shared-audio-access';
 import { Promise } from 'rsvp';
+import { copy } from 'ember-copy';
 
 const log = debug('ember-hifi');
 import { set, get, getProperties, computed } from '@ember/object';
@@ -79,10 +80,7 @@ export default class Hifi extends Service.extend(Evented) {
 
     this.loadConnections();
 
-    this.alwaysUseSingleAudioElement = !!get(
-      this,
-      'options.emberHifi.alwaysUseSingleAudioElement'
-    );
+    this.alwaysUseSingleAudioElement = !!get(this, 'options.emberHifi.alwaysUseSingleAudioElement');
     this.appEnvironment = get(this, 'options.environment') || 'development';
     this.defaultVolume = get(this, 'options.emberHifi.initialVolume') || 100;
     this.sharedAudioAccess = new SharedAudioAccess();
@@ -219,6 +217,8 @@ export default class Hifi extends Service.extend(Evented) {
     }
     this._connections = {};
     this._activateConnections(connections);
+
+    return this;
   }
 
   /**
@@ -244,7 +244,7 @@ export default class Hifi extends Service.extend(Evented) {
 
   findLoaded(identifiers) {
     var sound;
-
+  
     makeArray(identifiers).forEach((identifier) => {
       if (!sound) {
         if (identifier && identifier.url) {
@@ -298,11 +298,12 @@ export default class Hifi extends Service.extend(Evented) {
    * @return {Sound} A sound that's ready to be played, or an error
    */
 
-  @task({ enqueue: true })
+  @task({ enqueue: true, debug: true })
   * loadTask(urlsOrPromise, options) {
-    options = assign({ metadata: {} }, options);
- 
     var sharedAudioAccess = this._createAndUnlockAudio();
+
+    options = assign({ metadata: {}, sharedAudioAccess }, options);
+ 
     let urlsToTry = yield this._resolveUrls(urlsOrPromise);
     this.trigger('pre-load', urlsToTry);
     var sound = this.soundCache.find(urlsToTry);
@@ -311,11 +312,11 @@ export default class Hifi extends Service.extend(Evented) {
       return yield({sound});
     }
     else {
-      var strategies = this._prepareAllStrategies(urlsToTry, options);
+      var strategies = copy(this._prepareAllStrategies(urlsToTry, options));
       var success = false
       let failures = []
       while (strategies.length > 0 && !success) {
-        let strategy = strategies.shift()
+        let strategy = strategies.shift();
         let result = yield this.tryLoadingSound.perform(strategy);
         if (result.sound) {
           sound = result.sound
@@ -348,20 +349,19 @@ export default class Hifi extends Service.extend(Evented) {
       errorMessage = failures.map(f => f.error).filter(f => f.toString().length > 0)[0]
     }
 
-    this.trigger('audio-load-error', { url: urlsToTry, failures: failures, message: errorMessage })
+    this.trigger('audio-load-error', { sound: { url: urlsToTry }, failures: failures, error: errorMessage })
   }
 
   _handleLoadSuccess({sound, options}) {
-    sound.on('audio-played', () => {
+    sound.on('audio-played', ({sound}) => {
       let previousSound = this.currentSound;
       let currentSound  = sound;
 
       if (previousSound !== currentSound) {
         if (previousSound && get(previousSound, 'isPlaying')) {
-          this.trigger('current-sound-interrupted', previousSound);
+          this.trigger('current-sound-interrupted', {sound: previousSound});
         }
-
-        this.trigger('current-sound-changed', currentSound, previousSound);
+        this.trigger('current-sound-changed', {sound: currentSound, previousSound});
         this.setCurrentSound(sound);
       }
     })
@@ -384,6 +384,8 @@ export default class Hifi extends Service.extend(Evented) {
    */
 
   load(urlsOrPromise, options) {
+    options = assign({ metadata: {} }, options);
+
     try {
       let promise = this.loadTask.perform(urlsOrPromise, options);
       this.trigger('new-load-request', {loadPromise: promise, urlsOrPromise, options});
@@ -411,12 +413,10 @@ export default class Hifi extends Service.extend(Evented) {
   @task({maxConcurrency: 1, restartable: true})
   * playTask(urlsOrPromise, options = {}) {
     if (this.isPlaying) {
-      this.trigger('current-sound-interrupted', this.currentSound);
+      this.trigger('current-sound-interrupted', {sound: this.currentSound});
       this.pause();
     }
     // update the UI immediately while `.load` figures out which sound is playable
-    this.set('currentMetadata', options.metadata);
-
     let loadPromise = this.loadTask.perform(urlsOrPromise, options);
     this.trigger('new-load-request', {loadPromise, urlsOrPromise, options});
 
@@ -558,6 +558,8 @@ export default class Hifi extends Service.extend(Evented) {
       strategies = this._prepareStandardStrategies(urlsToTry);
     }
 
+    debug('ember-hifi')(`trying strategies: ${JSON.stringify(strategies)}`)
+
     if (this.useSharedAudioAccess) {
       // If we're on a mobile device or have specified to always use a single audio element,
       // pass in sharedAudioAccess into each connection.
@@ -650,49 +652,49 @@ export default class Hifi extends Service.extend(Evented) {
    * @private
    */
 
-  _relayEvent(eventName, sound, info = {}) {
-    // next(() => {
-    this.trigger(eventName, sound, info);
-    debug('ember-hifi')(eventName, sound);
-    // })
+  _relayEvent(eventName, info = {}) {
+    next(() => {
+      this.trigger(eventName, info);
+      debug('ember-hifi')(eventName, info);
+    })
   }
 
   /**
     Named functions so Ember Evented can successfully register/unregister them
   */
 
-  _relayPlayedEvent(sound) {
-    this._relayEvent('audio-played', sound);
+  _relayPlayedEvent(info) {
+    this._relayEvent('audio-played', info);
   }
-  _relayPausedEvent(sound) {
-    this._relayEvent('audio-paused', sound);
+  _relayPausedEvent(info) {
+    this._relayEvent('audio-paused', info);
   }
-  _relayEndedEvent(sound) {
-    this._relayEvent('audio-ended', sound);
+  _relayEndedEvent(info) {
+    this._relayEvent('audio-ended', info);
   }
-  _relayDurationChangedEvent(sound) {
-    this._relayEvent('audio-duration-changed', sound);
+  _relayDurationChangedEvent(info) {
+    this._relayEvent('audio-duration-changed', info);
   }
-  _relayPositionChangedEvent(sound) {
-    this._relayEvent('audio-position-changed', sound);
+  _relayPositionChangedEvent(info) {
+    this._relayEvent('audio-position-changed', info);
   }
-  _relayLoadedEvent(sound) {
-    this._relayEvent('audio-loaded', sound);
+  _relayLoadedEvent(info) {
+    this._relayEvent('audio-loaded', info);
   }
-  _relayLoadingEvent(sound) {
-    this._relayEvent('audio-loading', sound);
+  _relayLoadingEvent(info) {
+    this._relayEvent('audio-loading', info);
   }
-  _relayPositionWillChangeEvent(sound, info = {}) {
-    this._relayEvent('audio-position-will-change', sound, info);
+  _relayPositionWillChangeEvent(info) {
+    this._relayEvent('audio-position-will-change', info);
   }
-  _relayWillRewindEvent(sound, info) {
-    this._relayEvent('audio-will-rewind', sound, info);
+  _relayWillRewindEvent(info) {
+    this._relayEvent('audio-will-rewind', info);
   }
-  _relayWillFastForwardEvent(sound, info) {
-    this._relayEvent('audio-will-fast-forward', sound, info);
+  _relayWillFastForwardEvent(info) {
+    this._relayEvent('audio-will-fast-forward', info);
   }
-  _relayMetadataChangedEvent(sound, info) {
-    this._relayEvent('audio-metadata-changed', sound, info);
+  _relayMetadataChangedEvent(info) {
+    this._relayEvent('audio-metadata-changed', info);
   }
   /**
    * Activates the connections as specified in the config options
@@ -708,10 +710,16 @@ export default class Hifi extends Service.extend(Evented) {
     const activatedConnections = {};
 
     options.forEach((connectionOption) => {
-      const { name } = connectionOption;
-      const connection = cachedConnections[name]
-        ? cachedConnections[name]
-        : this._activateConnection(connectionOption);
+      let name;
+      let connection;
+      if (typeof connectionOption === 'string') {
+        name = connectionOption;
+        connection = cachedConnections[name] ? cachedConnections[name] : this._activateConnection({name, config: {}});
+      }
+      else {
+        name = connectionOption.name;
+        connection = cachedConnections[name] ? cachedConnections[name] : this._activateConnection(connectionOption);
+      }
 
       set(activatedConnections, name, connection);
     });
@@ -779,9 +787,7 @@ export default class Hifi extends Service.extend(Evented) {
   async _resolveUrls(urlsOrPromise) {
     debug('ember-hifi')(`resolve urls: ${urlsOrPromise}`);
     let prepare = (urls) => {
-      return emberArray(makeArray(urls).map((u) => u.toString()))
-        .uniq()
-        .reject((i) => isEmpty(i));
+      return emberArray(makeArray(urls)).uniq().reject((i) => isEmpty(i));
     };
 
     if (urlsOrPromise && urlsOrPromise.then) {
@@ -870,15 +876,15 @@ export default class Hifi extends Service.extend(Evented) {
   _prepareStrategies(urlsToTry, connectionKeys) {
     connectionKeys = makeArray(connectionKeys);
     let strategies = [];
-    let connectionOptions = get(this, 'options.emberHifi.connections') || [];
-    connectionOptions = emberArray(connectionOptions);
+    let connectionExtraOptions = emberArray(get(this, 'options.emberHifi.connections') || []);
 
     urlsToTry.forEach((url) => {
       let connectionSuccesses = [];
-      connectionKeys.forEach(async (name) => {
+      connectionKeys.forEach((name) => {
         let connection = get(this, `_connections.${name}`);
-        let config = connectionOptions.findBy('name', name);
         let canPlay = connection.canPlay(url);
+        let config = connectionExtraOptions.findBy('name', name);
+        console.log(`${url}: ${name}`)
         if (canPlay) {
           connectionSuccesses.push(name);
           strategies.push({
@@ -912,12 +918,14 @@ export default class Hifi extends Service.extend(Evented) {
     // IE desktop browsers can't deal with that and will suddenly
     // play the loading audio before it's ready
 
-    return this.sharedAudioAccess.unlock(this.isMobileDevice);
+    return this.sharedAudioAccess.unlock();
   }
 
   /**
    * Attempts to play the sound after a load, which in certain cases can fail on mobile
    * @method _attemptToPlaySoundOnMobile
+   * @param {Sound} sound
+   * @param {Sound} sound
    * @param {Sound} sound
    * @private
    */

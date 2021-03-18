@@ -1,11 +1,13 @@
-import errorCache from 'dummy/utils/error-cache';
+import ErrorCache from 'dummy/utils/error-cache';
 import { module, test } from 'qunit';
 
 module('Unit | Utility | error-cache', function() {
 
   // TODO: Replace this with your real tests.
   test('it works', function(assert) {
-    let result = errorCache();
-    assert.ok(result);
+    let errorCache = new ErrorCache();
+    errorCache.cache({url: '/what/sound.mp3', error: 'errorsville', connectionKey: 'DummyConnection'})
+    let error = errorCache.find('/what/sound.mp3')[0]
+    assert.equal(error['DummyConnection'], 'errorsville');
   });
 });

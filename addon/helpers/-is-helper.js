@@ -1,8 +1,7 @@
 import classic from 'ember-classic-decorator';
 import { inject as service } from '@ember/service';
 import Helper from '@ember/component/helper';
-import debug from 'debug';
-import { tracked } from '@glimmer/tracking';
+import { dedupeTracked } from 'tracked-toolbox';
 import hasEqualUrls from 'ember-hifi/utils/has-equal-urls';
 
 const UNINITIALIZED = Object.freeze({});
@@ -11,7 +10,8 @@ export default class HifiBaseIsHelper extends Helper {
   @service hifi;
   
   identifier = UNINITIALIZED;
-  @tracked sound = UNINITIALIZED
+  @dedupeTracked sound = UNINITIALIZED
+  @dedupeTracked options = UNINITIALIZED
   
   /**
   returns the state
@@ -20,7 +20,9 @@ export default class HifiBaseIsHelper extends Helper {
   @return {boolean}
   */
 
-  compute([identifier]) {
+  compute([identifier], {key = undefined}) {
+    this.options = {key};
+
     if (identifier !== this.identifier) {
       this.sound = UNINITIALIZED; // if identifier changes, reinitialize sound
       this.identifier = identifier || 'system';

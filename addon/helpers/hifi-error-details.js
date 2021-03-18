@@ -39,10 +39,10 @@ export default class HifiIsErrored extends Helper {
       if (this.identifier !== 'system') {
         let result = this.hifi.errorCache.find(this.identifier)
         if (result) {
-          this.result = makeArray(error);
+          this.result = makeArray(result);
         }
         else {
-          this.hifi.on('audio-load-error', async (sound) => {
+          this.hifi.on('audio-load-error', async ({error, sound}) => {
             let isEqual = await hasEqualUrls(this.identifier, sound.url);
             if (isEqual) {
               this.result = this.hifi.errorCache.find(this.identifier)
@@ -53,7 +53,7 @@ export default class HifiIsErrored extends Helper {
     }
 
     if (!this.result) { return }
-    if (this.result.length === 1) {
+    if (this.result.length === 1) { // only one connection
       var error = this.result[0];
       if (connectionName && error[connectionName]) {
         debug(`ember-hifi:helpers:error-details:${identifier}`)(`render = ${error[connectionName]}`); 

@@ -5,7 +5,6 @@ import { assert } from '@ember/debug';
 import { getMimeType } from 'ember-hifi/utils/mime-types';
 import debug from 'debug';
 import { tracked } from '@glimmer/tracking';
-import { dedupeTracked } from 'tracked-toolbox';
 import Evented from 'ember-hifi/utils/evented';
 /**
  * This is the base sound object from which other sound objects are derived.
@@ -80,6 +79,7 @@ export default class Sound extends Evented {
   @tracked error = null;
   @tracked duration = 0
   @tracked percentLoaded = 0
+  @tracked metadata = {};
 
   get debugName() {
     var parser = document.createElement('a');
@@ -87,6 +87,18 @@ export default class Sound extends Evented {
 
     let parts = parser.pathname.split('/');
     return `ember-hifi:${this.connectionName || this.constructor.toString()} (${parts[parts.length - 1]})`;
+  }
+
+  trigger(eventName, info = {}) {
+    if (!info) {
+      info = {}
+    }
+
+    if (!info.sound) {
+      info.sound = this;
+    }
+
+    this.eventManager.trigger(eventName, info);
   }
 
   get isStream() {
@@ -106,7 +118,7 @@ export default class Sound extends Evented {
     return this._position;
   }
   set position(v) {
-    this.trigger('audio-position-will-change', this, { currentPosition: this._currentPosition(), newPosition: v });
+    this.trigger('audio-position-will-change', { sound: this, currentPosition: this._currentPosition(), newPosition: v });
 
     this._setPosition(v);
   }
@@ -154,7 +166,7 @@ export default class Sound extends Evented {
     } = getProperties(this, 'audioLoading', 'audioLoaded', 'audioReady', 'audioPlayed', 'audioPaused', 'audioEnded', 'audioLoadError');
     this.isLoading = true;
 
-    this.on('audio-played',    () => {
+    this.on('audio-played', () => {
       this.hasPlayed = true
       this.isLoading = false
       this.isPlaying = true
@@ -167,21 +179,21 @@ export default class Sound extends Evented {
       this.debug(`audio-played ${this.isPlaying}`);
     });
 
-    this.on('audio-paused',   () => {
+    this.on('audio-paused', () => {
       this.isPlaying = false;
       if (audioPaused) { audioPaused(this); }
       this.syncState()
       this.debug('audio-paused');
     });
 
-    this.on('audio-ended',    () => {
+    this.on('audio-ended', () => {
       this.isPlaying = false;
       if (audioEnded) { audioEnded(this); }
       this.syncState()
       this.debug('audio-ended');
     });
 
-    this.on('audio-ready',    () => {
+    this.on('audio-ready', () => {
       this.isReady = true;
       this.duration = this._audioDuration();
       if (audioReady) { audioReady(this); }
@@ -189,13 +201,15 @@ export default class Sound extends Evented {
       this.debug('audio-ready');
     });
 
-    this.on('audio-load-error', (e) => {
+    this.on('audio-load-error', (opts = {}) => {
+      let { error } = opts;
+
       if (this.hasPlayed) {
         this.isLoading = false;
         this.isPlaying = false;
       }
       this.isErrored = true;
-      this.error = e;
+      this.error = error;
       if (audioLoadError) { audioLoadError(this); }
       this.syncState()
       this.debug('audio-load-error');
@@ -224,7 +238,7 @@ export default class Sound extends Evented {
     }
     catch(e) {
       next(() => {
-        this.trigger('audio-load-error', `Error in setup ${e.message}`);
+        this.trigger('audio-load-error', {sound: this, error: `Error in setup ${e.message}`});
         if (audioLoadError) { audioLoadError(this); }
       });
     }
@@ -233,7 +247,7 @@ export default class Sound extends Evented {
   _detectTimeouts() {
     if (this.timeout) {
       let timeout = later(() => {
-          this.trigger('audio-load-error', "request timed out");
+          this.trigger('audio-load-error', {sound: this, error: "request timed out"});
       }, this.timeout);
 
       this.on('audio-ready',      () => cancel(timeout));
@@ -246,14 +260,14 @@ export default class Sound extends Evented {
     let currentPosition = this._currentPosition();
     let newPosition     = Math.min((currentPosition + duration), audioLength);
 
-    this.trigger('audio-will-fast-forward', this, {currentPosition, newPosition});
+    this.trigger('audio-will-fast-forward', { sound: this, currentPosition, newPosition});
     this._setPosition(newPosition);
   }
 
   rewind(duration) {
     let currentPosition = this._currentPosition();
     let newPosition     = Math.max((currentPosition - duration), 0);
-    this.trigger('audio-will-rewind', this, {currentPosition, newPosition});
+    this.trigger('audio-will-rewind', { sound: this, currentPosition, newPosition});
     this._setPosition(newPosition);
   }
 

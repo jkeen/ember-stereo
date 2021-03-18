@@ -166,18 +166,18 @@ The `hifi` service and the `sound` objects are extended with [Ember.Evented](htt
 
 ###### Triggered on both the sound and relayed through the hifi service
 
-- `audio-played` (sound) - the sound started playing
-- `audio-paused` (sound) - the sound was paused
-- `audio-ended` (sound) - the sound finished playing
-- `audio-load-error` (error) - loading sound failed
-- `audio-ready` (sound) - the sound is ready to play
-- `audio-will-rewind` (sound, {currentPosition, newPosition}) - fired before rewinding a sound
-- `audio-will-fast-forward` (sound, {currentPosition, newPosition}) - fired before fast-forwarding a sound
-- `audio-position-will-change` (sound, {currentPosition, newPosition}) - fired before audio position change
-- `audio-position-changed` (sound, {})
+- `audio-played` ({ sound }) - the sound started playing
+- `audio-paused` ({ sound }) - the sound was paused
+- `audio-ended` ({ sound }) - the sound finished playing
+- `audio-load-error` ({ sound }) - loading sound failed
+- `audio-ready` ({ sound }) - the sound is ready to play
+- `audio-will-rewind` ({sound, currentPosition, newPosition}) - fired before rewinding a sound
+- `audio-will-fast-forward` ({sound, currentPosition, newPosition}) - fired before fast-forwarding a sound
+- `audio-position-will-change` ({sound, currentPosition, newPosition}) - fired before audio position change
+- `audio-position-changed` ({sound})
 ###### Hifi service events
-- `current-sound-changed` (currentSound, previousSound) - triggered when the current sound changes. On initial play, previousSound will be undefined.
-- `current-sound-interrupted` (currentSound, previousSound) - triggered when a sound has been playing and a new one takes its place by being played, pausing the first one
+- `current-sound-changed` ({sound, previousSound}) - triggered when the current sound changes. On initial play, previousSound will be undefined.
+- `current-sound-interrupted` ({sound, previousSound}) - triggered when a sound has been playing and a new one takes its place by being played, pausing the first one
 - `new-load-request` ({loadPromise, urlsOrPromise, options}) - triggered whenever `.load` or `.play` is called.
 - `pre-load` ({loadPromise, urlsOrPromise, options}) - triggered whenever `.load` or `.play` is called.
 

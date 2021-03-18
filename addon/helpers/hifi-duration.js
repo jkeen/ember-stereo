@@ -44,7 +44,6 @@ export default class HifiDuration extends Helper {
           this.sound = sound;
         }
         else {
-
           if (load) {
             this.hifi.load(({sound}) => this.sound = sound);
           }

@@ -193,25 +193,25 @@ export default class NativeAudioConnection extends BaseSound {
   }
 
   _onAudioProgress() {
-    this.trigger('audio-loading', this, this._calculatePercentLoaded());
+    this.trigger('audio-loading', { sound: this, ...this._calculatePercentLoaded() });
   }
 
   _onPositionChange() {
-    this.trigger('audio-position-changed', this);
+    this.trigger('audio-position-changed', { sound: this });
   }
 
   _onAudioDurationChanged() {
-    this.trigger('audio-duration-changed', this);
+    this.trigger('audio-duration-changed', { sound: this });
   }
 
   _onAudioPlayed() {
     if (!this.isPlaying) {
-      this.trigger('audio-played', this);
+      this.trigger('audio-played', { sound: this });
     }
   }
 
   _onAudioEnded() {
-    this.trigger('audio-ended', this);
+    this.trigger('audio-ended', { sound: this });
   }
 
   _onAudioError(error) {
@@ -235,20 +235,20 @@ export default class NativeAudioConnection extends BaseSound {
     }
 
     this.debug(`audio element threw error ${message}`);
-    this.trigger('audio-load-error', message);
+    this.trigger('audio-load-error', {sound: this, error: message});
   }
 
   _onAudioEmptied() {
-    this.trigger('audio-paused', this);
+    this.trigger('audio-paused', { sound: this });
   }
 
   _onAudioPaused() {
-    this.trigger('audio-paused', this);
+    this.trigger('audio-paused', { sound: this });
   }
 
   _onAudioReady() {
-    this.trigger('audio-ready', this);
-    this.trigger('audio-loaded', this);
+    this.trigger('audio-ready', { sound: this });
+    this.trigger('audio-loaded', { sound: this });
   }
 
   _calculatePercentLoaded() {
@@ -320,6 +320,8 @@ export default class NativeAudioConnection extends BaseSound {
     }
 
     this.debug('telling audio to play');
+    audio.volume = 0
+    audio.muted= true;
     return audio.play().catch(e => this._onAudioError(e));
   }
 
@@ -367,7 +369,7 @@ export default class NativeAudioConnection extends BaseSound {
 
   teardown() {
     let audio = this.requestControl();
-    this.trigger('_will_destroy');
+    this.trigger('_will_destroy', { sound: this});
     this._unregisterEvents(audio);
   }
 }

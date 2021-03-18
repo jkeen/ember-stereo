@@ -1,10 +1,8 @@
 import classic from 'ember-classic-decorator';
-import Service, { inject as service } from '@ember/service';
 import { A as emberArray, makeArray } from '@ember/array';
 import debug from 'debug';
 import { tracked } from '@glimmer/tracking';
 import urlToIdentifier from 'ember-hifi/utils/url-to-identifier';
-import deepSet from 'ember-deep-set';
 
 /**
 * This class caches sound objects based on urls. You shouldn't have to interact with this class.
@@ -36,7 +34,7 @@ export default class ErrorCache  {
    */
   find(urls) {
     urls = makeArray(urls);
-    let cache = this._cache;
+    let cache        = this._cache;
     let keysToSearch = emberArray(urls).map(urlToIdentifier);
     let errors       = emberArray(keysToSearch).map(url => cache[url]);
     let foundErrors  = emberArray(errors).compact();

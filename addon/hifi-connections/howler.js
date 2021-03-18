@@ -32,28 +32,28 @@ export default class HowlerSound extends BaseSound {
       onload: function() {
         sound.url = this._src;
         sound.howl = this;
-        sound.trigger('audio-loaded', sound);
-        sound.trigger('audio-ready', sound);
+        sound.trigger('audio-loaded', {sound: this});
+        sound.trigger('audio-ready', {sound: this});
       },
       onpause: function() {
         if (!sound.isPlaying) {
-          sound.trigger('audio-paused', sound);
+          sound.trigger('audio-paused', {sound: this});
         }
       },
       onplay: function() {
-        sound.trigger('audio-played', sound);
+        sound.trigger('audio-played', {sound: this});
       },
       onend: function() {
-        sound.trigger('audio-ended', sound);
+        sound.trigger('audio-ended', {sound: this});
       },
       onstop: function() {
-        sound.trigger('audio-paused', sound);
+        sound.trigger('audio-paused', {sound: this});
       },
       onloaderror: function(id, error) {
-        sound.trigger('audio-load-error', error);
+        sound.trigger('audio-load-error', {sound: this, error});
       },
       onseek: function() {
-        sound.trigger('audio-position-changed', sound);
+        sound.trigger('audio-position-changed', {sound: this});
       }
     }, this.options);
 
@@ -79,20 +79,20 @@ export default class HowlerSound extends BaseSound {
   }
 
   _audioDuration() {
-    return this.howl.duration() * 1000;
+    return this.howl?.duration() * 1000;
   }
 
   _currentPosition() {
-    return this.howl.seek() * 1000;
+    return this.howl?.seek() * 1000;
   }
 
   _setPosition(position) {
-    this.howl.seek(position / 1000);
+    this.howl?.seek(position / 1000);
     return this._currentPosition();
   }
 
   _setVolume(volume) {
-    this.howl.volume(volume/100);
+    this.howl?.volume(volume/100);
   }
 
   play({position} = {}) {
