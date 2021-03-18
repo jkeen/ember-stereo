@@ -1,11 +1,6 @@
 import { next, bind } from '@ember/runloop';
-import Mixin from '@ember/object/mixin';
 import Ember from 'ember';
 import BaseSound from './base';
-import classic from 'ember-classic-decorator';
-import { tracked } from '@glimmer/tracking';
-import { get } from '@ember/object';
-@classic
 export default class DummyConnection extends BaseSound {
   static canPlay = () => true;
   static canUseConnection = () => true;

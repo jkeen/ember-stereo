@@ -1,4 +1,3 @@
-import classic from 'ember-classic-decorator';
 import HifiBaseIsHelper from './-is-helper';
 import debug from 'debug';
 import { dedupeTracked } from 'tracked-toolbox';

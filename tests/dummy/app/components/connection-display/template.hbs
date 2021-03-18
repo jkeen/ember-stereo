@@ -15,7 +15,7 @@
   {{this.connection}}
 </a>
 
-{{#animated-beacon name=this.connectionName}}
+<AnimatedBeacon @name={{this.connectionName}}>
   <div class="connection-display-info">
     {{#if this.canUseConnection}}
       {{#if (or this.connection.acceptMimeTypes connection.rejectMimeTypes)}}
@@ -33,4 +33,4 @@
       Can Not Use In This Browser
     {{/if}}
   </div>
-{{/animated-beacon}}
+</AnimatedBeacon>

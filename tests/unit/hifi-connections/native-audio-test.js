@@ -100,8 +100,6 @@ module('Unit | Connection | Native Audio', function(hooks) {
     })
 
     let count = 0;
-    require('debug').enable("ember-hifi:*");
-
     sound.on('audio-played', function() {
       count++
     });

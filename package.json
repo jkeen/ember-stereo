@@ -39,6 +39,7 @@
   },
   "dependencies": {
     "@ember/render-modifiers": "^1.0.2",
+    "@glimmer/tracking": "^1.0.3",
     "debug": "4.3.2",
     "ember-auto-import": "^1.10.1",
     "ember-classic-decorator": "^2.0.0",
@@ -46,7 +47,6 @@
     "ember-cli-htmlbars": "^5.3.1",
     "ember-copy": "^1.0.0",
     "ember-modifier": "^2.1.1",
-    "@glimmer/tracking": "^1.0.3",
     "ember-poll": "^1.4.0",
     "hls.js": "1.0.0-beta.3",
     "howler": "^2.2.1",
@@ -55,6 +55,7 @@
   "devDependencies": {
     "@ember/optional-features": "^2.0.0",
     "@ember/test-helpers": "^2.1.4",
+    "@ember/test-waiters": "^2.4.2",
     "@fortawesome/ember-fontawesome": "^0.2.2",
     "@fortawesome/free-solid-svg-icons": "^5.9.0",
     "@glimmer/component": "^1.0.3",
@@ -103,6 +104,7 @@
     "eslint": "^7.17.0",
     "eslint-config-prettier": "^7.1.0",
     "eslint-plugin-ember": "^10.1.1",
+    "eslint-plugin-ember-concurrency": "^0.3.1",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-prettier": "^3.3.1",
     "loader.js": "^4.7.0",

@@ -1,9 +1,7 @@
-import classic from 'ember-classic-decorator';
 import { inject as service } from '@ember/service';
 import Helper from '@ember/component/helper';
 import debug from 'debug';
 import { makeArray } from '@ember/array';
-@classic
 export default class HifiIsPlayingElsewhere extends Helper {
   @service hifi;
   @service hifiSync;

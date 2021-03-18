@@ -7,6 +7,7 @@ export default Component.extend({
   classNames: ['stream-display'],
 
   didReceiveAttrs() {
+this._super();
     // ember hifi can't handle doing this consistently right now.
 
     // this.preload();
@@ -14,8 +15,8 @@ export default Component.extend({
 
   preload() {
     let urls = this.get('stream.mountPoints');
-    let logger = this.get('logger');
-    let load = this.get('hifi').load(urls, {debugName: this.get('stream.title')});
+    let logger = this.logger;
+    let load = this.hifi.load(urls, {debugName: this.get('stream.title')});
     let title = this.get('stream.title');
 
     this.set('loading', true);
@@ -40,12 +41,12 @@ export default Component.extend({
 
   actions: {
     listen(url) {
-      let stream = this.get('stream');
+      let stream = this.stream;
       stream.set('currentMount', url);
-      this.get('play')(stream);
+      this.play(stream);
     },
     tryAll() {
-      this.get('tryAll')(this.get('stream'));
+      this.tryAll(this.stream);
     }
   }
 });

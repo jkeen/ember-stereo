@@ -1,4 +1,3 @@
-import classic from 'ember-classic-decorator';
 import { inject as service } from '@ember/service';
 import Helper from '@ember/component/helper';
 import hasEqualUrls from 'ember-hifi/utils/has-equal-urls';
@@ -18,7 +17,6 @@ import debug from 'debug';
   @returns {Float}
 */
 
-@classic
 export default class HifiDuration extends Helper {
   @service hifi;
   @dedupeTracked sound;

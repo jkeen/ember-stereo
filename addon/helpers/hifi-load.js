@@ -1,4 +1,3 @@
-import classic from 'ember-classic-decorator';
 import { inject as service } from '@ember/service';
 import Helper from '@ember/component/helper';
 
@@ -13,7 +12,6 @@ import Helper from '@ember/component/helper';
   @type Helper
   @param {String} url
   */
-@classic
 export default class HifiLoad extends Helper {
   @service
   hifi;

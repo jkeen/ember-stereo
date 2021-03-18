@@ -1,9 +1,6 @@
 import { makeArray } from '@ember/array';
-import Mixin from '@ember/object/mixin';
 import BaseSound from './base';
 import { Howl } from 'howler';
-import { get } from '@ember/object';
-import classic from 'ember-classic-decorator';
 /**
 * This class connects with Howler to create sounds.
 *
@@ -12,7 +9,6 @@ import classic from 'ember-classic-decorator';
 * @extensionfor Base
 
 */
-@classic
 export default class HowlerSound extends BaseSound {
   static rejectMimeTypes = ['application/vnd.apple.mpegurl']
 
@@ -67,15 +63,17 @@ export default class HowlerSound extends BaseSound {
   }
 
   get audioElement() {
-    let sounds = get(this, 'howl._sounds');
+    let sounds = this.howl?._sounds
 
     if (sounds && sounds.length > 0) {
-      let element = get(sounds[0], '_node');
+      let element = (sounds[0])._node;
       if (element) {
         element.setAttribute('crossOrigin', 'anonymous');
         return element;
       }
     }
+
+    return undefined;
   }
 
   _audioDuration() {

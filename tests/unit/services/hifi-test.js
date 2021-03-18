@@ -1,21 +1,20 @@
 import { Promise as EmberPromise } from 'rsvp';
 import { next, later } from '@ember/runloop';
 import { A } from '@ember/array';
-import { set, get } from '@ember/object';
+import { get } from '@ember/object';
 import { module, test /*, skip */ } from 'qunit';
 import { setupTest } from 'ember-qunit';
 import { waitUntil, settled } from '@ember/test-helpers'
 import sinon from 'sinon';
 import urlToIdentifier from 'ember-hifi/utils/url-to-identifier';
 import SoundCache from 'dummy/utils/sound-cache';
-import EmberObject from '@ember/object';
 
 import {
   stubConnectionCreateWithSuccess,
   stubConnectionCreateWithFailure
 } from '../../helpers/ember-hifi-test-helpers';
 
-let hifiConnections, options, sandbox;
+let sandbox;
 
 module('Unit | Service | hifi', function(hooks) {
   setupTest(hooks);
@@ -774,7 +773,7 @@ module('Unit | Service | hifi', function(hooks) {
 
     assert.expect(2);
 
-    service.on('audio-position-will-change', ({sound, currentPosition, newPosition}) => {
+    service.on('audio-position-will-change', ({currentPosition, newPosition}) => {
       assert.equal(currentPosition, 0, "current position should be zero");
       assert.equal(newPosition, 5000, "new position should be 5000");
     });
@@ -813,7 +812,7 @@ module('Unit | Service | hifi', function(hooks) {
     let s1url       = "/good/15000/1.mp3";
     assert.expect(2);
 
-    service.on('audio-will-fast-forward', ({sound, currentPosition, newPosition}) => {
+    service.on('audio-will-fast-forward', ({currentPosition, newPosition}) => {
       assert.equal(currentPosition, 5000, "current position should be 5000");
       assert.equal(newPosition, 6000, "new position should be 6000");
     });

@@ -13,7 +13,7 @@ export default Component.extend(RecognizerMixin, {
     return new Array(this.notchCount);
   }),
   notchCount: 20,
-  activeNotches: computed('notchCount', 'hifi.volume', 'dragAdjustment', function() {
+  activeNotches: computed('dragAdjustment', 'element', 'hifi.volume', 'notchCount', function() {
     let dragAdjustment = (this.dragAdjustment / this.element.getBoundingClientRect().width) * 100;
     let value           = this.hifi.volume + dragAdjustment;
     return Math.floor(value / (100 / this.notchCount));

@@ -1,4 +1,3 @@
-import classic from 'ember-classic-decorator';
 import Service from '@ember/service';
 import { A as emberArray, makeArray } from '@ember/array';
 import { inject as service } from '@ember/service';
@@ -13,7 +12,6 @@ import urlToIdentifier from 'ember-hifi/utils/url-to-identifier';
 * @constructor
 */
 
-@classic
 export default class SoundCache  {
   @tracked cachedCount = 0;
 

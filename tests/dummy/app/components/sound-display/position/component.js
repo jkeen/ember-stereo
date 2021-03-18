@@ -30,7 +30,7 @@ export default Component.extend(RecognizerMixin, {
     }
   }),
 
-  playedPercentageStyle: computed('playedPercentage', function() {
+  playedPercentageStyle: computed('playedPercentage', 'sound.isStream', function() {
     if (!this.get('sound.isStream')) {
       return htmlSafe(`width: ${(this.playedPercentage) * 100}%;`);
     }
@@ -43,7 +43,7 @@ export default Component.extend(RecognizerMixin, {
     return (get(this, 'sound.duration') === Infinity);
   }),
 
-  playHeadPositionStyle: computed('playedPercentage', 'dragAdjustment', function() {
+  playHeadPositionStyle: computed('dragAdjustment', 'element', 'playedPercentage', function() {
     let dragAdjustmentPercentage = (this.dragAdjustment / this.element.getBoundingClientRect().width);
     let p = this.playedPercentage + dragAdjustmentPercentage;
     let percent = parseFloat(p, 10) * 100;

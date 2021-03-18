@@ -8,17 +8,17 @@
     </span>
 
     <div class="test-sound-actions">
-      <button href="#" class="button is-medium is-outline is-dark {{if loadCustomSound.isRunning "is-loading"}}" {{action (perform loadCustomSound)}}>Load</button>
-      <button href="#" class="button is-medium is-info {{if playCustomSound.isRunning "is-loading"}}" {{action (perform playCustomSound)}}>Play</button>
+      <button href="#" class="button is-medium is-outline is-dark {{if loadCustomSound.isRunning "is-loading"}}" type="button" {{action (perform loadCustomSound)}}>Load</button>
+      <button href="#" class="button is-medium is-info {{if playCustomSound.isRunning "is-loading"}}" type="button" {{action (perform playCustomSound)}}>Play</button>
     </div>
     <div class="errors">
       {{error}}
     </div>
   </div>
 
-  {{#animated-container}}
+  <AnimatedContainer>
     {{#animated-each testSounds use=transition duration=250 as |item|}}
       <TestSound @url={{item.url}} @title={{item.title}} @debug={{item.debug}}/>
     {{/animated-each}}
-  {{/animated-container}}
+  </AnimatedContainer>
 </div>

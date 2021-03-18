@@ -24,7 +24,7 @@ export default Component.extend({
     }
   }),
 
-  loadedItems: computed('hifi.soundCache.cachedCount', function() {
+  loadedItems: computed('hifi.soundCache.{_cache,cachedCount}', function() {
     return Object.values(this.hifi.soundCache._cache); // animated each gets messed up unless you do this thing
   }),
 

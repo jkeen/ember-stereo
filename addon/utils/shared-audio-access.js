@@ -1,5 +1,3 @@
-import EmberObject from '@ember/object';
-import { inject as service } from '@ember/service';
 import debug from 'debug';
 const log = debug('ember-hifi:shared-audio-access');
 

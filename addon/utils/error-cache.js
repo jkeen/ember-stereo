@@ -1,4 +1,3 @@
-import classic from 'ember-classic-decorator';
 import { A as emberArray, makeArray } from '@ember/array';
 import debug from 'debug';
 import { tracked } from '@glimmer/tracking';
@@ -12,7 +11,6 @@ import urlToIdentifier from 'ember-hifi/utils/url-to-identifier';
 * @constructor
 */
 
-@classic
 export default class ErrorCache  {
   @tracked cachedCount = 0;
   @tracked _cache = {};

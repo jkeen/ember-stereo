@@ -17,7 +17,7 @@ export default Component.extend({
 
   //eslint-disable-next-line
   lastResultWasOurs: computed('lastResult.connectionResult', 'lastResult.thisConnection', function() {
-    return get(this, 'lastResult') && get(this, 'lastResult.connectionResult') === get(this, 'lastResult.thisConnection');
+    return this.lastResult && get(this, 'lastResult.connectionResult') === get(this, 'lastResult.thisConnection');
   }),
   lastResultCouldHaveBeenOurs: bool('lastResult.canPlay'),
   hasLastResult: bool('lastResult'),

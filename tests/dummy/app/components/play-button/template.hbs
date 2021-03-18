@@ -1,4 +1,4 @@
-<button class="hifi-play-button" {{hifi-control @url}}>
+<button class="hifi-play-button" type="button" {{hifi-control @url}}>
   <div class="hifi-play-button-bg"></div>
   {{#if (is-errored @url)}}
     <FaIcon @icon="bomb" @size="2x"/>

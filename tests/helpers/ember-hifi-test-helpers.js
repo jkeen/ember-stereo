@@ -1,7 +1,5 @@
 import { next } from '@ember/runloop';
 import { get } from '@ember/object';
-import BaseSound from 'ember-hifi/hifi-connections/base';
-import DummySound from 'ember-hifi/hifi-connections/dummy-connection';
 import sinon from 'sinon';
 
 const dummyOps = {

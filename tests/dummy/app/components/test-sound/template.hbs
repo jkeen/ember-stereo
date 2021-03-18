@@ -7,13 +7,13 @@
   </span>
 
   <div class="test-sound-actions">
-    <button class="button is-small is-outline {{if this.loadSound.isRunning "is-loading"}}" {{on 'click' (perform this.loadSound @url)}}>Load</button>
+    <button class="button is-small is-outline {{if this.loadSound.isRunning "is-loading"}}" type="button" {{on 'click' (perform this.loadSound @url)}}>Load</button>
 
 
     <PlayButton @url={{@url}}>
 
     </PlayButton>    
-    <button class="button is-small is-outline" {{hifi-control this.loadUrl}}>Play via P</button>
+    <button class="button is-small is-outline" type="button" {{hifi-control this.loadUrl}}>Play via P</button>
   </div>
 </div>
 {{yield}}

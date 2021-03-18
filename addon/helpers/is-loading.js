@@ -1,8 +1,6 @@
 
-import classic from 'ember-classic-decorator';
 import { inject as service } from '@ember/service';
 import Helper from '@ember/component/helper';
-import { tracked } from '@glimmer/tracking';
 import hasEqualUrls from 'ember-hifi/utils/has-equal-urls';
 import { dedupeTracked } from 'tracked-toolbox';
 import debug from 'debug';
@@ -32,7 +30,6 @@ import debug from 'debug';
 */
 
 const UNINITIALIZED = Object.freeze({});
-@classic
 export default class HifiIsLoading extends Helper {
   @service hifi;
 

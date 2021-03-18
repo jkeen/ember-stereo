@@ -3,7 +3,6 @@ import { run } from '@ember/runloop';
 import Mixin from '@ember/object/mixin';
 import BaseSound from './base';
 import Ember from 'ember';
-import classic from 'ember-classic-decorator';
 // These are the events we're watching for
 const AUDIO_EVENTS = ['loadstart', 'durationchange', 'loadedmetadata', 'loadeddata', 'progress', 'canplay', 'canplaythrough', 'error', 'playing', 'pause', 'ended', 'emptied', 'timeupdate'];
 
@@ -21,7 +20,6 @@ const HAVE_CURRENT_DATA = 2;
 * @extends BaseSound
 * @constructor
 */
-@classic
 export default class NativeAudioConnection extends BaseSound {
   static canPlayMimeType(mimeType) {
     let audio = new Audio();
@@ -320,8 +318,6 @@ export default class NativeAudioConnection extends BaseSound {
     }
 
     this.debug('telling audio to play');
-    audio.volume = 0
-    audio.muted= true;
     return audio.play().catch(e => this._onAudioError(e));
   }
 

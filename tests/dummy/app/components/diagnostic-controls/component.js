@@ -12,7 +12,7 @@ export default Component.extend({
   hifi: service(),
   classNames: ['diagnostic-controls'],
 
-  dormantItems: computed('testSounds', 'hifi.soundCache.cachedCount', function() {
+  dormantItems: computed('hifi.soundCache.{_cache,cachedCount}', 'testSounds', function() {
     return this.testSounds.filter(item => !this.hifi.soundCache._cache[item.url])
   }),
 

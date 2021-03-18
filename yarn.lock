@@ -1224,7 +1224,7 @@
     ember-cli-htmlbars "^5.2.0"
     ember-destroyable-polyfill "^2.0.3"
 
-"@ember/test-waiters@^2.3.0", "@ember/test-waiters@^2.4.0":
+"@ember/test-waiters@^2.3.0", "@ember/test-waiters@^2.4.0", "@ember/test-waiters@^2.4.2":
   version "2.4.2"
   resolved "https://registry.yarnpkg.com/@ember/test-waiters/-/test-waiters-2.4.2.tgz#28e38d00edc96bcdc8c42592933d8f1b4171d1a1"
   integrity sha512-WNbprLvC5PsgjnoX0cWa5/2dP3sbDDLjc6JYNUfrFlmZfsuKU9/+Ioyi0V6cx9mzpWLdfkSZMW+bw/rItjPKVg==
@@ -7860,6 +7860,11 @@ eslint-config-prettier@^7.1.0:
   version "7.2.0"
   resolved "https://registry.yarnpkg.com/eslint-config-prettier/-/eslint-config-prettier-7.2.0.tgz#f4a4bd2832e810e8cc7c1411ec85b3e85c0c53f9"
   integrity sha512-rV4Qu0C3nfJKPOAhFujFxB7RMP+URFyQqqOZW9DMRD7ZDTFyjaIlETU3xzHELt++4ugC0+Jm084HQYkkJe+Ivg==
+
+eslint-plugin-ember-concurrency@^0.3.1:
+  version "0.3.1"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-ember-concurrency/-/eslint-plugin-ember-concurrency-0.3.1.tgz#7d6a929488ce94d6c4224b5b6e464b01e5163aff"
+  integrity sha512-ihhW9cTv4WU4j3a458gwVIsQQ3FdEJKgwBgNRvUC3pMJzSCqizpbMGO5KJihT2JLWaHtCuibvGaO1ZTJEwwBUQ==
 
 eslint-plugin-ember@^10.1.1:
   version "10.2.0"

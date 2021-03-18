@@ -4,6 +4,7 @@ import OneAtATime from 'dummy/utils/one-at-a-time';
 import { module, test } from 'qunit';
 
 module('Unit | Helper | one at a time', function() {
+  /* eslint-disable */
   const Sound = EmberObject.extend(Evented, {
     play() {
       this.trigger('audio-played');
@@ -14,6 +15,7 @@ module('Unit | Helper | one at a time', function() {
       this.set('isPlaying', false);
     }
   });
+  /* eslint-enable */
 
   test("only one sound should play at a time", function(assert) {
     assert.expect(3);

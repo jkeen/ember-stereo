@@ -1,6 +1,5 @@
 import { next, later, cancel } from '@ember/runloop';
 import { A } from '@ember/array';
-import { getProperties } from '@ember/object';
 import { assert } from '@ember/debug';
 import { getMimeType } from 'ember-hifi/utils/mime-types';
 import debug from 'debug';
@@ -163,7 +162,7 @@ export default class Sound extends Evented {
       audioPaused,
       audioEnded,
       audioLoadError
-    } = getProperties(this, 'audioLoading', 'audioLoaded', 'audioReady', 'audioPlayed', 'audioPaused', 'audioEnded', 'audioLoadError');
+    } = this;
     this.isLoading = true;
 
     this.on('audio-played', () => {

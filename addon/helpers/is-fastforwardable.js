@@ -1,4 +1,3 @@
-import classic from 'ember-classic-decorator';
 import HifiBaseIsHelper from './-is-helper';
 import debug from 'debug';
 
@@ -26,7 +25,6 @@ import debug from 'debug';
   @param {String} url
 */
 
-@classic
 export default class HifiIsFastForwardable extends HifiBaseIsHelper {
   get result() {
     if (this.identifier === 'system') {

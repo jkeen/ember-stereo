@@ -1,4 +1,4 @@
-import { registerWaiter } from '@ember/test';
+import { registerWaiter } from '@ember/test-waiters';
 import { later } from '@ember/runloop';
 import { module, test, skip } from 'qunit';
 import { setupTest } from 'ember-qunit';

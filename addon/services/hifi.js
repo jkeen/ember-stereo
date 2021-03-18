@@ -2,7 +2,7 @@ import { later, cancel } from '@ember/runloop';
 import { isEmpty } from '@ember/utils';
 import { assign } from '@ember/polyfills';
 import { getOwner } from '@ember/application';
-import { race, waitForProperty, waitForEvent, didCancel } from 'ember-concurrency';
+import { race, waitForProperty, didCancel } from 'ember-concurrency';
 import { task } from 'ember-concurrency-decorators';
 import Evented from '@ember/object/evented';
 import SoundCache from 'ember-hifi/utils/sound-cache';
@@ -15,17 +15,14 @@ import { next } from '@ember/runloop';
 import SharedAudioAccess from 'ember-hifi/utils/shared-audio-access';
 import { Promise } from 'rsvp';
 import { copy } from 'ember-copy';
-
-const log = debug('ember-hifi');
-import { set, get, getProperties, computed } from '@ember/object';
-import { or, readOnly, equal, reads, alias } from '@ember/object/computed';
+import { set, get } from '@ember/object';
 import { A as emberArray, makeArray } from '@ember/array';
 import { dasherize } from '@ember/string';
 import OneAtATime from '../utils/one-at-a-time';
-import RSVP from 'rsvp';
-import PromiseRace from '../utils/promise-race';
 import { tracked } from '@glimmer/tracking';
 const DEFAULT_CONNECTIONS = [{ name: 'NativeAudio' }];
+
+const log = debug('ember-hifi');
 
 export const EVENT_MAP = [
   { event: 'audio-played', handler: '_relayPlayedEvent' },
@@ -35,10 +32,7 @@ export const EVENT_MAP = [
   { event: 'audio-position-changed', handler: '_relayPositionChangedEvent' },
   { event: 'audio-loaded', handler: '_relayLoadedEvent' },
   { event: 'audio-loading', handler: '_relayLoadingEvent' },
-  {
-    event: 'audio-position-will-change',
-    handler: '_relayPositionWillChangeEvent',
-  },
+  { event: 'audio-position-will-change', handler: '_relayPositionWillChangeEvent' },
   { event: 'audio-will-rewind', handler: '_relayWillRewindEvent' },
   { event: 'audio-will-fast-forward', handler: '_relayWillFastForwardEvent' },
   { event: 'audio-metadata-changed', handler: '_relayMetadataChangedEvent' },
@@ -244,7 +238,7 @@ export default class Hifi extends Service.extend(Evented) {
 
   findLoaded(identifiers) {
     var sound;
-  
+
     makeArray(identifiers).forEach((identifier) => {
       if (!sound) {
         if (identifier && identifier.url) {
@@ -258,15 +252,13 @@ export default class Hifi extends Service.extend(Evented) {
     return sound;
   }
 
-  @task
-  * waitForSuccess(strategy, sound) {
+  @task *waitForSuccess(strategy, sound) {
     yield waitForProperty(sound, 'isReady');
     debug('ember-hifi')(`SUCCESS: [${strategy.connectionName}] -> (${strategy.url})`);
     return { sound }
   }
 
-  @task
-  * waitForFailure(strategy, sound) {
+  @task *waitForFailure(strategy, sound) {
     yield waitForProperty(sound, 'isErrored');
     debug('ember-hifi')(`FAILED: [${strategy.connectionName}] -> ${sound.error} (${strategy.url})`);
     this._unregisterEvents(sound);
@@ -274,8 +266,7 @@ export default class Hifi extends Service.extend(Evented) {
     return { error: sound.error }
   }
 
-  @task({ enqueue: true, maxConcurrency: 1 })
-  * tryLoadingSound(strategy) {
+  @task({ enqueue: true, maxConcurrency: 1 }) *tryLoadingSound(strategy) {
     let { connection: Connection, url, connectionName, sharedAudioAccess, options } = strategy
     var newSound = new Connection({ url, connectionName, sharedAudioAccess, options });
     this._registerEvents(newSound);
@@ -287,7 +278,7 @@ export default class Hifi extends Service.extend(Evented) {
       this.waitForFailure.perform(strategy, newSound)
     ]);
   }
-  
+
   /**
    * Given an array of URLS, return a sound ready for playing
    *
@@ -299,7 +290,7 @@ export default class Hifi extends Service.extend(Evented) {
    */
 
   @task({ enqueue: true, debug: true })
-  * loadTask(urlsOrPromise, options) {
+  *loadTask(urlsOrPromise, options) {
     var sharedAudioAccess = this._createAndUnlockAudio();
 
     options = assign({ metadata: {}, sharedAudioAccess }, options);
@@ -390,7 +381,7 @@ export default class Hifi extends Service.extend(Evented) {
       let promise = this.loadTask.perform(urlsOrPromise, options);
       this.trigger('new-load-request', {loadPromise: promise, urlsOrPromise, options});
 
-      return promise;    
+      return promise;
     }
     catch(e) {
       if (!didCancel(e)) {
@@ -411,7 +402,7 @@ export default class Hifi extends Service.extend(Evented) {
    */
 
   @task({maxConcurrency: 1, restartable: true})
-  * playTask(urlsOrPromise, options = {}) {
+  *playTask(urlsOrPromise, options = {}) {
     if (this.isPlaying) {
       this.trigger('current-sound-interrupted', {sound: this.currentSound});
       this.pause();

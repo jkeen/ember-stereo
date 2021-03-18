@@ -1,4 +1,3 @@
-import classic from 'ember-classic-decorator';
 import Helper from '@ember/component/helper';
 import { dedupeTracked } from 'tracked-toolbox';
 import hasEqualUrls from 'ember-hifi/utils/has-equal-urls';
@@ -18,7 +17,6 @@ import { makeArray } from '@ember/array';
 
 const UNINITIALIZED = Object.freeze({});
 
-@classic
 export default class HifiIsErrored extends Helper {
   @service hifi;
   

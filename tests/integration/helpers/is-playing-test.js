@@ -1,9 +1,7 @@
 import { module, test } from 'qunit';
 import { setupRenderingTest } from 'ember-qunit';
-import { render, getContext } from '@ember/test-helpers';
+import { render  } from '@ember/test-helpers';
 import { hbs } from 'ember-cli-htmlbars';
-import isPlayingHelper from 'dummy/helpers/is-playing';
-import Hifi from 'dummy/services/hifi';
 
 module('Integration | Helper | is-playing', function(hooks) {
   setupRenderingTest(hooks);

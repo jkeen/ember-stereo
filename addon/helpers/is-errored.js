@@ -1,10 +1,8 @@
-import classic from 'ember-classic-decorator';
 import Helper from '@ember/component/helper';
 import { dedupeTracked } from 'tracked-toolbox';
 import hasEqualUrls from 'ember-hifi/utils/has-equal-urls';
 import { inject as service } from '@ember/service';
 
-import debug from 'debug';
 /**
   A helper to detect if a sound is errored.
   ```hbs
@@ -31,7 +29,7 @@ import debug from 'debug';
 
 const UNINITIALIZED = Object.freeze({});
 
-@classic
+
 export default class HifiIsErrored extends Helper {
   @service hifi;
 
@@ -46,13 +44,17 @@ export default class HifiIsErrored extends Helper {
   * @param {String} options.format time, ms, s,
   * @param {Boolean} options.load load the sound if it's not loaded?
   */
-  compute([identifier = 'system'], {connectionName}) {
+  compute([identifier = 'system'], { connectionName }) {
     if (identifier !== this.identifier) {
       this.result = UNINITIALIZED; // if identifier changes, reinitialize sound
       this.identifier = identifier || 'system';
       if (this.identifier !== 'system') {
         let error = this.hifi.errorCache.find(this.identifier);
-        if (error) {
+
+        if (error && connectionName && error[connectionName]) {
+          this.result = true;
+        }
+        else if (error) {
           this.result = true;
         }
         else {

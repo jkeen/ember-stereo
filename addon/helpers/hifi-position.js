@@ -1,4 +1,3 @@
-import classic from 'ember-classic-decorator';
 import { inject as service } from '@ember/service';
 import Helper from '@ember/component/helper';
 import hasEqualUrls from 'ember-hifi/utils/has-equal-urls';
@@ -11,14 +10,13 @@ import {tracked} from '@glimmer/tracking';
   ```hbs
    {{hifi-position this.url}}</p>
   ```
-  
+
   @class HifiPosition
   @type Helper
   @param {String} url
   @returns {Float}
 */
 
-@classic
 export default class HifiPosition extends Helper {
   @service hifi;
   sound;
@@ -35,7 +33,7 @@ export default class HifiPosition extends Helper {
     @return {Float}
   */
 
-  compute([identifier='system'], {format=false, defaultValue}) { 
+  compute([identifier='system'], {format=false, defaultValue}) {
     if (identifier !== this.identifier) {
       this.identifier = identifier || 'system';
       if (this.identifier == 'system') {
@@ -47,7 +45,7 @@ export default class HifiPosition extends Helper {
           this.sound = sound;
         }
         else {
-          this.hifi.on('new-load-request', async ({loadPromise, urlsOrPromise, options}) => {
+          this.hifi.on('new-load-request', async ({loadPromise, urlsOrPromise /*, options */}) => {
             let isEqual = await hasEqualUrls(this.identifier, urlsOrPromise);
             if (isEqual) {
               loadPromise.then(({sound}) => this.sound = sound);
@@ -83,7 +81,7 @@ export default class HifiPosition extends Helper {
 
     this.result = result;
 
-    debug(`ember-hifi:helpers:hifi-position:${identifier}:${format}`)(`render = ${this.result}`); 
+    debug(`ember-hifi:helpers:hifi-position:${identifier}:${format}`)(`render = ${this.result}`);
     return this.result
   }
 }

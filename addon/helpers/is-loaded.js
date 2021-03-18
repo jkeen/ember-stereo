@@ -1,4 +1,3 @@
-import classic from 'ember-classic-decorator';
 import HifiBaseIsHelper from './-is-helper';
 import debug from 'debug';
 
@@ -25,7 +24,6 @@ import debug from 'debug';
   @type Helper
   @param {String} url
 */
-@classic
 export default class HifiIsLoaded extends HifiBaseIsHelper {
   name = 'is-loaded'
 

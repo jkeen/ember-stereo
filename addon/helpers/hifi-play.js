@@ -1,7 +1,5 @@
-import classic from 'ember-classic-decorator';
 import { inject as service } from '@ember/service';
 import Helper from '@ember/component/helper';
-import { observer } from '@ember/object';
 
 /**
   A helper to load a sound
@@ -14,7 +12,6 @@ import { observer } from '@ember/object';
   @type Helper
   @param {String} url
   */
-@classic
 export default class HifiPlay extends Helper {
   @service
   hifi;

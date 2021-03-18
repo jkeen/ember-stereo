@@ -27,13 +27,14 @@ export default Component.extend({
   connectionName: reads('sound.connectionName'),
   durationIsInfinity: equal('duration', Infinity),
 
-  isCurrentSound: computed('hifi.currentSound', 'sound', function() {
+  isCurrentSound: computed('hifi.currentSound.url', 'sound.url', function() {
     return (this.hifi.currentSound && this.sound && this.hifi.currentSound.url === this.sound.url);
   }),
 
   onRemoval: function() {},
 
   didReceiveAttrs() {
+this._super();
     if (!this.sound) {
       this.loadSound.perform();
     }

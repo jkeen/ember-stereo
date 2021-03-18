@@ -1,4 +1,3 @@
-import classic from 'ember-classic-decorator';
 import { inject as service } from '@ember/service';
 import Helper from '@ember/component/helper';
 
@@ -14,7 +13,7 @@ import Helper from '@ember/component/helper';
   @param {String} url
   @param {String} increment
 */
-@classic
+
 export default class HifiRewind extends Helper {
   @service
   hifi;

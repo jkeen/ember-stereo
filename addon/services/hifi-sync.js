@@ -1,11 +1,10 @@
-import classic from 'ember-classic-decorator';
 import Service from '@ember/service';
 import { inject as service } from '@ember/service';
 import debug from 'debug';
 import Evented from '@ember/object/evented';
 import { next } from '@ember/runloop';
 import { throttle } from '@ember/runloop';
-@classic
+
 export default class HifiSync extends Service.extend(Evented) {
   @service hifi;
 

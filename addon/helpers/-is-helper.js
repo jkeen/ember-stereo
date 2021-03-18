@@ -1,11 +1,9 @@
-import classic from 'ember-classic-decorator';
 import { inject as service } from '@ember/service';
 import Helper from '@ember/component/helper';
 import { dedupeTracked } from 'tracked-toolbox';
 import hasEqualUrls from 'ember-hifi/utils/has-equal-urls';
 
 const UNINITIALIZED = Object.freeze({});
-@classic
 export default class HifiBaseIsHelper extends Helper {
   @service hifi;
   
