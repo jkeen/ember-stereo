@@ -50,7 +50,6 @@ export const SERVICE_EVENT_MAP = [
  */
 export default class Hifi extends Service.extend(Evented) {
   @service poll;
-  @service hifiSync;
 
   @tracked currentSound = null;
   @tracked errorCache = null;

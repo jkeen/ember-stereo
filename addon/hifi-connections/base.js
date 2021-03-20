@@ -62,8 +62,6 @@ export default class Sound extends Evented {
       return true; // assume true
     }
   }
-  // @service('hifi-sync') sync;
-
 
   @tracked __canPlay // internal
 
@@ -135,21 +133,6 @@ export default class Sound extends Evented {
     log(message);
   }
 
-  onSyncChanged(data) {
-    console.log('on sync changed', data);
-  }
-
-  syncState() {
-    // this.sync.broadcast(this.url, {
-    //   isPlaying: this.isPlaying,
-    //   isLoaded: this.isLoaded,
-    //   isStream: this.isStream,
-    //   isFastForwardable: this.isFastForwardable,
-    //   isRewindable: this.isRewindable,
-    //   position: !this.isStream ? this.position : null
-    // })
-  }
-
   constructor(args = {}) {
     super(...arguments);
 
@@ -178,21 +161,18 @@ export default class Sound extends Evented {
       if (audioPlayed) { audioLoading(this); }
 
       // recover lost isLoading update
-      this.syncState()
       this.debug(`audio-played ${this.isPlaying}`);
     });
 
     this.on('audio-paused', () => {
       this.isPlaying = false;
       if (audioPaused) { audioPaused(this); }
-      this.syncState()
       this.debug('audio-paused');
     });
 
     this.on('audio-ended', () => {
       this.isPlaying = false;
       if (audioEnded) { audioEnded(this); }
-      this.syncState()
       this.debug('audio-ended');
     });
 
@@ -200,7 +180,6 @@ export default class Sound extends Evented {
       this.isReady = true;
       this.duration = this._audioDuration();
       if (audioReady) { audioReady(this); }
-      this.syncState()
       this.debug('audio-ready');
     });
 
@@ -214,7 +193,6 @@ export default class Sound extends Evented {
       this.isErrored = true;
       this.error = error;
       if (audioLoadError) { audioLoadError(this); }
-      this.syncState()
       this.debug('audio-load-error');
     });
 
@@ -232,8 +210,6 @@ export default class Sound extends Evented {
       if (audioLoading) { audioLoading(this, info && info.percentLoaded); }
       this.debug('audio-loading');
     });
-
-    // this.sync.on(`change:${this.url}`, this.onSyncChanged);
 
     try {
       this._detectTimeouts();

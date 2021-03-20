@@ -4,8 +4,8 @@
     <FaIcon @icon="bomb" @size="2x"/>
   {{else if (is-playing @url)}}
     <FaIcon @icon="pause" @size="2x"/>
-  {{else if (is-playing-elsewhere @url)}}
-    <FaIcon @icon="pause" @size="2x"/>
+  {{!-- {{else if (is-playing-elsewhere @url)}}
+    <FaIcon @icon="pause" @size="2x"/> --}}
   {{else if (is-loading @url)}}
     <FaIcon @icon="circle-notch" @size="2x" class="icon-spin"/>
   {{else}}
