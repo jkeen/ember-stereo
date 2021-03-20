@@ -3,7 +3,6 @@ import { module, test } from 'qunit';
 
 module('Unit | Utility | url-to-identifier', function() {
 
-  // TODO: Replace this with your real tests.
   test('it works', function(assert) {
     let result = urlToIdentifier('/relative/url');
 

@@ -4,7 +4,6 @@ import { assign } from '@ember/polyfills';
 import { copy } from 'ember-copy';
 import { dasherize } from '@ember/string';
 import { getOwner } from '@ember/application';
-import { isEmpty } from '@ember/utils';
 import { later, cancel, bind, next } from '@ember/runloop';
 import { Promise } from 'rsvp';
 import { race, waitForProperty, didCancel, task } from 'ember-concurrency';
