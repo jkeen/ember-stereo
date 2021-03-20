@@ -37,13 +37,13 @@ export default class ConnectionDisplay extends Component {
   _setupCanPlayMonitor() {
     this.canUseConnection = this.args.connection.canUseConnection();
     let _canPlay = this.args.connection.canPlay;
-    // this.args.connection.canPlay = (urlOrPromise) => {
-    //   if (!this.enabled) {
-    //     return false; // we've disabled it in the diagnostic
-    //   }
+    this.args.connection.canPlay = (urlOrPromise) => {
+      if (!this.enabled) {
+        return false; // we've disabled it in the diagnostic
+      }
 
-    //   return _canPlay.call(this.args.connection, urlOrPromise);
-    // };
+      return _canPlay.call(this.args.connection, urlOrPromise);
+    };
   }
 
   _setupLoadRequestMonitor() {
