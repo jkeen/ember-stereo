@@ -1,24 +1,28 @@
-<div class="sound-container" data-title="Sound Loader">
-  <div class="sound test-sound">
-    <span class="test-sound-title-url">
-      {{input type="text" class="input" placeholder="title" value=title}}
-    </span>
-    <span class="test-sound-title">
-      {{input type="text" class="input" placeholder="url" value=url}}
-    </span>
-
-    <div class="test-sound-actions">
-      <button href="#" class="button is-medium is-outline is-dark {{if loadCustomSound.isRunning "is-loading"}}" type="button" {{action (perform loadCustomSound)}}>Load</button>
-      <button href="#" class="button is-medium is-info {{if playCustomSound.isRunning "is-loading"}}" type="button" {{action (perform playCustomSound)}}>Play</button>
+<div class="diagnostic-controls">
+  <div class="sound-container" data-title="Sound Loader">
+    <div class="sound test-sound">
+      <span class="test-sound-title-url">
+        <Input type="text" class="input" placeholder="title" @value={{@title}}/>
+      </span>
+      <span class="test-sound-title">
+        <Input type="text" class="input" placeholder="url" @value={{@url}} />
+      </span>
+  
+      <div class="test-sound-actions">
+        <button href="#" class="button is-medium is-outline is-dark {{if this.loadCustomSound.isRunning " is-loading"}}"
+          type="button" {{on 'click' (perform this.loadCustomSound)}}>Load</button>
+        <button href="#" class="button is-medium is-info {{if this.playCustomSound.isRunning " is-loading"}}" type="button"
+          {{on 'click' (perform this.playCustomSound)}}>Play</button>
+      </div>
+      <div class="errors">
+        {{this.error}}
+      </div>
     </div>
-    <div class="errors">
-      {{error}}
-    </div>
+  
+    <AnimatedContainer>
+      {{#animated-each @testSounds use=this.transition duration=250 as |item|}}
+      <TestSound @url={{item.url}} @title={{item.title}} @debug={{item.debug}} />
+      {{/animated-each}}
+    </AnimatedContainer>
   </div>
-
-  <AnimatedContainer>
-    {{#animated-each testSounds use=transition duration=250 as |item|}}
-      <TestSound @url={{item.url}} @title={{item.title}} @debug={{item.debug}}/>
-    {{/animated-each}}
-  </AnimatedContainer>
 </div>

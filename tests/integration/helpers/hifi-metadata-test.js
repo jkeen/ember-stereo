@@ -1,31 +1,27 @@
-import { module, test } from 'qunit';
-import { setupRenderingTest } from 'ember-qunit';
-import { render } from '@ember/test-helpers';
-import { hbs } from 'ember-cli-htmlbars';
+import { module, test } from "qunit";
+import { setupRenderingTest } from "ember-qunit";
+import { render } from "@ember/test-helpers";
+import { hbs } from "ember-cli-htmlbars";
 
-module('Integration | Helper | hifi-metadata', function(hooks) {
+module("Integration | Helper | hifi-metadata", function (hooks) {
   setupRenderingTest(hooks);
-  test('it renders when key is specified', async function(assert) {
-    let service = this.owner.lookup('service:hifi');
-    service.loadConnections([{ name: 'DummyConnection' }]);
-    this.url = '/good/1000/silence.mp3';
-    await service.load(this.url, { metadata: { artist: 'beatles' }});
-    await render(
-      hbs`{{hifi-metadata this.url key='artist'}}`
-    );
+  test("it renders when key is specified", async function (assert) {
+    let service = this.owner.lookup("service:hifi");
+    service.loadConnections([{ name: "DummyConnection" }]);
+    this.url = "/good/1000/silence.mp3";
+    await service.load(this.url, { metadata: { artist: "beatles" } });
+    await render(hbs`{{hifi-metadata this.url key='artist'}}`);
 
-    assert.equal(this.element.textContent.trim(), 'beatles');
+    assert.equal(this.element.textContent.trim(), "beatles");
   });
 
-  test('it renders when no key is specified', async function(assert) {
-    let service = this.owner.lookup('service:hifi');
-    service.loadConnections([{ name: 'DummyConnection' }]);
-    this.url = '/good/1000/silence.mp3';
-    await service.load(this.url, { metadata: 'whatever you want'});
-    await render(
-      hbs`{{hifi-metadata this.url}}`
-    );
+  test("it renders when no key is specified", async function (assert) {
+    let service = this.owner.lookup("service:hifi");
+    service.loadConnections([{ name: "DummyConnection" }]);
+    this.url = "/good/1000/silence.mp3";
+    await service.load(this.url, { metadata: "whatever you want" });
+    await render(hbs`{{hifi-metadata this.url}}`);
 
-    assert.equal(this.element.textContent.trim(), 'whatever you want');
+    assert.equal(this.element.textContent.trim(), "whatever you want");
   });
 });

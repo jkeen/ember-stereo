@@ -1,7 +1,7 @@
 import { inject as service } from '@ember/service';
 import Helper from '@ember/component/helper';
 
-export default class HifiTogglePlay extends Helper {
+export default class HifiStop extends Helper {
   @service
   hifi;
 

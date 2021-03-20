@@ -64,22 +64,22 @@ let FlashConnection = BaseSound.extend({
       },
       onloaderror: function(error) {
         // Couldn't load this sound. Tell hifi to move on and try another url/connection
-        sound.trigger('audio-load-error', error);
+        sound.trigger('audio-load-error', {error});
       },
       onpause: function() {
-        sound.trigger('audio-paused', sound);
+        sound.trigger('audio-paused', { sound });
       },
       onplay: function() {
-        sound.trigger('audio-played', sound);
+        sound.trigger('audio-played', { sound });
       },
       onend: function() {
-        sound.trigger('audio-ended', sound);
+        sound.trigger('audio-ended', { sound });
       },
       onseek: function() {
-        sound.trigger('audio-position-changed', sound);
+        sound.trigger('audio-position-changed', { sound });
       },
       onloading: function(percentLoaded) {
-        sound.trigger('audio-loading', sound, {percentLoaded: percentLoaded});
+        sound.trigger('audio-loading', {sound, percentLoaded: percentLoaded});
       }
     })
 

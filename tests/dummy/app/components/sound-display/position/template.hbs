@@ -1,28 +1,39 @@
-{{! template-lint-disable }}
-<div class="progress {{if durationIsInfinity "is-indeterminate" ""}} {{if sound.isPlaying "is-playing" ""}}">
-  <div class="progress-track js-progress-track">
-    <div class="progress-track-downloaded" style={{downloadPercentageStyle}}></div>
-    <div class="progress-track-played" style="width: {{hifi-position sound.url format='percent'}}%"></div>
+<div class="sound-display-control-position service-display-current-sound-position" {{did-insert this.didInsert}} {{recognize-gesture 'tap'}} {{on 'tap' this.handleTap}}>
+  <div class="progress {{if (not (or (is-fastforwardable @sound.url) (is-rewindable @sound.url))) " is-indeterminate" "" }} {{if @sound.isPlaying "is-playing" "" }}">
+    <div class="progress-track js-progress-track">
+      <div class="progress-track-downloaded"></div>
+      <div class="progress-track-played" 
+          style={{html-safe (
+            concat "width: " (hifi-position @sound.url format='percent') "%"
+          )}}></div>
+    </div>
+    {{#if @sound}}
+      <div class="progress-track-playhead" 
+        {{recognize-gesture 'pan'}} 
+        {{on 'pan' this.updatePlayheadPosition}} 
+        {{on 'panend' this.updatePosition}}
+        style={{html-safe (
+          concat "left: calc(" (hifi-position @sound.url format='percent') "% + " this.dragAdjustment "px)"
+        )}}
+      >
+      </div>
+    {{/if}}
   </div>
-  {{#if sound}}
-    {{component "sound-display/position/play-head" positionStyle=playHeadPositionStyle duration=duration
-      onPan=(action "updatePlayheadPosition")
-      onPanEnd=(action "updatePosition")}}
-  {{/if}}
-</div>
-<div class="sound-display-control-position-info">
-  <span class="sound-display-control-position-info-positon">
-    {{#if sound}}
-      {{hifi-position sound.url format='time'}}
-    {{else}}
+  <div class="sound-display-control-position-info">
+    <span class="sound-display-control-position-info-positon">
+      {{#if @sound}}
+        {{hifi-position @sound.url format='time'}}
+      {{else}}
       &nbsp;
-    {{/if}}
-  </span>
-  <span class="sound-display-control-position-info-duration">
-    {{#if sound}}
-      {{hifi-duration sound.url format='time'}}
-    {{else}}
-      &nbsp;
-    {{/if}}
-  </span>
+      {{/if}}
+    </span>
+    <span class="sound-display-control-position-info-duration">
+      {{#if @sound}}
+        {{hifi-duration @sound.url format='time'}}
+      {{else}}
+       &nbsp;
+      {{/if}}
+    </span>
+  </div>
+
 </div>

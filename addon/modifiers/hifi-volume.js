@@ -37,6 +37,8 @@ export default class HifiControlModifier extends Modifier {
     if (this.options.initialVolume) {
       this.hifi.volume = this.options.initialVolume;
     }
+
+    this.element.value = this.hifi.volume;
   }
 
   willRemove() {

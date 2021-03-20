@@ -1,4 +1,4 @@
-<button class="hifi-play-button" type="button" {{hifi-control @url}}>
+<button class="hifi-play-button" type="button" {{on 'click' (hifi-toggle-play @url metadata=@metadata)}}>
   <div class="hifi-play-button-bg"></div>
   {{#if (is-errored @url)}}
     <FaIcon @icon="bomb" @size="2x"/>
@@ -11,10 +11,4 @@
   {{else}}
     <FaIcon @icon="play" @size="2x"/>
   {{/if}}
-
 </button>
-
-{{hifi-error-details @url}}
-{{hifi-metadata this.url key='artist'}}
-
-{{!--  --}}

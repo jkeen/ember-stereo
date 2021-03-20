@@ -4,6 +4,7 @@ import { assert } from '@ember/debug';
 import { getMimeType } from 'ember-hifi/utils/mime-types';
 import debug from 'debug';
 import { tracked } from '@glimmer/tracking';
+import { dedupeTracked } from 'tracked-toolbox';
 import Evented from 'ember-hifi/utils/evented';
 /**
  * This is the base sound object from which other sound objects are derived.
@@ -63,9 +64,12 @@ export default class Sound extends Evented {
   }
   // @service('hifi-sync') sync;
 
+
+  @tracked __canPlay // internal
+
   @tracked url
   @tracked pollInterval = 1000
-  @tracked timeout   = 30000
+  @tracked timeout = 30000
   @tracked connectionName
 
   @tracked hasPlayed = false
@@ -102,15 +106,15 @@ export default class Sound extends Evented {
 
   get isStream() {
     return this.duration == Infinity;
-  } 
+  }
 
   get isFastForwardable() {
     return !this.isStream;
-  } 
+  }
 
   get isRewindable() {
     return !this.isStream;
-  } 
+  }
 
   // _position is updated by the service on the currently playing sound
   get position() {

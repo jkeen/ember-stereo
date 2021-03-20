@@ -1,6 +1,6 @@
 import Component from '@glimmer/component';
 import { inject as service } from '@ember/service';
-import { task, timeout } from 'ember-concurrency-decorators';
+import { task, timeout } from 'ember-concurrency';
 import { action } from '@ember/object';
 import debug from 'debug';
 import { get } from '@ember/object';

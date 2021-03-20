@@ -1,47 +1,45 @@
-import Component from '@ember/component';
-import layout from './template';
-import { computed } from "@ember/object";
-import { EVENT_MAP, SERVICE_EVENT_MAP } from 'ember-hifi/services/hifi';
-import { A } from '@ember/array';
+import Component from "@glimmer/component";
+import { EVENT_MAP, SERVICE_EVENT_MAP } from "ember-hifi/services/hifi";
+import { tracked } from "@glimmer/tracking";
+import { action } from "@ember/object";
+import { A as emberArray } from "@ember/array";
 import { set } from "@ember/object";
 
-export default Component.extend({
-  layout,
+export default class EventDisplay extends Component {
+  @tracked eventsList = emberArray([]);
 
-  classNames: ['diagnostic-debug-events'],
-  eventListGroupings: computed('eventsList.length', function() {
+  constructor() {
+    super(...arguments);
+
+    if (this.args.service) {
+      this.addServiceEvents(this.args.service);
+    } else if (this.args.sound) {
+      this.addSoundEvents(this.args.sound);
+    }
+  }
+
+  get eventListGroupings() {
     let groupedEvents = [];
 
-    this.eventsList.forEach(e => {
-      let lastItem = groupedEvents.pop()
+    this.eventsList.forEach((e) => {
+      let lastItem = groupedEvents.pop();
       if (lastItem && lastItem.name == e.name) {
         set(lastItem, 'count', lastItem.count + 1); // eslint-disable-line
         groupedEvents.push(lastItem);
-      }
-      else {
-        if (lastItem) { groupedEvents.push(lastItem); }
+      } else {
+        if (lastItem) {
+          groupedEvents.push(lastItem);
+        }
         set(e, 'count', 1) // eslint-disable-line
         groupedEvents.push(e);
       }
     });
 
     return groupedEvents.reverse().slice(0, 20);
-  }),
+  }
 
-  init() {
-    this._super(...arguments);
-    this.set('eventsList', A());
-
-    if (this.service) {
-      this.addServiceEvents(this.service);
-    }
-    else if (this.sound) {
-      this.addSoundEvents(this.sound)
-    }
-  },
-
-  willDestroyElement() {
-    this._super(...arguments);
+  willDestroy() {
+    super.willDestroy(...arguments);
 
     if (this.service) {
       this.removeEvents(this.service);
@@ -49,34 +47,39 @@ export default Component.extend({
     if (this.sound) {
       this.removeEvents(this.sound);
     }
-  },
+  }
 
-  addSoundEvents: function(item) {
-    EVENT_MAP.forEach(e => {
+  addSoundEvents(item) {
+    EVENT_MAP.forEach((e) => {
       item.on(e.event, (data) => {
-        this.eventsList.pushObject({name: e.event, data: data, type: 'sound'})
+        this.eventsList.pushObject({
+          name: e.event,
+          data: data,
+          type: "sound",
+        });
       });
     });
-  },
+  }
 
-  addServiceEvents: function(item) {
+  addServiceEvents(item) {
     this.addSoundEvents(item);
 
-    SERVICE_EVENT_MAP.forEach(e => {
+    SERVICE_EVENT_MAP.forEach((e) => {
       item.on(e.event, (data) => {
-        this.eventsList.pushObject({name: e.event, data: data, type: 'service'})
+        this.eventsList.pushObject({
+          name: e.event,
+          data: data,
+          type: "service",
+        });
       });
     });
-  },
-
-  removeEvents: function(item) {
-
-  },
-
-  actions: {
-    async displayEvent(e) {
-      console.log(`name: ${e.name}`); //eslint-disable-line
-      console.log(e.data); //eslint-disable-line
-    }
   }
-});
+
+  removeEvents(item) {}
+
+  @action
+  async displayEvent(e) {
+    console.log(`name: ${e.name}`); //eslint-disable-line
+    console.log(e.data); //eslint-disable-line
+  }
+}

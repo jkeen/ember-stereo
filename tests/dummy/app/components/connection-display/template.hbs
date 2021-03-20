@@ -1,36 +1,42 @@
-{{yield}}
+<div class="connection-display
+  {{~if this.lastResultWasOurs ' last-result-was-ours ' ~}}
+  {{~if this.lastResultCouldHaveBeenOurs ' last-result-could-have-been-ours ' ~}}
+" ...attributes>
+  {{yield}}
 
-<a href="#" class="connection-display-title" {{action (toggle "enabled" this (not this.enabled))}}>
-  <div class="connection-toggle {{if this.enabled "is-enabled"}}">
-    {{#if this.enabled}}
+  <button type="button" class="connection-display-title" {{on 'click' (toggle "enabled" this (not this.enabled))}}>
+    <div class="connection-toggle {{if this.enabled " is-enabled"}}">
+      {{#if this.enabled}}
       <span class="icon">
         {{fa-icon "check-square"}}
       </span>
-    {{else}}
+      {{else}}
       <span class="icon">
         {{fa-icon "square"}}
       </span>
-    {{/if}}
-  </div>
-  {{this.connection}}
-</a>
-
-<AnimatedBeacon @name={{this.connectionName}}>
-  <div class="connection-display-info">
-    {{#if this.canUseConnection}}
-      {{#if (or this.connection.acceptMimeTypes connection.rejectMimeTypes)}}
-        {{#each this.connection.acceptMimeTypes as |type|}}
-          <span class="has-text-success">Accepts: {{type}}</span>
-        {{/each}}
-
-        {{#each this.connection.rejectMimeTypes as |type|}}
-          <span class="has-text-danger">Rejects: {{type}}</span>
-        {{/each}}
-      {{else}}
-        <span class="has-text-success">Accepts: All</span>
       {{/if}}
-    {{else}}
+    </div>
+    {{this.connection}}
+  </button>
+
+  <AnimatedBeacon @name={{this.connectionName}}>
+    <div class="connection-display-info">
+      {{#if this.canUseConnection}}
+      {{#if (or @connection.acceptMimeTypes @connection.rejectMimeTypes)}}
+      {{#each @connection.acceptMimeTypes as |type|}}
+      <span class="has-text-success">Accepts: {{type}}</span>
+      {{/each}}
+
+      {{#each @connection.rejectMimeTypes as |type|}}
+      <span class="has-text-danger">Rejects: {{type}}</span>
+      {{/each}}
+      {{else}}
+      <span class="has-text-success">Accepts: All</span>
+      {{/if}}
+      {{else}}
       Can Not Use In This Browser
-    {{/if}}
-  </div>
-</AnimatedBeacon>
+      {{/if}}
+    </div>
+  </AnimatedBeacon>
+
+</div>

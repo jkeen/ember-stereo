@@ -1,87 +1,87 @@
-import Component from '@ember/component';
-import layout from './template';
-import { get, computed } from '@ember/object';
-import RecognizerMixin from 'ember-gestures/mixins/recognizers';
-import { htmlSafe } from '@ember/string';
-import { throttle, next } from '@ember/runloop';
+import Component from "@glimmer/component";
+import { htmlSafe } from "@ember/string";
+import { throttle, next } from "@ember/runloop";
 import { inject as service } from "@ember/service";
+import { action } from "@ember/object";
+import { tracked } from "@glimmer/tracking";
+export default class Position extends Component {
+  @service hifi;
+  @tracked element;
+  @tracked dragAdjustment = 0;
 
+  get durationIsInfinity() {
+    return this.args.sound.duration === Infinity;
+  }
 
-export default Component.extend(RecognizerMixin, {
-  layout,
-  recognizers             : 'tap',
-  dragAdjustment          : 0,
-  classNames              : ['sound-display-control-position'],
-  downloadPercentageStyle : computed('sound.percentLoaded', function() {
-    let downloaded = get(this, 'sound.percentLoaded');
-    return htmlSafe(`width: ${(downloaded) * 100}%;`);
-  }),
-
-  hifi: service(),
-
-  playedPercentage        : computed('sound.{position,duration}', function() {
-    if (this.sound && this.sound.duration !== Infinity) {
-      let position = get(this, 'sound.position');
-      let duration = get(this, 'sound.duration');
-      return position/duration;
+  get playHeadPositionStyle() {
+    if (!this.element) {
+      return 1;
     }
-    else {
-      return 0;
-    }
-  }),
 
-  playedPercentageStyle: computed('playedPercentage', 'sound.isStream', function() {
-    if (!this.get('sound.isStream')) {
-      return htmlSafe(`width: ${(this.playedPercentage) * 100}%;`);
-    }
-    else {
-      return htmlSafe(`width: auto;`);
-    }
-  }),
-
-  durationIsInfinity: computed('sound.duration', function() {
-    return (get(this, 'sound.duration') === Infinity);
-  }),
-
-  playHeadPositionStyle: computed('dragAdjustment', 'element', 'playedPercentage', function() {
-    let dragAdjustmentPercentage = (this.dragAdjustment / this.element.getBoundingClientRect().width);
+    let dragAdjustmentPercentage =
+      this.dragAdjustment / this.element?.getBoundingClientRect().width;
     let p = this.playedPercentage + dragAdjustmentPercentage;
     let percent = parseFloat(p, 10) * 100;
 
     return htmlSafe(`left : ${Math.max(0, Math.min(percent, 100))}%;`);
-  }),
+  }
 
-  tap(e) {
-    const {
-      center
-    } = e.gesture;
+  @action
+  didInsert(element) {
+    this.element = element;
+  }
 
-    if (this.sound.isFastForwardable && this.sound.isRewindable) {
+  @action
+  handleTap(e) {
+    const { center } = e.gesture;
+
+    if (
+      this.args.sound.isFastForwardable &&
+      this.args.sound.isRewindable &&
+      this.element
+    ) {
       let rect = this.element.getBoundingClientRect();
-      let positionPercentage = ((center.x - rect.x)/rect.width)
-      let newPosition      = parseFloat(this.sound.duration * positionPercentage, 10);
+      let positionPercentage = (center.x - rect.x) / rect.width;
+      let newPosition = parseFloat(
+        this.args.sound.duration * positionPercentage,
+        10
+      );
       next(() => {
-        this.set('sound.position', newPosition);
-        this.set('dragAdjustment', 0);
-      })
-    }
-  },
-
-  actions: {
-    updatePosition(deltaX) {
-      let width = this.element.getBoundingClientRect().width;
-      let changePercentage = (deltaX / width)
-      let newPercentage    = this.playedPercentage + changePercentage;
-      let newPosition      = parseFloat(this.sound.duration * newPercentage, 10);
-      next(() => {
-        this.set('sound.position', newPosition);
-        this.set('dragAdjustment', 0);
-      })
-    },
-    updatePlayheadPosition(deltaX) {
-      throttle(this, () => {
-        this.set('dragAdjustment', deltaX)
-      }, 200)
+        this.args.sound.position = parseInt(newPosition, 10);
+        this.dragAdjustment = 0;
+      });
     }
   }
-});
+
+  @action
+  updatePosition(e) {
+    let { deltaX } = e.gesture;
+    if (this.element) {
+      let width = this.element.getBoundingClientRect().width;
+      let changePercentage = deltaX / width;
+      let newPercentage =
+        this.args.sound.position / this.args.sound.duration + changePercentage;
+      let newPosition = parseFloat(
+        this.args.sound.duration * newPercentage,
+        10
+      );
+      next(() => {
+        this.args.sound.position = newPosition;
+        this.dragAdjustment = 0;
+      });
+    }
+  }
+
+  @action
+  updatePlayheadPosition(e) {
+    let { deltaX } = e.gesture;
+
+    throttle(
+      this,
+      () => {
+        this.dragAdjustment = deltaX;
+      },
+      200
+    );
+  }
+}

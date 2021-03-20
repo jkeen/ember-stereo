@@ -1,57 +1,58 @@
-import Component from '@ember/component';
-import layout from './template';
-import RecognizerMixin from 'ember-gestures/mixins/recognizers';
-import { computed } from '@ember/object';
-import { inject as service } from '@ember/service';
-import { next } from '@ember/runloop';
-export default Component.extend(RecognizerMixin, {
-  layout,
-  recognizers: 'pan tap',
-  hifi: service(),
-  dragAdjustment: 0,
-  numOfNotches: computed('notchCount', function() {
+import Component from "@glimmer/component";
+import { inject as service } from "@ember/service";
+import { tracked } from "@glimmer/tracking";
+import { next } from "@ember/runloop";
+import { action } from '@ember/object';
+import { debounce } from '@ember/runloop';
+export default class Volume extends Component {
+  @service hifi;
+  @tracked dragAdjustment = 0;
+  @tracked alreadyChanged = 0;
+  @tracked element;
+  notchCount = 25;
+
+  get numOfNotches() {
     return new Array(this.notchCount);
-  }),
-  notchCount: 20,
-  activeNotches: computed('dragAdjustment', 'element', 'hifi.volume', 'notchCount', function() {
-    let dragAdjustment = (this.dragAdjustment / this.element.getBoundingClientRect().width) * 100;
-    let value           = this.hifi.volume + dragAdjustment;
-    return Math.floor(value / (100 / this.notchCount));
-  }),
+  }
 
-  classNames: ['volume-control'],
+  get activeNotches() {
+    return parseInt((this.hifi.volume / 100) * this.notchCount, 10);
+  }
 
-  panEnd(e) {
-    const {
-      deltaX
-    } = e.gesture;
+  get notchWidth() {
+    return this.element.getBoundingClientRect().width / this.numOfNotches
+  }
 
-    let width            = this.element.getBoundingClientRect().width;
-    let change           = parseInt((deltaX / width) * 100, 10)
-    let newVolume        = this.hifi.volume + change
-    next(() => {
-      this.set('dragAdjustment', 0);
-      this.set('hifi.volume', Math.max(Math.min(newVolume, 100), 0));
-    })
-  },
-  pan(e) {
-    const {
-      deltaX
-    } = e.gesture;
+  @action
+  didInsert(el) {
+    this.element = el;
+  }
 
-    this.set('dragAdjustment', deltaX);
-  },
+  @action
+  handlePanEnd(e) {
+    this.dragAdjustment = 0;
+  }
 
-  tap(e) {
-    const {
-      center
-    } = e.gesture;
-    let rect             = this.element.getBoundingClientRect();
-    let volumePercentage = ((center.x - rect.x)/rect.width) * 100;
-    let newVolume        = Math.max(Math.min(volumePercentage, 100), 0);
-    next(() => {
-      this.set('hifi.volume', newVolume);
-    })
-  },
+  @action
+  handlePan(currentVolume, e) {
+    const { deltaX } = e.gesture;
 
-});
+    let width = this.element.getBoundingClientRect().width;
+    let change = parseInt((deltaX / width) * 100, 10);
+    let existingChange = parseInt((this.dragAdjustment / width) * 100, 10);
+    let newChange = change - existingChange
+
+
+    this.hifi.volume = Math.max(Math.min(this.hifi.volume + newChange, 100), 0);
+    this.dragAdjustment = deltaX;
+  }
+
+  @action
+  handleTap(e) {
+    const { center } = e.gesture;
+    let rect = this.element.getBoundingClientRect();
+    let volumePercentage = ((center.x - rect.x) / rect.width) * 100;
+    let newVolume = Math.max(Math.min(volumePercentage, 100), 0);
+    this.hifi.volume = newVolume;
+  }
+}

@@ -1,4 +1,4 @@
-import { registerWaiter } from '@ember/test-waiters';
+import { registerWaiter } from '@ember/test';
 import { later } from '@ember/runloop';
 import { module, test, skip } from 'qunit';
 import { setupTest } from 'ember-qunit';
@@ -33,7 +33,7 @@ module('Unit | Service | hifi integration test.js', function(hooks) {
     assert.ok(sound);
   });
 
-  // TODO: figure out how to effectively handle these errors. 
+  // TODO: figure out how to effectively handle these errors.
   skip('playing a bad url fails', async function(assert) {
     catchExpectedErrors(["All given promises failed."]);
 

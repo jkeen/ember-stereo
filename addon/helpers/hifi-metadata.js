@@ -22,11 +22,11 @@ export default class HifiMetadata extends HifiBaseIsHelper {
 
   get result() {
     if (this.identifier == 'system') {
-      debug(`ember-hifi:helpers:hifi-metadata:${this.identifier}`)(`metadata = ${this.hifi.currentSound?.metadata}`)
+      debug(`ember-hifi:helpers:hifi-metadata:${this.identifier}`)(`metadata = ${JSON.stringify(this.hifi.currentSound?.metadata)}`)
       this.metadata = this.hifi.currentSound?.metadata || {};
     }
     else {
-      debug(`ember-hifi:helpers:hifi-metadata:${this.identifier}`)(`metadata = ${this.sound?.metadata}`)
+      debug(`ember-hifi:helpers:hifi-metadata:${this.identifier}`)(`metadata = ${JSON.stringify(this.sound?.metadata)}`)
       this.metadata = this.sound?.metadata || {};
     }
 

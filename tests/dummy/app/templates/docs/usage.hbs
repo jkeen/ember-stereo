@@ -4,7 +4,7 @@ The following examples all use the following URL <a href={{this.onDemandUrl}}>{{
 
 <DocsDemo as |demo|>
   <demo.example @name="hifi-helpers.hbs">
-    <button type="button" {{hifi-control this.onDemandUrl}}>
+    <button type="button" {{on 'click' (hifi-toggle-play this.onDemandUrl)}}>
       {{#if (is-playing this.onDemandUrl)}}
         Pause
       {{else if (is-loading this.onDemandUrl)}}
@@ -33,7 +33,7 @@ The following examples all use the following URL <a href={{this.onDemandUrl}}>{{
 
 
 
-Different browsers support different audio formats, so hifi lets you try multiple urls, playing the first one that succeeds. 
+Different browsers support different audio formats, so hifi lets you try multiple urls, playing the first one that succeeds.
 
 
 <DocsDemo as |demo|>
@@ -44,7 +44,7 @@ Different browsers support different audio formats, so hifi lets you try multipl
     ) as |urls| }}
 
 
-    <button type="button" {{hifi-control urls}}>
+    <button type="button" {{on 'click' (hifi-toggle-play urls)}}>
       {{#if (is-playing urls)}}
         Pause
       {{else if (is-loading urls)}}
@@ -73,7 +73,7 @@ Different browsers support different audio formats, so hifi lets you try multipl
 
 <DocsDemo as |demo|>
   <demo.example @name="hifi-helpers-stream.hbs">
-    <button type="button" {{hifi-control this.streamUrl preload=true metadata=(hash title='Streaming Audio')}}>
+    <button type="button" {{on 'click' (hifi-toggle-play this.streamUrl preload=true metadata=(hash title='Streaming Audio'))}}>
       {{#if (is-playing this.streamUrl)}}
         Pause
       {{else if (is-loading this.streamUrl)}}
@@ -123,6 +123,7 @@ Currently Playing Sound Display
       <span>
         {{hifi-position format='time'}}
       </span>
+      {{!-- template-lint-disable no-inline-styles --}}
       <div style="background-color: #DDD; padding: 5px; ">
         <div style="width: {{hifi-position format='percent'}}%; background-color: red; height: 5px;"></div>
       </div>
@@ -150,7 +151,7 @@ Volume Control
 
 
 
-{{!-- 
+{{!--
 <DocsDemo as |demo|>
   <demo.example @name="hifi-play-decorator-promise.hbs">
       {{#let (perform this.loadAudioUrl this) as |url|}}

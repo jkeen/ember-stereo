@@ -130,7 +130,6 @@
 
 .diagnostic-debug-toggle {
   margin: -5px -10px;
-  display: block;
   text-align: center;
   font-size: 13px;
   margin-top: 10px;
@@ -138,6 +137,7 @@
   padding: 2px 0;
   background-color: $sound-background-color;
   text-decoration: none;
+  width: 100%;
 
   > span {
     font-size: 11px;
@@ -389,13 +389,13 @@
 }
 
 @keyframes spin {
-  0% { 
-    transform: rotate(0deg); 
-    -webkit-transform: rotate(0deg); 
+  0% {
+    transform: rotate(0deg);
+    -webkit-transform: rotate(0deg);
   }
-  100% { 
-    transform: rotate(360deg);   
-    -webkit-transform: rotate(360deg); 
+  100% {
+    transform: rotate(360deg);
+    -webkit-transform: rotate(360deg);
   }
 }
 
@@ -408,7 +408,7 @@
     right: -90%; }
   100% {
     left: 100%;
-    right: -90%; } 
+    right: -90%; }
 }
 
 @keyframes indeterminate-short {

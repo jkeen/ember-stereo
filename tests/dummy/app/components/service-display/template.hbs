@@ -1,56 +1,62 @@
-<div class="service-display-sound-and-controls">
-  <div class="service-display-current-sound">
-    <p class="service-display-current-sound-title">
-      {{this.currentSound.metadata.title}}
-    </p>
-    <p class="service-display-current-sound-url">
-      {{this.currentSound.url}}
-    </p>
-    {{#if this.currentSound}}
-      <SoundDisplay::Position @sound={{this.currentSound}} class="service-display-current-sound-position"></SoundDisplay::Position>
+<div class="service-display {{if this.showDebugInfo 'show-debug-info'}}">
+  <div class="service-display-sound-and-controls">
+    <div class="service-display-current-sound">
+      <p class="service-display-current-sound-title">
+        {{this.currentSound.metadata.title}}
+      </p>
+      <p class="service-display-current-sound-url">
+        {{this.currentSound.url}}
+      </p>
+      {{#if this.currentSound}}
+      <SoundDisplay::Position @sound={{this.currentSound}} @class="service-display-current-sound-position">
+      </SoundDisplay::Position>
+      {{/if}}
+    </div>
+
+    <div class="service-display-controls">
+      <div class="service-display-buttons">
+        <button class="service-display-button-item" type="button" {{on "click" (fn (hifi-rewind))}}>
+          <FaIcon @icon="backward" @size="2x" />
+        </button>
+
+        <button type="button" class="service-display-button-item" {{on "click" (fn (hifi-toggle-play))}}>
+          {{#if (is-playing)}}
+          <FaIcon @icon="pause" @size="2x" />
+          {{else if (is-loading)}}
+          <FaIcon @icon="circle-notch" @size="2x" class="icon-spin" />
+          {{else}}
+          <FaIcon @icon="play" @size="2x" />
+          {{/if}}
+        </button>
+
+        <button type="button" class="service-display-button-item" {{on "click" (fn (hifi-fast-forward))}}>
+          <FaIcon @icon="forward" @size="2x" />
+        </button>
+
+        <button type="button" class="service-display-button-item" {{on "click" (fn (hifi-stop))}}>
+          <FaIcon @icon="stop" @size="2x" />
+        </button>
+      </div>
+      <div class="service-display-volume">
+        <SoundDisplay::Volume/>
+        <Input @type="range" {{hifi-volume}} />
+
+        <Input @type="range" @value={{this.hifi.volume}} min={{0}} max={{100}}/>
+      </div>
+
+    </div>
+  </div>
+  <div class="diagnostic-debug">
+    <h3>Events</h3>
+    <EventDisplay @service={{this.hifi}} />
+  </div>
+  <button type="button" class="diagnostic-debug-toggle" {{on 'click' (toggle "showDebugInfo" this)}}>
+    {{#if this.showDebugInfo}}
+      <span>Hide Debug</span>
+      {{fa-icon "angle-up"}}
+    {{else}}
+      <span>Show Debug</span>
+      {{fa-icon "angle-down"}}
     {{/if}}
-  </div>
-
-  <div class="service-display-controls">
-    <div class="service-display-buttons">
-      <button class="service-display-button-item" type="button" {{on "click" (fn (hifi-rewind))}}>
-        <FaIcon @icon="backward" @size="2x"/>
-      </button>
-
-      <button type="button" class="service-display-button-item" {{on "click" (fn (hifi-toggle-play))}}>
-        {{#if (is-playing)}}
-          <FaIcon @icon="pause" @size="2x"/>
-        {{else if (is-loading)}}
-          <FaIcon @icon="circle-notch" @size="2x" class="icon-spin"/>
-        {{else}}
-          <FaIcon @icon="play" @size="2x"/>
-        {{/if}}
-      </button>
-
-      <button type="button" class="service-display-button-item" {{on "click" (fn (hifi-fast-forward))}}>
-        <FaIcon @icon="forward" @size="2x"/>
-      </button>
-
-      <button type="button" class="service-display-button-item" {{on "click" (fn (hifi-stop))}}>
-        <FaIcon @icon="stop" @size="2x"/>
-      </button>
-    </div>
-    <div class="service-display-volume">
-      {{input type="range" value=this.hifi.volume min=0 max=100}}
-    </div>
-
-  </div>
+  </button>
 </div>
-<div class="diagnostic-debug">
-  <h3>Events</h3>
-  <EventDisplay @service={{this.hifi}} />
-</div>
-<a href="#" class="diagnostic-debug-toggle" {{action (toggle "showDebugInfo" this)}}>
-  {{#if showDebugInfo}}
-    <span>Hide Debug</span>
-    {{fa-icon "angle-up"}}
-  {{else}}
-    <span>Show Debug</span>
-    {{fa-icon "angle-down"}}
-  {{/if}}
-</a>

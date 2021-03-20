@@ -1,6 +1,6 @@
-import { inject as service } from '@ember/service';
-import Helper from '@ember/component/helper';
-
+import { inject as service } from "@ember/service";
+import Helper from "@ember/component/helper";
+import prepareOptions from "../-private/prepare-options";
 /**
   A helper to load a sound
   ```hbs
@@ -21,10 +21,11 @@ export default class HifiLoad extends Helper {
     @param {String} [url]
     @return {Function}
   */
-  compute([urls], metadata = {}) {
+  compute([urls], options = {}, metadata = {}) {
+    options = prepareOptions(options, metadata);
+
     return () => {
-      return this.hifi.load(urls, { metadata }).then(result => result.sound);
-    }
+      return this.hifi.load(urls, options).then((result) => result.sound);
+    };
   }
 }
-

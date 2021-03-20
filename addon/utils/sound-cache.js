@@ -12,8 +12,9 @@ import urlToIdentifier from 'ember-hifi/utils/url-to-identifier';
 * @constructor
 */
 
-export default class SoundCache  {
+export default class SoundCache {
   @tracked cachedCount = 0;
+  @tracked cachedList = [];
 
   constructor(name = 'hifi-cache') {
     this.name = name;
@@ -58,8 +59,9 @@ export default class SoundCache  {
     debug(this.name)(`removing sound from cache with url: ${sound.url}`);
 
     if (this._cache[sound.url]) {
-      delete this._cache[sound.url]
+      delete this._cache[sound.url];
       this.cachedCount = Object.keys(this._cache).length
+      this.cachedList = Object.keys(this._cache);
     }
   }
 
@@ -77,6 +79,7 @@ export default class SoundCache  {
     if (!this._cache[identifier]) {
       this._cache[identifier] = sound;
       this.cachedCount = Object.keys(this._cache).length;
+      this.cachedList = Object.keys(this._cache);
     }
   }
 }
