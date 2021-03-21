@@ -1,5 +1,5 @@
 import config from '../config/environment';
-import sharedAudioAccess from '../utils/shared-audio-access';
+import sharedAudioAccess from 'ember-hifi/-private/utils/shared-audio-access';
 
 export function initialize(application) {
   const { emberHifi, environment = 'development' } = config;

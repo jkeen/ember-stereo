@@ -1,7 +1,7 @@
 import { inject as service } from '@ember/service';
 import Helper from '@ember/component/helper';
-import hasEqualUrls from 'ember-hifi/utils/has-equal-urls';
-import {numericDuration} from './numeric-duration';
+import hasEqualUrls from 'ember-hifi/-private/utils/has-equal-urls';
+import {numericDuration} from 'ember-hifi/helpers/numeric-duration';
 import debug from 'debug';
 import {tracked} from '@glimmer/tracking';
 

@@ -6,8 +6,8 @@ import { module, test /*, skip */ } from 'qunit';
 import { setupTest } from 'ember-qunit';
 import { waitUntil, settled } from '@ember/test-helpers'
 import sinon from 'sinon';
-import urlToIdentifier from 'ember-hifi/utils/url-to-identifier';
-import SoundCache from 'dummy/utils/sound-cache';
+import urlToIdentifier from 'ember-hifi/-private/utils/url-to-identifier';
+import SoundCache from 'ember-hifi/-private/utils/sound-cache';
 
 import {
   stubConnectionCreateWithSuccess,

@@ -1,4 +1,4 @@
-import HifiBaseIsHelper from './-is-helper';
+import HifiBaseIsHelper from 'ember-hifi/-private/helpers/is-helper';
 import debug from 'debug';
 import { dedupeTracked } from 'tracked-toolbox';
 /**
@@ -33,7 +33,7 @@ export default class HifiMetadata extends HifiBaseIsHelper {
     if (this.options?.key && this.metadata && this.metadata[this.options.key]) {
       return this.metadata[this.options.key];
     }
-    else {
+    else if (!this.options?.key && this.metadata) {
       return this.metadata;
     }
   }

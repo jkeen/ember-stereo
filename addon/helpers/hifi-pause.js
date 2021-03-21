@@ -1,6 +1,6 @@
 import { inject as service } from "@ember/service";
 import Helper from "@ember/component/helper";
-import prepareOptions from "../-private/prepare-options";
+import prepareOptions from "ember-hifi/-private/utils/prepare-options";
 
 /**
   A helper to load a sound

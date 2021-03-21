@@ -1,8 +1,8 @@
 import Component from "@glimmer/component";
 import { inject as service } from "@ember/service";
-import { getMimeType } from "ember-hifi/utils/mime-types";
+import { getMimeType } from "ember-hifi/-private/utils/mime-types";
 import { get, set } from "@ember/object";
-import resolveUrls from "ember-hifi/utils/resolve-urls";
+import resolveUrls from "ember-hifi/-private/utils/resolve-urls";
 import deepSet from "ember-deep-set";
 import { tracked } from "@glimmer/tracking";
 export default class ConnectionDisplay extends Component {

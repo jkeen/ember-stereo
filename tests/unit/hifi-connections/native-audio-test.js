@@ -1,7 +1,7 @@
 import { module, test } from 'qunit';
 import { setupTest } from 'ember-qunit';
 import sinon from 'sinon';
-import SharedAudioAccess from 'dummy/utils/shared-audio-access';
+import SharedAudioAccess from 'ember-hifi/-private/utils/shared-audio-access';
 import NativeAudio from 'ember-hifi/hifi-connections/native-audio';
 
 let sandbox;

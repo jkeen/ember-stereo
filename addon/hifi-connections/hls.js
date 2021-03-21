@@ -1,4 +1,4 @@
-import BaseSound from './base';
+import BaseSound from 'ember-hifi/hifi-connections/base';
 import HLS from 'hls';
 import { tracked } from '@glimmer/tracking';
 /**
@@ -16,6 +16,7 @@ export default class HLSSound extends BaseSound {
     return HLS.isSupported();
   }
 
+  static key = 'HLS';
   static toString() {
     return 'HLS';
   }

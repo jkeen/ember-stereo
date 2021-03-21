@@ -1,6 +1,6 @@
 import Helper from '@ember/component/helper';
 import { dedupeTracked } from 'tracked-toolbox';
-import hasEqualUrls from 'ember-hifi/utils/has-equal-urls';
+import hasEqualUrls from 'ember-hifi/-private/utils/has-equal-urls';
 import { inject as service } from '@ember/service';
 
 /**

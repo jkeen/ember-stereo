@@ -1,11 +1,11 @@
 import { next, later, cancel } from '@ember/runloop';
 import { A } from '@ember/array';
 import { assert } from '@ember/debug';
-import { getMimeType } from 'ember-hifi/utils/mime-types';
+import { getMimeType } from 'ember-hifi/-private/utils/mime-types';
 import debug from 'debug';
 import { tracked } from '@glimmer/tracking';
-import { dedupeTracked } from 'tracked-toolbox';
-import Evented from 'ember-hifi/utils/evented';
+import Evented from 'ember-hifi/-private/utils/evented';
+
 /**
  * This is the base sound object from which other sound objects are derived.
  *
@@ -62,8 +62,6 @@ export default class Sound extends Evented {
       return true; // assume true
     }
   }
-
-  @tracked __canPlay // internal
 
   @tracked url
   @tracked pollInterval = 1000
@@ -130,7 +128,7 @@ export default class Sound extends Evented {
 
   debug(message) {
     const log = debug(this.debugName);
-    log(message);
+    log(...arguments);
   }
 
   constructor(args = {}) {
@@ -138,6 +136,7 @@ export default class Sound extends Evented {
 
     this.url = args.url;
     this.connectionName = args.connectionName;
+    this.connectionKey = args.connectionKey;
     this.options = args.options;
     this.sharedAudioAccess = args.sharedAudioAccess;
 
@@ -184,7 +183,8 @@ export default class Sound extends Evented {
     });
 
     this.on('audio-load-error', (opts = {}) => {
-      let { error } = opts;
+      console.error(opts)
+      let { error, sound } = opts;
 
       if (this.hasPlayed) {
         this.isLoading = false;

@@ -1,6 +1,6 @@
 import { next, bind } from '@ember/runloop';
 import Ember from 'ember';
-import BaseSound from './base';
+import BaseSound from 'ember-hifi/hifi-connections/base';
 export default class DummyConnection extends BaseSound {
   static canPlay = () => true;
   static canUseConnection = () => true;
@@ -8,6 +8,8 @@ export default class DummyConnection extends BaseSound {
   static toString() {
     return 'Dummy Connection';
   }
+
+  static key = 'DummyConnection';
 
   debugName = 'dummyConnection';
   _position = 0;

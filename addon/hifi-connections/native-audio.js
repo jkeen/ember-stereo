@@ -1,7 +1,6 @@
 import { A } from '@ember/array';
 import { run } from '@ember/runloop';
-import Mixin from '@ember/object/mixin';
-import BaseSound from './base';
+import BaseSound from 'ember-hifi/hifi-connections/base';
 import Ember from 'ember';
 // These are the events we're watching for
 const AUDIO_EVENTS = ['loadstart', 'durationchange', 'loadedmetadata', 'loadeddata', 'progress', 'canplay', 'canplaythrough', 'error', 'playing', 'pause', 'ended', 'emptied', 'timeupdate'];
@@ -20,13 +19,14 @@ const HAVE_CURRENT_DATA = 2;
 * @extends BaseSound
 * @constructor
 */
-export default class NativeAudioConnection extends BaseSound {
+export default class NativeAudio extends BaseSound {
   static canPlayMimeType(mimeType) {
     let audio = new Audio();
     // it returns "probably" and "maybe". Both are worth trying. Empty is bad.
     return (audio.canPlayType(mimeType) !== "");
   }
 
+  static key = 'NativeAudio';
   static toString() {
     return 'Native Audio';
   }

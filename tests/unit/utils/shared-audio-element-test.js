@@ -1,4 +1,4 @@
-import SharedAudioAccess from 'dummy/utils/shared-audio-access';
+import SharedAudioAccess from 'ember-hifi/-private/utils/shared-audio-access';
 import { module, test } from 'qunit';
 import sinon from 'sinon';
 

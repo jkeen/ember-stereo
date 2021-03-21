@@ -1,4 +1,4 @@
-import { getMimeType } from 'dummy/utils/mime-types';
+import { getMimeType } from 'ember-hifi/-private/utils/mime-types';
 import { module, test } from 'qunit';
 
 module('Unit | Utility | mime types', function() {

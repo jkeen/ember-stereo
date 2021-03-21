@@ -14,6 +14,7 @@ const log = debug('ember-hifi:shared-audio-access');
  * an extra click by the user to get around strict autoplay restrictions
  *
  * @class SharedAudioAccess
+ * @private
  */
 
 export default class SharedAudioAccess {

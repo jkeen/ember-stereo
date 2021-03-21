@@ -1,6 +1,6 @@
 import Evented from '@ember/object/evented';
 import EmberObject from '@ember/object';
-import OneAtATime from 'dummy/utils/one-at-a-time';
+import OneAtATime from 'ember-hifi/-private/utils/one-at-a-time';
 import { module, test } from 'qunit';
 
 module('Unit | Helper | one at a time', function() {

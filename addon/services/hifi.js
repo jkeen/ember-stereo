@@ -10,13 +10,18 @@ import { race, waitForProperty, didCancel, task } from 'ember-concurrency';
 import { set, get } from '@ember/object';
 import { tracked } from '@glimmer/tracking';
 import debug from 'debug';
-import ErrorCache from 'ember-hifi/utils/error-cache';
-import Evented from '@ember/object/evented';
-import OneAtATime from '../utils/one-at-a-time';
-import resolveUrls from '../utils/resolve-urls';
+
 import Service, { inject as service } from '@ember/service';
-import SharedAudioAccess from 'ember-hifi/utils/shared-audio-access';
-import SoundCache from 'ember-hifi/utils/sound-cache';
+
+import EmberEvented from '@ember/object/evented';
+import ErrorCache from 'ember-hifi/-private/utils/error-cache';
+import OneAtATime from 'ember-hifi/-private/utils/one-at-a-time';
+import Sync from 'ember-hifi/-private/utils/sync';
+import resolveUrls from 'ember-hifi/-private/utils/resolve-urls';
+import SharedAudioAccess from 'ember-hifi/-private/utils/shared-audio-access';
+import SoundCache from 'ember-hifi/-private/utils/sound-cache';
+import Strategy from 'ember-hifi/-private/utils/strategy';
+
 const DEFAULT_CONNECTIONS = [{ name: 'NativeAudio' }];
 
 const log = debug('ember-hifi');
@@ -48,7 +53,7 @@ export const SERVICE_EVENT_MAP = [
  * @class hifi
  * @constructor
  */
-export default class Hifi extends Service.extend(Evented) {
+export default class Hifi extends Service.extend(EmberEvented) {
   @service poll;
 
   @tracked currentSound = null;
@@ -259,14 +264,15 @@ export default class Hifi extends Service.extend(Evented) {
     yield waitForProperty(sound, 'isErrored');
     debug('ember-hifi')(`FAILED: [${strategy.connectionName}] -> ${sound.error} (${strategy.url})`);
     this._unregisterEvents(sound);
+
     strategy.error = sound.error;
     return { error: sound.error }
   }
 
   @task
   *tryLoadingSound(strategy) {
-    let { connection: Connection, url, connectionName, sharedAudioAccess, options } = strategy
-    var newSound = new Connection({ url, connectionName, sharedAudioAccess, options });
+    let { connection: Sound, url, connectionName, connectionKey, sharedAudioAccess, options } = strategy
+    var newSound = new Sound({ url, connectionName, connectionKey, sharedAudioAccess, options });
     this._registerEvents(newSound);
 
     debug('ember-hifi')(`TRYING: [${strategy.connectionName}] -> ${strategy.url}`);
@@ -313,7 +319,7 @@ export default class Hifi extends Service.extend(Evented) {
         }
         if (result.error) {
           failures.push(strategy);
-          this.errorCache.cache({url: strategy, error: strategy.error, connectionKey: strategy.connectionKey})
+          this.errorCache.cache({url: strategy.url, error: strategy.error, connectionKey: strategy.connectionKey})
         }
       }
 
@@ -405,7 +411,7 @@ export default class Hifi extends Service.extend(Evented) {
       this.trigger('current-sound-interrupted', {sound: this.currentSound});
       this.pause();
     }
-    // update the UI immediately while `.load` figures out which sound is playable
+
     let loadPromise = this.loadTask.perform(urlsOrPromise, options);
     this.trigger('new-load-request', {loadPromise, urlsOrPromise, options});
 
@@ -414,10 +420,26 @@ export default class Hifi extends Service.extend(Evented) {
     if (sound) {
       this._registerEvents(sound);
       this._attemptToPlaySound(sound, options);
-      yield waitForProperty(sound, 'isPlaying')
-    }
 
-    return {sound, failures}
+      yield race([
+        waitForProperty(sound, 'isPlaying'),
+        waitForProperty(sound, 'isErrored')
+      ]);
+
+      if (sound.isPlaying) {
+        return {sound, failures}
+      }
+      else {
+        let strategy = {url: sound.url, error: sound.error, connectionKey: sound.connectionKey};
+        this.errorCache.cache({url: sound.url, error: sound.error, connectionKey: sound.connectionKey})
+        this.trigger('audio-load-error', { sound: sound, failures: [strategy], error: sound.error })
+
+        return {sound, failures: [strategy]}
+      }
+    }
+    else {
+      return {sound, failures}
+    }
   }
 
   /**

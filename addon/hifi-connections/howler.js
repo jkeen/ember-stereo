@@ -1,5 +1,5 @@
 import { makeArray } from '@ember/array';
-import BaseSound from './base';
+import BaseSound from 'ember-hifi/hifi-connections/base';
 import { Howl } from 'howler';
 /**
 * This class connects with Howler to create sounds.
@@ -9,8 +9,9 @@ import { Howl } from 'howler';
 * @extensionfor Base
 
 */
-export default class HowlerSound extends BaseSound {
+export default class Howler extends BaseSound {
   static rejectMimeTypes = ['application/vnd.apple.mpegurl']
+  static key = 'Howler';
 
   static toString() {
     return 'Howler';

@@ -1,4 +1,4 @@
-import HifiBaseIsHelper from './-is-helper';
+import HifiBaseIsHelper from 'ember-hifi/-private/helpers/is-helper';
 import debug from 'debug';
 
 /**

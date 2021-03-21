@@ -3,7 +3,7 @@ import { A as emberArray, makeArray } from '@ember/array';
 import { inject as service } from '@ember/service';
 import debug from 'debug';
 import { tracked } from '@glimmer/tracking';
-import urlToIdentifier from 'ember-hifi/utils/url-to-identifier';
+import urlToIdentifier from 'ember-hifi/-private/utils/url-to-identifier';
 /**
 * This class caches sound objects based on urls. You shouldn't have to interact with this class.
 *
@@ -15,14 +15,16 @@ import urlToIdentifier from 'ember-hifi/utils/url-to-identifier';
 export default class SoundCache {
   @tracked cachedCount = 0;
   @tracked cachedList = [];
+  @tracked _cache = {};
 
   constructor(name = 'hifi-cache') {
     this.name = name;
-    this._cache = {};
   }
 
   reset() {
     this._cache = {};
+    this.cachedCount = 0;
+    this.cachedList = [];
   }
 
   /**

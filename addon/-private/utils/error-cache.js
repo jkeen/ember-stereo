@@ -1,7 +1,7 @@
 import { A as emberArray, makeArray } from '@ember/array';
 import debug from 'debug';
 import { tracked } from '@glimmer/tracking';
-import urlToIdentifier from 'ember-hifi/utils/url-to-identifier';
+import urlToIdentifier from 'ember-hifi/-private/utils/url-to-identifier';
 
 /**
 * This class caches sound objects based on urls. You shouldn't have to interact with this class.

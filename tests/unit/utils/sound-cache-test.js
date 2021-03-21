@@ -1,5 +1,5 @@
 import { module, test } from 'qunit';
-import SoundCache from 'dummy/utils/sound-cache';
+import SoundCache from 'ember-hifi/-private/utils/sound-cache';
 
 class Sound {
   constructor(options) {
