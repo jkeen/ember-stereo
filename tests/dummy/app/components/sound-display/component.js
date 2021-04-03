@@ -17,6 +17,6 @@ export default class SoundDisplay extends Component {
   async removeSound() {
     this.hifi.soundCache.remove(this.args.sound);
     this.args.sound.stop();
-    this.args.onRemoval();
+    this.args?.onRemoval();
   }
 }

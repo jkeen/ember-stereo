@@ -2,15 +2,15 @@
   <div class="progress {{if (not (or (is-fastforwardable @sound.url) (is-rewindable @sound.url))) " is-indeterminate" "" }} {{if @sound.isPlaying "is-playing" "" }}">
     <div class="progress-track js-progress-track">
       <div class="progress-track-downloaded"></div>
-      <div class="progress-track-played" 
+      <div class="progress-track-played"
           style={{html-safe (
             concat "width: " (hifi-position @sound.url format='percent') "%"
           )}}></div>
     </div>
     {{#if @sound}}
-      <div class="progress-track-playhead" 
-        {{recognize-gesture 'pan'}} 
-        {{on 'pan' this.updatePlayheadPosition}} 
+      <div class="progress-track-playhead"
+        {{recognize-gesture 'pan'}}
+        {{on 'pan' this.updatePlayheadPosition}}
         {{on 'panend' this.updatePosition}}
         style={{html-safe (
           concat "left: calc(" (hifi-position @sound.url format='percent') "% + " this.dragAdjustment "px)"
