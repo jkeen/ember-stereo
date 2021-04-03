@@ -36,5 +36,7 @@ export default class HifiMetadata extends HifiBaseIsHelper {
     else if (!this.options?.key && this.metadata) {
       return this.metadata;
     }
+
+    return this.metadata
   }
 }

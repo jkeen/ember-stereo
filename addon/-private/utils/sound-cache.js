@@ -1,6 +1,4 @@
-import Service from '@ember/service';
 import { A as emberArray, makeArray } from '@ember/array';
-import { inject as service } from '@ember/service';
 import debug from 'debug';
 import { tracked } from '@glimmer/tracking';
 import urlToIdentifier from 'ember-hifi/-private/utils/url-to-identifier';

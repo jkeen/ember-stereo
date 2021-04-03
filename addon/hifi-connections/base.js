@@ -126,7 +126,7 @@ export default class Sound extends Evented {
     return getMimeType(this.url);
   }
 
-  debug(message) {
+  debug() {
     const log = debug(this.debugName);
     log(...arguments);
   }
@@ -184,7 +184,7 @@ export default class Sound extends Evented {
 
     this.on('audio-load-error', (opts = {}) => {
       console.error(opts)
-      let { error, sound } = opts;
+      let { error } = opts;
 
       if (this.hasPlayed) {
         this.isLoading = false;

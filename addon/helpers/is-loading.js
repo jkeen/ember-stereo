@@ -62,7 +62,7 @@ export default class HifiIsLoading extends Helper {
 
           this.hifi.on(
             "new-load-request",
-            async ({ loadPromise, urlsOrPromise, options }) => {
+            async ({ loadPromise, urlsOrPromise }) => {
               let isEqual = await hasEqualUrls(this.identifier, urlsOrPromise);
               if (isEqual) {
                 this.result = true;

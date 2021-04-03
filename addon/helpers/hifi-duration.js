@@ -50,7 +50,7 @@ export default class HifiDuration extends Helper {
           } else {
             this.hifi.on(
               "new-load-request",
-              async ({ loadPromise, urlsOrPromise, options }) => {
+              async ({ loadPromise, urlsOrPromise }) => {
                 let isEqual = await hasEqualUrls(
                   this.identifier,
                   urlsOrPromise

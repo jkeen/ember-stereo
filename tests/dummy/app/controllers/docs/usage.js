@@ -11,7 +11,7 @@ export default class DocsUsageController extends Controller {
   // BEGIN-SNIPPET application-controller.js
   onDemandUrl = "https://audio.wnyc.org/otm/otm04212017pod.mp3"
   onDemandOgg = "https://file-examples-com.github.io/uploads/2017/11/file_example_OOG_1MG.ogg"
-  
+
   streamUrl = "https://streaming.koop.org/stream.aac"
 
   // END-SNIPPET
@@ -19,7 +19,7 @@ export default class DocsUsageController extends Controller {
 
   // BEGIN_SNIPPET hifi-play-decorator-promise.js
   @task
-  * loadAudioUrl() {
+  *loadAudioUrl() {
     yield timeout(200);
     return yield [this.onDemandUrl]
   }

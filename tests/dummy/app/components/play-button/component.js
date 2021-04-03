@@ -5,7 +5,7 @@ export default class PlayButtonComponent extends Component {
   @action
 
 
-  draw(data, canvas, options, frame) {
+  draw(data, canvas, options, /* frame */) {
     let h = canvas.height;
     let w = canvas.width;
     let ctx = canvas.getContext('2d');
@@ -15,10 +15,7 @@ export default class PlayButtonComponent extends Component {
     let increase = w / 128;
     let point_count = 128;
     let min = 5;
-    let breakpoint = Math.floor(point_count / options.colors.length);
-
-
-
+    // let breakpoint = Math.floor(point_count / options.colors.length);
 
     let drawLineSegment = (ctx, x, start, stop, color) => {
       ctx.moveTo(x, start);
@@ -36,7 +33,7 @@ export default class PlayButtonComponent extends Component {
         start = limit
       }
 
-      limit = height * 0.1      
+      limit = height * 0.1
       if (stop >= limit) {
         drawLineSegment(ctx, x, start, limit, 'aqua')
         start = limit
@@ -74,12 +71,12 @@ export default class PlayButtonComponent extends Component {
         // ctx.lineTo(x, top - p);
         // ctx.stroke();
         // ctx.beginPath();
-        
 
 
 
 
-    
+
+
         // if ((mid - p) >  20) {
           // ctx.strokeStyle='aqua';
           // ctx.lineTo(x, top - p);
@@ -96,7 +93,7 @@ export default class PlayButtonComponent extends Component {
 
         // ctx.beginPath();
     }
-    
+
   }
 
 

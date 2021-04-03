@@ -6,11 +6,11 @@ import hasEqualUrls from 'ember-hifi/-private/utils/has-equal-urls';
 const UNINITIALIZED = Object.freeze({});
 export default class HifiBaseIsHelper extends Helper {
   @service hifi;
-  
+
   identifier = UNINITIALIZED;
   @dedupeTracked sound = UNINITIALIZED
   @dedupeTracked options = UNINITIALIZED
-  
+
   /**
   returns the state
   @method compute
@@ -30,10 +30,10 @@ export default class HifiBaseIsHelper extends Helper {
           this.sound = sound;
         }
         else {
-          this.hifi.on('new-load-request', async ({loadPromise, urlsOrPromise, options}) => {
+          this.hifi.on('new-load-request', async ({loadPromise, urlsOrPromise, /* options */}) => {
             let isEqual = await hasEqualUrls(this.identifier, urlsOrPromise);
             if (isEqual) {
-              loadPromise.then(({sound, failures}) => {
+              loadPromise.then(({sound, /* failures */}) => {
                 this.sound = sound
               });
             }

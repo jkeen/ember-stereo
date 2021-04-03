@@ -1,9 +1,7 @@
 import Component from "@glimmer/component";
 import { inject as service } from "@ember/service";
 import { tracked } from "@glimmer/tracking";
-import { next } from "@ember/runloop";
 import { action } from '@ember/object';
-import { debounce } from '@ember/runloop';
 export default class Volume extends Component {
   @service hifi;
   @tracked dragAdjustment = 0;

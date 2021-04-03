@@ -1339,6 +1339,14 @@
     resolve "^1.8.1"
     semver "^7.3.2"
 
+"@embroider/test-setup@^0.39.1":
+  version "0.39.1"
+  resolved "https://registry.yarnpkg.com/@embroider/test-setup/-/test-setup-0.39.1.tgz#3b87c9a3a029711f43f7ac89952eaaddf30196fd"
+  integrity sha512-EYlsiPiK6FfxeB9Yq9/c/dXwTjo1T5xD6UUfK6rv0PLGP5W1OqYd0Kyf8LGpLKeaRzLD6GfOeb+GXpx9IgPyeg==
+  dependencies:
+    lodash "^4.17.20"
+    resolve "^1.17.0"
+
 "@eslint/eslintrc@^0.4.0":
   version "0.4.0"
   resolved "https://registry.yarnpkg.com/@eslint/eslintrc/-/eslintrc-0.4.0.tgz#99cc0a0584d72f1df38b900fb062ba995f395547"
@@ -7518,33 +7526,33 @@ ember-source-channel-url@^3.0.0:
   dependencies:
     node-fetch "^2.6.0"
 
-ember-source@~3.24.0:
-  version "3.24.3"
-  resolved "https://registry.yarnpkg.com/ember-source/-/ember-source-3.24.3.tgz#fb535adec2eb9289e8af21afbe0e1ed5cd0a0889"
-  integrity sha512-EEAoz/pwgKZCosFiHUpkXewOcGsx8zjd7JtrwIh97JjRY/EUhBsMovjycieCjLrSXQrLjayr1vuVun2FJBESRw==
+ember-source@~3.16.0:
+  version "3.16.10"
+  resolved "https://registry.yarnpkg.com/ember-source/-/ember-source-3.16.10.tgz#1a81006cb5f2e1b192f47c8ef4c5cd6336691e14"
+  integrity sha512-Vh+J1RWntKdovnjBJCwTJyrNDbj0UQ95geQRBk3tA6HCinnqRIAMxj1I2yF8aY19w/ljpsUOdog0RSjEm5oLDg==
   dependencies:
     "@babel/helper-module-imports" "^7.8.3"
     "@babel/plugin-transform-block-scoping" "^7.8.3"
     "@babel/plugin-transform-object-assign" "^7.8.3"
     "@ember/edition-utils" "^1.2.0"
     babel-plugin-debug-macros "^0.3.3"
-    babel-plugin-filter-imports "^4.0.0"
-    broccoli-concat "^4.2.4"
+    babel-plugin-filter-imports "^3.0.0"
+    broccoli-concat "^3.7.4"
     broccoli-debug "^0.6.4"
     broccoli-funnel "^2.0.2"
-    broccoli-merge-trees "^4.2.0"
-    chalk "^4.0.0"
-    ember-cli-babel "^7.23.0"
+    broccoli-merge-trees "^3.0.2"
+    chalk "^2.4.2"
+    ember-cli-babel "^7.18.0"
     ember-cli-get-component-path-option "^1.0.0"
     ember-cli-is-package-missing "^1.0.0"
     ember-cli-normalize-entity-name "^1.0.0"
     ember-cli-path-utils "^1.0.0"
     ember-cli-string-utils "^1.1.0"
-    ember-cli-version-checker "^5.1.1"
+    ember-cli-version-checker "^3.1.3"
     ember-router-generator "^2.0.0"
     inflection "^1.12.0"
-    jquery "^3.5.0"
-    resolve "^1.17.0"
+    jquery "^3.4.1"
+    resolve "^1.11.1"
     semver "^6.1.1"
     silent-error "^1.1.1"
 
@@ -10391,7 +10399,7 @@ jpeg-js@^0.3.4:
   resolved "https://registry.yarnpkg.com/jpeg-js/-/jpeg-js-0.3.7.tgz#471a89d06011640592d314158608690172b1028d"
   integrity sha512-9IXdWudL61npZjvLuVe/ktHiA41iE8qFyLB+4VDTblEsWBzeg8WQTlktdUK4CdncUqtUgUg0bbOmTE2bKBKaBQ==
 
-jquery@^3.5.0:
+jquery@^3.4.1:
   version "3.6.0"
   resolved "https://registry.yarnpkg.com/jquery/-/jquery-3.6.0.tgz#c72a09f15c1bdce142f49dbf1170bdf8adac2470"
   integrity sha512-JVzAR/AjBvVt2BmYhxRCSYysDsPcssdmTFnzyLEts9qNwmjmu4JTAMYubEfwVOSwpQ1I1sKKFcxhZCI2buerfw==

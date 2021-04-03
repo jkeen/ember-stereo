@@ -19,10 +19,10 @@ const UNINITIALIZED = Object.freeze({});
 
 export default class HifiIsErrored extends Helper {
   @service hifi;
-  
+
   identifier = UNINITIALIZED;
   @dedupeTracked result = UNINITIALIZED
-  
+
   /**
   returns the state
   @method compute
@@ -40,7 +40,7 @@ export default class HifiIsErrored extends Helper {
           this.result = makeArray(result);
         }
         else {
-          this.hifi.on('audio-load-error', async ({error, sound}) => {
+          this.hifi.on('audio-load-error', async ({sound}) => {
             let isEqual = await hasEqualUrls(this.identifier, sound.url);
             if (isEqual) {
               this.result = this.hifi.errorCache.find(this.identifier)
@@ -54,7 +54,7 @@ export default class HifiIsErrored extends Helper {
     if (this.result.length === 1) { // only one connection
       var error = this.result[0];
       if (connectionName && error[connectionName]) {
-        debug(`ember-hifi:helpers:error-details:${identifier}`)(`render = ${error[connectionName]}`); 
+        debug(`ember-hifi:helpers:error-details:${identifier}`)(`render = ${error[connectionName]}`);
         return error[connectionName];
       }
       else {

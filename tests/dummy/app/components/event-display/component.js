@@ -75,7 +75,7 @@ export default class EventDisplay extends Component {
     });
   }
 
-  removeEvents(item) {}
+  removeEvents(/* item */) {}
 
   @action
   async displayEvent(e) {

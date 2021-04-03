@@ -1,6 +1,6 @@
 import { module, test } from 'qunit';
 import { setupRenderingTest } from 'ember-qunit';
-import { render, settled } from '@ember/test-helpers';
+import { render } from '@ember/test-helpers';
 import { hbs } from 'ember-cli-htmlbars';
 
 module('Integration | Helper | hifi-duration', function (hooks) {
@@ -20,7 +20,7 @@ module('Integration | Helper | hifi-duration', function (hooks) {
     service.loadConnections([{ name: 'DummyConnection' }]);
     this.url = '/good/10/silence.mp3';
     await render(hbs`{{hifi-duration this.url load=true}}`);
-    await settled();
+
 
     assert.equal(this.element.textContent.trim(), '10');
   });

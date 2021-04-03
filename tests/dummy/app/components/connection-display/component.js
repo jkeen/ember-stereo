@@ -1,7 +1,7 @@
 import Component from "@glimmer/component";
 import { inject as service } from "@ember/service";
 import { getMimeType } from "ember-hifi/-private/utils/mime-types";
-import { get, set } from "@ember/object";
+import { set } from "@ember/object";
 import resolveUrls from "ember-hifi/-private/utils/resolve-urls";
 import deepSet from "ember-deep-set";
 import { tracked } from "@glimmer/tracking";

@@ -26,6 +26,7 @@ module.exports = {
       '--ignore-autoplay-restriction',
       '--autoplay-policy=no-user-gesture-required',
       '--no-user-gesture-required',
+      '--remote-debugging-port=9222',
       '--debug',
     ].filter(Boolean),
   }

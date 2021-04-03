@@ -10,7 +10,7 @@ module.exports = {
       legacyDecorators: true,
     },
   },
-  plugins: ['ember'],
+  plugins: ['ember', 'ember-concurrency'],
   extends: [
     'eslint:recommended',
     'plugin:ember/recommended'
