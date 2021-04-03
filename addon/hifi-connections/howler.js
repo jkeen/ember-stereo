@@ -29,28 +29,28 @@ export default class Howler extends BaseSound {
       onload: function() {
         sound.url = this._src;
         sound.howl = this;
-        sound.trigger('audio-loaded', {sound: this});
-        sound.trigger('audio-ready', {sound: this});
+        sound.trigger('audio-loaded', {sound});
+        sound.trigger('audio-ready', {sound});
       },
       onpause: function() {
         if (!sound.isPlaying) {
-          sound.trigger('audio-paused', {sound: this});
+          sound.trigger('audio-paused', {sound});
         }
       },
       onplay: function() {
-        sound.trigger('audio-played', {sound: this});
+        sound.trigger('audio-played', {sound});
       },
       onend: function() {
-        sound.trigger('audio-ended', {sound: this});
+        sound.trigger('audio-ended', {sound});
       },
       onstop: function() {
-        sound.trigger('audio-paused', {sound: this});
+        sound.trigger('audio-paused', {sound});
       },
       onloaderror: function(id, error) {
-        sound.trigger('audio-load-error', {sound: this, error});
+        sound.trigger('audio-load-error', {sound, error});
       },
       onseek: function() {
-        sound.trigger('audio-position-changed', {sound: this});
+        sound.trigger('audio-position-changed', {sound});
       }
     }, this.options);
 
