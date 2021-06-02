@@ -16,7 +16,6 @@ import Service, { inject as service } from '@ember/service';
 import EmberEvented from '@ember/object/evented';
 import ErrorCache from 'ember-hifi/-private/utils/error-cache';
 import OneAtATime from 'ember-hifi/-private/utils/one-at-a-time';
-import Sync from 'ember-hifi/-private/utils/sync';
 import resolveUrls from 'ember-hifi/-private/utils/resolve-urls';
 import SharedAudioAccess from 'ember-hifi/-private/utils/shared-audio-access';
 import SoundCache from 'ember-hifi/-private/utils/sound-cache';
