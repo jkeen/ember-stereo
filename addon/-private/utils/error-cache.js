@@ -1,7 +1,7 @@
 import { A as emberArray, makeArray } from '@ember/array';
 import debug from 'debug';
 import { tracked } from '@glimmer/tracking';
-import urlToIdentifier from 'ember-hifi/-private/utils/url-to-identifier';
+import urlToIdentifier from 'ember-stereo/-private/utils/url-to-identifier';
 
 /**
 * This class caches sound objects based on urls. You shouldn't have to interact with this class.
@@ -16,8 +16,8 @@ export default class ErrorCache  {
   @tracked _cache = {};
   name = 'error-cache'
 
-  constructor(hifi) {
-    this.hifi = hifi;
+  constructor(stereo) {
+    this.stereo = stereo;
   }
 
   reset() {
@@ -51,7 +51,7 @@ export default class ErrorCache  {
    *
    * @param  {Sound} sound
    */
-  cache({url, error, connectionKey}) {    
+  cache({url, error, connectionKey}) {
     let identifier = urlToIdentifier(url)
     if (!this._cache[identifier]) {
       this._cache[identifier] = {}

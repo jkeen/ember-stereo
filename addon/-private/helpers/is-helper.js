@@ -1,11 +1,11 @@
 import { inject as service } from '@ember/service';
 import Helper from '@ember/component/helper';
 import { dedupeTracked } from 'tracked-toolbox';
-import hasEqualUrls from 'ember-hifi/-private/utils/has-equal-urls';
+import hasEqualUrls from 'ember-stereo/-private/utils/has-equal-urls';
 
 const UNINITIALIZED = Object.freeze({});
-export default class HifiBaseIsHelper extends Helper {
-  @service hifi;
+export default class StereoBaseIsHelper extends Helper {
+  @service stereo;
 
   identifier = UNINITIALIZED;
   @dedupeTracked sound = UNINITIALIZED
@@ -25,12 +25,12 @@ export default class HifiBaseIsHelper extends Helper {
       this.sound = UNINITIALIZED; // if identifier changes, reinitialize sound
       this.identifier = identifier || 'system';
       if (this.identifier !== 'system') {
-        let sound = this.hifi.findLoaded(this.identifier)
+        let sound = this.stereo.findLoaded(this.identifier)
         if (sound) {
           this.sound = sound;
         }
         else {
-          this.hifi.on('new-load-request', async ({loadPromise, urlsOrPromise, /* options */}) => {
+          this.stereo.on('new-load-request', async ({loadPromise, urlsOrPromise, /* options */}) => {
             let isEqual = await hasEqualUrls(this.identifier, urlsOrPromise);
             if (isEqual) {
               loadPromise.then(({sound, /* failures */}) => {

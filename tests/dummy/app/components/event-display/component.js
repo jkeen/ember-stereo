@@ -1,5 +1,5 @@
 import Component from "@glimmer/component";
-import { EVENT_MAP, SERVICE_EVENT_MAP } from "ember-hifi/services/hifi";
+import { EVENT_MAP, SERVICE_EVENT_MAP } from "ember-stereo/services/stereo";
 import { tracked } from "@glimmer/tracking";
 import { action } from "@ember/object";
 import { A as emberArray } from "@ember/array";

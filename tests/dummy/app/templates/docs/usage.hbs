@@ -3,63 +3,63 @@
 The following examples all use the following URL <a href={{this.onDemandUrl}}>{{this.onDemandUrl}}</a>
 
 <DocsDemo as |demo|>
-  <demo.example @name="hifi-helpers.hbs">
-    <button type="button" {{on 'click' (hifi-toggle-play this.onDemandUrl)}}>
-      {{#if (is-playing this.onDemandUrl)}}
+  <demo.example @name="stereo-helpers.hbs">
+    <button type="button" {{on 'click' (toggle-play-sound this.onDemandUrl)}}>
+      {{#if (sound-is-playing this.onDemandUrl)}}
         Pause
-      {{else if (is-loading this.onDemandUrl)}}
+      {{else if (sound-is-loading this.onDemandUrl)}}
         Loading
       {{else}}
         Play
       {{/if}}
     </button>
 
-    {{hifi-error-details this.onDemandUrl}}
+    {{stereo-error-details this.onDemandUrl}}
 
-    <button type="button" {{on 'click' (hifi-load this.onDemandUrl)}}>
-      {{#if (is-loaded this.onDemandUrl)}}
+    <button type="button" {{on 'click' (load-sound this.onDemandUrl)}}>
+      {{#if (sound-is-loaded this.onDemandUrl)}}
         Loaded
-      {{else if (is-loading this.onDemandUrl)}}
+      {{else if (sound-is-loading this.onDemandUrl)}}
         Loaded
       {{else}}
         Load
       {{/if}}
     </button>
   </demo.example>
-  {{demo.snippet "hifi-helpers.hbs"}}
+  {{demo.snippet "stereo-helpers.hbs"}}
   {{demo.snippet "application-controller.js"}}
 </DocsDemo>
 
 
 
 
-Different browsers support different audio formats, so hifi lets you try multiple urls, playing the first one that succeeds.
+Different browsers support different audio formats, so stereo lets you try multiple urls, playing the first one that succeeds.
 
 
 <DocsDemo as |demo|>
-  <demo.example @name="hifi-helpers-multiple-sounds.hbs">
+  <demo.example @name="stereo-helpers-multiple-sounds.hbs">
     {{#let (array
       this.onDemandOgg
       this.onDemandUrl
     ) as |urls| }}
 
 
-    <button type="button" {{on 'click' (hifi-toggle-play urls)}}>
-      {{#if (is-playing urls)}}
+    <button type="button" {{on 'click' (toggle-play-sound urls)}}>
+      {{#if (sound-is-playing urls)}}
         Pause
-      {{else if (is-loading urls)}}
+      {{else if (sound-is-loading urls)}}
         Loading
       {{else}}
         Play
       {{/if}}
     </button>
 
-    {{hifi-error-details urls}}
+    {{stereo-error-details urls}}
 
-    <button type="button" {{on 'click' (hifi-load urls)}}>
-      {{#if (is-loaded urls)}}
+    <button type="button" {{on 'click' (load-sound urls)}}>
+      {{#if (sound-is-loaded urls)}}
         Loaded
-      {{else if (is-loading urls)}}
+      {{else if (sound-is-loading urls)}}
         Loaded
       {{else}}
         Load
@@ -67,82 +67,82 @@ Different browsers support different audio formats, so hifi lets you try multipl
     </button>
     {{/let}}
   </demo.example>
-  {{demo.snippet "hifi-helpers-multiple-sounds.hbs"}}
+  {{demo.snippet "stereo-helpers-multiple-sounds.hbs"}}
   {{demo.snippet "application-controller.js"}}
 </DocsDemo>
 
 <DocsDemo as |demo|>
-  <demo.example @name="hifi-helpers-stream.hbs">
-    <button type="button" {{on 'click' (hifi-toggle-play this.streamUrl preload=true metadata=(hash title='Streaming Audio'))}}>
-      {{#if (is-playing this.streamUrl)}}
+  <demo.example @name="stereo-helpers-stream.hbs">
+    <button type="button" {{on 'click' (toggle-play-sound this.streamUrl preload=true metadata=(hash title='Streaming Audio'))}}>
+      {{#if (sound-is-playing this.streamUrl)}}
         Pause
-      {{else if (is-loading this.streamUrl)}}
+      {{else if (sound-is-loading this.streamUrl)}}
         Loading
       {{else}}
         Play
       {{/if}}
     </button>
 
-    <button type="button" {{on 'click' (hifi-load this.streamUrl)}}>
-      {{#if (is-loaded this.streamUrl)}}
+    <button type="button" {{on 'click' (load-sound this.streamUrl)}}>
+      {{#if (sound-is-loaded this.streamUrl)}}
         Loaded
-      {{else if (is-loading this.streamUrl)}}
+      {{else if (sound-is-loading this.streamUrl)}}
         Loaded
       {{else}}
         Load
       {{/if}}
     </button>
   </demo.example>
-  {{demo.snippet "hifi-helpers-stream.hbs"}}
+  {{demo.snippet "stereo-helpers-stream.hbs"}}
   {{demo.snippet "application-controller.js"}}
 </DocsDemo>
 
 
 <DocsDemo as |demo|>
-  <demo.example @name="hifi-duration-and-position.hbs">
+  <demo.example @name="sound-duration-and-position.hbs">
     <div class="position-display" style="display: grid; grid-template-columns: min-content auto min-content; align-items: center; grid-gap: 10px;">
       <span>
-        {{hifi-position this.onDemandUrl format='time'}}
+        {{sound-position this.onDemandUrl format='time'}}
       </span>
       <div style="background-color: #DDD; padding: 5px; ">
-        <div style="width: {{hifi-position this.onDemandUrl format='percent'}}%; background-color: red; height: 5px;"></div>
+        <div style="width: {{sound-position this.onDemandUrl format='percent'}}%; background-color: red; height: 5px;"></div>
       </div>
       <span>
-        {{hifi-duration this.onDemandUrl format='time'}}
+        {{sound-duration this.onDemandUrl format='time'}}
       </span>
     </div>
   </demo.example>
-  {{demo.snippet "hifi-duration-and-position.hbs"}}
+  {{demo.snippet "sound-duration-and-position.hbs"}}
   {{demo.snippet "application-controller.js"}}
 </DocsDemo>
 
 Currently Playing Sound Display
 <DocsDemo as |demo|>
-  <demo.example @name="hifi-duration-and-position-cs.hbs">
+  <demo.example @name="sound-duration-and-position-cs.hbs">
     <div class="position-display" style="display: grid; grid-template-columns: min-content auto min-content; align-items: center; grid-gap: 10px;">
       <span>
-        {{hifi-position format='time'}}
+        {{sound-position format='time'}}
       </span>
       {{!-- template-lint-disable no-inline-styles --}}
       <div style="background-color: #DDD; padding: 5px; ">
-        <div style="width: {{hifi-position format='percent'}}%; background-color: red; height: 5px;"></div>
+        <div style="width: {{sound-position format='percent'}}%; background-color: red; height: 5px;"></div>
       </div>
       <span>
-        {{hifi-duration format='time'}}
+        {{sound-duration format='time'}}
       </span>
     </div>
   </demo.example>
-  {{demo.snippet "hifi-duration-and-position-cs.hbs"}}
+  {{demo.snippet "sound-duration-and-position-cs.hbs"}}
   {{demo.snippet "application-controller.js"}}
 </DocsDemo>
 
 Volume Control
 <DocsDemo as |demo|>
-  <demo.example @name="hifi-volume.hbs">
-    <input type="range" {{hifi-volume initialVolume='100'}} />
+  <demo.example @name="stereo-volume.hbs">
+    <input type="range" {{stereo-volume initialVolume='100'}} />
 
   </demo.example>
-  {{demo.snippet "hifi-volume.hbs"}}
+  {{demo.snippet "stereo-volume.hbs"}}
   {{demo.snippet "application-controller.js"}}
 </DocsDemo>
 
@@ -153,12 +153,12 @@ Volume Control
 
 {{!--
 <DocsDemo as |demo|>
-  <demo.example @name="hifi-play-decorator-promise.hbs">
+  <demo.example @name="play-sound-decorator-promise.hbs">
       {{#let (perform this.loadAudioUrl this) as |url|}}
-      <button {{hifi-control url}}>
-        {{#if (is-playing url)}}
+      <button {{stereo-control url}}>
+        {{#if (sound-is-playing url)}}
           Pause
-        {{else if (is-loading url)}}
+        {{else if (sound-is-loading url)}}
           Loading
         {{else}}
           Play
@@ -166,6 +166,6 @@ Volume Control
       </button>
       {{/let}}
   </demo.example>
-  {{demo.snippet "hifi-play-decorator-promise.hbs"}}
-  {{demo.snippet "hifi-play-decorator-promise.js"}}
+  {{demo.snippet "play-sound-decorator-promise.hbs"}}
+  {{demo.snippet "play-sound-decorator-promise.js"}}
 </DocsDemo> --}}

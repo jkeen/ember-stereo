@@ -1,10 +1,10 @@
 <div class="sound-display-control-position service-display-current-sound-position" {{did-insert this.didInsert}} {{recognize-gesture 'tap'}} {{on 'tap' this.handleTap}}>
-  <div class="progress {{if (not (or (is-fastforwardable @sound.url) (is-rewindable @sound.url))) " is-indeterminate" "" }} {{if @sound.isPlaying "is-playing" "" }}">
+  <div class="progress {{if (not (or (sound-is-fastforwardable @sound.url) (sound-is-rewindable @sound.url))) " is-indeterminate" "" }} {{if @sound.isPlaying "sound-is-playing" "" }}">
     <div class="progress-track js-progress-track">
       <div class="progress-track-downloaded"></div>
       <div class="progress-track-played"
           style={{html-safe (
-            concat "width: " (hifi-position @sound.url format='percent') "%"
+            concat "width: " (sound-position @sound.url format='percent') "%"
           )}}></div>
     </div>
     {{#if @sound}}
@@ -13,7 +13,7 @@
         {{on 'pan' this.updatePlayheadPosition}}
         {{on 'panend' this.updatePosition}}
         style={{html-safe (
-          concat "left: calc(" (hifi-position @sound.url format='percent') "% + " this.dragAdjustment "px)"
+          concat "left: calc(" (sound-position @sound.url format='percent') "% + " this.dragAdjustment "px)"
         )}}
       >
       </div>
@@ -22,14 +22,14 @@
   <div class="sound-display-control-position-info">
     <span class="sound-display-control-position-info-positon">
       {{#if @sound}}
-        {{hifi-position @sound.url format='time'}}
+        {{sound-position @sound.url format='time'}}
       {{else}}
       &nbsp;
       {{/if}}
     </span>
     <span class="sound-display-control-position-info-duration">
       {{#if @sound}}
-        {{hifi-duration @sound.url format='time'}}
+        {{sound-duration @sound.url format='time'}}
       {{else}}
        &nbsp;
       {{/if}}

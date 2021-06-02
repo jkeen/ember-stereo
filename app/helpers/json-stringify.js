@@ -1,1 +1,1 @@
-export { default, jsonStringify } from 'ember-hifi/helpers/json-stringify';
+export { default, jsonStringify } from 'ember-stereo/helpers/json-stringify';

@@ -1,5 +1,5 @@
 import { module, test } from 'qunit';
-import SoundCache from 'ember-hifi/-private/utils/sound-cache';
+import SoundCache from 'ember-stereo/-private/utils/sound-cache';
 
 class Sound {
   constructor(options) {
@@ -15,7 +15,7 @@ module('Unit | Utility | sound-cache', function() {
     let sound1 = new Sound({url: '/test/1'});
     let sound2 = new Sound({url: '/test/2'});
     let sound3 = new Sound({url: '/test/3'});
-    
+
     soundCache.cache(sound1);
     soundCache.cache(sound2);
     soundCache.cache(sound3);

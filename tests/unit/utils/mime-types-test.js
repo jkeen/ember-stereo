@@ -1,4 +1,4 @@
-import { getMimeType } from 'ember-hifi/-private/utils/mime-types';
+import { getMimeType } from 'ember-stereo/-private/utils/mime-types';
 import { module, test } from 'qunit';
 
 module('Unit | Utility | mime types', function() {
@@ -12,7 +12,7 @@ module('Unit | Utility | mime types', function() {
     let mp3MimeWithParams = getMimeType(mp3UrlWithParams);
     let m3u8Mime = getMimeType(hlsUrl);
     let unknownMime = getMimeType(unknownUrl);
-    
+
     assert.equal(mp3Mime, 'audio/mpeg');
     assert.equal(mp3MimeWithParams, 'audio/mpeg');
     assert.equal(m3u8Mime, 'application/vnd.apple.mpegurl');

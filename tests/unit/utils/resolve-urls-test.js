@@ -1,4 +1,4 @@
-import resolveUrls from 'ember-hifi/-private/utils/resolve-urls';
+import resolveUrls from 'ember-stereo/-private/utils/resolve-urls';
 import { module, test } from 'qunit';
 
 module('Unit | Utility | resolve-urls', function() {

@@ -1,4 +1,4 @@
-import ErrorCache from 'ember-hifi/-private/utils/error-cache';
+import ErrorCache from 'ember-stereo/-private/utils/error-cache';
 import { module, test } from 'qunit';
 
 module('Unit | Utility | error-cache', function() {

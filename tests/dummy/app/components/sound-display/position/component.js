@@ -5,7 +5,7 @@ import { inject as service } from "@ember/service";
 import { action } from "@ember/object";
 import { tracked } from "@glimmer/tracking";
 export default class Position extends Component {
-  @service hifi;
+  @service stereo;
   @tracked element;
   @tracked dragAdjustment = 0;
 

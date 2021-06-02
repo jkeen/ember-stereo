@@ -1,5 +1,5 @@
-import urlToIdentifier from 'ember-hifi/-private/utils/url-to-identifier';
-import resolveUrls from 'ember-hifi/-private/utils/resolve-urls';
+import urlToIdentifier from 'ember-stereo/-private/utils/url-to-identifier';
+import resolveUrls from 'ember-stereo/-private/utils/resolve-urls';
 import { makeArray } from '@ember/array';
 
 export default async function hasEqualUrls(urlOrPromise1, urlOrPromise2) {

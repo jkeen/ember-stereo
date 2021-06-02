@@ -1,12 +1,12 @@
 import Component from "@glimmer/component";
 import { inject as service } from "@ember/service";
-import { getMimeType } from "ember-hifi/-private/utils/mime-types";
+import { getMimeType } from "ember-stereo/-private/utils/mime-types";
 import { set } from "@ember/object";
-import resolveUrls from "ember-hifi/-private/utils/resolve-urls";
+import resolveUrls from "ember-stereo/-private/utils/resolve-urls";
 import deepSet from "ember-deep-set";
 import { tracked } from "@glimmer/tracking";
 export default class ConnectionDisplay extends Component {
-  @service hifi;
+  @service stereo;
 
   enabled = true;
   @tracked lastResult = null;
@@ -50,7 +50,7 @@ export default class ConnectionDisplay extends Component {
     // Intercept load requests and push the results into the created sound. This powers the "strategy"
     // area of the debug information in the sound diagnostic
 
-    this.hifi.on(
+    this.stereo.on(
       "new-load-request",
       async ({ loadPromise, urlsOrPromise, options }) => {
         // TODO: change this event to provide the urls
@@ -61,12 +61,12 @@ export default class ConnectionDisplay extends Component {
         if (options.useConnections) {
           // If the consumer has specified a connection to prefer, use it
           let connectionNames = options.useConnections;
-          strategies = this.hifi._prepareStrategies(urlsToTry, connectionNames);
-        } else if (this.hifi.get("isMobileDevice")) {
+          strategies = this.stereo._prepareStrategies(urlsToTry, connectionNames);
+        } else if (this.stereo.get("isMobileDevice")) {
           // If we're on a mobile device, we want to try NativeAudio first
-          strategies = this.hifi._prepareMobileStrategies(urlsToTry);
+          strategies = this.stereo._prepareMobileStrategies(urlsToTry);
         } else {
-          strategies = this.hifi._prepareStandardStrategies(urlsToTry);
+          strategies = this.stereo._prepareStandardStrategies(urlsToTry);
         }
 
         let url = urlsToTry[0];

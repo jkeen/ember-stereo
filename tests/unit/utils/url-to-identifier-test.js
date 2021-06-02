@@ -1,4 +1,4 @@
-import urlToIdentifier from 'ember-hifi/-private/utils/url-to-identifier';
+import urlToIdentifier from 'ember-stereo/-private/utils/url-to-identifier';
 import { module, test } from 'qunit';
 
 module('Unit | Utility | url-to-identifier', function() {

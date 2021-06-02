@@ -1,4 +1,4 @@
-import hasEqualUrls from 'ember-hifi/-private/utils/has-equal-urls';
+import hasEqualUrls from 'ember-stereo/-private/utils/has-equal-urls';
 import { module, test } from 'qunit';
 
 module('Unit | Utility | has-equal-urls', function() {

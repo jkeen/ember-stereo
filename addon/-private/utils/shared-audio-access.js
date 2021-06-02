@@ -1,5 +1,5 @@
 import debug from 'debug';
-const log = debug('ember-hifi:shared-audio-access');
+const log = debug('ember-stereo:shared-audio-access');
 
 /***
 * @class SharedAudioAccess
@@ -23,7 +23,7 @@ export default class SharedAudioAccess {
   // constructor() {
   //   this.unlock();
   // }
-  
+
   debug(message) {
     log(message);
   }

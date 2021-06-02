@@ -6,15 +6,15 @@ import scale from 'ember-animated/motions/scale';
 import { task } from 'ember-concurrency';
 
 export default class DiagnosticControls extends Component {
-  @service hifi
+  @service stereo
 
   get dormantItems() {
-    return this.args.testSounds.filter(item => !this.hifi.soundCache._cache[item.url]);
+    return this.args.testSounds.filter(item => !this.stereo.soundCache._cache[item.url]);
   }
 
   @task({drop: true})
   * playCustomSound() {
-    yield this.hifi.play(this.url, {
+    yield this.stereo.play(this.url, {
       metadata: {
         title: this.title
       }
@@ -26,7 +26,7 @@ export default class DiagnosticControls extends Component {
   @task({drop: true})
   * loadCustomSound() {
     try {
-      yield this.hifi.load(this.url, {
+      yield this.stereo.load(this.url, {
         metadata: {
           title: this.title
         }

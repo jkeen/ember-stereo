@@ -6,7 +6,7 @@ var Funnel = require('broccoli-funnel'); //eslint-disable-line
 var mergeTrees = require('broccoli-merge-trees'); //eslint-disable-line
 
 module.exports = {
-  name: 'ember-hifi',
+  name: 'ember-stereo',
 
   included(app, parentAddon) {
     this._super.included.apply(this, arguments);
@@ -16,8 +16,8 @@ module.exports = {
       target = target.app;
     }
 
-    this.getHifiConnections();
-    if (this.hifiConnections.includes('Howler')) {
+    this.getStereoConnections();
+    if (this.stereoConnections.includes('Howler')) {
       target.import({
         development: 'vendor/third-party/howler.js',
         production: 'vendor/third-party/howler.min.js'
@@ -26,7 +26,7 @@ module.exports = {
       target.import('vendor/howler.js');
     }
 
-    if (this.hifiConnections.includes('HLS')) {
+    if (this.stereoConnections.includes('HLS')) {
       target.import({
         development: 'vendor/third-party/hls.js',
         production: 'vendor/third-party/hls.min.js'
@@ -39,20 +39,20 @@ module.exports = {
   treeForVendor(vendorTree) {
     var trees = [];
 
-    this.getHifiConnections();
+    this.getStereoConnections();
 
     if (vendorTree) {
       trees.push(vendorTree);
     }
 
-    if (this.hifiConnections.includes('Howler')) {
+    if (this.stereoConnections.includes('Howler')) {
       trees.push(new Funnel(path.dirname(require.resolve('howler')), {
         files: ['howler.js', 'howler.min.js'],
         destDir: 'third-party'
       }));
     }
 
-    if (this.hifiConnections.includes('HLS')) {
+    if (this.stereoConnections.includes('HLS')) {
       trees.push(new Funnel(path.dirname(require.resolve('hls.js')), {
         files: ['hls.js', 'hls.min.js', 'hls.js.map'],
         destDir: 'third-party'
@@ -62,20 +62,20 @@ module.exports = {
     return mergeTrees(trees);
   },
 
-  getHifiConnections: function() {
-    if (this.hifiConnections) {
+  getStereoConnections: function() {
+    if (this.stereoConnections) {
       return;
     }
 
     let projectConfig = this.project.config(process.env.EMBER_ENV)
-    let hifiConfig = projectConfig.emberHifi;
+    let stereoConfig = projectConfig.emberStereo;
 
-    if (hifiConfig && hifiConfig.connections) {
-      this.hifiConnections = hifiConfig.connections.map((connection) => connection.name);
+    if (stereoConfig && stereoConfig.connections) {
+      this.stereoConnections = stereoConfig.connections.map((connection) => connection.name);
     }
     else {
       // Default
-      this.hifiConnections = ["NativeAudio", "HLS", "Howler"]
+      this.stereoConnections = ["NativeAudio", "HLS", "Howler"]
     }
 
   },

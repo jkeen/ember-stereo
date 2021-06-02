@@ -1,4 +1,4 @@
-<div class="volume-control" {{did-insert this.didInsert}} {{recognize-gesture 'pan' 'tap'}} {{on 'pan' (fn this.handlePan this.hifi.volume)}} {{on 'panend' this.handlePanEnd}} {{on 'tap' this.handleTap}}>
+<div class="volume-control" {{did-insert this.didInsert}} {{recognize-gesture 'pan' 'tap'}} {{on 'pan' (fn this.handlePan this.stereo.volume)}} {{on 'panend' this.handlePanEnd}} {{on 'tap' this.handleTap}}>
   {{#each this.numOfNotches as |item time|}}
     <span class="volume-notch {{if (lte time this.activeNotches) "active"}}"></span>
   {{/each}}

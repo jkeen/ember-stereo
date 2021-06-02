@@ -3,30 +3,30 @@
   <span class="test-sound-title-url">
     {{@url}}
   </span>
-  <span>{{hifi-error-details @url}}</span>
+  <span>{{stereo-error-details @url}}</span>
 
   <div class="test-sound-actions">
-    {{#if (is-loaded @url)}}
+    {{#if (sound-is-loaded @url)}}
     <button type="button" class="button is-link" disabled>Loaded</button>
-    {{else if (is-loading @url)}}
+    {{else if (sound-is-loading @url)}}
     <button type="button" class="button is-link" disabled>Loading</button>
     {{else}}
     <button type="button" class="button is-link" {{on 'click'
-      (hifi-load @url metadata=(hash title=@title))}}>
+      (load-sound @url metadata=(hash title=@title))}}>
       Load
     </button>
     {{/if}}
 
-    {{#if (is-playing @url)}}
-      <button type="button" class="button is-link" {{on 'click' (hifi-pause @url)}}>Pause</button>
+    {{#if (sound-is-playing @url)}}
+      <button type="button" class="button is-link" {{on 'click' (pause-sound @url)}}>Pause</button>
     {{else}}
-      <button type="button" class="button is-link" {{on 'click' (hifi-play @url)}}>Play</button>
+      <button type="button" class="button is-link" {{on 'click' (play-sound @url)}}>Play</button>
     {{/if}}
 
-    {{#if (is-playing this.loadUrl)}}
-    <button type="button" class="button is-link" {{on 'click' (hifi-pause this.loadUrl)}}>Pause</button>
+    {{#if (sound-is-playing this.loadUrl)}}
+    <button type="button" class="button is-link" {{on 'click' (pause-sound this.loadUrl)}}>Pause</button>
     {{else}}
-    <button type="button" class="button is-link" {{on 'click' (hifi-play this.loadUrl metadata=(hash title=@title))}}>Play via Promise</button>
+    <button type="button" class="button is-link" {{on 'click' (play-sound this.loadUrl metadata=(hash title=@title))}}>Play via Promise</button>
     {{/if}}
 
 

@@ -1,1 +1,1 @@
-export { default, numericDuration } from 'ember-hifi/helpers/numeric-duration';
+export { default, numericDuration } from 'ember-stereo/helpers/numeric-duration';

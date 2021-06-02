@@ -1,11 +1,11 @@
-2021-01-14T03:28:40.224Z [info] [addon/helpers/hifi-duration.js]: SUCCESS
-2021-01-14T03:28:40.332Z [info] [addon/helpers/hifi-is-loading.js]: SUCCESS
-2021-01-14T03:28:41.191Z [warn] [addon/helpers/hifi-load.js]: FAILURE 
-Validation errors: 
+2021-01-14T03:28:40.224Z [info] [addon/helpers/sound-duration.js]: SUCCESS
+2021-01-14T03:28:40.332Z [info] [addon/helpers/hifi-sound-is-loading.js]: SUCCESS
+2021-01-14T03:28:41.191Z [warn] [addon/helpers/load-sound.js]: FAILURE
+Validation errors:
 	[load]: Transform not supported - need option '--decorators=true' or the property type CallExpression can not be transformed
-2021-01-14T03:28:41.198Z [info] [addon/helpers/is-playing.js]: SUCCESS
-2021-01-14T03:28:41.238Z [info] [addon/helpers/hifi-is-playing.js]: SUCCESS
-2021-01-14T03:28:41.467Z [info] [addon/helpers/hifi-play.js]: SUCCESS
+2021-01-14T03:28:41.198Z [info] [addon/helpers/sound-is-playing.js]: SUCCESS
+2021-01-14T03:28:41.238Z [info] [addon/helpers/hifi-sound-is-playing.js]: SUCCESS
+2021-01-14T03:28:41.467Z [info] [addon/helpers/play-sound.js]: SUCCESS
 2021-01-14T03:28:42.195Z [info] [addon/helpers/one-at-a-time.js]: SUCCESS
 2021-01-14T03:31:39.847Z [info] [addon/services/hifi-cache.js]: SUCCESS
 2021-01-14T03:39:22.158Z [info] [addon/services/hifi-sync.js]: SUCCESS

@@ -1,9 +1,10 @@
 {
-  "name": "ember-hifi",
-  "version": "1.18.0",
-  "description": "The easy way to play audio in your ember app.",
+  "name": "ember-stereo",
+  "version": "2.0.0",
+  "description": "Playing audio in your ember app made easy.",
   "keywords": [
     "ember-addon",
+    "ember-stereo",
     "ember-hifi",
     "audio",
     "hls",
@@ -16,7 +17,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/nypublicradio/ember-hifi/"
+    "url": "https://github.com/jkeen/ember-stereo/"
   },
   "license": "MIT",
   "author": "Jeff Keen, Brian Whitton",
@@ -127,5 +128,5 @@
   "ember-addon": {
     "configPath": "tests/dummy/config"
   },
-  "homepage": "https://nypublicradio.github.io/ember-hifi"
+  "homepage": "https://nypublicradio.github.io/ember-stereo"
 }

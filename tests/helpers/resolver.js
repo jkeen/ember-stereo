@@ -3,7 +3,7 @@ import config from '../../config/environment';
 
 const resolver = Resolver.create({
   pluralizedTypes: {
-    'hifi-connection': 'hifi-connections'
+    'stereo-connection': 'stereo-connections'
   }
 });
 

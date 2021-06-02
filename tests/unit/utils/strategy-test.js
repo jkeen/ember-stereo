@@ -1,6 +1,6 @@
 import { module, test } from 'qunit';
-import Strategy from 'ember-hifi/-private/utils/strategy';
-import NativeAudio from 'ember-hifi/hifi-connections/native-audio';
+import Strategy from 'ember-stereo/-private/utils/strategy';
+import NativeAudio from 'ember-stereo/stereo-connections/native-audio';
 
 module('Unit | Utility | strategy', function() {
   test("strategy can be created", function(assert) {

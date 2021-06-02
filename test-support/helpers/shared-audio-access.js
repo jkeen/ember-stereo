@@ -1,1 +1,1 @@
-export { default } from 'ember-hifi/-private/utils/shared-audio-access';
+export { default } from 'ember-stereo/-private/utils/shared-audio-access';

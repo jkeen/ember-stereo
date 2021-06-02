@@ -7,18 +7,18 @@
       <span class="test-sound-title">
         <Input type="text" class="input" placeholder="url" @value={{@url}} />
       </span>
-  
+
       <div class="test-sound-actions">
-        <button href="#" class="button is-medium is-outline is-dark {{if this.loadCustomSound.isRunning " is-loading"}}"
+        <button href="#" class="button is-medium is-outline is-dark {{if this.loadCustomSound.isRunning " sound-is-loading"}}"
           type="button" {{on 'click' (perform this.loadCustomSound)}}>Load</button>
-        <button href="#" class="button is-medium is-info {{if this.playCustomSound.isRunning " is-loading"}}" type="button"
+        <button href="#" class="button is-medium is-info {{if this.playCustomSound.isRunning " sound-is-loading"}}" type="button"
           {{on 'click' (perform this.playCustomSound)}}>Play</button>
       </div>
       <div class="errors">
         {{this.error}}
       </div>
     </div>
-  
+
     <AnimatedContainer>
       {{#animated-each @testSounds use=this.transition duration=250 as |item|}}
       <TestSound @url={{item.url}} @title={{item.title}} @debug={{item.debug}} />

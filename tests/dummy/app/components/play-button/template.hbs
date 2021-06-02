@@ -1,12 +1,12 @@
-<button class="hifi-play-button" type="button" {{on 'click' (hifi-toggle-play @url metadata=@metadata)}}>
-  <div class="hifi-play-button-bg"></div>
-  {{#if (is-errored @url)}}
+<button class="play-sound-button" type="button" {{on 'click' (toggle-play-sound @url metadata=@metadata)}}>
+  <div class="play-sound-button-bg"></div>
+  {{#if (sound-is-errored @url)}}
     <FaIcon @icon="bomb" @size="2x"/>
-  {{else if (is-playing @url)}}
+  {{else if (sound-is-playing @url)}}
     <FaIcon @icon="pause" @size="2x"/>
-  {{!-- {{else if (is-playing-elsewhere @url)}}
+  {{!-- {{else if (sound-is-playing-elsewhere @url)}}
     <FaIcon @icon="pause" @size="2x"/> --}}
-  {{else if (is-loading @url)}}
+  {{else if (sound-is-loading @url)}}
     <FaIcon @icon="circle-notch" @size="2x" class="icon-spin"/>
   {{else}}
     <FaIcon @icon="play" @size="2x"/>

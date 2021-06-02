@@ -3,7 +3,7 @@ import { inject as service } from "@ember/service";
 import { tracked } from "@glimmer/tracking";
 import { action } from '@ember/object';
 export default class Volume extends Component {
-  @service hifi;
+  @service stereo;
   @tracked dragAdjustment = 0;
   @tracked alreadyChanged = 0;
   @tracked element;
@@ -14,7 +14,7 @@ export default class Volume extends Component {
   }
 
   get activeNotches() {
-    return parseInt((this.hifi.volume / 100) * this.notchCount, 10);
+    return parseInt((this.stereo.volume / 100) * this.notchCount, 10);
   }
 
   get notchWidth() {
@@ -41,7 +41,7 @@ export default class Volume extends Component {
     let newChange = change - existingChange
 
 
-    this.hifi.volume = Math.max(Math.min(this.hifi.volume + newChange, 100), 0);
+    this.stereo.volume = Math.max(Math.min(this.stereo.volume + newChange, 100), 0);
     this.dragAdjustment = deltaX;
   }
 
@@ -51,6 +51,6 @@ export default class Volume extends Component {
     let rect = this.element.getBoundingClientRect();
     let volumePercentage = ((center.x - rect.x) / rect.width) * 100;
     let newVolume = Math.max(Math.min(volumePercentage, 100), 0);
-    this.hifi.volume = newVolume;
+    this.stereo.volume = newVolume;
   }
 }

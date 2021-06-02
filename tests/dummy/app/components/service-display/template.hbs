@@ -15,38 +15,38 @@
 
     <div class="service-display-controls">
       <div class="service-display-buttons">
-        <button class="service-display-button-item" type="button" {{on "click" (fn (hifi-rewind))}}>
+        <button class="service-display-button-item" type="button" {{on "click" (fn (rewind-sound))}}>
           <FaIcon @icon="backward" @size="2x" />
         </button>
 
-        <button type="button" class="service-display-button-item" {{on "click" (fn (hifi-toggle-play))}}>
-          {{#if (is-playing)}}
+        <button type="button" class="service-display-button-item" {{on "click" (fn (toggle-play-sound))}}>
+          {{#if (sound-is-playing)}}
           <FaIcon @icon="pause" @size="2x" />
-          {{else if (is-loading)}}
+          {{else if (sound-is-loading)}}
           <FaIcon @icon="circle-notch" @size="2x" class="icon-spin" />
           {{else}}
           <FaIcon @icon="play" @size="2x" />
           {{/if}}
         </button>
 
-        <button type="button" class="service-display-button-item" {{on "click" (fn (hifi-fast-forward))}}>
+        <button type="button" class="service-display-button-item" {{on "click" (fn (fast-forward-sound))}}>
           <FaIcon @icon="forward" @size="2x" />
         </button>
 
-        <button type="button" class="service-display-button-item" {{on "click" (fn (hifi-stop))}}>
+        <button type="button" class="service-display-button-item" {{on "click" (fn (stop-sound))}}>
           <FaIcon @icon="stop" @size="2x" />
         </button>
       </div>
       <div class="service-display-volume">
         <SoundDisplay::Volume/>
-        <Input @type="range" @value={{this.hifi.volume}} min={{0}} max={{100}}/>
+        <Input @type="range" @value={{this.stereo.volume}} min={{0}} max={{100}}/>
       </div>
 
     </div>
   </div>
   <div class="diagnostic-debug">
     <h3>Events</h3>
-    <EventDisplay @service={{this.hifi}} />
+    <EventDisplay @service={{this.stereo}} />
   </div>
   <button type="button" class="diagnostic-debug-toggle" {{on 'click' (toggle "showDebugInfo" this)}}>
     {{#if this.showDebugInfo}}

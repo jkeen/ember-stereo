@@ -4,7 +4,7 @@ import { timeout } from 'ember-concurrency';
 import { task } from 'ember-concurrency';
 export default class DocsUsageController extends Controller {
   // BEGIN-SNIPPET application-controller.js
-  @service hifi;
+  @service stereo;
   // END-SNIPPET
 
 
@@ -17,7 +17,7 @@ export default class DocsUsageController extends Controller {
   // END-SNIPPET
 
 
-  // BEGIN_SNIPPET hifi-play-decorator-promise.js
+  // BEGIN_SNIPPET play-sound-decorator-promise.js
   @task
   *loadAudioUrl() {
     yield timeout(200);

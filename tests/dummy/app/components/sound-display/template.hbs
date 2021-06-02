@@ -1,6 +1,6 @@
-<div class="sound sound-display is-loaded
+<div class="sound sound-display sound-is-loaded
   {{~if this.isCurrentSound ' is-current-sound '~}}
-  {{~if this.isPlaying ' is-playing '~}}
+  {{~if this.isPlaying ' sound-is-playing '~}}
   {{~if this.showDebugInfo ' show-debug-info '~}}"
   data-connection-name="{{@sound.connectionName}}"
 >
@@ -29,7 +29,7 @@
 
   <div class="sound-display-title">
     <div class="sound-display-title-given">
-      {{hifi-metadata @sound.url key='title'}}
+      {{sound-metadata @sound.url key='title'}}
     </div>
     <div class="sound-display-title-url">
       {{@sound.url}}
@@ -42,30 +42,30 @@
     <div class="sound-control-buttons">
       <a href="#" class="sound-control-button-item"></a>
 
-      {{#if (is-rewindable @sound.url)}}
-      <button type="button" class="sound-control-button-item" {{on 'click' (fn (hifi-rewind this.url increment=5000))}}>
+      {{#if (sound-is-rewindable @sound.url)}}
+      <button type="button" class="sound-control-button-item" {{on 'click' (fn (rewind-sound this.url increment=5000))}}>
         <FaIcon @icon="backward" />
       </button>
       {{/if}}
 
-      <button type="button" class="sound-control-button-item" {{on 'click' (hifi-toggle-play @sound.url)}}>
-        {{#if (is-loading @sound.url)}}
+      <button type="button" class="sound-control-button-item" {{on 'click' (toggle-play-sound @sound.url)}}>
+        {{#if (sound-is-loading @sound.url)}}
         <FaIcon @icon="circle-notch" @size="2x" class="icon-spin" />
-        {{else if (is-playing @sound.url)}}
+        {{else if (sound-is-playing @sound.url)}}
         <FaIcon @icon="pause" @size="2x" />
         {{else}}
         <FaIcon @icon="play" @size="2x" />
         {{/if}}
       </button>
 
-      {{#if (is-fastforwardable @sound.url)}}
-      <button type="button" class="sound-control-button-item" {{on 'click' (hifi-fast-forward @sound.url
+      {{#if (sound-is-fastforwardable @sound.url)}}
+      <button type="button" class="sound-control-button-item" {{on 'click' (fast-forward-sound @sound.url
         increment=5000)}}>
         <FaIcon @icon="forward" />
       </button>
       {{/if}}
 
-      <button type="button" class="sound-control-button-item" {{on 'click' (hifi-stop @sound.url)}}>
+      <button type="button" class="sound-control-button-item" {{on 'click' (stop-sound @sound.url)}}>
         <FaIcon @icon="stop" />
       </button>
     </div>
@@ -97,11 +97,6 @@
       {{/each}}
     </ul>
 
-    <h3>Events</h3>
-    {{#if (is-loaded @sound.url)}}
-    <EventDisplay class="diagnostic-debug-events" @sound={{@sound}} />
-    {{/if}}
-
     <h3>Properties</h3>
     <dl class="diagnostic-debug-list">
       <dt>Id</dt>
@@ -113,7 +108,7 @@
       <dt>isPlaying</dt>
       <dd>{{@sound.isPlaying}}</dd>
 
-      <dt>isErrored</dt>
+      <dt>soundIsErrored</dt>
       <dd>{{@sound.isErrored}}</dd>
 
       <dt>hasPlayed</dt>
@@ -140,6 +135,12 @@
       <dt>id3TagMetadata</dt>
       <dd>{{json-stringify @sound.id3TagMetadata}}</dd>
     </dl>
+
+
+    <h3>Events</h3>
+    {{#if (sound-is-loaded @sound.url)}}
+      <EventDisplay class="diagnostic-debug-events" @sound={{@sound}} />
+    {{/if}}
   </div>
 
   <button type="button" class="diagnostic-debug-toggle" {{on 'click' (toggle "showDebugInfo" this)}}>

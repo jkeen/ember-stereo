@@ -3,19 +3,19 @@ import { inject as service } from "@ember/service";
 import { tracked } from "@glimmer/tracking";
 
 export default class ServiceDisplay extends Component {
-  @service hifi;
+  @service stereo;
 
   @tracked showDebugInfo;
 
   get cachedCount() {
-    return this.hifi.soundCache.cachedCount;
+    return this.stereo.soundCache.cachedCount;
   }
 
   get connections() {
-    return Object.values(this.hifi._connections);
+    return Object.values(this.stereo._connections);
   }
 
   get currentSound() {
-    return this.hifi.currentSound;
+    return this.stereo.currentSound;
   }
 }

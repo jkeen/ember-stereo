@@ -3,20 +3,23 @@ import { inject as service } from "@ember/service";
 import { action } from "@ember/object";
 
 export default class SoundDisplay extends Component {
-  @service hifi;
+  @service stereo;
 
   get isCurrentSound() {
     return (
-      this.hifi.currentSound &&
+      this.stereo.currentSound &&
       this.args.sound &&
-      this.hifi.currentSound.url === this.args.sound.url
+      this.stereo.currentSound.url === this.args.sound.url
     );
   }
 
   @action
   async removeSound() {
-    this.hifi.soundCache.remove(this.args.sound);
     this.args.sound.stop();
-    this.args?.onRemoval();
+    this.stereo.soundCache.remove(this.args.sound);
+
+    if (this.args.onRemoval) {
+      this.args.onRemoval();
+    }
   }
 }

@@ -1,13 +1,13 @@
 
-## Writing Your Own Hifi Connection
+## Writing Your Own Stereo Connection
 
-Do you need to support a funky audio format that requires a special library, or do you really want to buck this whole HTML5-only strategy and play sounds using Flash? You can make your own hifi connection.
+Do you need to support a funky audio format that requires a special library, or do you really want to buck this whole HTML5-only strategy and play sounds using Flash? You can make your own stereo connection.
 
 ```sh
-$ ember generate hifi-connection flash-connection
+$ ember generate stereo-connection flash-connection
 ```
 
-This creates `app/hifi-connections/flash-connection.js` and a unit test at `tests/unit/hifi-connections/flash-connection.js`, which you should now customize.
+This creates `app/stereo-connections/flash-connection.js` and a unit test at `tests/unit/stereo-connections/flash-connection.js`, which you should now customize.
 
 The files created by the blueprint should walk you through what you need to implement, but to be thorough:
 
@@ -30,9 +30,9 @@ The files created by the blueprint should walk you through what you need to impl
   });
 ```
 
-`canPlayMimeType` and `canUseConnection` are called when `hifi` is looking for connections to try with a url. Give your best guess here. For instance, our built-in HLS.js library won't work on mobile, so `canUseConnection` returns false on a mobile device and true on a desktop browser. Similary, HLS only plays `application/vnd.apple.mpegurl` files, so we just check for that extension in `canPlayMimeType`.
+`canPlayMimeType` and `canUseConnection` are called when `stereo` is looking for connections to try with a url. Give your best guess here. For instance, our built-in HLS.js library won't work on mobile, so `canUseConnection` returns false on a mobile device and true on a desktop browser. Similary, HLS only plays `application/vnd.apple.mpegurl` files, so we just check for that extension in `canPlayMimeType`.
 
-##### Implement methods to bridge communication between hifi and your third party sound.
+##### Implement methods to bridge communication between stereo and your third party sound.
 
 - `setup()`
 Wire up your library to trigger the following methods when things happen on your sound:
@@ -63,7 +63,7 @@ let FlashConnection = BaseSound.extend({
         sound.trigger("audio-ready")
       },
       onloaderror: function(error) {
-        // Couldn't load this sound. Tell hifi to move on and try another url/connection
+        // Couldn't load this sound. Tell stereo to move on and try another url/connection
         sound.trigger('audio-load-error', {error});
       },
       onpause: function() {
@@ -96,7 +96,7 @@ let FlashConnection = BaseSound.extend({
   }
 ```
 
-### Other required methods to let hifi control your sound
+### Other required methods to let stereo control your sound
 
 ```javascript
 _setVolume(volume) {
@@ -144,7 +144,7 @@ Once you have implemented your new connection, you can add it to your app's conf
 ```js
 module.exports = function(environment) {
   var ENV = {
-    emberHifi:
+    emberStereo:
       debug: true,    // get ready for some deep console messages to help you find your way
       connections: [
         {

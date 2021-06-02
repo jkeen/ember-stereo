@@ -7,12 +7,12 @@ const defaultConnections = [
 ];
 
 module.exports = function(environment, appConfig) {
-  appConfig.emberHifi = appConfig.emberHifi || {};
-  appConfig.emberHifi.debug = (appConfig.emberHifi.debug === undefined) ? false : appConfig.emberHifi.debug;
+  appConfig.emberStereo = appConfig.emberStereo || {};
+  appConfig.emberStereo.debug = (appConfig.emberStereo.debug === undefined) ? false : appConfig.emberStereo.debug;
 
-  let configConnections = appConfig.emberHifi.connections || [];
+  let configConnections = appConfig.emberStereo.connections || [];
 
   if (configConnections.length === 0) {
-    appConfig.emberHifi.connections = defaultConnections;
+    appConfig.emberStereo.connections = defaultConnections;
   }
 };

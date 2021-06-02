@@ -5,16 +5,16 @@ import { easeOut, easeIn } from "ember-animated/easings/cosine";
 import { parallel } from "ember-animated";
 import scale from "ember-animated/motions/scale";
 export default class CachedSound extends Component {
-  @service hifi;
+  @service stereo;
 
   get loadedItems() {
-    return this.hifi.soundCache.cachedList.map((url) =>
-      this.hifi.soundCache.find(url)
+    return this.stereo.soundCache.cachedList.map((url) =>
+      this.stereo.soundCache.find(url)
     );
   }
 
   get loadedSoundCountSentence() {
-    let count = this.hifi.soundCache.cachedCount;
+    let count = this.stereo.soundCache.cachedCount;
     if (count === 1) {
       return "1 Loaded Sound";
     } else if (count > 1) {

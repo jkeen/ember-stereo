@@ -238,7 +238,7 @@
     }
   }
 
-  .progress.is-indeterminate.is-playing {
+  .progress.is-indeterminate.sound-is-playing {
     .progress-track {
       background-color: darken($sound-accent-color, 20);
       pointer-events: none;
@@ -380,7 +380,7 @@
 }
 
 
-.sound-display.is-playing {
+.sound-display.sound-is-playing {
 
 }
 

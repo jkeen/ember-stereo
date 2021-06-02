@@ -26,6 +26,6 @@ function resolveFunction(urlsOrPromise) {
 
 export default async function resolveUrls(urlsOrPromise) {
   let urls = prepare(await Promise.resolve(resolveFunction(urlsOrPromise)));
-  debug('ember-hifi')(`given urls: ${urls.join(', ')}`);
+  debug('ember-stereo')(`given urls: ${urls.join(', ')}`);
   return urls;
 }

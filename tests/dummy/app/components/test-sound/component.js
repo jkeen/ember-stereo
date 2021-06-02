@@ -6,7 +6,7 @@ import debug from 'debug';
 import { get } from '@ember/object';
 
 export default class TestSound extends Component {
-  @service hifi;
+  @service stereo;
 
   get isLoaded() {
     return (this.sound && !this.sound.isLoading)
@@ -26,13 +26,13 @@ export default class TestSound extends Component {
 
   @action
   async loadUrl() {
-    debug('ember-hifi:test-sound')('loading url');
+    debug('ember-stereo:test-sound')('loading url');
     return this.args.url
   }
 
   @task({restartable: true, maxConcurrency: 1})
   * playSound() {
-    let { sound } = yield this.hifi.play(this.args.url, {
+    let { sound } = yield this.stereo.play(this.args.url, {
       metadata: {
         title: this.args.title,
         debug: this.args.debug
@@ -40,10 +40,10 @@ export default class TestSound extends Component {
     })
     this.sound = sound;
   }
-  
+
   @task({restartable: true, maxConcurrency: 1})
   * loadSound() {
-    let { sound } = yield this.hifi.load(this.args.url, {
+    let { sound } = yield this.stereo.load(this.args.url, {
       metadata: {
         title: this.args.title,
         debug: this.args.debug

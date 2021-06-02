@@ -27,11 +27,11 @@
   text-decoration: none;
   border-radius: 5px;
   font-size: 12px;
-  &:not(.is-loading):hover {
+  &:not(.sound-is-loading):hover {
     background-color: #EEE;
   }
 
-  &.is-loading {
+  &.sound-is-loading {
     opacity: 0.5;
   }
 }

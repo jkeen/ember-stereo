@@ -5,7 +5,7 @@ module.exports = function(deployTarget) {
   let ENV = {
     build: {},
     git: {
-      repo: 'git@github.com:nypublicradio/ember-hifi.git'
+      repo: 'git@github.com:nypublicradio/ember-stereo.git'
     },
     'git-ci': {
       userName: 'deploy',
