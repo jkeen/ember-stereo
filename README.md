@@ -2,9 +2,9 @@
 
 ## The easy way to play audio in your ember app
 
-![Download count all time](https://img.shields.io/npm/dt/ember-stereo.svg) [![npm version](https://img.shields.io/npm/v/ember-stereo.svg?style=flat-square)](https://www.npmjs.com/package/ember-stereo) [![CircleCI](https://img.shields.io/circleci/project/github/nypublicradio/ember-stereo/master.svg?style=flat-square)](https://circleci.com/gh/nypublicradio/ember-stereo/tree/master) [![Ember Observer Score](http://emberobserver.com/badges/ember-stereo.svg)](http://emberobserver.com/addons/ember-stereo)
-[![Maintainability](https://api.codeclimate.com/v1/badges/24a53d2c7a91e15d7200/maintainability)](https://codeclimate.com/github/nypublicradio/ember-stereo/maintainability)
-[![Test Coverage](https://api.codeclimate.com/v1/badges/24a53d2c7a91e15d7200/test_coverage)](https://codeclimate.com/github/nypublicradio/ember-stereo/test_coverage)
+![Download count all time](https://img.shields.io/npm/dt/ember-stereo.svg) [![npm version](https://img.shields.io/npm/v/ember-stereo.svg?style=flat-square)](https://www.npmjs.com/package/ember-stereo) [![CircleCI](https://img.shields.io/circleci/project/github/nypublicradio/ember-stereo/master.svg?style=flat-square)](https://circleci.com/gh/jkeen/ember-stereo/tree/master) [![Ember Observer Score](http://emberobserver.com/badges/ember-stereo.svg)](http://emberobserver.com/addons/ember-stereo)
+[![Maintainability](https://api.codeclimate.com/v1/badges/24a53d2c7a91e15d7200/maintainability)](https://codeclimate.com/github/jkeen/ember-stereo/maintainability)
+[![Test Coverage](https://api.codeclimate.com/v1/badges/24a53d2c7a91e15d7200/test_coverage)](https://codeclimate.com/github/jkeen/ember-stereo/test_coverage)
 
 This addon exposes a `stereo` service which produces `Sound` objects which represent a playable piece of audio.
 
@@ -19,13 +19,98 @@ The `stereo` service makes it easy to play audio in the unfriendly landscape tha
 npm install ember-stereo
 ```
 
-### Upgrading from < 1.11.0
-`ember-stereo` no longer adds bower dependencies. If you are upgrading, you should edit your app's `bower.json` to remove the `hls.js` and `howler.js` entries added by previous versions of `ember-stereo`. NPM's dependency graph will take care of installing these libraries, and they will be added to your app's vendor tree at build time. Thanks to [@gmurphey](https://github.com/gmurphey) for [#41](https://github.com/nypublicradio/ember-stereo/pull/41).
+### Upgrading from `ember-hifi`
 
 ## Usage
 
 
 ### API
+
+#### Template Helpers
+`ember-stereo` includes many template helpers for interacting with audio files
+
+
+##### Actions
+
+- `play-sound`
+
+```hbs
+  <button type="button" class="button is-link" {{on 'click' (play-sound @url)}}>Play</button>
+```
+
+- `load-sound`
+```hbs
+  <button type="button" class="button is-link" {{on 'click' (load-sound @url)}}>Play</button>
+```
+- `pause-sound`
+```hbs
+  <button type="button" class="button is-link" {{on 'click' (pause-sound @url)}}>Pause</button>
+```
+- `fastforward-sound`
+```hbs
+<button type="button" class="button is-link" {{on 'click' (fastforward-sound @url increment=5000)}}>Fast Forward</button>
+```
+- `rewind-sound`
+```hbs
+<button type="button" class="button is-link" {{on 'click' (rewind-sound @url increment=5000)}}>Rewind</button>
+```
+
+##### Conditionals
+- `sound-is-errored`
+
+```hbs
+  {{#if (sound-is-errored @url)}}
+    {{sound-error-details @url}}
+  {{/if}}
+```
+
+- `sound-is-fastforwardable`
+
+```hbs
+  {{#if (sound-is-fastforwardable @url)}}
+    <button type="button" class="button is-link" {{on 'click' (fastforward-sound @url increment=5000)}}>Fast Forward</button>
+  {{/if}}
+```
+
+- `sound-is-rewindable`
+
+```hbs
+  {{#if (sound-is-rewindable @url)}}
+    <button type="button" class="button is-link" {{on 'click' (rewind-sound @url increment=5000)}}>Fast Forward</button>
+  {{/if}}
+```
+- `sound-is-rewindable`
+```hbs
+  {{#if (sound-is-loaded @url)}}
+    sound is loaded and ready to play
+  {{/if}}
+```
+
+- `sound-is-loading`
+```hbs
+  {{#if (sound-is-loading @url)}}
+    [show loading spinner]
+  {{/if}}
+```
+
+- `sound-is-playing`
+```hbs
+  {{#if (sound-is-playing @url)}}
+    <button type="button" class="button is-link" {{on 'click' (pause-sound @url)}}>Pause</button>
+  {{/if}}
+```
+##### Getters
+
+- `sound-metadata`
+
+```{{sound-metadata @url}}```
+
+- `sound-duration(@url, load=false, format=false)`
+
+```{{sound-duration @url load=true format=time}} #=> ```
+
+
+
 
 #### Service API
 `stereo` plays one sound at a time. Multiple sounds can be loaded and ready to go, but only one sound plays at a time. The currently playing sound is set to `currentSound` on the service, and most methods and properties on the service simply proxy to that sound.
@@ -41,40 +126,38 @@ npm install ember-stereo
 If the audio URLs are not known at the time of a play event, give `play` the promise to resolve, otherwise your mobile users might have to click the play button twice (due to some restrictions on autoplaying audio).
 
 ```javascript
-export default Ember.Route.extend({
-  stereo: service(),
+export default class StereoComponent extends Component {
+  @service stereo
   ...
-  actions: {
-    play(id) {
-      let urlPromise = this.store.findRecord('story', id).then(story => story.getProperties('aacUrl', 'hlsUrl'))
+  @action
+  play(id) {
+    let urlPromise = this.store.findRecord('story', id).then(story => story.getProperties('aacUrl', 'hlsUrl'))
 
-      this.stereo.play(urlPromise).then(({sound}) => {
-        // sound object
+    this.stereo.play(urlPromise).then(({sound}) => {
+      // sound object
 
-      }).catch(error => {
+    }).catch(error => {
 
-      })
-    }
+    })
   }
-});
+} 
 ```
 If you already know the URLs, just pass them in.
 
 ```javascript
-export default Ember.Route.extend({
-  stereo: service(),
+export default class StereoComponent extends Component {
+  @service stereo
   ...
-  actions: {
-    play(urls) {
-      this.stereo.play(urls).then(({sound}) => {
-        // sound object
+  @action
+  play(urls) {
+    this.stereo.play(urls).then(({sound}) => {
+      // sound object
 
-      }).catch(error => {
+    }).catch(error => {
 
-      })
-    }
+    })
   }
-});
+} 
 ```
 
 - `pause()`

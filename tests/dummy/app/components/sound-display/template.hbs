@@ -59,7 +59,7 @@
       </button>
 
       {{#if (sound-is-fastforwardable @sound.url)}}
-      <button type="button" class="sound-control-button-item" {{on 'click' (fast-forward-sound @sound.url
+      <button type="button" class="sound-control-button-item" {{on 'click' (fastforward-sound @sound.url
         increment=5000)}}>
         <FaIcon @icon="forward" />
       </button>
