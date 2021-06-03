@@ -33,7 +33,6 @@ npm install ember-stereo
 ##### Actions
 
 - `play-sound`
-
 ```hbs
   <button type="button" class="button is-link" {{on 'click' (play-sound @url)}}>Play</button>
 ```
@@ -42,17 +41,25 @@ npm install ember-stereo
 ```hbs
   <button type="button" class="button is-link" {{on 'click' (load-sound @url)}}>Play</button>
 ```
+
 - `pause-sound`
 ```hbs
   <button type="button" class="button is-link" {{on 'click' (pause-sound @url)}}>Pause</button>
 ```
+
 - `fastforward-sound`
 ```hbs
 <button type="button" class="button is-link" {{on 'click' (fastforward-sound @url increment=5000)}}>Fast Forward</button>
 ```
+
 - `rewind-sound`
 ```hbs
 <button type="button" class="button is-link" {{on 'click' (rewind-sound @url increment=5000)}}>Rewind</button>
+```
+
+- `toggle-play-sound`
+```hbs
+<button type="button" class="button is-link" {{on 'click' (toggle-play-sound @url)}}>Play/Pause</button>
 ```
 
 ##### Conditionals
@@ -79,7 +86,7 @@ npm install ember-stereo
     <button type="button" class="button is-link" {{on 'click' (rewind-sound @url increment=5000)}}>Fast Forward</button>
   {{/if}}
 ```
-- `sound-is-rewindable`
+- `sound-is-loaded`
 ```hbs
   {{#if (sound-is-loaded @url)}}
     sound is loaded and ready to play
@@ -99,16 +106,25 @@ npm install ember-stereo
     <button type="button" class="button is-link" {{on 'click' (pause-sound @url)}}>Pause</button>
   {{/if}}
 ```
+```
+
 ##### Getters
 
 - `sound-metadata`
-
-```{{sound-metadata @url}}```
+```hbs
+  {{sound-metadata @url}}
+```
 
 - `sound-duration(@url, load=false, format=false)`
+```hbs
+  {{sound-duration @url load=true format=time}}
+```
 
-```{{sound-duration @url load=true format=time}} #=> ```
-
+- `sound-position(@url, format=false defaultValue=0)`
+```hbs
+  {{sound-position @url format=percentage}} #=> 12
+  {{sound-position @url format=time}} #=> 00:20
+```
 
 
 
