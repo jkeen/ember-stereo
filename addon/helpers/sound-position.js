@@ -4,6 +4,7 @@ import hasEqualUrls from 'ember-stereo/-private/utils/has-equal-urls';
 import {numericDuration} from 'ember-stereo/helpers/numeric-duration';
 import debug from 'debug';
 import {tracked} from '@glimmer/tracking';
+import { dedupeTracked } from 'tracked-toolbox'
 
 /**
   A helper to get a sound's position.
@@ -19,7 +20,7 @@ import {tracked} from '@glimmer/tracking';
 
 export default class soundPosition extends Helper {
   @service stereo;
-  sound;
+  @dedupeTracked sound;
   @tracked result;
 
   default = 0

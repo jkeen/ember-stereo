@@ -40,7 +40,6 @@ export default class Volume extends Component {
     let existingChange = parseInt((this.dragAdjustment / width) * 100, 10);
     let newChange = change - existingChange
 
-
     this.stereo.volume = Math.max(Math.min(this.stereo.volume + newChange, 100), 0);
     this.dragAdjustment = deltaX;
   }

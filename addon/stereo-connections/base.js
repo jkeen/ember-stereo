@@ -112,6 +112,10 @@ export default class Sound extends Evented {
     return !this.isStream;
   }
 
+  get isSeekable() {
+    return !this.isStream;
+  }
+
   // _position is updated by the service on the currently playing sound
   get position() {
     return this._position;

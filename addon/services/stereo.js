@@ -128,6 +128,10 @@ export default class Stereo extends Service.extend(EmberEvented) {
     return this.currentSound?.isStream;
   }
 
+  get isSeekable() {
+    return this.currentSound?.isFastForwardable || this.currentSound?.isRewindable;
+  }
+
   get isFastForwardable() {
     return this.currentSound?.isFastForwardable;
   }

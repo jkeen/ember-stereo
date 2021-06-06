@@ -6,6 +6,7 @@ export default class togglePlaySound extends Helper {
 
   compute([compare], { options = {}, metadata = {} }) {
     return () => {
+
       if (!compare) {
         this.stereo.togglePause();
       } else {

@@ -2,33 +2,6 @@
 
 The following examples all use the following URL <a href={{this.onDemandUrl}}>{{this.onDemandUrl}}</a>
 
-<DocsDemo as |demo|>
-  <demo.example @name="stereo-helpers.hbs">
-    <button type="button" {{on 'click' (toggle-play-sound this.onDemandUrl)}}>
-      {{#if (sound-is-playing this.onDemandUrl)}}
-        Pause
-      {{else if (sound-is-loading this.onDemandUrl)}}
-        Loading
-      {{else}}
-        Play
-      {{/if}}
-    </button>
-
-    {{stereo-error-details this.onDemandUrl}}
-
-    <button type="button" {{on 'click' (load-sound this.onDemandUrl)}}>
-      {{#if (sound-is-loaded this.onDemandUrl)}}
-        Loaded
-      {{else if (sound-is-loading this.onDemandUrl)}}
-        Loaded
-      {{else}}
-        Load
-      {{/if}}
-    </button>
-  </demo.example>
-  {{demo.snippet "stereo-helpers.hbs"}}
-  {{demo.snippet "application-controller.js"}}
-</DocsDemo>
 
 
 
@@ -54,7 +27,7 @@ Different browsers support different audio formats, so stereo lets you try multi
       {{/if}}
     </button>
 
-    {{stereo-error-details urls}}
+    {{sound-error-details urls}}
 
     <button type="button" {{on 'click' (load-sound urls)}}>
       {{#if (sound-is-loaded urls)}}

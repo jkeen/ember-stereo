@@ -7,6 +7,14 @@ var mergeTrees = require('broccoli-merge-trees'); //eslint-disable-line
 
 module.exports = {
   name: 'ember-stereo',
+  options: {
+    svgJar: {
+      sourceDirs: [
+        'public',
+        'tests/dummy/public/assets/images/',
+      ],
+    },
+  },
 
   included(app, parentAddon) {
     this._super.included.apply(this, arguments);
