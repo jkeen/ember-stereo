@@ -24,7 +24,7 @@ export default class PlaySound extends Helper {
   compute([urls], options = {}, metadata = {}) {
     return () => {
       return this.stereo
-        .play(urls, prepareOptions(options, metadata))
+        .play(urls, prepareOptions({options, metadata}))
         .then((result) => result.sound);
     };
   }

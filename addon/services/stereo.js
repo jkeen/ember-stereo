@@ -55,15 +55,13 @@ export const SERVICE_EVENT_MAP = [
 export default class Stereo extends Service.extend(EmberEvented) {
   @service poll;
 
+  /** currently loaded {Sound} object
+   * @property currentSound
+   * @type {Sound}
+   * @public
+  */
   @tracked currentSound = null;
   @tracked errorCache = null;
-
-  /**
-   * When the Service is created, activate connections that were specified in the
-   * configuration. This config is injected into the Service as `options`.
-   *
-   * @method init
-   */
 
   init() {
     const owner = getOwner(this);
@@ -96,71 +94,112 @@ export default class Stereo extends Service.extend(EmberEvented) {
     super.init(...arguments);
   }
 
-  get isMobileDevice() {
-    return this._isMobileDevice || 'ontouchstart' in window;
-  }
-  set isMobileDevice(v) {
-    this._isMobileDevice = v;
-    return v;
-  }
-
-  get useSharedAudioAccess() {
-    return this.isMobileDevice || this.alwaysUseSingleAudioElement;
-  }
-
-  get id3TagMetadata() {
-    return this.currentSound?.id3TagMetadata;
-  }
-
-  get currentMetadata() {
-    return this.currentSound?.metadata;
-  }
-
+  /**
+    * is the current sound playing
+    * @property isPlaying
+    * @type {Boolean}
+    * @readOnly
+    * @public
+  */
   get isPlaying() {
     return this.currentSound?.isPlaying || false;
   }
 
-  get soundIsLoading() {
+  /**
+    * is a sound loading?
+    * @property isLoading
+    * @type {Boolean}
+    * @readOnly
+    * @public
+  */
+  get isLoading() {
     return this.loadTask.isRunning;
   }
 
+  /**
+    * Current metadata object of the current sound. Use `{{sound-metadata}}` helper in templates
+    * @property currentMetadata
+    * @type {Object}
+    * @readOnly
+    * @public
+  */
+  get currentMetadata() {
+    return this.currentSound?.metadata;
+  }
+
+  /**
+    * is the current sound a stream?
+    * @property isStream
+    * @type {Boolean}
+    * @readOnly
+    * @public
+  */
   get isStream() {
     return this.currentSound?.isStream;
   }
 
+  /**
+    * is the current sound fastforwardable?
+    * @property isSeekable
+    * @type {Boolean}
+    * @readOnly
+    * @public
+  */
   get isSeekable() {
     return this.currentSound?.isFastForwardable || this.currentSound?.isRewindable;
   }
 
+  /**
+  * is the current sound fastforwardable?
+  * @property isFastForwardable
+  * @type {Boolean}
+  * @readOnly
+  * @public
+  */
   get isFastForwardable() {
     return this.currentSound?.isFastForwardable;
   }
 
+  /**
+    * is the current sound rewindable?
+    * @property isRewindable
+    * @type {Boolean}
+    * @readOnly
+    * @public
+  */
   get isRewindable() {
     return this.currentSound?.isRewindable;
   }
 
-  get isMuted() {
-    return this.volume === 0;
-  }
-
+  /**
+    * Duration of current sound in milliseconds. Use `{{numeric-duration}}` to convert, or the `{{sound-duration url format=time}}` template helper
+    * @property duration
+    * @type {Float}
+    * @readOnly
+    * @public
+  */
   get duration() {
     return this.currentSound?.duration;
   }
 
+  /**
+    * Percent loaded of current sound
+    * @property percentLoaded
+    * @type {Float}
+    * @readOnly
+    * @public
+  */
   get percentLoaded() {
     return this.currentSound?.percentLoaded;
   }
 
-  get pollInterval() {
-    return (
-      this._pollInterval || get(this, 'options.emberStereo.positionInterval')
-    );
-  }
-  set pollInterval(p) {
-    this._pollInterval = p;
-  }
-
+  /**
+     * Get/set the current sound position
+    *
+    * @property position
+    * @type {Float}
+    * @public
+  */
   get position() {
     return this.currentSound?.position;
   }
@@ -168,6 +207,13 @@ export default class Stereo extends Service.extend(EmberEvented) {
     this.currentSound.position = v;
   }
 
+  /**
+   * Get/set the system volume, 0-100
+   *
+   * @property volume
+   * @type {Integer}
+
+  */
   @tracked _volume = this.defaultVolume;
   get volume() {
     return this._volume;
@@ -183,12 +229,49 @@ export default class Stereo extends Service.extend(EmberEvented) {
   }
 
   /**
+   * Get/set if hifi should treat this as a mobile device
+   *
+   * @property isMobileDevice
+   * @type {Boolean}
+
+  */
+  get isMobileDevice() {
+    return this._isMobileDevice || 'ontouchstart' in window;
+  }
+  set isMobileDevice(v) {
+    this._isMobileDevice = v;
+    return v;
+  }
+
+  /**
+   * get if hifi should use a shared audio element
+   *
+   * @property useSharedAudioAccess
+   * @type {Boolean}
+
+  */
+  get useSharedAudioAccess() {
+    return this.isMobileDevice || this.alwaysUseSingleAudioElement;
+  }
+
+  /**
+    * is the sound muted
+    * @property isMuted
+    * @type {Boolean}
+    * @readOnly
+    * @public
+  */
+  get isMuted() {
+    return this.volume === 0;
+  }
+
+  /**
    * Toggles mute state. Sets volume to zero on mute, resets volume to the last level it was before mute, unless
    * unless the last level was zero, in which case it sets it to the default volume
    *
    * @method toggleMute
+   * @public
    */
-
   toggleMute() {
     if (this.isMuted) {
       this.volume = this.unmuteVolume;
@@ -202,96 +285,13 @@ export default class Stereo extends Service.extend(EmberEvented) {
   }
 
   /**
-   * Returns the list of activated and available connections
-   *
-   * @method loadConnections
-   * @return {Array}
-   */
-
-  loadConnections(connections = get(this, 'options.emberStereo.connections')) {
-    if (!connections) {
-      connections = emberArray(DEFAULT_CONNECTIONS);
-    }
-    this._connections = {};
-    this._activateConnections(connections);
-
-    return this;
-  }
-
-  /**
-   * Returns the list of activated and available connections
-   *
-   * @method availableConnections
-   * @return {Array}
-   */
-
-  get availableConnections() {
-    return Object.keys(this._connections);
-  }
-
-  /**
-   * Given a sound, a url, or an object with a URL property, return a sound ready for playing
-   *
-   * @method findLoaded
-   * @async
-   * @param identifier [..{Promise|String}]
-   * Provide an array of urls to try, or a promise that will resolve to an array of urls
-   * @return {Sound} A sound that's ready to be played, or an error
-   */
-
-  findLoaded(identifiers) {
-    var sound;
-
-    makeArray(identifiers).forEach((identifier) => {
-      if (!sound) {
-        if (identifier && identifier.url) {
-          sound = this.soundCache.find(identifier.url);
-        } else if (identifier) {
-          sound = this.soundCache.find(identifier.toString());
-        }
-      }
-    });
-
-    return sound;
-  }
-
-  @task
-  *waitForSuccess(strategy, sound) {
-    yield waitForProperty(sound, 'isReady');
-    debug('ember-stereo')(`SUCCESS: [${strategy.connectionName}] -> (${strategy.url})`);
-    return { sound }
-  }
-
-  @task
-  *waitForFailure(strategy, sound) {
-    yield waitForProperty(sound, 'isErrored');
-    debug('ember-stereo')(`FAILED: [${strategy.connectionName}] -> ${sound.error} (${strategy.url})`);
-    this._unregisterEvents(sound);
-
-    strategy.error = sound.error;
-    return { error: sound.error }
-  }
-
-  @task
-  *tryLoadingSound(strategy) {
-    let { connection: Sound, url, connectionName, connectionKey, sharedAudioAccess, options } = strategy
-    var newSound = new Sound({ url, connectionName, connectionKey, sharedAudioAccess, options });
-    this._registerEvents(newSound);
-
-    debug('ember-stereo')(`TRYING: [${strategy.connectionName}] -> ${strategy.url}`);
-
-    return yield race([
-      this.waitForSuccess.perform(strategy, newSound),
-      this.waitForFailure.perform(strategy, newSound)
-    ]);
-  }
-
-  /**
-   * Given an array of URLS, return a sound ready for playing
+   * Ember concurrency task: Given an array of URLS, return a sound ready for playing
    *
    * @method loadTask
    * @async
-   * @param urlsOrPromise [..{Promise|String}]
+   * @param {Array|Promise} urlsOrPromise [..{Promise|String}]
+   * @param {Object} options { metadata: {},
+   * @public
    * Provide an array of urls to try, or a promise that will resolve to an array of urls
    * @return {Sound} A sound that's ready to be played, or an error
    */
@@ -299,7 +299,6 @@ export default class Stereo extends Service.extend(EmberEvented) {
   @task({ debug: true, maxConcurrency: 5 })
   *loadTask(urlsOrPromise, options) {
     var sharedAudioAccess = this._createAndUnlockAudio();
-
     options = assign({ metadata: {}, sharedAudioAccess }, options);
 
     let urlsToTry = yield resolveUrls(urlsOrPromise);
@@ -337,47 +336,13 @@ export default class Stereo extends Service.extend(EmberEvented) {
     }
   }
 
-  _handleLoadFailure({urlsToTry, failures}) {
-    let nativeAudioFailure = failures.find(f => f.connectionKey == 'NativeAudio')
-    let errorMessage = ""
-    if (nativeAudioFailure) {
-      errorMessage = nativeAudioFailure.error;
-    }
-    else {
-      errorMessage = failures.map(f => f.error).filter(f => f.toString().length > 0)[0]
-    }
-
-    this.trigger('audio-load-error', { sound: { url: urlsToTry }, failures: failures, error: errorMessage })
-  }
-
-  _handleLoadSuccess({sound, options}) {
-    sound.on('audio-played', ({sound}) => {
-      let previousSound = this.currentSound;
-      let currentSound  = sound;
-
-      if (previousSound !== currentSound) {
-        if (previousSound && get(previousSound, 'isPlaying')) {
-          this.trigger('current-sound-interrupted', {sound: previousSound});
-        }
-        this.trigger('current-sound-changed', {sound: currentSound, previousSound});
-        this.setCurrentSound(sound);
-      }
-    })
-    // set current sound metadata
-    sound.metadata = options.metadata
-    this.soundCache.cache(sound);
-
-    // On audio-played this pauses all the other sounds. One at a time!
-    this.oneAtATime.register(sound)
-  }
-
   /**
    * Given an array of URLS, return a sound ready for playing
    *
    * @method load
    * @async
-   * @param urlsOrPromise [..{Promise|String}]
-   * Provide an array of urls to try, or a promise that will resolve to an array of urls
+   * @public
+   * @param {Array|Promise} urlsOrPromise An array of urls or a promise that will resolve to an array of urls
    * @return {Sound} A sound that's ready to be played, or an error
    */
 
@@ -401,10 +366,10 @@ export default class Stereo extends Service.extend(EmberEvented) {
   /**
    * Given an array of URLs, return a sound and play it.
    *
-   * @method playTass
+   * @method playTask
    * @async
-   * @param urlsOrPromise [..{Promise|String}]
-   * Provide an array of urls to try, or a promise that will resolve to an array of urls
+   * @public
+   * @param {Array|Promise} urlsOrPromise An array of urls or a promise that will resolve to an array of urls
    * @return {Sound, failures} A sound that's playing, or an error
    */
 
@@ -415,6 +380,8 @@ export default class Stereo extends Service.extend(EmberEvented) {
       this.pause();
     }
 
+
+    options = assign({ metadata: {} }, options);
     let loadPromise = this.loadTask.perform(urlsOrPromise, options);
     this.trigger('new-load-request', {loadPromise, urlsOrPromise, options});
 
@@ -450,8 +417,7 @@ export default class Stereo extends Service.extend(EmberEvented) {
    *
    * @method play
    * @async
-   * @param urlsOrPromise [..{Promise|String}]
-   * Provide an array of urls to try, or a promise that will resolve to an array of urls
+   * @param {Array|Promise} urlsOrPromise Provide an array of urls to try, or a promise that will resolve to an array of urls
    * @return {Sound} A sound that's playing, or an error
    */
 
@@ -471,6 +437,7 @@ export default class Stereo extends Service.extend(EmberEvented) {
    * Pauses the current sound
    *
    * @method pause
+   * @public
    */
 
   pause() {
@@ -482,6 +449,7 @@ export default class Stereo extends Service.extend(EmberEvented) {
    * Stops the current sound
    *
    * @method stop
+   * @public
    */
 
   stop() {
@@ -493,6 +461,7 @@ export default class Stereo extends Service.extend(EmberEvented) {
    * Toggles play/pause state of the current sound
    *
    * @method togglePause
+   * @public
    */
 
   togglePause() {
@@ -509,6 +478,7 @@ export default class Stereo extends Service.extend(EmberEvented) {
    * Fast forwards current sound if able
    *
    * @method fastForward
+   * @public
    * @param {Integer} duration in ms
    */
 
@@ -521,6 +491,7 @@ export default class Stereo extends Service.extend(EmberEvented) {
    * Rewinds current sound if able
    *
    * @method rewind
+   * @public
    * @param {Integer} duration in ms
    */
 
@@ -529,16 +500,51 @@ export default class Stereo extends Service.extend(EmberEvented) {
     this.currentSound.rewind(duration);
   }
 
+  /* ------------------------ PRIVATE(ISH) STUFF ------------------------------ */
+  /* -------------------------------------------------------------------------- */
+  /* -------------------------------------------------------------------------- */
+
+
+  _handleLoadFailure({ urlsToTry, failures }) {
+    let nativeAudioFailure = failures.find(f => f.connectionKey == 'NativeAudio')
+    let errorMessage = ""
+    if (nativeAudioFailure) {
+      errorMessage = nativeAudioFailure.error;
+    }
+    else {
+      errorMessage = failures.map(f => f.error).filter(f => f.toString().length > 0)[0]
+    }
+
+    this.trigger('audio-load-error', { sound: { url: urlsToTry }, failures: failures, error: errorMessage })
+  }
+
+  _handleLoadSuccess({ sound, options }) {
+    sound.on('audio-played', ({ sound }) => {
+      let previousSound = this.currentSound;
+      let currentSound = sound;
+
+      if (previousSound !== currentSound) {
+        if (previousSound && get(previousSound, 'isPlaying')) {
+          this.trigger('current-sound-interrupted', { sound: previousSound });
+        }
+        this.trigger('current-sound-changed', { sound: currentSound, previousSound });
+        this._setCurrentSound(sound);
+      }
+    })
+    // set current sound metadata
+    sound.metadata = options.metadata
+    this.soundCache.cache(sound);
+
+    // On audio-played this pauses all the other sounds. One at a time!
+    this.oneAtATime.register(sound)
+  }
+
   /**
    * Set the current sound and wire up all the events the sound fires so they
    * trigger through the service, remove the ones on the previous current sound,
    * and set the new current sound to the system volume
-   *
-   * @method setCurrentSound
-   * @param {Sound} sound
    */
-
-  setCurrentSound(sound) {
+  _setCurrentSound(sound) {
     if (this.isDestroyed || this.isDestroying) {
       return; // should use ember-concurrency to cancel any pending promises in willDestroy
     }
@@ -549,14 +555,128 @@ export default class Stereo extends Service.extend(EmberEvented) {
     debug('ember-stereo')(`setting current sound -> ${sound.url}`);
   }
 
-  /* ------------------------ PRIVATE(ISH) METHODS ---------------------------- */
-  /* -------------------------------------------------------------------------- */
-  /* -------------------------------------------------------------------------- */
+  /**
+   * Loads stereo connections
+   *
+   * @method loadConnections
+   * @param {Array} connections an array of connection objects
+   * @private
+   * @return {Array}
+   */
+
+  loadConnections(connections = get(this, 'options.emberStereo.connections')) {
+    if (!connections) {
+      connections = emberArray(DEFAULT_CONNECTIONS);
+    }
+    this._connections = {};
+    this._activateConnections(connections);
+
+    return this;
+  }
+
+  /**
+   * Returns the list of activated and available connections
+   *
+   * @property connections
+   * @type {Array}
+   * @private
+   */
+
+  get connections() {
+    return Object.keys(this._connections);
+  }
+
+  /**
+   * Given a sound, a url, or an object with a URL property, return a sound ready for playing
+   *
+   * @method findLoaded
+   * @async
+   * @param {Array} identifiers [..{Promise|String}]
+   * @private
+   * @return {Sound} A sound that's ready to be played, or an error
+  */
+
+  findLoaded(identifiers) {
+    var sound;
+
+    makeArray(identifiers).forEach((identifier) => {
+      if (!sound) {
+        if (identifier && identifier.url) {
+          sound = this.soundCache.find(identifier.url);
+        } else if (identifier) {
+          sound = this.soundCache.find(identifier.toString());
+        }
+      }
+    });
+
+    return sound;
+  }
+
+  /**
+  * Wait for sound to succeed
+  *
+  * @method waitForSuccess
+  * @private
+  * @param {Object} strategy a connection strategy object
+  * @param {Sound} sound a sound object to play
+  * @async
+  * @return {Object} { sound }
+  **/
+  @task
+  *waitForSuccess(strategy, sound) {
+    yield waitForProperty(sound, 'isReady');
+    debug('ember-stereo')(`SUCCESS: [${strategy.connectionName}] -> (${strategy.url})`);
+    return { sound }
+  }
+
+  /**
+  * Wait for sound to succeed
+  *
+  * @method waitForSuccess
+  * @private
+  * @param {Object} strategy a connection strategy object
+  * @param {Sound} sound a sound object to play
+  * @async
+  * @return {Object} { error }
+  **/
+  @task
+  *waitForFailure(strategy, sound) {
+    yield waitForProperty(sound, 'isErrored');
+    debug('ember-stereo')(`FAILED: [${strategy.connectionName}] -> ${sound.error} (${strategy.url})`);
+    this._unregisterEvents(sound);
+
+    strategy.error = sound.error;
+    return { error: sound.error }
+  }
+
+  /**
+    * Try loading sound
+    *
+    * @method tryLoadingSound
+    * @private
+    * @param {Object} strategy a connection strategy object
+    * @return {Object} { sound } or { error }
+  **/
+  @task
+  *tryLoadingSound(strategy) {
+    let { connection: Sound, url, connectionName, connectionKey, sharedAudioAccess, options } = strategy
+    var newSound = new Sound({ url, connectionName, connectionKey, sharedAudioAccess, options });
+    this._registerEvents(newSound);
+
+    debug('ember-stereo')(`TRYING: [${strategy.connectionName}] -> ${strategy.url}`);
+
+    return yield race([
+      this.waitForSuccess.perform(strategy, newSound),
+      this.waitForFailure.perform(strategy, newSound)
+    ]);
+  }
 
   /**
    * Prepares the strategies to attempt to play the sound
    *
    * @method _prepareAllStrategies
+   * @param {Array} urlsToTry array of urls to try loading
+   * @param {Object} options options object
    * @private
    */
 
@@ -594,7 +714,7 @@ export default class Stereo extends Service.extend(EmberEvented) {
    * Sets the current sound with its current position, so the sound doesn't have
    * to deal with timers. The service runs the show.
    *
-   * @method _setCurrentSoundForPosition
+   * @method _setCurrentPosition
    * @private
    */
 
@@ -661,7 +781,7 @@ export default class Stereo extends Service.extend(EmberEvented) {
   /**
    * Relays an audio event on the sound to an event on the service
    *
-   * @method relayEvent
+   * @method _relayEvent
    * @param {String, Object} eventName, sound
    * @private
    */
@@ -677,6 +797,10 @@ export default class Stereo extends Service.extend(EmberEvented) {
     Named functions so Ember Evented can successfully register/unregister them
   */
 
+  /**
+   * Fired when audio is played
+   * @event 'audio-played'
+   */
   _relayPlayedEvent(info) {
     this._relayEvent('audio-played', info);
   }
@@ -762,7 +886,7 @@ export default class Stereo extends Service.extend(EmberEvented) {
    * connections over the addon's connections.
    *
    * @method _lookupConnection
-   * @param {string} connectionName
+   * @param {String} connectionName
    * @private
    * @return {Connection} a local connection or a connection from the addon
    */
@@ -845,7 +969,7 @@ export default class Stereo extends Service.extend(EmberEvented) {
   _prepareStandardStrategies(urlsToTry, options) {
     return this._prepareStrategies(
       urlsToTry,
-      this.availableConnections,
+      this.connections,
       options
     );
   }
@@ -913,13 +1037,12 @@ export default class Stereo extends Service.extend(EmberEvented) {
    * Attempts to play the sound after a load, which in certain cases can fail on mobile
    * @method _attemptToPlaySoundOnMobile
    * @param {Sound} sound
-   * @param {Sound} sound
-   * @param {Sound} sound
+   * @param {Object} options
    * @private
    */
 
   _attemptToPlaySound(sound, options) {
-    if (this.isMobileDevice) {
+    // if (this.isMobileDevice) {
       let touchPlay = () => {
         debug('ember-stereo')(`triggering sound play from document touch`);
         sound.play();
@@ -937,7 +1060,7 @@ export default class Stereo extends Service.extend(EmberEvented) {
         document.removeEventListener('touchstart', touchPlay);
         cancel(blockCheck);
       });
-    }
+    // }
     sound.play(options);
   }
 }

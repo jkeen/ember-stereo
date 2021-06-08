@@ -1,0 +1,18 @@
+<DocsDemo as |demo|>
+  <demo.example @name="stereo-simple.hbs" style="display: grid; grid-auto-flow: column;" class="demo-sound-display">
+    {{#let "https://streaming.koop.org/stream.mp3" as |url|}}
+    <button type="button" {{on 'click' (toggle-play-sound url)}}>
+      {{#if (sound-is-playing url)}}
+        {{svg-jar "pause-outline" height=20 width=30 title="Pause"}}
+      {{else if (sound-is-loaded url)}}
+        {{svg-jar "resume-outline" height=20 width=30 title="Pause"}}
+      {{else if (sound-is-loading url)}}
+        {{svg-jar "loading-outline" height=20 width=30 title="Loading" class="icon-spin"}}
+      {{else}}
+        {{svg-jar "play-outline" height=20 width=30 title="Play"}}
+      {{/if}}
+    </button>
+    {{/let}}
+  </demo.example>
+  {{demo.snippet "stereo-simple.hbs"}}
+</DocsDemo>

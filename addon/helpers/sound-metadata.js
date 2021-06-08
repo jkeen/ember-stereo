@@ -17,7 +17,7 @@ A helper to detect if a sound is playing.
 */
 
 
-export default class soundMetadata extends StereoBaseIsHelper {
+export default class SoundMetadata extends StereoBaseIsHelper {
   @dedupeTracked metadata = {};
 
   get result() {
@@ -36,7 +36,5 @@ export default class soundMetadata extends StereoBaseIsHelper {
     else if (!this.options?.key && this.metadata) {
       return this.metadata;
     }
-
-    return this.metadata
   }
 }

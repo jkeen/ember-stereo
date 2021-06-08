@@ -79,4 +79,26 @@ module('Integration | Helper | sound-is-loading', function(hooks) {
     });
     assert.equal(this.element.textContent.trim(), 'sound-is-loading', 'helper reports not loading when finished');
   });
+
+  test('it renders system loading status', async function (assert) {
+    let done = assert.async();
+    let service = this.owner.lookup('service:stereo')
+    service.loadConnections([{ name: 'DummyConnection' }]);
+    this.set('url', '/good/3/silence.mp3')
+
+    await render(hbs`{{#if (sound-is-loading)}}sound-is-loading{{else}}is-not-loading{{/if}}`);
+    assert.equal(this.element.textContent.trim(), 'is-not-loading', 'helper reports not loading');
+
+    service.load(this.url).then(async () => {
+      await waitUntil(() => {
+        return this.element.textContent.trim() == 'is-not-loading'
+      }, { timeout: 5000 });
+      assert.equal(this.element.textContent.trim(), 'is-not-loading', 'helper reports loading');
+      done();
+    });
+    await waitUntil(() => {
+      return this.element.textContent.trim() == 'sound-is-loading'
+    });
+    assert.equal(this.element.textContent.trim(), 'sound-is-loading', 'helper reports not loading when finished');
+  });
 });

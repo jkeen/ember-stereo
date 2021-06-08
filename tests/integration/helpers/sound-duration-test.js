@@ -33,6 +33,15 @@ module('Integration | Helper | sound-duration', function (hooks) {
 
     assert.equal(this.element.textContent.trim(), '');
   });
+  test('it renders placeholder if not loaded and formatted time', async function (assert) {
+    let service = this.owner.lookup('service:stereo');
+    service.loadConnections([{ name: 'DummyConnection' }]);
+    this.url = '/good/10/silence.mp3';
+    await render(hbs`{{sound-duration this.url format='time'}}`);
+
+    assert.equal(this.element.textContent.trim(), '--:--');
+  });
+
 
   test('it renders infinity if stream', async function (assert) {
     let service = this.owner.lookup('service:stereo');

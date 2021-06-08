@@ -14,7 +14,7 @@ import Helper from '@ember/component/helper';
   @param {String} increment
 */
 
-export default class fastForwardSound extends Helper {
+export default class FastForwardSound extends Helper {
   @service stereo;
 
   /**

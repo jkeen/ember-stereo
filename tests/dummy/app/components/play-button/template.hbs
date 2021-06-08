@@ -1,14 +1,15 @@
 <button class="play-sound-button" type="button" {{on 'click' (toggle-play-sound @url metadata=@metadata)}}>
   <div class="play-sound-button-bg"></div>
   {{#if (sound-is-errored @url)}}
-    <FaIcon @icon="bomb" @size="2x"/>
+    {{svg-jar "bomb-outline" class="stereo-icon" height="48" width="48"}}
   {{else if (sound-is-playing @url)}}
-    <FaIcon @icon="pause" @size="2x"/>
+    {{svg-jar "pause-outline" class="stereo-icon" height="48" width="48"}}
   {{!-- {{else if (sound-is-playing-elsewhere @url)}}
-    <FaIcon @icon="pause" @size="2x"/> --}}
+        {{svg-jar "pause-outline" class="stereo-icon" height="48" width="48"}}
+ --}}
   {{else if (sound-is-loading @url)}}
-    <FaIcon @icon="circle-notch" @size="2x" class="icon-spin"/>
+    {{svg-jar "loading-outline" class="stereo-icon icon-spin" height="48" width="48"}}
   {{else}}
-    <FaIcon @icon="play" @size="2x"/>
+    {{svg-jar "play-outline" class="stereo-icon" height="48" width="48"}}
   {{/if}}
 </button>

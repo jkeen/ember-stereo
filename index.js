@@ -85,7 +85,6 @@ module.exports = {
       // Default
       this.stereoConnections = ["NativeAudio", "HLS", "Howler"]
     }
-
   },
 
   isDevelopingAddon: function() {

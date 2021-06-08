@@ -9,8 +9,11 @@ import { dedupeTracked } from 'tracked-toolbox'
 /**
   A helper to get a sound's position.
   ```hbs
-   {{sound-position this.url}}</p>
-  ```
+   {{sound-position this.url}} #=> 144000
+   {{sound-position this.url format="time"}} #=> "02:24"
+   {{sound-position this.url format="percent"}} #=> "56"
+
+   ```
 
   @class soundPosition
   @type Helper

@@ -14,7 +14,7 @@ export default class togglePlaySound extends Helper {
         if (sound) {
           return sound.togglePause();
         } else {
-          return this.stereo.play(compare, prepareOptions(options, metadata));
+          return this.stereo.play(compare, prepareOptions({options, metadata}));
         }
       }
     };

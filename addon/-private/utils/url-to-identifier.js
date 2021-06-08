@@ -7,5 +7,5 @@ export default function urlToIdentifier(url) {
   let parser1 = document.createElement('a');
   parser1.href = url;
 
-  return parser1.href;
+  return parser1.origin + parser1.pathname; // don't use search string as part of the identifer
 }

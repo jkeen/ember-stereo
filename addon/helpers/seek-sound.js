@@ -5,7 +5,7 @@ import prepareOptions from "ember-stereo/-private/utils/prepare-options";
 /**
   A helper to load a sound
   ```hbs
-    <button {{on 'click' (play-sound this.url)}}>
+    <button {{on 'click' (seek-sound this.url 20 unit=percentage)}}>
       Play
     </button>
   ```

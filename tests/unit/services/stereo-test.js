@@ -37,7 +37,7 @@ module('Unit | Service | stereo', function(hooks) {
 
   test('it returns a list of the available connections', function(assert) {
     const service = this.owner.lookup('service:stereo').loadConnections(['Howler', 'NativeAudio', 'DummyConnection'])
-    assert.deepEqual(service.availableConnections, ["Howler", "NativeAudio", "DummyConnection"]);
+    assert.deepEqual(service.connections, ["Howler", "NativeAudio", "DummyConnection"]);
   });
 
   test('#load tries the first connection that says it can handle the url', async function(assert) {
@@ -131,7 +131,7 @@ module('Unit | Service | stereo', function(hooks) {
     assert.equal(service.currentSound?.url, sound2.url, "sound2 should be set as current sound");
   });
 
-  test('Calling setCurrentSound multiple times will not register duplicate events on the sound', async function(assert) {
+  test('Calling _setCurrentSound multiple times will not register duplicate events on the sound', async function(assert) {
     assert.expect(2);
     let service = this.owner.lookup('service:stereo').loadConnections([{ name: 'DummyConnection' }]);
 
@@ -148,10 +148,10 @@ module('Unit | Service | stereo', function(hooks) {
     }, { timeout: 5000 });
 
     assert.equal(callCount, 1, "ended event should have been fired once");
-    service.setCurrentSound(sound);
-    service.setCurrentSound(sound);
-    service.setCurrentSound(sound);
-    service.setCurrentSound(sound);
+    service._setCurrentSound(sound);
+    service._setCurrentSound(sound);
+    service._setCurrentSound(sound);
+    service._setCurrentSound(sound);
     sound.trigger('audio-ended');
     await waitUntil(() => {
       return callCount == 2
@@ -221,13 +221,13 @@ module('Unit | Service | stereo', function(hooks) {
     assert.equal(spy1.callCount, 0, "sound 1 should not have been polled yet");
     assert.equal(spy2.callCount, 0, "sound 1 should not have been polled yet");
     service.set('pollInterval', INTERVAL);
-    service.setCurrentSound(sound1);
+    service._setCurrentSound(sound1);
 
     this.clock.tick(INTERVAL * 4);
 
     assert.equal(spy1.callCount, 4, "sound 1 should have been polled 4 times");
     assert.equal(spy2.callCount, 0, "sound 2 should not have been polled yet");
-    service.setCurrentSound(sound2);
+    service._setCurrentSound(sound2);
 
     this.clock.tick(INTERVAL * 2);
 
@@ -253,11 +253,11 @@ module('Unit | Service | stereo', function(hooks) {
 
     assert.equal(spy1.callCount, 0, "volume should not be set");
 
-    service.setCurrentSound(sound1);
+    service._setCurrentSound(sound1);
 
     assert.ok(spy1.withArgs(defaultVolume).calledOnce, "volume on sound 1 should be set to default volume");
 
-    service.setCurrentSound(sound2);
+    service._setCurrentSound(sound2);
 
     assert.ok(spy2.withArgs(defaultVolume).calledOnce, "volume on sound 2 should be set to default volume after current sound change");
 
@@ -265,7 +265,7 @@ module('Unit | Service | stereo', function(hooks) {
 
     assert.ok(spy2.withArgs(55).calledOnce, "volume on sound 2 should be set to new system volume");
 
-    service.setCurrentSound(sound1);
+    service._setCurrentSound(sound1);
 
     assert.ok(spy1.withArgs(55).calledOnce, "volume on sound 1 should be set to new system volume after current sound change");
 
@@ -390,7 +390,7 @@ module('Unit | Service | stereo', function(hooks) {
     stubConnectionCreateWithSuccess(service, "LocalDummyConnection", sandbox);
     stubConnectionCreateWithSuccess(service, "Howler", sandbox);
 
-    service.set('isMobileDevice', true);
+    service.isMobileDevice = true
 
     await service.load(urls);
     assert.equal(strategyMethodSpy.callCount, 1, "Mobile strategy should have been used");

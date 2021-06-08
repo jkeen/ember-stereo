@@ -7,7 +7,7 @@ import { makeArray } from '@ember/array';
 /**
   A helper to display error details.
   ```hbs
-    {{stereo-error-details this.url}}
+    {{sound-error-details this.url}}
   ```
 
   @class soundErrorDetails

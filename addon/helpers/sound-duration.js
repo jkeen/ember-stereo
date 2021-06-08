@@ -77,7 +77,7 @@ export default class SoundDuration extends Helper {
         if (this.sound?.duration) {
           result = numericDuration([this.sound?.duration]);
         } else {
-          result = defaultValue || "00:00";
+          result = defaultValue || "--:--";
         }
       } else {
         result = this.sound?.duration || defaultValue;

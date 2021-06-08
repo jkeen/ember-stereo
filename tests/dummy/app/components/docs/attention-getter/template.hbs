@@ -1,0 +1,16 @@
+<DocsDemo as |demo|>
+  <demo.example @name="attention-getter.hbs" style="display: grid; grid-auto-flow: column;" class="demo-sound-display">
+    {{#let "sounds/attention.wav" as |url|}}
+    <button type="button" {{on 'click' (play-sound url )}} class="stereo-button">
+      {{#if (sound-is-playing url)}}
+        <span>{{svg-jar "pause-outline" height=16 width=16}}</span>
+      {{else}}
+        <span>{{svg-jar "play-outline" width=16 height=16}}</span>
+      {{/if}}
+      Really, it's easy
+    </button>
+    {{/let}}
+  </demo.example>
+  {{demo.snippet "attention-getter.hbs"}}
+</DocsDemo>
+

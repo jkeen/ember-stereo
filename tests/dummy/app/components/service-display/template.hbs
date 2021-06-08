@@ -15,26 +15,26 @@
 
     <div class="service-display-controls">
       <div class="service-display-buttons">
-        <button class="service-display-button-item" type="button" {{on "click" (fn (rewind-sound))}}>
-          <FaIcon @icon="backward" @size="2x" />
+        <button class="service-display-button-item" type="button" {{on "click" (fn (rewind-sound))}} disabled={{not (sound-is-fastforwardable)}}>
+          {{svg-jar "skip-backward-outline" class="stereo-icon" height="48" width="48"}}
         </button>
 
         <button type="button" class="service-display-button-item" {{on "click" (fn (toggle-play-sound))}}>
           {{#if (sound-is-playing)}}
-          <FaIcon @icon="pause" @size="2x" />
+            {{svg-jar "pause-outline" class="stereo-icon" height="48" width="48"}}
           {{else if (sound-is-loading)}}
-          <FaIcon @icon="circle-notch" @size="2x" class="icon-spin" />
+            {{svg-jar "loading-outline" class="stereo-icon icon-spin" height="48" width="48"}}
           {{else}}
-          <FaIcon @icon="play" @size="2x" />
+            {{svg-jar "play-outline" class="stereo-icon" height="48" width="48"}}
           {{/if}}
         </button>
 
-        <button type="button" class="service-display-button-item" {{on "click" (fn (fastforward-sound))}}>
-          <FaIcon @icon="forward" @size="2x" />
+        <button type="button" class="service-display-button-item" {{on "click" (fn (fastforward-sound))}} disabled={{not (sound-is-fastforwardable)}}>
+          {{svg-jar "skip-forward-outline" class="stereo-icon" height="48" width="48"}}
         </button>
 
         <button type="button" class="service-display-button-item" {{on "click" (fn (stop-sound))}}>
-          <FaIcon @icon="stop" @size="2x" />
+          {{svg-jar "stop-outline" class="stereo-icon" height="48" width="48"}}
         </button>
       </div>
       <div class="service-display-volume">
