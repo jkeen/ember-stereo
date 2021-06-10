@@ -119,19 +119,19 @@ export default class DummyConnection extends BaseSound {
     this.stopTicking();
   }
 
-  _setPosition(duration) {
-    duration = Math.max(0, duration);
-    duration = Math.min(this._audioDuration(), duration);
-    this._position = duration;
+  _setPosition(pos) {
+    pos = Math.max(0, pos);
+    pos = Math.min(this._audioDuration(), pos);
+    this._position = pos;
 
-    if (duration >= this._audioDuration()) {
+    if (pos >= this._audioDuration()) {
       next(() => {
         this.trigger('audio-ended', {sound: this});
         this.stopTicking();
       });
     }
 
-    return duration;
+    return pos;
   }
 
   _currentPosition() {

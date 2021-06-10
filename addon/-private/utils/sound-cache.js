@@ -13,6 +13,7 @@ import urlToIdentifier from 'ember-stereo/-private/utils/url-to-identifier';
 export default class SoundCache {
   @tracked cachedCount = 0;
   @tracked cachedList = [];
+  @tracked cachedSounds = [];
   @tracked _cache = {};
 
   constructor(name = 'stereo-cache') {
@@ -23,6 +24,7 @@ export default class SoundCache {
     this._cache = {};
     this.cachedCount = 0;
     this.cachedList = [];
+    this.cachedSounds = [];
   }
 
   /**
@@ -80,6 +82,7 @@ export default class SoundCache {
       this._cache[identifier] = sound;
       this.cachedCount = Object.keys(this._cache).length;
       this.cachedList = Object.keys(this._cache);
+      this.cachedSounds = Object.values(this._cache);
     }
   }
 }

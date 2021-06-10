@@ -30,6 +30,10 @@ export default class SoundIsErrored extends Helper {
   @return {boolean}
   */
 
+  reset() {
+    this.result = UNINITIALIZED
+  }
+
   compute([identifier], {connectionName = 'NativeAudio'}) {
     if (identifier !== this.identifier) {
       this.result = UNINITIALIZED; // if identifier changes, reinitialize sound

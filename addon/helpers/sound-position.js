@@ -39,9 +39,13 @@ export default class soundPosition extends Helper {
 
   compute([identifier='system'], {format=false, defaultValue}) {
     if (identifier !== this.identifier) {
+      this.sound= null;
       this.identifier = identifier || 'system';
       if (this.identifier == 'system') {
-        this.sound = this.stereo.currentSound;
+        this.sound = this.stereo.currentSound
+        this.stereo.on('current-sound-changed', ({ sound }) => {
+          this.sound = sound;
+        })
       }
       else if (this.identifier !== 'system') {
         let sound = this.stereo.findLoaded(this.identifier)

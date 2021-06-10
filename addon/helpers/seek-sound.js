@@ -1,6 +1,5 @@
 import { inject as service } from "@ember/service";
 import Helper from "@ember/component/helper";
-import prepareOptions from "ember-stereo/-private/utils/prepare-options";
 
 /**
   A helper to load a sound
@@ -22,11 +21,22 @@ export default class SeekSound extends Helper {
     @return {Function}
   */
   compute([identifier, position], options = {}) {
+    if (!position && identifier) {
+      identifier == 'system'
+      position = identifier
+    }
+
     return (eventOrItem) => {
       if (identifier) {
-        let sound = this.stereo.findLoaded(identifier)
-        if (sound) {
+        let sound;
+        if (identifier == 'system') {
+          sound = this.stereo.currentSound;
+        }
+        else {
+          sound = this.stereo.findLoaded(identifier)
+        }
 
+        if (sound) {
           let unit = (options["unit"] || "percentage");
           let value = position === undefined ? eventOrItem : position
 

@@ -1,6 +1,7 @@
 import StereoBaseIsHelper from 'ember-stereo/-private/helpers/is-helper';
 import debug from 'debug';
 import { dedupeTracked } from 'tracked-toolbox';
+import { get } from '@ember/object';
 /**
 A helper to detect if a sound is playing.
 ```hbs
@@ -14,6 +15,7 @@ A helper to detect if a sound is playing.
 @class {{sound-metadata}}
 @type Helper
 @param {String} url
+@returns {Object}
 */
 
 
@@ -30,11 +32,13 @@ export default class SoundMetadata extends StereoBaseIsHelper {
       this.metadata = this.sound?.metadata || {};
     }
 
-    if (this.options?.key && this.metadata && this.metadata[this.options.key]) {
-      return this.metadata[this.options.key];
+    if (this.options?.key && this.metadata && get(this.metadata, this.options.key)) {
+      return get(this.metadata, this.options.key);
     }
     else if (!this.options?.key && this.metadata) {
       return this.metadata;
     }
+
+    return null
   }
 }

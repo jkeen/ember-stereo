@@ -24,6 +24,17 @@ function resolveFunction(urlsOrPromise) {
   }
 }
 
+export function expandUrl(url) {
+  let parser1 = document.createElement('a');
+  parser1.href = url;
+
+  return parser1.href;
+}
+
+export function expandUrls(urls) {
+  return urls.map(expandUrl);
+}
+
 export default async function resolveUrls(urlsOrPromise) {
   let urls = prepare(await Promise.resolve(resolveFunction(urlsOrPromise)));
   debug('ember-stereo')(`given urls: ${urls.join(', ')}`);

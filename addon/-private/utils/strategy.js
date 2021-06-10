@@ -1,4 +1,7 @@
 export default class Strategy {
+
+  sharedAudioAccess = null;
+
   constructor(connection, url, config = {}) {
     this.connection = connection
     this.url = url
@@ -8,14 +11,15 @@ export default class Strategy {
   get name() {
     return this.connection.toString();
   }
+
   get connectionName() {
     return this.name;
   }
 
-
   get key() {
     return this.connection.key;
   }
+
   get connectionKey() {
     return this.key;
   }

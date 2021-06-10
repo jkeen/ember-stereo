@@ -123,6 +123,17 @@ export default class Stereo extends Service.extend(EmberEvented) {
     * @readOnly
     * @public
   */
+  get currentId3Data() {
+    return this.currentSound?.id3TagMetadata;
+  }
+
+  /**
+    * Current metadata object of the current sound. Use `{{sound-metadata}}` helper in templates
+    * @property currentMetadata
+    * @type {Object}
+    * @readOnly
+    * @public
+  */
   get currentMetadata() {
     return this.currentSound?.metadata;
   }
@@ -321,7 +332,6 @@ export default class Stereo extends Service.extend(EmberEvented) {
         }
         if (result.error) {
           failures.push(strategy);
-          this.errorCache.cache({url: strategy.url, error: strategy.error, connectionKey: strategy.connectionKey})
         }
       }
 
@@ -329,6 +339,9 @@ export default class Stereo extends Service.extend(EmberEvented) {
         this._handleLoadSuccess({sound, options});
       }
       else {
+        failures.forEach(strategy => {
+          this.errorCache.cache({ url: strategy.url, error: strategy.error, connectionKey: strategy.connectionKey })
+        })
         this._handleLoadFailure({urlsToTry, failures})
       }
 
@@ -380,7 +393,6 @@ export default class Stereo extends Service.extend(EmberEvented) {
       this.pause();
     }
 
-
     options = assign({ metadata: {} }, options);
     let loadPromise = this.loadTask.perform(urlsOrPromise, options);
     this.trigger('new-load-request', {loadPromise, urlsOrPromise, options});
@@ -395,6 +407,10 @@ export default class Stereo extends Service.extend(EmberEvented) {
         waitForProperty(sound, 'isPlaying'),
         waitForProperty(sound, 'isErrored')
       ]);
+
+      if (sound && options.position) {
+        sound.position = options.position
+      }
 
       if (sound.isPlaying) {
         return {sound, failures}
@@ -938,12 +954,8 @@ export default class Stereo extends Service.extend(EmberEvented) {
       'modifying standard strategy for to work best on mobile'
     );
 
-    let nativeStrategies = emberArray(strategies).filter(
-      (s) => s.connectionKey === 'NativeAudio'
-    );
-    let otherStrategies = emberArray(strategies).reject(
-      (s) => s.connectionKey === 'NativeAudio'
-    );
+    let nativeStrategies = emberArray(strategies).filterBy('connectionKey', 'NativeAudio');
+    let otherStrategies = emberArray(strategies).rejectBy('connectionKey', 'NativeAudio');
     let orderedStrategies = nativeStrategies.concat(otherStrategies);
 
     return orderedStrategies;
@@ -987,29 +999,20 @@ export default class Stereo extends Service.extend(EmberEvented) {
    */
 
   _prepareStrategies(urlsToTry, connectionKeys) {
-    connectionKeys = makeArray(connectionKeys);
     let strategies = [];
     let connectionExtraOptions = emberArray(get(this, 'options.emberStereo.connections') || []);
 
     urlsToTry.forEach((url) => {
-      let connectionSuccesses = [];
-      connectionKeys.forEach((name) => {
+      makeArray(connectionKeys).forEach((name) => {
         let connection = get(this, `_connections.${name}`);
         let canPlay = connection.canPlay(url);
         let config = connectionExtraOptions.findBy('name', name);
         if (canPlay) {
-          connectionSuccesses.push(name);
-          strategies.push({
-            connectionName: connection.toString(),
-            connectionKey: name,
-            connection: connection,
-            url: url.url || url,
-            options: config ? config.options : null,
-          });
+          strategies.push(new Strategy(connection, (url.url || url), config?.options));
         }
       });
       debug('ember-stereo')(
-        `Compatible connections for ${url}: ${connectionSuccesses.join(', ')}`
+        `Compatible connections for ${url}: ${strategies.map(m => m.name).join(', ')}`
       );
     });
     return strategies;
