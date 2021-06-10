@@ -69,11 +69,11 @@ export default class SoundCache {
    */
   remove(sound) {
     if (this.isDestroyed) return;
+    let identifier = new StereoUrl(sound.url).key
 
     debug(this.name)(`removing sound from cache with url: ${sound.url}`);
-
-    if (this._cache[sound.url]) {
-      delete this._cache[sound.url];
+    if (this._cache[identifier]) {
+      delete this._cache[identifier];
       this.cachedCount = Object.keys(this._cache).length
       this.cachedList = Object.keys(this._cache);
     }
@@ -86,7 +86,7 @@ export default class SoundCache {
    */
   cache(sound) {
     if (this.isDestroyed) return;
-    let identifier = new StereoUrl(sound.url)
+    let identifier = new StereoUrl(sound.url).key
 
     debug(this.name)(`caching sound with url: ${identifier}`);
 

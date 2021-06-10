@@ -27,9 +27,17 @@ function stubConnectionCreateWithFailure(service, connectionName, sandbox = sino
   });
 }
 
+function absoluteUrl(fragment) {
+  let parser = document.createElement('a')
+  parser.href = fragment;
+
+  return parser.href
+}
+
 
 export {
   stubConnectionCreateWithSuccess,
   stubConnectionCreateWithFailure,
-  dummyOps
+  dummyOps,
+  absoluteUrl
 };

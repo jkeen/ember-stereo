@@ -19,10 +19,10 @@
       </div>
     </div>
 
-    <AnimatedContainer>
+    {{!-- <AnimatedContainer> --}}
       {{#animated-each @testSounds use=this.transition duration=250 as |item|}}
       <TestSound @url={{item.url}} @title={{item.title}} @debug={{item.debug}} />
       {{/animated-each}}
-    </AnimatedContainer>
+    {{!-- </AnimatedContainer> --}}
   </div>
 </div>

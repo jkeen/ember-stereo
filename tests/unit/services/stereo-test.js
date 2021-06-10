@@ -13,7 +13,7 @@ import setupCustomAssertions from 'ember-cli-custom-assertions/test-support';
 
 import {
   stubConnectionCreateWithSuccess,
-  stubConnectionCreateWithFailure
+  stubConnectionCreateWithFailure,
 } from '../../helpers/ember-stereo-test-helpers';
 
 let sandbox;
@@ -343,7 +343,7 @@ module('Unit | Service | stereo', function(hooks) {
   });
 
   test("for desktop devices, try each url on each connection", async function(assert) {
-    let urls = ["first-test-url.mp3", "second-test-url.mp3", "third-test-url.mp3"];
+    let urls = ["first-test-url.mp3", "second-test-url.mp3", "third-test-url.mp3"]
     const connections = ['LocalDummyConnection', 'Howler', 'NativeAudio'];
     const service = this.owner.lookup('service:stereo');
     service.loadConnections([{name: connections[0]}, { name: connections[1]}, {name: connections[2]}])
@@ -464,32 +464,31 @@ module('Unit | Service | stereo', function(hooks) {
   });
 
   test('you can specify alwaysUseSingleAudioElement in config to always use a single audio element', function(assert) {
-    const service = this.owner.factoryFor('service:stereo').create({
-      options: {
-        emberStereo: {
-          alwaysUseSingleAudioElement: true,
-          connections: [
-            { name: 'DummyConnection' },
-          ]
-        }
-      }
-    })
+    const service = this.owner.lookup('service:stereo')
+
+    sinon.stub(service, 'systemStereoOptions').get(() => { return {
+      alwaysUseSingleAudioElement: true,
+      connections: [
+        { name: 'DummyConnection' },
+      ]
+    }})
+
     service.loadConnections(['DummyConnection'])
-    assert.equal(service.alwaysUseSingleAudioElement, true);
+    assert.equal(service.useSharedAudioAccess, true);
   });
 
   test("shared audio element should be passed if alwaysUseSingleAudioElement config option is specified", async function(assert) {
     let urls        = ["/good/1000/1.mp3", "/good/1000/2.mp3", "/good/1000/3.mp3"];
-    const service = this.owner.factoryFor('service:stereo').create({
-      options: {
-        emberStereo: {
-          alwaysUseSingleAudioElement: true,
-          connections: [
-            { name: 'DummyConnection' },
-          ]
-        }
+    const service = this.owner.lookup('service:stereo')
+    sinon.stub(service, 'systemStereoOptions').get(() => {
+      return {
+        alwaysUseSingleAudioElement: true,
+        connections: [
+          { name: 'DummyConnection' },
+        ]
       }
     })
+
     service.loadConnections(['DummyConnection'])
 
     let strategyOrderSpy  = sandbox.spy(service, '_prepareAllStrategies');

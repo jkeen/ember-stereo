@@ -24,6 +24,31 @@ module('Unit | Utility | sound-cache', function() {
     assert.deepEqual(soundCache.find('/test/2'), sound2);
     assert.deepEqual(soundCache.find('/test/3'), sound3);
   });
+
+  test("sounds can be retrieved by full url from cache", function (assert) {
+    let soundCache = new SoundCache()
+
+    let sound1 = new Sound({ url: '/test/1' });
+    soundCache.cache(sound1);
+
+    let a = document.createElement('a')
+    a.href = '/test/1'
+
+    assert.deepEqual(soundCache.find(a.href), sound1);
+  });
+
+  test("sounds can be retrieved by full url from cache ignoring query attributes", function (assert) {
+    let soundCache = new SoundCache()
+
+    let sound1 = new Sound({ url: '/test/1?access_key=1251251251892561' });
+    soundCache.cache(sound1);
+
+    let a = document.createElement('a')
+    a.href = '/test/1?access_key=99999'
+
+    assert.deepEqual(soundCache.find(a.href), sound1);
+  });
+
 });
 
 

@@ -10,6 +10,7 @@ import { race, waitForProperty, didCancel, task } from 'ember-concurrency';
 import { set, get } from '@ember/object';
 import { tracked } from '@glimmer/tracking';
 import debug from 'debug';
+import config from 'ember-get-config';
 
 import Service, { inject as service } from '@ember/service';
 
@@ -56,28 +57,17 @@ export const SERVICE_EVENT_MAP = [
  * @constructor
  */
 export default class Stereo extends Service.extend(EmberEvented) {
-  @service poll;
+  @service poll
 
-  /** currently loaded {Sound} object
-   * @property currentSound
-   * @type {Sound}
-   * @public
-  */
-  @tracked currentSound = null;
-  @tracked errorCache = null;
-
-  init() {
+  constructor() {
+    super(...arguments);
     const owner = getOwner(this);
-    owner.registerOptionsForType('ember-stereo@stereo-connection', {
-      instantiate: false,
-    });
+    owner.registerOptionsForType('ember-stereo@stereo-connection', { instantiate: false });
     owner.registerOptionsForType('stereo-connection', { instantiate: false });
 
     this.loadConnections();
 
-    this.alwaysUseSingleAudioElement = !!get(this, 'options.emberStereo.alwaysUseSingleAudioElement');
-    this.appEnvironment = get(this, 'options.environment') || 'development';
-    this.defaultVolume = get(this, 'options.emberStereo.initialVolume') || 100;
+    this.defaultVolume = this.systemStereoOptions?.initialVolume || 100;
     this.sharedAudioAccess = new SharedAudioAccess();
     this.oneAtATime = new OneAtATime();
     this.soundCache = new SoundCache(this);
@@ -93,8 +83,18 @@ export default class Stereo extends Service.extend(EmberEvented) {
       interval: this.pollInterval || 500,
       callback: bind(this, this._setCurrentPosition),
     });
+  }
 
-    super.init(...arguments);
+  /** currently loaded {Sound} object
+   * @property currentSound
+   * @type {Sound}
+   * @public
+  */
+  @tracked currentSound = null;
+  @tracked errorCache = null;
+
+  get loadedSounds() {
+    return this.soundCache.cachedList
   }
 
   /**
@@ -265,7 +265,7 @@ export default class Stereo extends Service.extend(EmberEvented) {
 
   */
   get useSharedAudioAccess() {
-    return this.isMobileDevice || this.alwaysUseSingleAudioElement;
+    return this.isMobileDevice || this.systemStereoOptions?.alwaysUseSingleAudioElement
   }
 
   /**
@@ -523,6 +523,10 @@ export default class Stereo extends Service.extend(EmberEvented) {
   /* -------------------------------------------------------------------------- */
   /* -------------------------------------------------------------------------- */
 
+  get systemStereoOptions() {
+    return config?.emberStereo
+  }
+
 
   _handleLoadFailure({ urlsToTry, failures }) {
     let nativeAudioFailure = failures.find(f => f.connectionKey == 'NativeAudio')
@@ -543,7 +547,7 @@ export default class Stereo extends Service.extend(EmberEvented) {
       let currentSound = sound;
 
       if (previousSound !== currentSound) {
-        if (previousSound && get(previousSound, 'isPlaying')) {
+        if (previousSound?.isPlaying) {
           this.trigger('current-sound-interrupted', { sound: previousSound });
         }
         this.trigger('current-sound-changed', { sound: currentSound, previousSound });
@@ -583,7 +587,7 @@ export default class Stereo extends Service.extend(EmberEvented) {
    * @return {Array}
    */
 
-  loadConnections(connections = get(this, 'options.emberStereo.connections')) {
+  loadConnections(connections = this.systemStereoOptions?.connections) {
     if (!connections) {
       connections = emberArray(DEFAULT_CONNECTIONS);
     }

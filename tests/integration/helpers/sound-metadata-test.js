@@ -24,4 +24,15 @@ module("Integration | Helper | sound-metadata", function (hooks) {
 
     assert.equal(this.element.textContent.trim(), "whatever you want");
   });
+
+  test("it renders metadata about current system sound", async function (assert) {
+    let service = this.owner.lookup("service:stereo");
+    service.loadConnections([{ name: "DummyConnection" }]);
+    this.url = "/good/1000/silence.mp3";
+    await render(hbs`{{sound-metadata key='title'}}`);
+    await service.play(this.url, { metadata: {title: "whatever you want" }});
+
+    assert.equal(this.element.textContent.trim(), "whatever you want");
+  });
+
 });

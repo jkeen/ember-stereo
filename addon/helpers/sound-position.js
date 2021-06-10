@@ -23,7 +23,7 @@ import { dedupeTracked } from 'tracked-toolbox'
 
 export default class soundPosition extends Helper {
   @service stereo;
-  @dedupeTracked sound;
+  @tracked sound;
   @tracked result;
 
   default = 0
@@ -39,7 +39,6 @@ export default class soundPosition extends Helper {
 
   compute([identifier='system'], {format=false, defaultValue}) {
     if (identifier !== this.identifier) {
-      this.sound= null;
       this.identifier = identifier || 'system';
       if (this.identifier == 'system') {
         this.sound = this.stereo.currentSound
@@ -73,7 +72,7 @@ export default class soundPosition extends Helper {
       }
     }
     else if (format == 'time') {
-      if (this.sound?.position) {
+      if (this.sound?.position !== undefined) {
         result = numericDuration([this.sound.position])
       }
       else {

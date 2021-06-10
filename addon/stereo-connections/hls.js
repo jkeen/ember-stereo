@@ -78,6 +78,7 @@ export default class HLSSound extends BaseSound {
       hls.on(HLS.Events.ERROR, (e, data) => this._onHLSError(e, data));
 
       hls.on(HLS.Events.FRAG_CHANGED, (e, f) => {
+        console.log(f.frag)
         let newId3TagMetadata = {
           title: f.frag.title
         }

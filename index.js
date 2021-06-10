@@ -14,8 +14,12 @@ module.exports = {
         'tests/dummy/public/assets/images/',
       ],
     },
+    babel: {
+      plugins: [
+        require.resolve('ember-auto-import/babel-plugin'),
+      ]
+    },
   },
-
   included(app, parentAddon) {
     this._super.included.apply(this, arguments);
     var target = parentAddon || app;

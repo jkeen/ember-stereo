@@ -122,7 +122,7 @@ export default class Sound extends Evented {
   set position(v) {
     this.trigger('audio-position-will-change', { sound: this, currentPosition: this._currentPosition(), newPosition: v });
 
-    this._setPosition(v);
+    this._position = this._setPosition(v);
   }
 
   get mimeType() {
