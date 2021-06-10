@@ -1,6 +1,7 @@
 export default class Strategy {
 
   sharedAudioAccess = null;
+  error = null
 
   constructor(connection, url, config = {}) {
     this.connection = connection

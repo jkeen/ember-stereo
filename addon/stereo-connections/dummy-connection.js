@@ -1,6 +1,7 @@
 import { next, bind } from '@ember/runloop';
 import Ember from 'ember';
 import BaseSound from 'ember-stereo/stereo-connections/base';
+import StereoUrl from 'ember-stereo/-private/utils/stereo-url';
 export default class DummyConnection extends BaseSound {
   static canPlay = () => true;
   static canUseConnection = () => true;
@@ -51,10 +52,11 @@ export default class DummyConnection extends BaseSound {
   }
 
   getInfoFromUrl() {
+    let stereoUrl = new StereoUrl(this.url)
     if (!this.url) {
       return {};
-    } else if (this.url.startsWith('/')) {
-      let [, result, lengthOrError, name] = this.url.split('/');
+    } else if (stereoUrl.pathname.startsWith('/') && stereoUrl.pathname.length > 1) {
+      let [, result, lengthOrError, name] = stereoUrl.pathname.split('/');
       /*eslint no-console: 0 */
       if (!(result && lengthOrError && name)) {
         console.error(
@@ -85,7 +87,7 @@ export default class DummyConnection extends BaseSound {
 
 
       if (result === 'bad') {
-        return { result, length: 1000, error: lengthOrError, name };
+        return { result, length: 1000, error: decodeURI(lengthOrError), name };
       }
       else {
         return { result, length: lengthOrError, name };

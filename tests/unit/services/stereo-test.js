@@ -6,8 +6,10 @@ import { module, test /*, skip */ } from 'qunit';
 import { setupTest } from 'ember-qunit';
 import { waitUntil, settled } from '@ember/test-helpers'
 import sinon from 'sinon';
-import urlToIdentifier from 'ember-stereo/-private/utils/url-to-identifier';
+import hasEqualUrls from 'ember-stereo/-private/utils/has-equal-urls';
 import SoundCache from 'ember-stereo/-private/utils/sound-cache';
+import StereoUrl from 'ember-stereo/-private/utils/stereo-url';
+import setupCustomAssertions from 'ember-cli-custom-assertions/test-support';
 
 import {
   stubConnectionCreateWithSuccess,
@@ -18,6 +20,7 @@ let sandbox;
 
 module('Unit | Service | stereo', function(hooks) {
   setupTest(hooks);
+  setupCustomAssertions(hooks)
   hooks.beforeEach(function() {
     sandbox = sinon.createSandbox();
   });
@@ -85,12 +88,13 @@ module('Unit | Service | stereo', function(hooks) {
       expectedUrl = sound.url;
       expectedFailures = failures;
     }
-    assert.equal(expectedUrl, goodUrl, "sound returned should have the successful url");
+
+    assert.equalUrls(expectedUrl, goodUrl, "sound returned should have the successful url");
     assert.equal(A(expectedFailures).mapBy('url').length, 2, "should only have two failures");
     assert.equal(expectedFailures[0].error, error1, `first url should have error: ${error1}`);
     assert.equal(expectedFailures[1].error, error2, `second url should have error: ${error2}`);
-    assert.equal(expectedFailures[0].url, badUrl1, `first bad url should be: ${badUrl1}`);
-    assert.equal(expectedFailures[1].url, badUrl2, `second bad url should be: ${badUrl2}`);
+    assert.equalUrls(expectedFailures[0].url, badUrl1, `first bad url should be: ${badUrl1}`);
+    assert.equalUrls(expectedFailures[1].url, badUrl2, `second bad url should be: ${badUrl2}`);
   });
 
   test('#load can take a promise that resolves urls', async function(assert) {
@@ -105,7 +109,7 @@ module('Unit | Service | stereo', function(hooks) {
     if (sound) {
       expectedUrl = sound.url;
     }
-    assert.equal(expectedUrl, goodUrl, "sound returned should have the successful url");
+    assert.equalUrls(expectedUrl, goodUrl, "sound returned should have the successful url");
   });
 
   test('When a sound gets created it gets registered with OneAtATime', async function(assert) {
@@ -357,15 +361,15 @@ module('Unit | Service | stereo', function(hooks) {
     assert.equal(strategyOrderSpy.callCount, 1, "Should have called internal find method with strategies");
 
     let correctOrder = [
-      `${connections[0]}:${urls[0]}`,
-      `${connections[1]}:${urls[0]}`,
-      `${connections[2]}:${urls[0]}`,
-      `${connections[0]}:${urls[1]}`,
-      `${connections[1]}:${urls[1]}`,
-      `${connections[2]}:${urls[1]}`,
-      `${connections[0]}:${urls[2]}`,
-      `${connections[1]}:${urls[2]}`,
-      `${connections[2]}:${urls[2]}`,
+      `${connections[0]}:${new StereoUrl(urls[0])}`,
+      `${connections[1]}:${new StereoUrl(urls[0])}`,
+      `${connections[2]}:${new StereoUrl(urls[0])}`,
+      `${connections[0]}:${new StereoUrl(urls[1])}`,
+      `${connections[1]}:${new StereoUrl(urls[1])}`,
+      `${connections[2]}:${new StereoUrl(urls[1])}`,
+      `${connections[0]}:${new StereoUrl(urls[2])}`,
+      `${connections[1]}:${new StereoUrl(urls[2])}`,
+      `${connections[2]}:${new StereoUrl(urls[2])}`,
     ];
 
     let strategies = strategyOrderSpy.getCall(0).returnValue;
@@ -397,15 +401,15 @@ module('Unit | Service | stereo', function(hooks) {
     assert.equal(strategyOrderSpy.callCount, 1, "Should have called internal find method with strategies");
 
     let correctOrder = [
-      `${connections[2]}:${urls[0]}`,
-      `${connections[2]}:${urls[1]}`,
-      `${connections[2]}:${urls[2]}`,
-      `${connections[0]}:${urls[0]}`,
-      `${connections[1]}:${urls[0]}`,
-      `${connections[0]}:${urls[1]}`,
-      `${connections[1]}:${urls[1]}`,
-      `${connections[0]}:${urls[2]}`,
-      `${connections[1]}:${urls[2]}`,
+      `${connections[2]}:${new StereoUrl(urls[0])}`,
+      `${connections[2]}:${new StereoUrl(urls[1])}`,
+      `${connections[2]}:${new StereoUrl(urls[2])}`,
+      `${connections[0]}:${new StereoUrl(urls[0])}`,
+      `${connections[1]}:${new StereoUrl(urls[0])}`,
+      `${connections[0]}:${new StereoUrl(urls[1])}`,
+      `${connections[1]}:${new StereoUrl(urls[1])}`,
+      `${connections[0]}:${new StereoUrl(urls[2])}`,
+      `${connections[1]}:${new StereoUrl(urls[2])}`,
     ];
 
     let actualOrder = [];
@@ -440,9 +444,9 @@ module('Unit | Service | stereo', function(hooks) {
     assert.equal(strategyOrderSpy.callCount, 1, "Should have called internal find method with strategies");
 
     let correctOrder = [
-      `${connections[0]}:${urls[0]}`,
-      `${connections[0]}:${urls[1]}`,
-      `${connections[0]}:${urls[2]}`,
+      `${connections[0]}:${new StereoUrl(urls[0])}`,
+      `${connections[0]}:${new StereoUrl(urls[1])}`,
+      `${connections[0]}:${new StereoUrl(urls[2])}`,
     ];
 
     let actualOrder = [];
@@ -516,14 +520,14 @@ module('Unit | Service | stereo', function(hooks) {
     await sound2.play();
     sound2.position = 1000;
 
-    assert.equal(sound1._currentPosition(), 2000, "first sound should still have its own position");
-    assert.equal(sound2._currentPosition(), 1000, "second sound should still have its own position");
+    assert.equal(Math.floor(sound1._currentPosition()), 2000, "first sound should still have its own position");
+    assert.equal(Math.floor(sound2._currentPosition()), 1000, "second sound should still have its own position");
 
     await sound1.play();
-    assert.equal(sound1._currentPosition(), 2000, "first sound should still have its own position");
+    assert.equal(Math.floor(sound1._currentPosition()), 2000, "first sound should still have its own position");
     sound2.position = 9000;
     await sound2.play();
-    assert.equal(sound2._currentPosition(), 9000, "second sound should still have its own position");
+    assert.equal(Math.floor(sound2._currentPosition()), 9000, "second sound should still have its own position");
   });
 
   test("sound can play on native audio using shared element one after the other", async function(assert) {
@@ -608,14 +612,14 @@ module('Unit | Service | stereo', function(hooks) {
     let sound1PauseEventTriggered;
     let sound2PauseEventTriggered;
 
-    service.on('audio-played', ({sound}) => {
-      sound1PlayEventTriggered = urlToIdentifier(sound.url) === urlToIdentifier(s1url);
-      sound2PlayEventTriggered = urlToIdentifier(sound.url) === urlToIdentifier(s2url);
+    service.on('audio-played', async ({sound}) => {
+      sound1PlayEventTriggered = await hasEqualUrls(sound.url, s1url);
+      sound2PlayEventTriggered = await hasEqualUrls(sound.url, s2url);
     });
 
-    service.on('audio-paused', ({sound}) => {
-      sound1PauseEventTriggered = urlToIdentifier(sound.url) === urlToIdentifier(s1url);
-      sound2PauseEventTriggered = urlToIdentifier(sound.url) === urlToIdentifier(s2url);
+    service.on('audio-paused', async ({sound}) => {
+      sound1PauseEventTriggered = await hasEqualUrls(sound.url, s1url);
+      sound2PauseEventTriggered = await hasEqualUrls(sound.url, s2url);
     });
 
     await service.play(s1url)
@@ -637,15 +641,15 @@ module('Unit | Service | stereo', function(hooks) {
     let s2url       = "/good/1000/silence2.mp3";
 
     service.one('current-sound-changed', ({sound, previousSound}) => {
-      assert.equal(previousSound, undefined, "there should not a previous sound");
-      assert.equal(sound.url, s1url, "current sound should be the first sound");
+      assert.equalUrls(previousSound, undefined, "there should not a previous sound");
+      assert.equalUrls(sound.url, s1url, "current sound should be the first sound");
     });
 
     await service.play(s1url);
 
     service.one('current-sound-changed', ({sound, previousSound}) => {
-      assert.equal(previousSound.url, s1url, "previous sound should be this sound");
-      assert.equal(sound.url, s2url);
+      assert.equalUrls(previousSound.url, s1url, "previous sound should be this sound");
+      assert.equalUrls(sound.url, s2url);
     });
 
     await service.play(s2url)
@@ -674,7 +678,7 @@ module('Unit | Service | stereo', function(hooks) {
     assert.expect(1);
 
     let handler = ({sound}) => {
-      assert.equal(sound.url, s1url, "current sound should be reported as interrupted");
+      assert.equalUrls(sound.url, s1url, "current sound should be reported as interrupted");
     }
 
     service.one('current-sound-interrupted', handler);
@@ -753,11 +757,11 @@ module('Unit | Service | stereo', function(hooks) {
     let count = 0;
     service.on('new-load-request', ({urlsOrPromise, options}) => {
       if (count == 0) {
-        assert.equal(urlsOrPromise, s1url, "url should equal url passed in");
+        assert.equalUrls(urlsOrPromise, s1url, "url should equal url passed in");
         assert.equal(options.metadata.id, 1, "metadata id should be equale");
       }
       else if (count === 1) {
-        assert.equal(urlsOrPromise, s1url, "url should equal url passed in");
+        assert.equalUrls(urlsOrPromise, s1url, "url should equal url passed in");
         assert.equal(options.metadata.id, 2, "metadata id should be 2");
       }
       count = count + 1;
@@ -839,7 +843,7 @@ module('Unit | Service | stereo', function(hooks) {
     await service.play(url);
     service.pause();
     await service.play(url)
-    assert.equal(cacheSpy.firstCall.args[0].url, `${url}?foo=bar`, 'cache lookup with expected value');
+    assert.equalUrls(cacheSpy.firstCall.args[0].url, `${url}?foo=bar`, 'cache lookup with expected value');
     assert.deepEqual(findSpy.secondCall.args[0], [cacheSpy.firstCall.args[0].url], 'lookup key is the same as the cached key');
     assert.equal(urlSpy.callCount, 2, 'callback is called');
   });

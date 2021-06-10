@@ -17,12 +17,17 @@ export default class Sound extends Evented {
     this.config = config;
   }
 
-  static canPlay(url) {
-    let usablePlatform = this.canUseConnection(url);
+  static canPlay(stereoUrl) {
+    let usablePlatform = this.canUseConnection(stereoUrl.toString());
     if (!usablePlatform) {
       return false;
     }
-    if (typeof url === 'string') {
+
+    if (stereoUrl.mimeType) {
+      return this.canPlayMimeType(stereoUrl.mimeType);
+    }
+    else {
+      let url = stereoUrl.toString();
       let mimeType = getMimeType(url);
 
       if (!mimeType) {
@@ -35,12 +40,6 @@ export default class Sound extends Evented {
       else {
         return this.canPlayMimeType(mimeType);
       }
-    }
-    else if (url.mimeType) {
-      return this.canPlayMimeType(url.mimeType);
-    }
-    else {
-      throw new Error('URL must be a string or object with a mimeType property');
     }
   }
 

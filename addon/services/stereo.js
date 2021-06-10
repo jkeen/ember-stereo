@@ -20,6 +20,9 @@ import resolveUrls from 'ember-stereo/-private/utils/resolve-urls';
 import SharedAudioAccess from 'ember-stereo/-private/utils/shared-audio-access';
 import SoundCache from 'ember-stereo/-private/utils/sound-cache';
 import Strategy from 'ember-stereo/-private/utils/strategy';
+import StereoUrl from 'ember-stereo/-private/utils/stereo-url';
+
+import Ember from 'ember';
 
 const DEFAULT_CONNECTIONS = [{ name: 'NativeAudio' }, { name: 'Howler' }, { name: 'HLS' }];
 
@@ -615,13 +618,9 @@ export default class Stereo extends Service.extend(EmberEvented) {
   findLoaded(identifiers) {
     var sound;
 
-    makeArray(identifiers).forEach((identifier) => {
+    makeArray(identifiers).map(u => new StereoUrl(u)).forEach((stereoUrl) => {
       if (!sound) {
-        if (identifier && identifier.url) {
-          sound = this.soundCache.find(identifier.url);
-        } else if (identifier) {
-          sound = this.soundCache.find(identifier.toString());
-        }
+        sound = this.soundCache.find(stereoUrl.url);
       }
     });
 

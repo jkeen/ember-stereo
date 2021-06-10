@@ -1,7 +1,7 @@
 import { A as emberArray, makeArray } from '@ember/array';
 import debug from 'debug';
 import { tracked } from '@glimmer/tracking';
-import urlToIdentifier from 'ember-stereo/-private/utils/url-to-identifier';
+import StereoUrl from 'ember-stereo/-private/utils/stereo-url';
 
 /**
 * This class caches sound objects based on urls. You shouldn't have to interact with this class.
@@ -31,10 +31,9 @@ export default class ErrorCache  {
    * @return {Sound}
    */
   find(urls) {
-    urls = makeArray(urls);
     let cache        = this._cache;
-    let keysToSearch = emberArray(urls).map(urlToIdentifier);
-    let errors       = emberArray(keysToSearch).map(url => cache[url]);
+    let identifiers  = makeArray(urls).map(i => new StereoUrl(i));
+    let errors       = emberArray(identifiers).map(identity => cache[identity.key]);
     let foundErrors  = emberArray(errors).compact();
 
     if (foundErrors.length > 0) {
@@ -42,7 +41,7 @@ export default class ErrorCache  {
       return foundErrors;
     }
     else {
-      debug(this.name)(`cache miss for ${keysToSearch.join(',')}`);
+      debug(this.name)(`cache miss for ${makeArray(identifiers).join(',')}`);
     }
   }
 
@@ -52,10 +51,10 @@ export default class ErrorCache  {
    * @param  {Sound} sound
    */
   cache({url, error, connectionKey}) {
-    let identifier = urlToIdentifier(url)
-    if (!this._cache[identifier]) {
-      this._cache[identifier] = {}
+    let identifier = new StereoUrl(url)
+    if (!this._cache[identifier.key]) {
+      this._cache[identifier.key] = {}
     }
-    this._cache[identifier][connectionKey] = error
+    this._cache[identifier.key][connectionKey] = error
   }
 }

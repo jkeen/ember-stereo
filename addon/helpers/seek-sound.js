@@ -21,7 +21,7 @@ export default class SeekSound extends Helper {
     @return {Function}
   */
   compute([identifier, position], options = {}) {
-    if (!position && identifier) {
+    if (position === undefined && identifier) {
       identifier == 'system'
       position = identifier
     }

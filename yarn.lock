@@ -6896,6 +6896,14 @@ ember-cli-code-coverage@^v1.0.0-beta.8:
     node-dir "^0.1.17"
     walk-sync "^2.1.0"
 
+ember-cli-custom-assertions@^0.2.0:
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/ember-cli-custom-assertions/-/ember-cli-custom-assertions-0.2.0.tgz#928271ba5d3e974d96cdf391a07be5be2d604c70"
+  integrity sha512-W5RNxwSovUszD7mRElhPLEjJKBh7STSOZkWK+dxZiNzTh/4nmyQr7IP/zzAED8l2gqvfVWCff0K3OWEhfOrTwg==
+  dependencies:
+    ember-cli-babel "^6.16.0"
+    ember-cli-string-utils "^1.0.0"
+
 ember-cli-dependency-checker@^3.2.0:
   version "3.2.0"
   resolved "https://registry.yarnpkg.com/ember-cli-dependency-checker/-/ember-cli-dependency-checker-3.2.0.tgz#9202ad9e14d6fda33cffc22a11c343c2a8885330"
