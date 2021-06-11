@@ -8,7 +8,7 @@ import Helper from '@ember/component/helper';
     Fast Forward
   </button>
   ```
-  @class fastForwardSound
+  @class {{fastforward-sound}}
   @type Helper
   @param {String} url
   @param {String} increment

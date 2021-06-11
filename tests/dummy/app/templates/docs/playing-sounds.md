@@ -1,1 +1,0 @@
-{{docs/stereo-player-example}}

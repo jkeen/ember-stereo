@@ -22,7 +22,7 @@ import { inject as service } from '@ember/service';
     {{/if}}
   ```
 
-  @class SoundIsErrored
+  @class {{sound-is-errored}}
   @type Helper
   @param {String} url
 */

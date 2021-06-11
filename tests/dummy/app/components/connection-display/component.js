@@ -1,15 +1,14 @@
 import Component from "@glimmer/component";
 import { inject as service } from "@ember/service";
-import { getMimeType } from "ember-stereo/-private/utils/mime-types";
-import { set } from "@ember/object";
-import resolveUrls from "ember-stereo/-private/utils/resolve-urls";
 import deepSet from "ember-deep-set";
 import { tracked } from "@glimmer/tracking";
+import StereoUrl from "ember-stereo/-private/utils/stereo-url";
 export default class ConnectionDisplay extends Component {
   @service stereo;
 
   enabled = true;
   @tracked lastResult = null;
+  idList = {}
 
   constructor() {
     super(...arguments);
@@ -46,82 +45,54 @@ export default class ConnectionDisplay extends Component {
     };
   }
 
+  decorateLoadInfo(sound, urls, strategies, options) {
+    let url = urls[0];
+    let mimeType = new StereoUrl(url).mimeType;
+
+    let result = {
+      url,
+      title: options?.metadata?.title,
+      canPlay: this.args.connection.canPlay(url),
+      mimeType: mimeType,
+      canPlayMimeType: this.args.connection.canPlayMimeType(mimeType),
+      canUseConnection: this.args.connection.canUseConnection(url),
+      connectionName: this.args.connection.toString(),
+      connectionResult: sound.connectionName,
+      didPlay: this.args.connection.toString() === sound.connectionName,
+    };
+
+    let results = sound?.metadata?.debug?.results || [];
+    this.lastResult = result;
+    results.push(result);
+    let sortedResults = results.sort((result) => strategies.indexOf((s) => s.connectionName === result.connectionName)).reverse();
+    let triedToPlay = true;
+    let debugResults = sortedResults.map((result) => {
+      result.triedToPlay = triedToPlay;
+
+      if (result.didPlay) {
+        triedToPlay = false;
+      }
+
+      return result;
+    });
+
+    deepSet(sound, "metadata.debug.results", debugResults);
+    deepSet(sound, "metadata.debug.strategies", strategies);
+  }
+
   _setupLoadRequestMonitor() {
     // Intercept load requests and push the results into the created sound. This powers the "strategy"
     // area of the debug information in the sound diagnostic
 
-    this.stereo.on(
-      "new-load-request",
-      async ({ loadPromise, urlsOrPromise, options }) => {
-        // TODO: change this event to provide the urls
-        let urlsToTry = await resolveUrls(urlsOrPromise);
-
-        let strategies = [];
-
-        if (options.useConnections) {
-          // If the consumer has specified a connection to prefer, use it
-          let connectionNames = options.useConnections;
-          strategies = this.stereo._prepareStrategies(urlsToTry, connectionNames);
-        } else if (this.stereo.get("isMobileDevice")) {
-          // If we're on a mobile device, we want to try NativeAudio first
-          strategies = this.stereo._prepareMobileStrategies(urlsToTry);
-        } else {
-          strategies = this.stereo._prepareStandardStrategies(urlsToTry);
+    this.stereo.on("--new-load-request-strategies", ({ urls, strategies, options }) => {
+      this.stereo.on("audio-loaded", ({ sound }) => {
+        if (urls.map(i => new StereoUrl(i).href).includes(new StereoUrl(sound.url).href)) {
+          if (!this.idList[sound.url]) {
+            this.decorateLoadInfo(sound, urls, strategies, options);
+            this.idList[sound.url] = true;
+          }
         }
-
-        let url = urlsToTry[0];
-
-        let mimeType =
-          typeof url === "string" ? getMimeType(url) : url.mimeType;
-
-        let result = {
-          url,
-          title: options?.metadata?.title,
-          canPlay: this.args.connection.canPlay(url),
-          mimeType: mimeType,
-          canPlayMimeType: this.args.connection.canPlayMimeType(mimeType),
-          canUseConnection: this.args.connection.canUseConnection(url),
-          connectionName: this.args.connection.toString(),
-        };
-
-        loadPromise.then(({ sound }) => {
-          if (!sound) return;
-
-          let results = sound?.metadata?.debug?.results || [];
-
-          set(result, "thisConnection", this.args.connection.toString());
-          set(result, "connectionResult", sound.connectionName);
-          set(this, "lastResult", result);
-          set(
-            result,
-            "didPlay",
-            this.args.connection.toString() === sound.connectionName
-          );
-          results.push(result);
-
-          let sortedResults = results
-            .sort((result) => {
-              return strategies.indexOf(
-                (s) => s.connectionName === result.connectionName
-              );
-            })
-            .reverse();
-
-          let triedToPlay = true;
-          let debugResults = sortedResults.map((result) => {
-            result.triedToPlay = triedToPlay;
-
-            if (result.didPlay) {
-              triedToPlay = false;
-            }
-
-            return result;
-          });
-
-          deepSet(sound, "metadata.debug.results", debugResults);
-          deepSet(sound, "metadata.debug.strategies", strategies);
-        });
-      }
-    );
+      })
+    })
   }
 }

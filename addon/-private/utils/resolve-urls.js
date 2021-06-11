@@ -28,6 +28,5 @@ function resolveFunction(urlsOrPromise) {
 export default async function resolveUrls(urlsOrPromise) {
   let resolved = await Promise.resolve(resolveFunction(urlsOrPromise));
   let urls = prepare(resolved).map(u => new StereoUrl(u));
-  debug('ember-stereo')(`given urls: ${urls.join(', ')}`);
   return urls
 }

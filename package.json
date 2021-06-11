@@ -57,6 +57,8 @@
     "@ember/test-helpers": "^2.1.4",
     "@ember/test-waiters": "^2.4.2",
     "@embroider/test-setup": "^0.39.1",
+    "@fortawesome/ember-fontawesome": "^0.2.2",
+    "@fortawesome/free-solid-svg-icons": "^5.9.0",
     "@glimmer/component": "^1.0.3",
     "babel-eslint": "^8.0.0",
     "broccoli-asset-rev": "3.0.0",
@@ -126,5 +128,5 @@
   "ember-addon": {
     "configPath": "tests/dummy/config"
   },
-  "homepage": "https://nypublicradio.github.io/ember-stereo"
+  "homepage": "https://jkeen.github.io/ember-stereo"
 }

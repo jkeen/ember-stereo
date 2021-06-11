@@ -8,7 +8,7 @@ import Helper from '@ember/component/helper';
     Rewind
   </button>
   ```
-  @class fastForwardSound
+  @class {{rewind-sound}}
   @type Helper
   @param {String} url
   @param {String} increment

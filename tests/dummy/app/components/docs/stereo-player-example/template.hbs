@@ -1,6 +1,6 @@
 <DocsDemo as |demo|>
   <demo.example @name="stereo-player-example.hbs" style="display: grid; grid-auto-flow: column;" class="demo-sound-display">
-    {{#let this.onDemandUrl as |url|}}
+    {{#let @url as |url|}}
     <button type="button" {{on 'click' (fastforward-sound url increment=5000)}} disabled={{not (sound-is-rewindable
       url)}} class="stereo-button">
       {{svg-jar "skip-backward-outline" height=20 width=30 title="Skip Forward"}}

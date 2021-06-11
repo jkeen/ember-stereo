@@ -13,7 +13,7 @@ import { tracked } from '@glimmer/tracking';
    <p>Duration of loaded sound in h:mm:ss {{sound-duration this.url format=time}}</p>
    <p>Duration of sound that this helper just tried to load in h:mm:ss {{sound-duration this.url format=time load=true}}</p>
    ```
-  @class SoundDuration
+  @class {{sound-duration}}
   @type Helper
   @param {String} url
   @returns {any}
@@ -22,7 +22,7 @@ import { tracked } from '@glimmer/tracking';
 export default class SoundDuration extends Helper {
   @service stereo;
   @dedupeTracked sound;
-  @tracked result;
+  @dedupeTracked result;
 
   default = "N/A";
 

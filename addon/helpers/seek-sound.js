@@ -8,9 +8,10 @@ import Helper from "@ember/component/helper";
       Play
     </button>
   ```
-  @class playSound
+  @class {{seek-sound}}
   @type Helper
   @param {String} url
+  @param {String} position
   */
 export default class SeekSound extends Helper {
   @service stereo;

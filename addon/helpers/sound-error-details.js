@@ -10,7 +10,7 @@ import { makeArray } from '@ember/array';
     {{sound-error-details this.url}}
   ```
 
-  @class soundErrorDetails
+  @class {{sound-error-details}}
   @type Helper
   @param {String} url
 */

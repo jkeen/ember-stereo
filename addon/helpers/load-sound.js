@@ -8,7 +8,7 @@ import prepareOptions from "ember-stereo/-private/utils/prepare-options";
       Load
     </button>
   ```
-  @class loadSound
+  @class {{load-sound}}
   @type Helper
   @param {String} url
   */

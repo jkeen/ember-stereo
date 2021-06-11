@@ -9,7 +9,7 @@ import prepareOptions from "ember-stereo/-private/utils/prepare-options";
       Play
     </button>
   ```
-  @class playSound
+  @class {{play-sound}}
   @type Helper
   @param {String} url
   */

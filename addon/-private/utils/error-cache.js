@@ -14,7 +14,7 @@ import StereoUrl from 'ember-stereo/-private/utils/stereo-url';
 export default class ErrorCache  {
   @tracked cachedCount = 0;
   @tracked _cache = {};
-  name = 'error-cache'
+  name = 'ember-stereo:error-cache'
 
   constructor(stereo) {
     this.stereo = stereo;

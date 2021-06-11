@@ -15,7 +15,7 @@ import { dedupeTracked } from 'tracked-toolbox'
 
    ```
 
-  @class soundPosition
+  @class {{sound-position}}
   @type Helper
   @param {String} url
   @returns {Float}

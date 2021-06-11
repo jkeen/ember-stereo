@@ -16,9 +16,10 @@ export default class SoundCache {
   @tracked cachedList = [];
   @tracked cachedSounds = [];
   @tracked _cache = {};
+  name = 'ember-stereo:sound-cache'
 
-  constructor(name = 'stereo-cache') {
-    this.name = name;
+  constructor(stereo) {
+    this.stereo = stereo;
   }
 
   reset() {
@@ -56,7 +57,7 @@ export default class SoundCache {
       debug(this.name)(`cache hit for ${foundSounds[0].url}`);
     }
     else {
-      debug(this.name)(`cache miss for ${stereoUrls.join(',')}`);
+      debug(this.name)(`cache miss for ${stereoUrls.map(u => u.url).join(',')}`);
     }
 
     return foundSounds[0];

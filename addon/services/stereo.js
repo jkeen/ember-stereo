@@ -35,7 +35,7 @@ export const EVENT_MAP = [
   { event: 'audio-ended', handler: '_relayEndedEvent' },
   { event: 'audio-duration-changed', handler: '_relayDurationChangedEvent' },
   { event: 'audio-position-changed', handler: '_relayPositionChangedEvent' },
-  { event: 'audio-ged', handler: '_relayLoadedEvent' },
+  { event: 'audio-loaded', handler: '_relayLoadedEvent' },
   { event: 'audio-loading', handler: '_relayLoadingEvent' },
   { event: 'audio-position-will-change', handler: '_relayPositionWillChangeEvent' },
   { event: 'audio-will-rewind', handler: '_relayWillRewindEvent' },
@@ -316,6 +316,7 @@ export default class Stereo extends Service.extend(EmberEvented) {
     options = assign({ metadata: {}, sharedAudioAccess }, options);
 
     let urlsToTry = yield resolveUrls(urlsOrPromise);
+    debug('ember-stereo')(`given urls: ${urlsToTry.join(', ')}`);
     this.trigger('pre-load', urlsToTry);
     var sound = this.soundCache.find(urlsToTry);
     if (sound) {
@@ -324,6 +325,9 @@ export default class Stereo extends Service.extend(EmberEvented) {
     }
     else {
       var strategies = copy(this._prepareAllStrategies(urlsToTry, options));
+
+      this.trigger('--new-load-request-strategies', { strategies, urls: urlsToTry, options })
+
       var success = false
       let failures = []
       while (strategies.length > 0 && !success) {
@@ -367,7 +371,7 @@ export default class Stereo extends Service.extend(EmberEvented) {
 
     try {
       let promise = this.loadTask.perform(urlsOrPromise, options);
-      this.trigger('new-load-request', {loadPromise: promise, urlsOrPromise, urls: Promise.resolve(resolveUrls(urlsOrPromise)), options});
+      this.trigger('new-load-request', {loadPromise: promise, urlsOrPromise, options});
 
       return promise;
     }
@@ -398,7 +402,7 @@ export default class Stereo extends Service.extend(EmberEvented) {
 
     options = assign({ metadata: {} }, options);
     let loadPromise = this.loadTask.perform(urlsOrPromise, options);
-    this.trigger('new-load-request', {loadPromise, urlsOrPromise, options});
+    this.trigger('new-load-request', { loadPromise, urlsOrPromise, options }); //urls: Promise.resolve(resolveUrls(urlsOrPromise))
 
     let { sound, failures } = yield loadPromise;
 

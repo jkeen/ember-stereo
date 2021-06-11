@@ -8,7 +8,7 @@ import Helper from "@ember/component/helper";
       Play
     </button>
   ```
-  @class pauseSound
+  @class {{pause-sound}}
   @type Helper
   @param {String} url
   */
