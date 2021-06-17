@@ -329,7 +329,7 @@ export default class Stereo extends Service.extend(EmberEvented) {
       this.trigger('--new-load-request-strategies', { strategies, urls: urlsToTry, options })
 
       var success = false
-      let failures = []
+      let failures = null
       while (strategies.length > 0 && !success) {
         let strategy = strategies.shift();
         let result = yield this.tryLoadingSound.perform(strategy);
@@ -338,6 +338,7 @@ export default class Stereo extends Service.extend(EmberEvented) {
           success = true;
         }
         if (result.error) {
+          failures = makeArray(failures);
           failures.push(strategy);
         }
       }
@@ -345,8 +346,8 @@ export default class Stereo extends Service.extend(EmberEvented) {
       if (success && sound) {
         this._handleLoadSuccess({sound, options});
       }
-      else {
-        failures.forEach(strategy => {
+      else if (failures) {
+        makeArray(failures).forEach(strategy => {
           this.errorCache.cache({ url: strategy.url, error: strategy.error, connectionKey: strategy.connectionKey })
         })
         this._handleLoadFailure({urlsToTry, failures})

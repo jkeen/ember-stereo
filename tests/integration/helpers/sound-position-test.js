@@ -56,7 +56,7 @@ module('Integration | Helper | sound-position', function(hooks) {
     assert.equal(this.element.textContent.trim(), '00:00');
 
     set(this, 'url', this.url2)
-    // await render(hbs`{{sound-position this.url format='time'}}`);
+    await render(hbs`{{sound-position this.url format='time'}}`);
     assert.equal(this.element.textContent.trim(), '00:05');
   });
 });
