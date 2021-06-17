@@ -7,6 +7,7 @@
 - [CHANGE] Default volume is now 100
 - [CHANGE] Audio errors no longer throw errors that need to be caught, instead they are surfaced on the hifi service, or through the `{{sound-is-errored}}` and `{{sound-error-details}}`
 - [CHANGE] Sounds are cached ignoring query strings
+- [IMPROVEMENT] HLS now provides `currentTime` property for HLS streams that include EXT-PROGRAM-DATE-TIME in their manifests
 
 
 - [CHORE] Renamed anything that was `hifi` to `stereo`
