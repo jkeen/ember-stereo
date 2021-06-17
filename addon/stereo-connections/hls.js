@@ -1,6 +1,7 @@
 import BaseSound from 'ember-stereo/stereo-connections/base';
 import HLS from 'hls.js';
 import { tracked } from '@glimmer/tracking';
+
 /**
 * This class connects with HLS.js to create sounds.
 *
@@ -68,6 +69,7 @@ export default class HLSSound extends BaseSound {
         this.debug(`level ${data.level} loaded`);
         this.live = data.details.live;
         this._checkIfAudioIsReady();
+        this._initializeCurrentTime()
       });
 
       hls.on(HLS.Events.AUDIO_TRACK_LOADED, () => {
@@ -78,27 +80,61 @@ export default class HLSSound extends BaseSound {
       hls.on(HLS.Events.ERROR, (e, data) => this._onHLSError(e, data));
 
       hls.on(HLS.Events.FRAG_CHANGED, (e, f) => {
-        console.log(f.frag)
-        let newId3TagMetadata = {
-          title: f.frag.title
-        }
-
-        if (JSON.stringify(this.id3TagMetadata) !== JSON.stringify(newId3TagMetadata)) {
-          this.debug('hls metadata changed');
-          this.trigger('audio-metadata-changed', {
-            sound: this,
-            old: this.id3TagMetadata,
-            new: newId3TagMetadata
-          });
-          this.id3TagMetadata = newId3TagMetadata;
-        }
+        this._updateId3Info(f.frag);
+        this._updateRealTimeOffset(f.frag);
       });
     });
+  }
+
+  _initializeCurrentTime(data) {
+    if (!this.realTimeOffset && data?.details) {
+      this.realTimeOffset = data.details.fragments[0].programDateTime
+      this._updateCurrentTime();
+    }
+  }
+
+  @tracked realTimeOffset;
+  @tracked appendedPts = 0
+  @tracked positionNow = 0
+  _updateRealTimeOffset(fragment) {
+    if (fragment.programDateTime) {
+      this.positionNow = this.video.currentTime;
+      this.realTimeOffset = fragment.programDateTime - fragment.start
+      this.appendedPts = fragment.appendedPTS
+    }
+  }
+
+  @tracked currentTime;
+  _updateCurrentTime() {
+    if (this.realTimeOffset) {
+      this.currentTime = new Date(((this.video.currentTime - this.positionNow) * 1000) + this.realTimeOffset);
+      // this.debug(`time = ${this.currentTime}`);
+    }
+  }
+
+  _updateId3Info(fragment) {
+    let newId3TagMetadata = {
+      title: fragment.title,
+      programDateTime: fragment.programDateTime,
+      rawProgramDateTime: fragment.rawProgramDateTime,
+    }
+
+    if (JSON.stringify(this.id3TagMetadata) !== JSON.stringify(newId3TagMetadata)) {
+      this.debug('hls metadata changed');
+      this.trigger('audio-metadata-changed', {
+        sound: this,
+        old: this.id3TagMetadata,
+        new: newId3TagMetadata
+      });
+
+      this.id3TagMetadata = newId3TagMetadata;
+    }
   }
 
   _setupPlayerEvents(video) {
     video.addEventListener('playing',         () => {
       if (this.loaded) {
+        this._updateCurrentTime();
         this.trigger('audio-played', {sound: this});
       }
       else {
@@ -108,8 +144,8 @@ export default class HLSSound extends BaseSound {
 
     video.addEventListener('pause',           ()  => this.trigger('audio-paused', { sound: this }));
     video.addEventListener('durationchange',  ()  => this.trigger('audio-duration-changed', { sound: this }));
-    video.addEventListener('seeked',          ()  => this.trigger('audio-position-changed', { sound: this }));
-    video.addEventListener('timeupdate',      ()  => this.trigger('audio-position-changed', { sound: this }));
+    video.addEventListener('seeked',          ()  => this.trigger('audio-position-changed', { sound: this, currentTime: this.currentTime }));
+    video.addEventListener('timeupdate',      ()  => this.trigger('audio-position-changed', { sound: this, currentTime: this.currentTime }));
     video.addEventListener('progress',        ()  => this.trigger('audio-loading', { sound: this }));
     video.addEventListener('error',           (e) => this._onVideoError(e));
   }
@@ -220,11 +256,13 @@ export default class HLSSound extends BaseSound {
   }
 
   _currentPosition() {
+    this._updateCurrentTime();
     return this.video.currentTime * 1000;
   }
 
   _setPosition(position) {
     this.video.currentTime = (position / 1000);
+    this._updateCurrentTime();
 
     return position;
   }

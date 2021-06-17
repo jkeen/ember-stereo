@@ -148,4 +148,11 @@ module('Unit | Connection | HLS', function(hooks) {
 
     assert.ok(sound);
   });
+
+  // test('it surfaces currentTime if EXT-PROGRAM-DATE-TIME is present')
+
+  // test('it reads HLS comments as id3metadata.title')
+
+  // test('it keeps current time if pausing and restarting the stream multiple times')
+
 });

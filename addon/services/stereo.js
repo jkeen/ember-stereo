@@ -427,10 +427,16 @@ export default class Stereo extends Service.extend(EmberEvented) {
         this.errorCache.cache({url: sound.url, error: sound.error, connectionKey: sound.connectionKey})
         this.trigger('audio-load-error', { sound: sound, failures: [strategy], error: sound.error })
 
+        // provide option to throw error
+        // throw new Error('sound failed to load', { sound, failures: [strategy] });
+
         return {sound, failures: [strategy]}
       }
     }
     else {
+      // TODO: provide option to throw error?
+      // throw new Error('sound failed to load', { sound, failures });
+
       return {sound, failures}
     }
   }
