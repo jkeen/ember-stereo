@@ -5,6 +5,7 @@ import { getMimeType } from 'ember-stereo/-private/utils/mime-types';
 import debug from 'debug';
 import { tracked } from '@glimmer/tracking';
 import Evented from 'ember-stereo/-private/utils/evented';
+import hasEqualUrls from 'ember-stereo/-private/utils/has-equal-urls';
 
 /**
  * This is the base sound object from which other sound objects are derived.
@@ -302,5 +303,9 @@ export default class Sound extends Evented {
 
   willDestroy() {
     this.teardown();
+  }
+
+  hasUrl(url) {
+    return hasEqualUrls(this.url, url);
   }
 }
