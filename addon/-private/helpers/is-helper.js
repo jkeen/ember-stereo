@@ -1,7 +1,7 @@
 import { inject as service } from '@ember/service';
 import Helper from '@ember/component/helper';
 import { dedupeTracked } from 'tracked-toolbox';
-import hasEqualUrls from 'ember-stereo/-private/utils/has-equal-urls';
+import hasEqualIdentifiers from 'ember-stereo/-private/utils/has-equal-identifiers';
 
 const UNINITIALIZED = Object.freeze({});
 export default class StereoBaseIsHelper extends Helper {
@@ -31,7 +31,7 @@ export default class StereoBaseIsHelper extends Helper {
         }
         else {
           this.stereo.on('new-load-request', async ({loadPromise, urlsOrPromise, /* options */}) => {
-            let isEqual = await hasEqualUrls(this.identifier, urlsOrPromise);
+            let isEqual = await hasEqualIdentifiers(this.identifier, urlsOrPromise);
             if (isEqual) {
               loadPromise.then(({sound, /* failures */}) => {
                 this.sound = sound

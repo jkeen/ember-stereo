@@ -6,7 +6,7 @@ import { module, test /*, skip */ } from 'qunit';
 import { setupTest } from 'ember-qunit';
 import { waitUntil, settled } from '@ember/test-helpers'
 import sinon from 'sinon';
-import hasEqualUrls from 'ember-stereo/-private/utils/has-equal-urls';
+import hasEqualIdentifiers from 'ember-stereo/-private/utils/has-equal-identifiers';
 import SoundCache from 'ember-stereo/-private/utils/sound-cache';
 import StereoUrl from 'ember-stereo/-private/utils/stereo-url';
 import setupCustomAssertions from 'ember-cli-custom-assertions/test-support';
@@ -612,13 +612,13 @@ module('Unit | Service | stereo', function(hooks) {
     let sound2PauseEventTriggered;
 
     service.on('audio-played', async ({sound}) => {
-      sound1PlayEventTriggered = await hasEqualUrls(sound.url, s1url);
-      sound2PlayEventTriggered = await hasEqualUrls(sound.url, s2url);
+      sound1PlayEventTriggered = await hasEqualIdentifiers(sound.url, s1url);
+      sound2PlayEventTriggered = await hasEqualIdentifiers(sound.url, s2url);
     });
 
     service.on('audio-paused', async ({sound}) => {
-      sound1PauseEventTriggered = await hasEqualUrls(sound.url, s1url);
-      sound2PauseEventTriggered = await hasEqualUrls(sound.url, s2url);
+      sound1PauseEventTriggered = await hasEqualIdentifiers(sound.url, s1url);
+      sound2PauseEventTriggered = await hasEqualIdentifiers(sound.url, s2url);
     });
 
     await service.play(s1url)

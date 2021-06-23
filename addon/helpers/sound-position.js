@@ -1,6 +1,6 @@
 import { inject as service } from '@ember/service';
 import Helper from '@ember/component/helper';
-import hasEqualUrls from 'ember-stereo/-private/utils/has-equal-urls';
+import hasEqualIdentifiers from 'ember-stereo/-private/utils/has-equal-identifiers';
 import {numericDuration} from 'ember-stereo/helpers/numeric-duration';
 import debug from 'debug';
 import {tracked} from '@glimmer/tracking';
@@ -53,7 +53,7 @@ export default class soundPosition extends Helper {
         }
         else {
           this.stereo.on('new-load-request', async ({loadPromise, urlsOrPromise /*, options */}) => {
-            let isEqual = await hasEqualUrls(this.identifier, urlsOrPromise);
+            let isEqual = await hasEqualIdentifiers(this.identifier, urlsOrPromise);
             if (isEqual) {
               loadPromise.then(({sound}) => this.sound = sound);
             }

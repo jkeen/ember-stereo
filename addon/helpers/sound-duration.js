@@ -1,6 +1,6 @@
 import { inject as service } from "@ember/service";
 import Helper from "@ember/component/helper";
-import hasEqualUrls from "ember-stereo/-private/utils/has-equal-urls";
+import hasEqualIdentifiers from "ember-stereo/-private/utils/has-equal-identifiers";
 import { dedupeTracked } from "tracked-toolbox";
 import { numericDuration } from "./numeric-duration";
 import debug from "debug";
@@ -58,7 +58,7 @@ export default class SoundDuration extends Helper {
             this.stereo.on(
               "new-load-request",
               async ({ loadPromise, urlsOrPromise }) => {
-                let isEqual = await hasEqualUrls(
+                let isEqual = await hasEqualIdentifiers(
                   this.identifier,
                   urlsOrPromise
                 );

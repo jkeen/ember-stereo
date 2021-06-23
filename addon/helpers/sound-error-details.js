@@ -1,6 +1,6 @@
 import Helper from '@ember/component/helper';
 import { dedupeTracked } from 'tracked-toolbox';
-import hasEqualUrls from 'ember-stereo/-private/utils/has-equal-urls';
+import hasEqualIdentifiers from 'ember-stereo/-private/utils/has-equal-identifiers';
 import { inject as service } from '@ember/service';
 import debug from 'debug';
 import { makeArray } from '@ember/array';
@@ -45,7 +45,7 @@ export default class SoundIsErrored extends Helper {
         }
         else {
           this.stereo.on('audio-load-error', async ({sound}) => {
-            let isEqual = await hasEqualUrls(this.identifier, sound.url);
+            let isEqual = await hasEqualIdentifiers(this.identifier, sound.url);
             if (isEqual) {
               this.result = this.stereo.errorCache.find(this.identifier)
             }

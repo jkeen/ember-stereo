@@ -1,7 +1,7 @@
 import { inject as service } from "@ember/service";
 import Helper from "@ember/component/helper";
-import hasEqualUrls from "ember-stereo/-private/utils/has-equal-urls";
-import { dedupeTracked } from "tracked-toolbox";
+import hasEqualIdentifiers from 'ember-stereo/-private/utils/has-equal-identifiers';
+import { dedupeTracked } from 'tracked-toolbox';
 import debug from "debug";
 
 /**
@@ -54,7 +54,7 @@ export default class SoundIsLoading extends Helper {
           this.result = sound.isLoading;
         } else {
           this.stereo.on('pre-load', async (urlsToTry) => {
-            let isEqual = await hasEqualUrls(this.identifier, urlsToTry);
+            let isEqual = await hasEqualIdentifiers(this.identifier, urlsToTry);
             if (isEqual) {
               this.result = true;
             }
@@ -63,7 +63,7 @@ export default class SoundIsLoading extends Helper {
           this.stereo.on(
             "new-load-request",
             async ({ loadPromise, urlsOrPromise }) => {
-              let isEqual = await hasEqualUrls(this.identifier, urlsOrPromise);
+              let isEqual = await hasEqualIdentifiers(this.identifier, urlsOrPromise);
               if (isEqual) {
                 this.result = true;
                 loadPromise.then(({ sound, failures }) => {
