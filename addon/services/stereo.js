@@ -116,7 +116,7 @@ export default class Stereo extends Service.extend(EmberEvented) {
     * @public
   */
   get isLoading() {
-    return this.loadTask.isRunning;
+    return this.loadTask.isRunning || (this.currentSound && this.currentSound.isLoading);
   }
 
   /**

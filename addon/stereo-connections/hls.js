@@ -272,6 +272,8 @@ export default class HLSSound extends BaseSound {
   }
 
   play() {
+    this.isLoading = true
+
     if (!this.video.src) {
       this.trigger('audio-loading', this)
       this.setup(); // the stream was stopped before

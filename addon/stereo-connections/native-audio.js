@@ -306,6 +306,7 @@ export default class NativeAudio extends BaseSound {
   }
 
   play({position} = {}) {
+    this.isLoading = true
     this.debug('#play');
     let audio = this.requestControl();
 
