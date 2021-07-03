@@ -307,7 +307,7 @@ export default class NativeAudio extends BaseSound {
   }
 
   @task({maxConcurrency: 1, drop: true})
-  *playTask({position, retryCount}) {
+  *playTask({position, retryCount = 0 }) {
     this.isLoading = true
     let audio = this.requestControl();
 
@@ -321,7 +321,13 @@ export default class NativeAudio extends BaseSound {
 
     this.debug('telling audio to play');
     try {
-      return yield audio.play()
+      yield audio.play().catch(e => {
+        if (retryCount < 2) {
+          this.playTask.perform({ position, retryCount: retryCount + 1 });
+        } else {
+          this._onAudioError(e)
+        }
+      });
     } catch(e) {
       if (retryCount < 2) {
         this.playTask.perform({ position, retryCount: retryCount + 1 });
