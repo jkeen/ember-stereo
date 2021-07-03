@@ -3,7 +3,6 @@ import Helper from "@ember/component/helper";
 import hasEqualIdentifiers from 'ember-stereo/-private/utils/has-equal-identifiers';
 import { dedupeTracked } from 'tracked-toolbox';
 import debug from "debug";
-
 /**
   A helper to detect if a sound is loading.
   ```hbs
@@ -45,38 +44,37 @@ export default class SoundIsLoading extends Helper {
   compute([identifier]) {
     if (identifier !== this.identifier) {
       this.identifier = identifier || "system";
+    }
 
-      if (this.identifier == "system") {
-        this.result = this.stereo.isLoading;
+    if (this.identifier == "system") {
+      this.result = this.stereo.isLoading;
+    } else {
+      let sound = this.stereo.findLoaded(this.identifier);
+
+      if (sound) {
+        this.result = sound.isLoading;
       } else {
-        let sound = this.stereo.findLoaded(this.identifier);
-        if (sound) {
-          this.result = sound.isLoading;
-        } else {
-          this.stereo.on('pre-load', async (urlsToTry) => {
-            let isEqual = await hasEqualIdentifiers(this.identifier, urlsToTry);
+        this.stereo.on('pre-load', async (urlsToTry) => {
+          let isEqual = await hasEqualIdentifiers(this.identifier, urlsToTry);
+          if (isEqual) {
+            this.result = true;
+          }
+        })
+
+        this.stereo.on("new-load-request", async ({ loadPromise, urlsOrPromise }) => {
+            let isEqual = await hasEqualIdentifiers(this.identifier, urlsOrPromise);
             if (isEqual) {
               this.result = true;
+              loadPromise.then(({ sound, failures }) => {
+                if (sound) {
+                  this.result = sound.isLoading;
+                } else if (failures) {
+                  this.result = false;
+                }
+              });
             }
-          })
-
-          this.stereo.on(
-            "new-load-request",
-            async ({ loadPromise, urlsOrPromise }) => {
-              let isEqual = await hasEqualIdentifiers(this.identifier, urlsOrPromise);
-              if (isEqual) {
-                this.result = true;
-                loadPromise.then(({ sound, failures }) => {
-                  if (sound) {
-                    this.result = sound.isLoading;
-                  } else if (failures) {
-                    this.result = false;
-                  }
-                });
-              }
-            }
-          );
-        }
+          }
+        );
       }
     }
 

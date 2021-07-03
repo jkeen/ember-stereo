@@ -2,6 +2,7 @@ import { A } from '@ember/array';
 import { run } from '@ember/runloop';
 import BaseSound from 'ember-stereo/stereo-connections/base';
 import Ember from 'ember';
+import { task } from 'ember-concurrency';
 // These are the events we're watching for
 const AUDIO_EVENTS = ['loadstart', 'durationchange', 'loadedmetadata', 'loadeddata', 'progress', 'canplay', 'canplaythrough', 'error', 'playing', 'pause', 'ended', 'emptied', 'timeupdate'];
 
@@ -305,9 +306,9 @@ export default class NativeAudio extends BaseSound {
     audio.volume = (volume/100);
   }
 
-  play({position} = {}) {
+  @task({maxConcurrency: 1, drop: true})
+  *playTask({position, retryCount}) {
     this.isLoading = true
-    this.debug('#play');
     let audio = this.requestControl();
 
     // since we clear the `src` attr on pause, restore it here
@@ -319,7 +320,21 @@ export default class NativeAudio extends BaseSound {
     }
 
     this.debug('telling audio to play');
-    return audio.play().catch(e => this._onAudioError(e));
+    try {
+      return yield audio.play()
+    } catch(e) {
+      if (retryCount < 2) {
+        this.playTask.perform({ position, retryCount: retryCount + 1 });
+      } else {
+        this._onAudioError(e)
+      }
+    } finally {
+      this.isLoading = false
+    }
+  }
+
+  play({position} = {}) {
+    return this.playTask.perform({position});
   }
 
   pause() {
