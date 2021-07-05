@@ -307,8 +307,9 @@ export default class NativeAudio extends BaseSound {
   }
 
   @task({maxConcurrency: 1, drop: true})
-  *playTask({position, retryCount = 0 }) {
+  *playTask({position, retryCount }) {
     this.isLoading = true
+    retryCount = retryCount || 0
     let audio = this.requestControl();
 
     // since we clear the `src` attr on pause, restore it here
@@ -324,16 +325,14 @@ export default class NativeAudio extends BaseSound {
       yield audio.play().catch(e => {
         if (retryCount < 2) {
           this.playTask.perform({ position, retryCount: retryCount + 1 });
-        } else {
-          this._onAudioError(e)
         }
+        this._onAudioError(e)
       });
     } catch(e) {
       if (retryCount < 2) {
         this.playTask.perform({ position, retryCount: retryCount + 1 });
-      } else {
-        this._onAudioError(e)
       }
+      this._onAudioError(e)
     } finally {
       this.isLoading = false
     }
@@ -348,7 +347,7 @@ export default class NativeAudio extends BaseSound {
     let audio = this.audioElement;
 
     if (this.isStream) {
-      this.stop(); // we don't want to the stream to continue loading while paused
+      this.stop(); // we don't want the stream to continue loading while paused
     }
     else {
       audio.pause();

@@ -5,6 +5,7 @@ import { task } from 'ember-concurrency';
 export default class DocsUsageController extends Controller {
   // BEGIN-SNIPPET application-controller.js
   @service stereo;
+  @service media;
   // END-SNIPPET
 
 

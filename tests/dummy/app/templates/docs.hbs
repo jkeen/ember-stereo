@@ -1,5 +1,5 @@
-<DocsViewer as |viewer|>
-  <viewer.nav as |nav|>
+<DocsViewer @media={{this.media}} as |viewer|>
+  <viewer.nav @media={{this.media}} @isShowingMenu={{isShowingMenu}} as |nav|>
     {{nav.section "Overview"}}
       {{nav.item "Intro" "docs.index"}}
       {{nav.item "Configuration" "docs.configuration"}}
@@ -10,9 +10,14 @@
       {{nav.item "Error Handling" "docs.events"}}
       {{nav.item "Monitoring Events" "docs.events"}}
       {{nav.item "Dealing with Autoplay" "docs.autoplay"}}
+    {{nav.item "Index" "docs.index"}}
   </viewer.nav>
 
-  <viewer.main>
-    {{outlet}}
+  <viewer.main @media={{this.media}}>
+    <div class="docs-container">
+      <div class="docs-section">
+        {{outlet}}
+      </div>
+    </div>
   </viewer.main>
 </DocsViewer>

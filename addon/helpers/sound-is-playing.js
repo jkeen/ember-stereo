@@ -26,13 +26,15 @@ Can also look for any system-level play event by passing in no argument
 */
 
 export default class SoundIsPlaying extends StereoBaseIsHelper {
+  debugName = 'ember-stereo:helpers:sound-is-playing'
+
   get result() {
     if (this.identifier == 'system') {
-      debug(`ember-stereo:helpers:sound-is-playing:${this.identifier}`)(`render = ${this.stereo.isPlaying}`)
+      debug(`${this.debugName}:${this.identifier}`)(`render = ${this.stereo.isPlaying}`)
       return this.stereo.isPlaying;
     }
     else {
-      debug(`ember-stereo:helpers:sound-is-playing:${this.identifier}`)(`render = ${this.sound?.isPlaying}`)
+      debug(`${this.debugName}:${this.identifier}`)(`render = ${this.sound?.isPlaying}`)
       return this.sound?.isPlaying;
     }
   }

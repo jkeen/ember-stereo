@@ -571,6 +571,8 @@ export default class Stereo extends Service.extend(EmberEvented) {
 
     // On audio-played this pauses all the other sounds. One at a time!
     this.oneAtATime.register(sound)
+
+    // sound.stop();
   }
 
   /**

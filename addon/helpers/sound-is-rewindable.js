@@ -26,13 +26,15 @@ import debug from 'debug';
 */
 
 export default class SoundIsRewindable extends StereoBaseIsHelper {
+  debugName = 'ember-stereo:helpers:sound-is-rewindable'
+
   get result() {
     if (this.identifier === 'system') {
-      debug(`ember-stereo:helpers:sound-is-rewindable:${this.identifier}`)(`render = ${this.stereo.isRewindable}`)
+      debug(`${this.debugName}:${this.identifier}`)(`render = ${this.stereo.isRewindable}`)
       return this.stereo.isRewindable;
     }
     else {
-      debug(`ember-stereo:helpers:sound-is-rewindable:${this.identifier}`)(`render = ${this.stereo.isRewindable}`)
+      debug(`${this.debugName}:${this.identifier}`)(`render = ${this.stereo.isRewindable}`)
       return this.sound?.isRewindable;
     }
   }

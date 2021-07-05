@@ -18,4 +18,16 @@ module('Integration | Helper | sound-is-loaded', function(hooks) {
     assert.equal(this.element.textContent.trim(), 'sound-is-loaded');
   });
 
+  test('it renders with array', async function (assert) {
+    let service = this.owner.lookup('service:stereo')
+    service.loadConnections([{ name: 'DummyConnection' }]);
+
+    this.set('url', ['/good/10/silence.mp3', '/good/10000/silent.mp3'])
+    await render(hbs`{{#if (sound-is-loaded this.url)}}sound-is-loaded{{else}}is-not-loaded{{/if}}`);
+    assert.equal(this.element.textContent.trim(), 'is-not-loaded');
+    await service.load(this.url);
+    await settled();
+    assert.equal(this.element.textContent.trim(), 'sound-is-loaded');
+  });
+
 });

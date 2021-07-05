@@ -18,7 +18,6 @@ Router.map(function() {
     this.route('trying-multiple-formats');
     this.route('handling-errors');
     this.route('events');
-
   });
 
   this.route('diagnostic', function() {

@@ -54,7 +54,6 @@ module('Integration | Helper | sound-is-loading', function(hooks) {
     assert.equal(this.element.textContent.trim(), 'sound-is-loading', 'helper reports not loading when finished');
   });
 
-
   test('it renders loading status when url is a promise', async function(assert) {
     let done = assert.async();
     let service = this.owner.lookup('service:stereo')
@@ -90,6 +89,30 @@ module('Integration | Helper | sound-is-loading', function(hooks) {
     assert.equal(this.element.textContent.trim(), 'is-not-loading', 'helper reports not loading');
 
     service.load(this.url).then(async () => {
+      await waitUntil(() => {
+        return this.element.textContent.trim() == 'is-not-loading'
+      }, { timeout: 5000 });
+      assert.equal(this.element.textContent.trim(), 'is-not-loading', 'helper reports loading');
+      done();
+    });
+    await waitUntil(() => {
+      return this.element.textContent.trim() == 'sound-is-loading'
+    });
+    assert.equal(this.element.textContent.trim(), 'sound-is-loading', 'helper reports not loading when finished');
+  });
+
+  test('it renders loading status when url is an array', async function (assert) {
+    let done = assert.async();
+    let service = this.owner.lookup('service:stereo')
+    service.loadConnections([{ name: 'DummyConnection' }]);
+
+    this.set('url', ['/good/3/silence.mp3', '/good/5000/silent.mp3'])
+
+    await render(hbs`{{#if (sound-is-loading this.url)}}sound-is-loading{{else}}is-not-loading{{/if}}`);
+    assert.equal(this.element.textContent.trim(), 'is-not-loading', 'helper reports not loading');
+
+    service.load('/good/3/silence.mp3').then(async () => {
+      // done loading
       await waitUntil(() => {
         return this.element.textContent.trim() == 'is-not-loading'
       }, { timeout: 5000 });

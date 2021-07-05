@@ -26,13 +26,15 @@ import debug from 'debug';
 */
 
 export default class SoundIsSeekable extends StereoBaseIsHelper {
+  debugName = 'ember-stereo:helpers:sound-is-seekable'
+
   get result() {
     if (this.identifier === 'system') {
-      debug(`ember-stereo:helpers:sound-is-seekable:${this.identifier}`)(`render = ${this.stereo.isSeekable}`)
+      debug(`${this.debugName}:${this.identifier}`)(`render = ${this.stereo.isSeekable}`)
       return this.stereo.isSeekable;
     }
     else {
-      debug(`ember-stereo:helpers:sound-is-seekable:${this.identifier}`)(`render = ${this.stereo.isSeekable}`)
+      debug(`${this.debugName}:${this.identifier}`)(`render = ${this.stereo.isSeekable}`)
       return this.sound?.isSeekable;
     }
   }

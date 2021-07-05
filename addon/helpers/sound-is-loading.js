@@ -1,8 +1,6 @@
-import { inject as service } from "@ember/service";
-import Helper from "@ember/component/helper";
-import hasEqualIdentifiers from 'ember-stereo/-private/utils/has-equal-identifiers';
-import { dedupeTracked } from 'tracked-toolbox';
-import debug from "debug";
+import StereoBaseIsHelper from 'ember-stereo/-private/helpers/is-helper';
+import debug from 'debug';
+
 /**
   A helper to detect if a sound is loading.
   ```hbs
@@ -27,60 +25,18 @@ import debug from "debug";
   @param {String} url
 */
 
-const UNINITIALIZED = Object.freeze({});
-export default class SoundIsLoading extends Helper {
-  @service stereo;
+export default class SoundIsLoading extends StereoBaseIsHelper {
+  name = 'sound-is-loaded'
+  debugName = 'ember-stereo:helpers:sound-is-loading'
 
-  @dedupeTracked result = undefined;
-  identifier = UNINITIALIZED;
-
-  /**
-    returns the state
-    @method compute
-    @param {String} [url]
-    @return {boolean}
-  */
-
-  compute([identifier]) {
-    if (identifier !== this.identifier) {
-      this.identifier = identifier || "system";
+  get result() {
+    if (this.identifier == 'system') {
+      debug(`${this.debugName}:${this.identifier}`)(`render = ${!!this.stereo.currentSound}`)
+      return !!this.stereo.isLoading;
     }
-
-    if (this.identifier == "system") {
-      this.result = this.stereo.isLoading;
-    } else {
-      let sound = this.stereo.findLoaded(this.identifier);
-
-      if (sound) {
-        this.result = sound.isLoading;
-      } else {
-        this.stereo.on('pre-load', async (urlsToTry) => {
-          let isEqual = await hasEqualIdentifiers(this.identifier, urlsToTry);
-          if (isEqual) {
-            this.result = true;
-          }
-        })
-
-        this.stereo.on("new-load-request", async ({ loadPromise, urlsOrPromise }) => {
-            let isEqual = await hasEqualIdentifiers(this.identifier, urlsOrPromise);
-            if (isEqual) {
-              this.result = true;
-              loadPromise.then(({ sound, failures }) => {
-                if (sound) {
-                  this.result = sound.isLoading;
-                } else if (failures) {
-                  this.result = false;
-                }
-              });
-            }
-          }
-        );
-      }
+    else {
+      debug(`${this.debugName}:${this.identifier}`)(`render = ${this.sound?.isLoaded}`)
+      return this.sound?.isLoading || this.isLoading;
     }
-
-    debug(`ember-stereo:helpers:sound-is-loading:${this.identifier}`)(
-      `render = ${this.result}`
-    );
-    return this.result;
   }
 }

@@ -20,15 +20,16 @@ A helper to detect if a sound is playing.
 
 
 export default class SoundMetadata extends StereoBaseIsHelper {
+  debugName = 'ember-stereo:helpers:sound-metadata'
   @dedupeTracked metadata = {};
 
   get result() {
     if (this.identifier == 'system') {
-      debug(`ember-stereo:helpers:sound-metadata:${this.identifier}`)(`metadata = ${JSON.stringify(this.stereo.currentSound?.metadata)}`)
+      debug(`${this.debugName}:${this.identifier}`)(`metadata = ${JSON.stringify(this.stereo.currentSound?.metadata)}`)
       this.metadata = this.stereo.currentSound?.metadata || {};
     }
     else {
-      debug(`ember-stereo:helpers:sound-metadata:${this.identifier}`)(`metadata = ${JSON.stringify(this.sound?.metadata)}`)
+      debug(`${this.debugName}:${this.identifier}`)(`metadata = ${JSON.stringify(this.sound?.metadata)}`)
       this.metadata = this.sound?.metadata || {};
     }
 

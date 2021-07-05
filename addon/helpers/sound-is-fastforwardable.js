@@ -26,13 +26,15 @@ import debug from 'debug';
 */
 
 export default class SoundIsFastForwardable extends StereoBaseIsHelper {
+  debugName = 'ember-stereo:helpers:sound-is-fastforwardable'
+
   get result() {
     if (this.identifier === 'system') {
-      debug(`ember-stereo:helpers:sound-is-fastforwardable:${this.identifier}`)(`render = ${this.stereo.isFastForwardable}`)
+      debug(`${this.debugName}:${this.identifier}`)(`render = ${this.stereo.isFastForwardable}`)
       return this.stereo.isFastForwardable;
     }
     else {
-      debug(`ember-stereo:helpers:sound-is-fastforwardable:${this.identifier}`)(`render = ${this.sound?.isFastForwardable}`)
+      debug(`${this.debugName}:${this.identifier}`)(`render = ${this.sound?.isFastForwardable}`)
       return this.sound?.isFastForwardable;
     }
   }

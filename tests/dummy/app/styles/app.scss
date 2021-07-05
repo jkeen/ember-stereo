@@ -9,7 +9,6 @@ $breakpoints: (
   'big-desktop': 1800px
 );
 
-
 @import "base";
 @import "diagnostic";
 @import "buttons";
@@ -68,7 +67,6 @@ $text-color-bright: #EEE;
   opacity: 0.3;
   pointer-events: none;
 }
-
 
 html {
   --brand-primary: #1b202b;

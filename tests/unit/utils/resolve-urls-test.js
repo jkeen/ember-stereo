@@ -9,23 +9,22 @@ module('Unit | Utility | resolve-urls', function() {
     });
 
     let result = await resolveUrls(p);
-    assert.deepEqual(result.map(i => i.href), [new StereoUrl('/good/url.mp3').href]);
+    assert.deepEqual(result, [new StereoUrl('/good/url.mp3').url]);
   });
 
   test('it resolves a function', async function(assert) {
     let result = await resolveUrls((() => ['/good/url.mp3']));
-    assert.deepEqual(result.map(i => i.href), [new StereoUrl('/good/url.mp3').href]);
+    assert.deepEqual(result, [new StereoUrl('/good/url.mp3').url]);
   })
 
   test('it resolves a function that returns a hash', async function (assert) {
     let result = await resolveUrls((() => { return { url: '/good/url', mimeType: 'audio/mpeg'}}));
-    assert.deepEqual(result.map(i => i.href), [new StereoUrl('/good/url', { mimeType: 'audio/mpeg' }).href]);
-    assert.deepEqual(result.map(i => i.mimeType), ['audio/mpeg']);
+    assert.deepEqual(result, [new StereoUrl('/good/url', { mimeType: 'audio/mpeg' }).url]);
   })
 
   test('it resolves a string', async function(assert) {
     let result = await resolveUrls((() => '/good/url.mp3'));
-    assert.deepEqual(result[0].href, new StereoUrl('/good/url.mp3').href);
+    assert.deepEqual(result[0], new StereoUrl('/good/url.mp3').url);
   })
 
 });

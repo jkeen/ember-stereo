@@ -26,15 +26,17 @@ import debug from 'debug';
 */
 export default class SoundIsLoaded extends StereoBaseIsHelper {
   name = 'sound-is-loaded'
+  debugName = 'ember-stereo:helpers:sound-is-loaded'
 
   get result() {
     if (this.identifier == 'system') {
-      debug(`ember-stereo:helpers:sound-is-loading:${this.identifier}`)(`render = ${!!this.stereo.currentSound}`)
+      debug(`${this.debugName}:${this.identifier}`)(`render = ${!!this.stereo.currentSound}`)
       return !!this.stereo.currentSound;
     }
     else {
-      debug(`ember-stereo:helpers:sound-is-loading:${this.identifier}`)(`render = ${this.sound?.isLoaded}`)
-      return this.sound?.isLoaded;
+      debug(`${this.debugName}:${this.identifier}`)(`render = ${this.sound?.isLoaded}`)
+
+      return (this.stereo.soundCache.cachedList || []).filter(url => this.sound && url === this.sound.url).length > 0;
     }
   }
 }

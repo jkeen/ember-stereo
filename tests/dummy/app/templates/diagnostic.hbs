@@ -1,11 +1,11 @@
 <DocsViewer as |viewer|>
-  <viewer.nav as |nav|>
+  <viewer.nav @media={{this.media}} as |nav|>
     {{nav.section "Diagnostic"}}
     {{nav.item "Main" "diagnostic.index"}}
     {{nav.item "Sync" "diagnostic.sync"}}
   </viewer.nav>
 
-  <viewer.main>
+  <viewer.main @media={{this.media}} >
     {{outlet}}
   </viewer.main>
 </DocsViewer>
