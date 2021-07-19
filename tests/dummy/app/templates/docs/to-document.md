@@ -2,7 +2,7 @@
 
 
 ### Service
-* api
+* methods
   * `play`
   * `load`
   * `pause`
@@ -30,7 +30,7 @@
 
 
 ### Sound Object
-* api
+* methods
   * `play`
   * `pause`
   * `fastForward`
@@ -49,6 +49,3 @@
 ### Advanced Usage
 * `play` accepts an Array and a Promise
 * `play` options
-* `sound-changed` event
-* testing
-* more on custom connections

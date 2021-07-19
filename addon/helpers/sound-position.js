@@ -5,6 +5,7 @@ import {numericDuration} from 'ember-stereo/helpers/numeric-duration';
 import debug from 'debug';
 import {tracked} from '@glimmer/tracking';
 import { dedupeTracked } from 'tracked-toolbox'
+import { didCancel } from 'ember-concurrency';
 
 /**
   A helper to get a sound's position.
@@ -55,7 +56,15 @@ export default class soundPosition extends Helper {
           this.stereo.on('new-load-request', async ({loadPromise, urlsOrPromise /*, options */}) => {
             let isEqual = await hasEqualIdentifiers(this.identifier, urlsOrPromise);
             if (isEqual) {
-              loadPromise.then(({sound}) => this.sound = sound);
+              try {
+                loadPromise.then(({ sound }) => (this.sound = sound));
+              }
+              catch (e) {
+                if (!didCancel(e)) {
+                  throw e;
+                }
+              }
+
             }
           });
         }

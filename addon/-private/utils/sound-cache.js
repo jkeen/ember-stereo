@@ -6,7 +6,7 @@ import Sound from 'ember-stereo/stereo-connections/base';
 /**
 * This class caches sound objects based on urls. You shouldn't have to interact with this class.
 *
-* @class sound-cache
+* @class SoundCache
 * @private
 * @constructor
 */

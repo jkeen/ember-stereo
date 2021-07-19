@@ -1,14 +1,12 @@
 # ember-stereo Changelog
 
 ### 2.0
-
 - [IMPROVEMENT] Added helpers and modifiers to operate hifi only from templates, removing a huge hurdle for newcomers having to deal with audio ids
 - [CHANGE] audio events now fire an object as the first argument, with the `sound`, matching the `play` and `load` functions. All event listeners should change from `this.stereo.on('event-name', (sound) => { // handler })` to `this.stereo.on('event-name', ({sound}) => { // handler })`
 - [CHANGE] Default volume is now 100
 - [CHANGE] Audio errors no longer throw errors that need to be caught, instead they are surfaced on the hifi service, or through the `{{sound-is-errored}}` and `{{sound-error-details}}`
 - [CHANGE] Sounds are cached ignoring query strings
 - [IMPROVEMENT] HLS now provides `currentTime` property for HLS streams that include EXT-PROGRAM-DATE-TIME in their manifests
-
 
 - [CHORE] Renamed anything that was `hifi` to `stereo`
 - [CHORE] Upgrade to Ember 3.24. This addon is octane-only now

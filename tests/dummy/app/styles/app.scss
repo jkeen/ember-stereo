@@ -47,6 +47,9 @@ $text-color-bright: #EEE;
   grid-auto-flow: column;
   grid-auto-columns: min-content min-content min-content auto;
   grid-gap: 11px;
+
+  padding: 10px;
+  border: 1px solid #EEE;
 }
 
 .demo-sound-position {

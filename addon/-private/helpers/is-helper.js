@@ -2,7 +2,7 @@ import { inject as service } from '@ember/service';
 import Helper from '@ember/component/helper';
 import { dedupeTracked } from 'tracked-toolbox';
 import hasEqualIdentifiers from 'ember-stereo/-private/utils/has-equal-identifiers';
-import { task, waitForEvent, race, all, timeout} from 'ember-concurrency';
+import { task, waitForEvent, race, all, timeout, didCancel} from 'ember-concurrency';
 import BaseSound from 'ember-stereo/stereo-connections/base';
 import resolveUrls from 'ember-stereo/-private/utils/resolve-urls';
 import hasEqualUrls from 'ember-stereo/-private/utils/has-equal-urls';
@@ -57,8 +57,15 @@ export default class StereoBaseIsHelper extends Helper {
 
       if (hasEqualUrls(identifier, urls)) {
         this.isLoading = true
-        yield loadPromise
-        sound = loadPromise.value.sound;
+        try {
+          loadPromise.then(value => {
+            sound = value.sound
+          })
+        } catch(e) {
+          if (!didCancel(e)) {
+            throw e;
+          }
+        }
       }
 
       if (sound) {

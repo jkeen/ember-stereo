@@ -11,6 +11,8 @@ import Helper from "@ember/component/helper";
   @class {{pause-sound}}
   @type Helper
   @param {String} url
+
+
   */
 export default class pauseSound extends Helper {
   @service stereo;

@@ -1,6 +1,7 @@
 import { makeArray } from '@ember/array';
 import BaseSound from 'ember-stereo/stereo-connections/base';
 import { Howl } from 'howler';
+
 /**
 * This class connects with Howler to create sounds.
 *
@@ -46,7 +47,23 @@ export default class Howler extends BaseSound {
       onstop: function() {
         sound.trigger('audio-paused', {sound});
       },
-      onloaderror: function(id, error) {
+      onloaderror: function(id, code) {
+        var MEDIA_ERR_ABORTED = 1;
+        var MEDIA_ERR_NETWORK = 2;
+        var MEDIA_ERR_DECODE = 3;
+        var MEDIA_ERR_SRC_NOT_SUPPORTED = 4;
+
+        let error = ""
+        if (code === MEDIA_ERR_ABORTED) {
+          error = "Loading process was aborted"
+        } else if (code === MEDIA_ERR_NETWORK) {
+          error = "A network error occurred"
+        } else if (code === MEDIA_ERR_DECODE) {
+          error = "Error occurred trying to decode audio"
+        } else if (code === MEDIA_ERR_SRC_NOT_SUPPORTED) {
+          error = "Audio source format is not supported"
+        }
+
         sound.trigger('audio-load-error', {sound, error});
       },
       onseek: function() {

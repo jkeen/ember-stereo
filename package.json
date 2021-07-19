@@ -1,6 +1,6 @@
 {
   "name": "ember-stereo",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Playing audio in your ember app made easy.",
   "keywords": [
     "ember-addon",
@@ -45,6 +45,7 @@
     "ember-auto-import": "^1.10.1",
     "ember-cli-babel": "^7.23.0",
     "ember-cli-htmlbars": "^5.3.1",
+    "can-autoplay": "shlajin/can-autoplay",
     "ember-concurrency": "^2.0.0",
     "ember-copy": "^1.0.0",
     "ember-get-config": "^0.3.0",

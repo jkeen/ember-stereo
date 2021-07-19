@@ -16,8 +16,9 @@ Router.map(function() {
     this.route('autoplay')
     this.route('playing-sounds');
     this.route('trying-multiple-formats');
-    this.route('handling-errors');
-    this.route('events');
+    this.route('metadata');
+    this.route('error-handling');
+    this.route('event-monitoring');
   });
 
   this.route('diagnostic', function() {

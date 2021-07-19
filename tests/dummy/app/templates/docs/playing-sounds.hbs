@@ -1,14 +1,17 @@
 
+<h1 class="docs-md__h1">Playing Sounds</h1>
 <p>
-  Playing sounds is simple
+Playing sounds is simple. You can interact directly with the stereo service, or use one of the template helpers to play
+sounds. Below is a simple player with the usual controls made just from simple template helpers.
 </p>
 
+{{docs/stereo-player-example url="https://file-examples-com.github.io/uploads/2017/11/file_example_OOG_1MG.ogg"}}
 
+<h3 class="docs-md__h3">On Demand URL</h3>
+{{docs/stereo-player url="https://file-examples-com.github.io/uploads/2017/11/file_example_OOG_1MG.ogg"}}
 
-<p>
-  You can play sounds by interacting directly with the service, or by using one of the template helpers
-</p>
+<h3 class="docs-md__h3">Streaming URL</h3>
+{{docs/stereo-player url="https://streaming.koop.org/stream.mp3"}}
 
-<Docs::StereoPlayer @url="https://file-examples-com.github.io/uploads/2017/11/file_example_OOG_1MG.ogg"/>
-
-{{docs-snippet name="stereo-player.hbs"}}
+<h3 class="docs-md__h2">Interacting with the service</h3>
+{{docs/service-example}}

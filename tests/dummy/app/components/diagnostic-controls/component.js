@@ -14,7 +14,6 @@ export default class DiagnosticControls extends Component {
 
   @task({drop: true})
   * playCustomSound() {
-
     yield this.stereo.play(this.url, {
       metadata: {
         title: this.title

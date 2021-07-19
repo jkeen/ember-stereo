@@ -1,0 +1,27 @@
+<DocsDemo as |demo|>
+  <demo.example @name="service-errors-example.hbs">
+    <div style="display: flex; justify-content: space-between;">
+      <button  {{on 'click' (fn this.togglePlaySoundWithThrow "https://invalid.example.url/s.mp3" )}} type="button">
+        {{#if this.sound.isPlaying}}
+          Pause
+        {{else}}
+          Play (Thrown Errors)
+        {{/if}}
+      </button>
+
+      <button {{on 'click' (fn this.togglePlaySoundWithoutThrow "https://invalid.example.url/s.mp3" )}} type="button">
+        {{#if this.sound.isPlaying}}
+          Pause
+        {{else}}
+          Play (Silent Errors)
+        {{/if}}
+      </button>
+    </div>
+
+    {{#if this.error}}
+      <div style="color: red;">{{this.error}}</div>
+    {{/if}}
+  </demo.example>
+  {{demo.snippet "service-errors-example.hbs"}}
+  {{demo.snippet "service-errors-example.js"}}
+</DocsDemo>

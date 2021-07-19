@@ -4,9 +4,9 @@ import { tracked } from '@glimmer/tracking';
 import StereoUrl from 'ember-stereo/-private/utils/stereo-url';
 
 /**
-* This class caches sound objects based on urls. You shouldn't have to interact with this class.
+* This class caches errors based on urls. You shouldn't have to interact with this class.
 *
-* @class sound-cache
+* @class Errorcache
 * @private
 * @constructor
 */

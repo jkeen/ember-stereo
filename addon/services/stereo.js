@@ -11,7 +11,7 @@ import { set, get } from '@ember/object';
 import { tracked } from '@glimmer/tracking';
 import debug from 'debug';
 import config from 'ember-get-config';
-
+import canAutoplay from 'can-autoplay';
 import Service, { inject as service } from '@ember/service';
 
 import EmberEvented from '@ember/object/evented';
@@ -59,6 +59,8 @@ export const SERVICE_EVENT_MAP = [
 export default class Stereo extends Service.extend(EmberEvented) {
   @service poll
 
+  @tracked autoPlayAllowed = false
+
   constructor() {
     super(...arguments);
     const owner = getOwner(this);
@@ -68,6 +70,7 @@ export default class Stereo extends Service.extend(EmberEvented) {
     this.loadConnections();
 
     this.defaultVolume = this.systemStereoOptions?.initialVolume || 100;
+
     this.sharedAudioAccess = new SharedAudioAccess();
     this.oneAtATime = new OneAtATime();
     this.soundCache = new SoundCache(this);
@@ -75,6 +78,7 @@ export default class Stereo extends Service.extend(EmberEvented) {
 
     this.volume = this.defaultVolume;
     this.isReady = true;
+    this.throwErrorOnFailure = this.systemStereoOptions?.throwErrorOnFailure;
 
     // Polls the current sound for position. We wanted to make it easy/flexible
     // for connection authors, and since we only play one sound at a time, we don't
@@ -83,7 +87,14 @@ export default class Stereo extends Service.extend(EmberEvented) {
       interval: this.pollInterval || 500,
       callback: bind(this, this._setCurrentPosition),
     });
+
+    canAutoplay.audio().then(({ result }) => {
+      if (result) {
+        this.autoPlayAllowed = true
+      }
+    })
   }
+
 
   /** currently loaded {Sound} object
    * @property currentSound
@@ -310,7 +321,7 @@ export default class Stereo extends Service.extend(EmberEvented) {
    * @return {Sound} A sound that's ready to be played, or an error
    */
 
-  @task({ debug: true, maxConcurrency: 5 })
+  @task({ debug: true, maxConcurrency: 5, restartable: true })
   *loadTask(urlsOrPromise, options) {
     var sharedAudioAccess = this._createAndUnlockAudio();
     options = assign({ metadata: {}, sharedAudioAccess }, options);
@@ -424,22 +435,48 @@ export default class Stereo extends Service.extend(EmberEvented) {
         return {sound, failures}
       }
       else {
-        let strategy = {url: sound.url, error: sound.error, connectionKey: sound.connectionKey};
-        this.errorCache.cache({url: sound.url, error: sound.error, connectionKey: sound.connectionKey})
-        this.trigger('audio-load-error', { sound: sound, failures: [strategy], error: sound.error })
-
-        // provide option to throw error
-        // throw new Error('sound failed to load', { sound, failures: [strategy] });
-
-        return {sound, failures: [strategy]}
+        return this._handlePlaybackError(sound, options)
       }
     }
     else {
-      // TODO: provide option to throw error?
-      // throw new Error('sound failed to load', { sound, failures });
-
-      return {sound, failures}
+      return this._handleLoadError({failures, options})
     }
+  }
+
+  _shouldThrowError(options) {
+    if (options) {
+      if (Object.keys(options || {}).includes('throwErrorOnFailure')) {
+        return options.throwErrorOnFailure;
+      }
+      else {
+        return this.systemStereoOptions.throwErrorOnFailure;
+      }
+    }
+  }
+
+  _handlePlaybackError({sound, options}) {
+    let strategy = { url: sound.url, error: sound.error, connectionKey: sound.connectionKey };
+    this.errorCache.cache({ url: sound.url, error: sound.error, connectionKey: sound.connectionKey })
+    this.trigger('audio-load-error', { sound: sound, failures: [strategy], error: sound.error })
+
+    if (this._shouldThrowError(options)) {
+      throw new Error((sound.error || 'stereo playback error'), { sound, failures: [strategy] });
+    }
+
+    return { sound, failures: [strategy], error: strategy.error }
+  }
+
+  _handleLoadError({failures, options }) {
+    let failure = failures.find(failure => failure.connectionKey === "NativeAudio")
+    if (!failure) {
+      failure = failures[0]
+    }
+
+    if (this._shouldThrowError(options)) {
+      throw new Error((failure.error || 'stereo load error'), { failures });
+    }
+
+    return { failures, error: failure?.error }
   }
 
   /**

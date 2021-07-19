@@ -7,6 +7,7 @@
       <span class="test-sound-title">
         <Input type="text" class="input" placeholder="url" @value={{url}} />
       </span>
+      {{sound-error-details this.url}}
 
       <div class="test-sound-actions">
         <button href="#" class="button is-medium is-outline is-dark {{if this.loadCustomSound.isRunning " sound-is-loading"}}"

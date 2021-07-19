@@ -1,5 +1,5 @@
 <DocsDemo as |demo|>
-  <demo.example @name="stereo-simple.hbs" style="display: grid; grid-auto-flow: column;" class="demo-sound-display">
+  <demo.example @name="stereo-simple.hbs" class="demo-sound-display">
     {{#let "https://streaming.koop.org/stream.mp3" as |url|}}
     <button type="button" {{on 'click' (toggle-play-sound url)}}>
       {{#if (sound-is-playing url)}}

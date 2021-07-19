@@ -1,0 +1,13 @@
+<DocsDemo as |demo|>
+  <demo.example @name="service-example.hbs" class="demo-sound-display">
+    <button type="button" {{on 'click' (fn this.togglePlaySound "https://streaming.koop.org/stream.mp3")}}>
+      {{#if this.sound.isPlaying}}
+        Pause
+      {{else}}
+        Play
+      {{/if}}
+    </button>
+  </demo.example>
+  {{demo.snippet "service-example.hbs"}}
+  {{demo.snippet "service-example.js"}}
+</DocsDemo>

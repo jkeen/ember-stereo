@@ -4,6 +4,7 @@ import hasEqualIdentifiers from "ember-stereo/-private/utils/has-equal-identifie
 import { dedupeTracked } from "tracked-toolbox";
 import { numericDuration } from "./numeric-duration";
 import debug from "debug";
+import { didCancel } from 'ember-concurrency';
 import { tracked } from '@glimmer/tracking';
 
 /**
@@ -63,7 +64,14 @@ export default class SoundDuration extends Helper {
                   urlsOrPromise
                 );
                 if (isEqual) {
-                  loadPromise.then(({ sound }) => (this.sound = sound));
+                  try {
+                    loadPromise.then(({ sound }) => (this.sound = sound));
+                  }
+                  catch(e) {
+                    if (!didCancel(e)) {
+                      throw e;
+                    }
+                  }
                 }
               }
             );
