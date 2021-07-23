@@ -31,7 +31,9 @@
     text-transform: uppercase;
   }
 }
-
+.test-sound-title {
+  grid-area: title;
+}
 .test-sound-title-url {
   grid-area: url;
   display: flex;

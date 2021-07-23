@@ -6,7 +6,6 @@ import { tracked } from '@glimmer/tracking';
 export default class ServiceExample extends Component {
   // BEGIN-SNIPPET service-example.js
   @service stereo;
-
   @tracked sound;
 
   @action

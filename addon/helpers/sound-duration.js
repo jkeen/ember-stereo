@@ -3,9 +3,8 @@ import Helper from "@ember/component/helper";
 import hasEqualIdentifiers from "ember-stereo/-private/utils/has-equal-identifiers";
 import { dedupeTracked } from "tracked-toolbox";
 import { numericDuration } from "./numeric-duration";
-import debug from "debug";
+import debugMessage from 'ember-stereo/-private/utils/debug-message';
 import { didCancel } from 'ember-concurrency';
-import { tracked } from '@glimmer/tracking';
 
 /**
   A helper to get a sound's duration in milliseconds.
@@ -21,6 +20,8 @@ import { tracked } from '@glimmer/tracking';
 */
 
 export default class SoundDuration extends Helper {
+  name = 'sound-duration'
+
   @service stereo;
   @dedupeTracked sound;
   @dedupeTracked result;
@@ -97,9 +98,7 @@ export default class SoundDuration extends Helper {
     }
 
     this.result = result;
-    debug(`ember-stereo:helpers:sound-duration:${identifier}:${format}`)(
-      `render = ${result}`
-    );
+    debugMessage(this, `render = ${result}`);
     return this.result;
   }
 }

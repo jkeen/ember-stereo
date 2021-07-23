@@ -24,10 +24,13 @@ export default class PlaySound extends Helper {
     @return {Function}
   */
   compute([urls], options = {}, metadata = {}) {
-    return () => {
-      return this.stereo
-        .play(urls, prepareOptions({options, metadata}))
-        .then((result) => result.sound);
+    return async () => {
+      try {
+        let { sound } = await this.stereo.play(urls, prepareOptions({ options, metadata }))
+        return sound;
+      } catch(e) {
+        return false;
+      }
     };
   }
 }

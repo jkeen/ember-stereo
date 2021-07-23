@@ -1,5 +1,5 @@
 import StereoBaseIsHelper from 'ember-stereo/-private/helpers/is-helper';
-import debug from 'debug';
+import debugMessage from 'ember-stereo/-private/utils/debug-message';
 
 /**
   A helper to detect if a sound is rewindable.
@@ -26,15 +26,15 @@ import debug from 'debug';
 */
 
 export default class SoundIsRewindable extends StereoBaseIsHelper {
-  debugName = 'ember-stereo:helpers:sound-is-rewindable'
+  name = 'sound-is-rewindable'
 
   get result() {
     if (this.identifier === 'system') {
-      debug(`${this.debugName}:${this.identifier}`)(`render = ${this.stereo.isRewindable}`)
+      debugMessage(this, `render = ${this.stereo.isRewindable}`)
       return this.stereo.isRewindable;
     }
     else {
-      debug(`${this.debugName}:${this.identifier}`)(`render = ${this.stereo.isRewindable}`)
+      debugMessage(this, `render = ${this.stereo.isRewindable}`)
       return this.sound?.isRewindable;
     }
   }

@@ -214,27 +214,33 @@ export default class NativeAudio extends BaseSound {
   }
 
   _onAudioError(error) {
-    let message = "";
-    switch (error.code) {
-      case error.MEDIA_ERR_ABORTED:
-        message = 'You aborted the audio playback.';
-        break;
-      case error.MEDIA_ERR_NETWORK:
-        message = 'A network error caused the audio download to fail.';
-        break;
-      case error.MEDIA_ERR_DECODE:
-        message = 'Decoder error.';
-        break;
-      case error.MEDIA_ERR_SRC_NOT_SUPPORTED:
-        message = 'Audio source format is not supported.';
-        break;
-      default:
-        message = error.message;
-        break;
+    if (error.name === 'NotAllowedError') {
+      this.stop();
+      this.trigger('audio-blocked', { sound: this, error: error.message });
     }
+    else {
+      let message = "";
+      switch (error.code) {
+        case error.MEDIA_ERR_ABORTED:
+          message = 'You aborted the audio playback.';
+          break;
+        case error.MEDIA_ERR_NETWORK:
+          message = 'A network error caused the audio download to fail.';
+          break;
+        case error.MEDIA_ERR_DECODE:
+          message = 'Decoder error.';
+          break;
+        case error.MEDIA_ERR_SRC_NOT_SUPPORTED:
+          message = 'Audio source format is not supported.';
+          break;
+        default:
+          message = error.message;
+          break;
+      }
 
-    this.debug(`audio element threw error ${message}`);
-    this.trigger('audio-load-error', {sound: this, error: message});
+      this.debug(`audio element threw error ${message}`);
+      this.trigger('audio-load-error', { sound: this, error: message });
+    }
   }
 
   _onAudioEmptied() {
@@ -301,9 +307,11 @@ export default class NativeAudio extends BaseSound {
   }
 
   _setVolume(volume) {
-    this.debug(`_setVolume: ${volume}`);
-    let audio = this.audioElement;
-    audio.volume = (volume/100);
+    if (!Ember.testing) {
+      this.debug(`_setVolume: ${volume}`);
+      let audio = this.audioElement;
+      audio.volume = (volume / 100);
+    }
   }
 
   @task({maxConcurrency: 1, drop: true})

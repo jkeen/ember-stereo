@@ -1,0 +1,42 @@
+<DocsDemo as |demo|>
+  <demo.example @name="try-multiple-urls-via-service.hbs">
+    <div style="display: flex; justify-content: space-between;">
+      <button {{on 'click' this.play}} type="button" class="ui-button">
+        {{#if this.sound.isPlaying}}
+        Pause
+        {{else}}
+        Play Sound
+        {{/if}}
+      </button>
+    </div>
+
+    {{#if this.error}}
+    <div style="color: red;">{{this.error}}</div>
+    {{/if}}
+  </demo.example>
+  {{demo.snippet "try-multiple-urls-via-service.js"}}
+  {{demo.snippet "try-multiple-urls-via-service.hbs"}}
+</DocsDemo>
+
+
+<DocsDemo as |demo|>
+  <demo.example @name="try-multiple-urls.hbs">
+    <p>Using template helpers to try multiple sounds</p>
+    <div style="display: flex; justify-content: space-between;">
+      {{#let (array "https://failing.example.url/try.mp3" "https://streaming.koop.org/stream.mp3") as |urls|}}
+        <button {{on 'click' (toggle-play-sound urls )}} type="button" class="ui-button">
+          {{#if (sound-is-playing urls)}}
+            Pause
+          {{else}}
+            Play Sound
+          {{/if}}
+        </button>
+
+        {{#if (sound-is-errored urls)}}
+          <div style="color: red;">{{sound-error-details urls}}</div>
+        {{/if}}
+      {{/let}}
+    </div>
+  </demo.example>
+  {{demo.snippet "try-multiple-urls.hbs"}}
+</DocsDemo>

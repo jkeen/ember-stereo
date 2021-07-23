@@ -1,6 +1,6 @@
 @import url('https://fonts.googleapis.com/css?family=Montserrat:400,600');
-// @import "bulma";
 @import "vendor/include-media";
+
 // MEDIA QUERIES
 $breakpoints: (
   'phone': 599px,
@@ -14,6 +14,10 @@ $breakpoints: (
 @import "buttons";
 @import "sync";
 
+
+html {
+  --brand-primary: #02BD9E;
+}
 
 $body-color: #FFF;
 $yellow: yellow;
@@ -40,7 +44,6 @@ $text-color-bright: #EEE;
 @import "components/connection-display";
 @import "components/sound-display";
 @import "components/diagnostic-controls";
-
 
 .demo-sound-display, .stereo-player {
   display: grid;
@@ -71,6 +74,43 @@ $text-color-bright: #EEE;
   pointer-events: none;
 }
 
-html {
-  --brand-primary: #1b202b;
+.ui-button {
+  border: 1px solid #DDD;
+  border-radius: 5px;
+  padding: 5px 10px;
+  background-color: #FFF;
+
+  &:hover {
+    background-color: #EEE;
+  }
+
+  &.with-icon {
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    line-height: 20px;
+  }
+}
+
+.hljs, .docs-md__code, .docs-bg-brand {
+  background-color: #012941;
+}
+
+a {
+  text-decoration: underline;
+}
+
+.autoplay-blocked-overlay {
+  background-color: rgba(0,0,0,0.8);
+  opacity: 1;
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #FFF;
+  padding: 10px;
 }

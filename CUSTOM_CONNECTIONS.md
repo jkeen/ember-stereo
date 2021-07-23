@@ -7,32 +7,83 @@ Do you need to support a funky audio format that requires a special library, or 
 $ ember generate stereo-connection flash-connection
 ```
 
-This creates `app/stereo-connections/flash-connection.js` and a unit test at `tests/unit/stereo-connections/flash-connection.js`, which you should now customize.
+This creates `app/stereo-connections/dash-connection.js` and a unit test at `tests/unit/stereo-connections/dash-connection.js`, which you should now customize.
 
 The files created by the blueprint should walk you through what you need to implement, but to be thorough:
 
 
 ```javascript
-  let ClassMethods = Ember.Mixin.create({
-    setup() {
-      // Do any global setup needed for your third party library.
-    },
+let Sound = class Sounds extends BaseSound {
+  static canPlayMimeType(/* extension */) {
+    // check if connection can play file with this mime type
+    return true;
+  },
 
-    canPlayMimeType(/* extension */) {
-      // check if connection can play file with this mime type
-      return true;
-    },
+  static canUseConnection() {
+    // check to see if this connection will work on this browser/platform
+    return true;
+  }
 
-    canUseConnection() {
-      // check to see if this connection will work on this browser/platform
-      return true;
-    }
-  });
+  setup() {
+    let url   = this.args.url;
+    let sound = this;
+
+    // Using the URL, try loading up your sound.
+
+    // Wire up your audio library so it fires these events on this sound class
+
+    // sound.trigger('audio-ready')                     -> when sound is ready to play
+    // sound.trigger('audio-load-error', errorMessage)  -> when sound encounters an loading error
+    // sound.trigger('audio-loading', info)             -> when sound is loading, optionally include {percentLoaded}
+
+    // sound.trigger('audio-played')                    -> when sound is played
+    // sound.trigger('audio-paused')                    -> when sound is paused
+    // sound.trigger('audio-ended')                     -> when sound is finished playing
+    // sound.trigger('audio-duration-changed')          -> when the audio duration changes
+    // sound.trigger('audio-position-changed')          -> when the audio position changes
+  }
+
+  teardown() {
+
+  }
+
+  // implement these methods to control your sound
+
+  _setVolume() {
+    assert('[stereo-connection: <%= name %>] #_setVolume interface not implemented', false);
+  }
+
+  _audioDuration() {
+    // return Infinity if source is an audio stream
+    assert("[stereo-connection: <%= name %>] #_audioDuration interface not implemented", false);
+  }
+
+  _currentPosition() {
+    assert("[stereo-connection: <%= name %>] #currentPosition interface not implemented", false);
+  }
+
+  _setPosition() {
+    assert("[stereo-connection: <%= name %>] #setPosition interface not implemented", false);
+  }
+
+  play() {
+    assert("[stereo-connection: <%= name %>] #play interface not implemented", false);
+  }
+
+  pause() {
+    assert("[stereo-connection: <%= name %>] #pause interface not implemented", false);
+  }
+
+  stop() {
+    // Stop playback and make sure no more audio is downloading
+    assert("[stereo-connection: <%= name %>] #stop interface not implemented", false);
+  }
+}
 ```
 
 `canPlayMimeType` and `canUseConnection` are called when `stereo` is looking for connections to try with a url. Give your best guess here. For instance, our built-in HLS.js library won't work on mobile, so `canUseConnection` returns false on a mobile device and true on a desktop browser. Similary, HLS only plays `application/vnd.apple.mpegurl` files, so we just check for that extension in `canPlayMimeType`.
 
-##### Implement methods to bridge communication between stereo and your third party sound.
+##### Implement methods to bridge communication between stereo and your third party library.
 
 - `setup()`
 Wire up your library to trigger the following methods when things happen on your sound:
@@ -49,14 +100,16 @@ Optional (but nice to have) events:
 - `sound.trigger('audio-loading', {percentLoaded: percent})` - when sound is downloading, update the percentLoaded
 
 ```javascript
-import flashLibrary from 'your-third-party-library'
+import dashLibrary from 'your-third-party-library'
 
-let FlashConnection = BaseSound.extend({
+let DashConnection = BaseSound.extend({
+  @tracked dashSound;
+
   setup() {
     let url   = this.url;
     let sound = this;
 
-    let flashSound = new flashLibrary({
+    let dashSound = new dashLibrary({
       url: url,
       onready: function() {
         // Sound is loaded and ready to go.
@@ -83,7 +136,7 @@ let FlashConnection = BaseSound.extend({
       }
     })
 
-    this.flashSound = flashSound;
+    this.dashSound = dashSound;
   }
 ```
 
@@ -92,7 +145,7 @@ let FlashConnection = BaseSound.extend({
 ```javascript
   // clean up after yourself
   teardown() {
-    this.get('flashSound').destroy();
+    this.get('dashSound').destroy();
   }
 ```
 
@@ -100,39 +153,39 @@ let FlashConnection = BaseSound.extend({
 
 ```javascript
 _setVolume(volume) {
-  this.get('flashSound').volume(volume);
+  this.dashSound.volume(volume);
 },
 
 _audioDuration() { // in ms
   // return Infinity if source is an audio stream
-  if (this.get('flashSound').isStreaming()) {
+  if (this.dashSound.isStreaming()) {
     return Infinity
   }
   else {
-    return this.get('flashSound').duration    
+    return this.dashSound.duration    
   }
 },
 
 _currentPosition() { // in ms
-  return this.get('flashSound').position
+  return this.dashSound.position
 },
 
 _setPosition(pos) { // in ms
-  return this.get('flashSound').setPosition(pos)
+  return this.dashSound.setPosition(pos)
 },
 
 play() {
-  this.get('flashSound').play();
+  this.dashSound.play();
 },
 
 pause() {
-  this.get('flashSound').pause();
+  this.dashSound.pause();
 },
 
 stop() {
   // Stop playback and make sure no more audio is downloading
-  this.get('flashSound').stopDownload();
-  this.get('flashSound').stop();
+  this.dashSound.stopDownload();
+  this.dashSound.stop();
 }
 
 ```
@@ -148,7 +201,7 @@ module.exports = function(environment) {
       debug: true,    // get ready for some deep console messages to help you find your way
       connections: [
         {
-          name: 'FlashConnection',
+          name: 'DashConnection',
           config: {
             options: { // these options get passed into your class-level setup
               foo: 'bar'

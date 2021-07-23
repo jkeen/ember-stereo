@@ -34,24 +34,6 @@ module('Unit | Service | stereo integration test.js', function(hooks) {
   });
 
   // TODO: figure out how to effectively handle these errors.
-  skip('playing a bad url fails', async function(assert) {
-    catchExpectedErrors(["All given promises failed."]);
-
-    let service = this.owner.factoryFor('service:audio').create({});
-    let failures, success = false;
-
-    try {
-      await service.playBad();
-      success = true;
-    } catch (results) {
-      failures = results.failures;
-      assert.ok(failures && failures.length > 0, "should have reported failures");
-    }
-
-    assert.equal(success, false, "should not be successful")
-  });
-
-  // TODO: figure out how to effectively handle these errors.
   skip('playing a blank url fails', async function(assert) {
     catchExpectedErrors(["[ember-stereo] URLs must be provided"]);
     let service = this.owner.factoryFor('service:audio').create({});

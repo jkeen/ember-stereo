@@ -2,6 +2,11 @@
 
 Sound objects can store whatever custom metadata you want. This info will stick around for as long as the sound is loaded.
 
+
+{{docs/custom-metadata}}
+
+
+You can also pass in metadata through the service.
 ```js
 
 @service stereo;
@@ -15,12 +20,4 @@ async playSound() {
     }
   })
 }
-```
-
-```hbs
-{{#if (sound-is-loaded this.show.audioTitle)}}
-<h3 class="show-title">
-  {{sound-metadata this.show.audioTitle key="title"}}
-</h3>
-{{/if}}
 ```

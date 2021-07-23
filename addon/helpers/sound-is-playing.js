@@ -1,5 +1,5 @@
 import StereoBaseIsHelper from 'ember-stereo/-private/helpers/is-helper';
-import debug from 'debug';
+import debugMessage from 'ember-stereo/-private/utils/debug-message';
 
 /**
 A helper to detect if a sound is playing.
@@ -26,16 +26,16 @@ Can also look for any system-level play event by passing in no argument
 */
 
 export default class SoundIsPlaying extends StereoBaseIsHelper {
-  debugName = 'ember-stereo:helpers:sound-is-playing'
+  name = 'sound-is-playing'
 
   get result() {
     if (this.identifier == 'system') {
-      debug(`${this.debugName}:${this.identifier}`)(`render = ${this.stereo.isPlaying}`)
-      return this.stereo.isPlaying;
+      debugMessage(this, `render = ${this.stereo.isPlaying}`)
+      return this.stereo.isPlaying
     }
     else {
-      debug(`${this.debugName}:${this.identifier}`)(`render = ${this.sound?.isPlaying}`)
-      return this.sound?.isPlaying;
+      debugMessage(this, `render = ${this.sound?.isPlaying}`)
+      return this.sound?.isPlaying
     }
   }
 }

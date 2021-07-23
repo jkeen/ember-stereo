@@ -74,6 +74,7 @@ export default class Sound extends Evented {
   @tracked isPlaying = false
   @tracked isErrored = false;
   @tracked isReady   = false
+  @tracked isBlocked = false
   @tracked _position = 0;
   @tracked error = null;
   @tracked duration = 0
@@ -159,6 +160,7 @@ export default class Sound extends Evented {
       this.hasPlayed = true
       this.isLoading = false
       this.isPlaying = true
+      this.isBlocked = false
       this.error = null
 
       if (audioPlayed) { audioLoading(this); }
@@ -187,7 +189,6 @@ export default class Sound extends Evented {
     });
 
     this.on('audio-load-error', (opts = {}) => {
-      console.error(opts)
       let { error } = opts;
 
       if (this.hasPlayed) {
@@ -214,6 +215,10 @@ export default class Sound extends Evented {
       if (audioLoading) { audioLoading(this, info && info.percentLoaded); }
       this.debug('audio-loading');
     });
+
+    this.on('audio-blocked', () => {
+      this.isBlocked = true;
+    })
 
     try {
       this._detectTimeouts();

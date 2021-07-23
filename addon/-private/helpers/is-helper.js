@@ -6,8 +6,7 @@ import { task, waitForEvent, race, all, timeout, didCancel} from 'ember-concurre
 import BaseSound from 'ember-stereo/stereo-connections/base';
 import resolveUrls from 'ember-stereo/-private/utils/resolve-urls';
 import hasEqualUrls from 'ember-stereo/-private/utils/has-equal-urls';
-
-import debug from 'debug';
+import debugMessage from 'ember-stereo/-private/utils/debug-message';
 
 const UNINITIALIZED = Object.freeze({});
 export default class StereoBaseIsHelper extends Helper {
@@ -25,15 +24,17 @@ export default class StereoBaseIsHelper extends Helper {
   @return {boolean}
   */
 
+  get waitingForSound() {
+    return !this.sound?.url
+  }
 
   @task
   * watchForAudioLoaded(identifier) {
-    debug(`${this.debugName}:${identifier}`)('waiting for audio-loaded or audio-played');
+    debugMessage(this, 'waiting for audio-loaded or audio-played');
 
-    while (!this.sound) {
+    while (this.waitingForSound) {
       let { sound } = yield race([waitForEvent(this.stereo, 'audio-loaded'), waitForEvent(this.stereo, 'audio-played')])
       if (sound && hasEqualUrls(sound.url, identifier)) {
-        debug(`${this.debugName}:${identifier}`)('found sound from audio-loaded');
         this.isLoading = false;
         this.sound = sound;
       }
@@ -44,18 +45,18 @@ export default class StereoBaseIsHelper extends Helper {
     }
   }
 
-
   @task
   * waitForSound(identifier) {
     this.watchForAudioLoaded.perform(identifier)
 
-    while (true) {
+    while (this.waitingForSound) {
       var sound = null;
-      debug(`${this.debugName}:${identifier}`)('waiting for new-load-request');
+      debugMessage(this, 'waiting for new-load-request');
       let { loadPromise, urlsOrPromise, options } = yield waitForEvent(this.stereo, 'new-load-request')
       let urls = yield resolveUrls(urlsOrPromise);
 
       if (hasEqualUrls(identifier, urls)) {
+        debugMessage(this, 'loading sound');
         this.isLoading = true
         try {
           loadPromise.then(value => {
@@ -69,10 +70,10 @@ export default class StereoBaseIsHelper extends Helper {
       }
 
       if (sound) {
-        debug(`${this.debugName}:${identifier}`)('found sound from new-load-request');
+        debugMessage(this, 'found sound from new-load-request');
         this.sound = sound;
+        this.isLoading = false;
       }
-      this.isLoading = false;
       if (Ember.testing) {
         break;
       }
@@ -89,7 +90,7 @@ export default class StereoBaseIsHelper extends Helper {
         this.identifier = identifier.url;
       }
       else {
-        this.sound = UNINITIALIZED; // if identifier changes, reinitialize sound
+        this.sound = UNINITIALIZED
         this.identifier = identifier || 'system';
       }
     }
@@ -98,16 +99,15 @@ export default class StereoBaseIsHelper extends Helper {
       this.sound = this.stereo.findLoaded(this.identifier)
 
       if (this.sound) {
-        debug(`${this.debugName}:${this.identifier}`)('found sound already loaded');
+        debugMessage(this, 'found sound already loaded');
       }
       else {
-        debug(`${this.debugName}:${this.identifier}`)('could not find loaded sound');
+        debugMessage(this, 'could not find loaded sound');
+
+        resolveUrls(this.identifier).then(urls => {
+          this.waitForSound.perform(urls);
+        });
       }
-
-      resolveUrls(identifier).then(urls => {
-        this.waitForSound.perform(urls);
-      });
-
     }
 
     return this.result;

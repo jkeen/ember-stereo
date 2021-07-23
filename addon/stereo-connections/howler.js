@@ -48,23 +48,37 @@ export default class Howler extends BaseSound {
         sound.trigger('audio-paused', {sound});
       },
       onloaderror: function(id, code) {
+        var MEDIA_NOT_ALLOWED = 0;
         var MEDIA_ERR_ABORTED = 1;
         var MEDIA_ERR_NETWORK = 2;
         var MEDIA_ERR_DECODE = 3;
         var MEDIA_ERR_SRC_NOT_SUPPORTED = 4;
 
-        let error = ""
-        if (code === MEDIA_ERR_ABORTED) {
-          error = "Loading process was aborted"
-        } else if (code === MEDIA_ERR_NETWORK) {
-          error = "A network error occurred"
-        } else if (code === MEDIA_ERR_DECODE) {
-          error = "Error occurred trying to decode audio"
-        } else if (code === MEDIA_ERR_SRC_NOT_SUPPORTED) {
-          error = "Audio source format is not supported"
+        if (code === MEDIA_NOT_ALLOWED) {
+          sound.trigger('audio-blocked', { sound, error: "Audio autoplay attempt was blocked by browser user settings" });
         }
+        else {
+          let message = ""
+          switch (code) {
+            case MEDIA_ERR_ABORTED:
+              message = 'You aborted the audio playback.';
+              break;
+            case MEDIA_ERR_NETWORK:
+              message = 'A network error caused the audio download to fail.';
+              break;
+            case MEDIA_ERR_DECODE:
+              message = 'Decoder error.';
+              break;
+            case MEDIA_ERR_SRC_NOT_SUPPORTED:
+              message = 'Audio source format is not supported.';
+              break;
+            default:
+              message = "Audio load error";
+              break;
+          }
 
-        sound.trigger('audio-load-error', {sound, error});
+          sound.trigger('audio-load-error', { sound, error: message });
+        }
       },
       onseek: function() {
         sound.trigger('audio-position-changed', {sound});

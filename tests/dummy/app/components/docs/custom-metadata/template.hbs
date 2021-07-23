@@ -1,0 +1,30 @@
+<DocsDemo as |demo|>
+  <demo.example @name="custom-metadata.hbs">
+    <div>
+      <strong>Now Playing: {{sound-metadata (current-sound) key="title"}}</strong>
+    </div>
+    <br/>
+    <div style="display: flex; justify-content: space-between;">
+      {{#let "http://streaming.koop.org/stream.mp3" as |url|}}
+        <button {{on 'click' (fn (toggle-play-sound url metadata = (hash title="91.7 KOOP")))}} type="button" class="ui-button">
+          {{#if (sound-is-playing url)}}
+            Pause
+          {{else}}
+            Play KOOP
+          {{/if}}
+        </button>
+      {{/let}}
+
+      {{#let "https://fm939.wnyc.org/wnycfm.aac" as |url|}}
+        <button {{on 'click' (fn (toggle-play-sound url metadata = (hash title="WNYC")))}} type="button" class="ui-button">
+          {{#if (sound-is-playing url)}}
+            Pause
+          {{else}}
+            Play WNYC
+          {{/if}}
+        </button>
+      {{/let}}
+    </div>
+  </demo.example>
+  {{demo.snippet "custom-metadata.hbs"}}
+</DocsDemo>

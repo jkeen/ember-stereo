@@ -1,15 +1,21 @@
+<DocsHeader as |header|>
+  {{#header.link "diagnostic"}}
+  Diagnostic
+  {{/header.link}}
+</DocsHeader>
 <DocsViewer @media={{this.media}} as |viewer|>
   <viewer.nav @media={{this.media}} @isShowingMenu={{isShowingMenu}} as |nav|>
     {{nav.section "Overview"}}
       {{nav.item "Intro" "docs.index"}}
       {{nav.item "Configuration" "docs.configuration"}}
+      {{nav.item "Upgrading From Hifi" "docs.upgrading"}}
     {{nav.section "Usage"}}
       {{nav.item "Playing Sounds" "docs.playing-sounds"}}
       {{nav.item "Trying Multiple Formats" "docs.trying-multiple-formats"}}
-      {{nav.item "Custom Metadata" "docs.metadata"}}
+      {{nav.item "Error Handling" "docs.error-handling"}}
       {{nav.item "Monitoring Events" "docs.event-monitoring"}}
       {{nav.item "Dealing with Autoplay" "docs.autoplay"}}
-      {{nav.item "Error Handling" "docs.error-handling"}}
+      {{nav.item "Custom Metadata" "docs.metadata"}}
   </viewer.nav>
 
   <viewer.main @media={{this.media}}>

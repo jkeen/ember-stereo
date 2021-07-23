@@ -2,9 +2,8 @@ import { inject as service } from '@ember/service';
 import Helper from '@ember/component/helper';
 import hasEqualIdentifiers from 'ember-stereo/-private/utils/has-equal-identifiers';
 import {numericDuration} from 'ember-stereo/helpers/numeric-duration';
-import debug from 'debug';
+import debugMessage from 'ember-stereo/-private/utils/debug-message';
 import {tracked} from '@glimmer/tracking';
-import { dedupeTracked } from 'tracked-toolbox'
 import { didCancel } from 'ember-concurrency';
 
 /**
@@ -22,7 +21,8 @@ import { didCancel } from 'ember-concurrency';
   @returns {Float}
 */
 
-export default class soundPosition extends Helper {
+export default class SoundPosition extends Helper {
+  name = 'sound-position'
   @service stereo;
   @tracked sound;
   @tracked result;
@@ -97,7 +97,7 @@ export default class soundPosition extends Helper {
 
     this.result = result;
 
-    debug(`ember-stereo:helpers:sound-position:${identifier}:${format}`)(`render = ${this.result}`);
+    debugMessage(this, `${format} render = ${this.result}`);
     return this.result
   }
 }

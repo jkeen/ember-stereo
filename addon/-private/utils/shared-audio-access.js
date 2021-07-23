@@ -18,12 +18,6 @@ const log = debug('ember-stereo:shared-audio-access');
  */
 
 export default class SharedAudioAccess {
-  // debugName: 'sharedAudioAccess',
-
-  // constructor() {
-  //   this.unlock();
-  // }
-
   debug(message) {
     log(message);
   }

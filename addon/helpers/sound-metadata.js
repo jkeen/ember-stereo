@@ -1,5 +1,5 @@
 import StereoBaseIsHelper from 'ember-stereo/-private/helpers/is-helper';
-import debug from 'debug';
+import debugMessage from 'ember-stereo/-private/utils/debug-message';
 import { dedupeTracked } from 'tracked-toolbox';
 import { get } from '@ember/object';
 /**
@@ -20,16 +20,16 @@ A helper to detect if a sound is playing.
 
 
 export default class SoundMetadata extends StereoBaseIsHelper {
-  debugName = 'ember-stereo:helpers:sound-metadata'
+  name = 'sound-metadata'
   @dedupeTracked metadata = {};
 
   get result() {
     if (this.identifier == 'system') {
-      debug(`${this.debugName}:${this.identifier}`)(`metadata = ${JSON.stringify(this.stereo.currentSound?.metadata)}`)
+      debugMessage(this, `metadata = ${JSON.stringify(this.stereo.currentSound?.metadata)}`)
       this.metadata = this.stereo.currentSound?.metadata || {};
     }
     else {
-      debug(`${this.debugName}:${this.identifier}`)(`metadata = ${JSON.stringify(this.sound?.metadata)}`)
+      debugMessage(this, `metadata = ${JSON.stringify(this.sound?.metadata)}`)
       this.metadata = this.sound?.metadata || {};
     }
 

@@ -6,7 +6,7 @@ import StereoUrl from 'ember-stereo/-private/utils/stereo-url';
 /**
 * This class caches errors based on urls. You shouldn't have to interact with this class.
 *
-* @class Errorcache
+* @class ErrorCache
 * @private
 * @constructor
 */

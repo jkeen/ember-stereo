@@ -303,12 +303,12 @@ module('Unit | Service | stereo', function(hooks) {
     let nativeAudioSpy    = stubConnectionCreateWithFailure(service, "NativeAudio", sandbox);
     let localAudioSpy     = stubConnectionCreateWithSuccess(service, "LocalDummyConnection", sandbox);
 
-    await service.load("/first/test.mp3", {useConnections: ['NativeAudio', 'LocalDummyConnection']});
+    await service.load("/first/test.mp3", { silenceErrors: true, useConnections: ['NativeAudio', 'LocalDummyConnection']});
     assert.equal(nativeAudioSpy.callCount, 1, "Native connection should have been called");
     assert.equal(localAudioSpy.callCount, 1, "local connection should have been called");
     assert.ok(nativeAudioSpy.calledBefore(localAudioSpy), "native audio should have been tried before local");
 
-    await service.play("/second/test.mp3", {useConnections: ['NativeAudio']});
+    await service.play("/second/test.mp3", { silenceErrors: true, useConnections: ['NativeAudio']});
     assert.equal(nativeAudioSpy.callCount, 2, "Native connection should have been called");
   });
 

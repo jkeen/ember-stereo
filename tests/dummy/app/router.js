@@ -11,6 +11,7 @@ Router.map(function() {
     /* Your docs routes go here */
     this.route('install')
     this.route('configuration')
+    this.route('upgrading')
 
     this.route('usage')
     this.route('autoplay')
@@ -25,6 +26,8 @@ Router.map(function() {
     this.route('index')
     this.route('sync')
   });
+
+  this.route('autoplay');
   this.route('not-found', { path: '/*path' });
 
 });

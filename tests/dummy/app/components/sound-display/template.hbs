@@ -12,14 +12,18 @@
     </div>
 
     <span class="sound-display-top-bar-connection-name">
-      {{#if @sound.connectionName}}
-      {{@sound.connectionName}} Sound
-      {{#if @sound.mimeType}}
-      ({{@sound.mimeType}})
-      {{/if}}
-      {{else}}
-      URL
-      {{/if}}
+      {{#let (find-loaded-sound @sound.url) as |sound|}}
+        {{#if sound}}
+          {{#if sound.connectionName}}
+            {{sound.connectionName}} Sound
+          {{/if}}
+          {{#if sound.mimeType}}
+            ({{sound.mimeType}})
+          {{/if}}
+        {{else}}
+        URL
+        {{/if}}
+      {{/let}}
     </span>
 
     {{#if this.isCurrentSound}}
@@ -142,7 +146,7 @@
 
     <h3>Events</h3>
     {{#if (sound-is-loaded @sound.url)}}
-      <EventDisplay class="diagnostic-debug-events" @sound={{@sound}} />
+      <EventDisplay class="diagnostic-debug-events" @sound={{find-loaded-sound @sound.url}} />
     {{/if}}
   </div>
 

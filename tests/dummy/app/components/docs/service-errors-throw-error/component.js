@@ -5,31 +5,12 @@ import { tracked } from '@glimmer/tracking';
 
 export default class ServiceExample extends Component {
   @tracked sound
-  @tracked error
-
-  // BEGIN-SNIPPET service-errors-example.js
+  @tracked error;
   @service stereo;
 
+  // BEGIN-SNIPPET service-errors-wild-west.js
   @action
-  async togglePlaySoundWithThrow(url) {
-    this.error = false
-
-    if (this.sound) {
-      this.sound.togglePause();
-    }
-    else {
-      try {
-        let { sound, error, failures } = await this.stereo.play(url, { throwErrorOnFailure: true });
-        this.sound = sound;
-      }
-      catch(e) {
-        this.error = e.message
-      }
-    }
-  }
-
-  @action
-  async togglePlaySoundWithoutThrow(url) {
+  async togglePlaySound(url) {
     this.error = false
 
     if (this.sound) {
@@ -37,8 +18,10 @@ export default class ServiceExample extends Component {
     }
     else {
       let { sound, error, failures } = await this.stereo.play(url);
+
+      // error gets thrown and this will never happen. catch your errors, mang
       this.sound = sound;
-      this.error = error;
+      this.error[url] = error
     }
   }
   // END-SNIPPET

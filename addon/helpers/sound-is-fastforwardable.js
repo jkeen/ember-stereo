@@ -1,5 +1,6 @@
 import StereoBaseIsHelper from 'ember-stereo/-private/helpers/is-helper';
-import debug from 'debug';
+import debugMessage from 'ember-stereo/-private/utils/debug-message';
+
 
 /**
   A helper to detect if a sound is fast-forwardable.
@@ -26,15 +27,15 @@ import debug from 'debug';
 */
 
 export default class SoundIsFastForwardable extends StereoBaseIsHelper {
-  debugName = 'ember-stereo:helpers:sound-is-fastforwardable'
+  name = 'sound-is-fastforwardable'
 
   get result() {
+    debugMessage(this, `render = ${this.stereo.isFastForwardable}`)
+
     if (this.identifier === 'system') {
-      debug(`${this.debugName}:${this.identifier}`)(`render = ${this.stereo.isFastForwardable}`)
       return this.stereo.isFastForwardable;
     }
     else {
-      debug(`${this.debugName}:${this.identifier}`)(`render = ${this.sound?.isFastForwardable}`)
       return this.sound?.isFastForwardable;
     }
   }

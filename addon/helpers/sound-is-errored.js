@@ -31,9 +31,8 @@ const UNINITIALIZED = Object.freeze({});
 
 
 export default class SoundIsErrored extends Helper {
-  @service stereo;
-
   name = 'sound-is-errored';
+  @service stereo;
   @dedupeTracked result = false;
   identifier = UNINITIALIZED;
 

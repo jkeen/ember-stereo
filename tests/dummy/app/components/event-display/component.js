@@ -50,6 +50,8 @@ export default class EventDisplay extends Component {
   }
 
   addSoundEvents(item) {
+    if (!item) { return }
+
     EVENT_MAP.forEach((e) => {
       item.on(e.event, (data) => {
         this.eventsList.pushObject({
@@ -62,6 +64,8 @@ export default class EventDisplay extends Component {
   }
 
   addServiceEvents(item) {
+    if (!item) { return }
+
     this.addSoundEvents(item);
 
     SERVICE_EVENT_MAP.forEach((e) => {

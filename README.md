@@ -1,18 +1,14 @@
 # ember-stereo
 
-## The easy way to play audio in your ember app
+## The easiest way to play audio in your ember app
 
-![Download count all time](https://img.shields.io/npm/dt/ember-stereo.svg) [![npm version](https://img.shields.io/npm/v/ember-stereo.svg?style=flat-square)](https://www.npmjs.com/package/ember-stereo) [![CircleCI](https://img.shields.io/circleci/project/github/nypublicradio/ember-stereo/master.svg?style=flat-square)](https://circleci.com/gh/jkeen/ember-stereo/tree/master) [![Ember Observer Score](http://emberobserver.com/badges/ember-stereo.svg)](http://emberobserver.com/addons/ember-stereo)
+![Download count all time](https://img.shields.io/npm/dt/ember-stereo.svg) [![npm version](https://img.shields.io/npm/v/ember-stereo.svg?style=flat-square)](https://www.npmjs.com/package/ember-stereo) [![Ember Observer Score](http://emberobserver.com/badges/ember-stereo.svg)](http://emberobserver.com/addons/ember-stereo)
 [![Maintainability](https://api.codeclimate.com/v1/badges/24a53d2c7a91e15d7200/maintainability)](https://codeclimate.com/github/jkeen/ember-stereo/maintainability)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/24a53d2c7a91e15d7200/test_coverage)](https://codeclimate.com/github/jkeen/ember-stereo/test_coverage)
 
 This addon exposes a `stereo` service which produces `Sound` objects which represent a playable piece of audio.
 
 The `stereo` service makes it easy to play audio in the unfriendly landscape that is the current state of audio on the web. Forget worrying about formats and browsers and just give `stereo` a list of URLs to try and it'll play the first one that works.
-
-* Ember.js v3.16 or above
-* Node.js v10 or above
-
 ## Installing The Addon
 
 ```shell
@@ -20,9 +16,15 @@ npm install ember-stereo
 ```
 
 ### Upgrading from `ember-hifi`
+  1. Find anything that says "hifi" and rename it "stereo"
+  2. Any event handlers that were expecting `(sound)` should be chnaged to `({sound})`
+    e.g. `this.hifi.on('event-name', (sound) => { // handler })` => `this.stereo.on('event-name', ({sound}) => { // handler })`
+  3. When audio playback fails we no longer throw an error, we just return an error object in the promise handler. 
 
-## Usage
-
+#### Enjoy the sweet improvements
+  1. Volume is now by default at 100. 
+  2. If you're using `ember-concurrency` and want to use tasks, change your `this.hifi.play()` and `this.hifi.load()` calls to use the task versions, at `this.stereo.playTask` and `this.stereo.loadTask`
+  3. Since we're using ember-concurrency we no longer have such 
 
 ### API
 
@@ -47,6 +49,11 @@ npm install ember-stereo
   <button type="button" class="button is-link" {{on 'click' (pause-sound @url)}}>Pause</button>
 ```
 
+- `stop-sound`
+```hbs
+<button type="button" class="button is-link" {{on 'click' (stop-sound @url)}}>Stop</button>
+```
+
 - `fastforward-sound`
 ```hbs
 <button type="button" class="button is-link" {{on 'click' (fastforward-sound @url increment=5000)}}>Fast Forward</button>
@@ -55,6 +62,11 @@ npm install ember-stereo
 - `rewind-sound`
 ```hbs
 <button type="button" class="button is-link" {{on 'click' (rewind-sound @url increment=5000)}}>Rewind</button>
+```
+
+- `seek-sound`
+```hbs
+<button type="button" class="button is-link" {{on 'click' (seek-sound @url position=5000)}}>Seek</button>
 ```
 
 - `toggle-play-sound`
@@ -86,6 +98,7 @@ npm install ember-stereo
     <button type="button" class="button is-link" {{on 'click' (rewind-sound @url increment=5000)}}>Fast Forward</button>
   {{/if}}
 ```
+
 - `sound-is-loaded`
 ```hbs
   {{#if (sound-is-loaded @url)}}
@@ -106,9 +119,43 @@ npm install ember-stereo
     <button type="button" class="button is-link" {{on 'click' (pause-sound @url)}}>Pause</button>
   {{/if}}
 ```
+
+- `sound-is-rewindable`
+```hbs
+  {{#if (sound-is-rewindable @url)}}
+    Sound is rewindable
+  {{/if}}
 ```
 
-##### Getters
+- `sound-is-fastforwardable`
+```hbs
+  {{#if (sound-is-rewindable @url)}}
+    Sound is fastforwardable
+  {{/if}}
+```
+
+- `sound-is-seekable`
+```hbs
+  {{#if (sound-is-rewindable @url)}}
+    Sound is fastforwardable
+  {{/if}}
+```
+
+- `sound-is-blocked`
+```hbs
+  {{#if (sound-is-blocked @url)}}
+    Browser has blocked auto play, needs user input
+  {{/if}}
+```
+
+- `autoplay-allowed`
+```hbs
+  {{#if (autoplay-allowed @url)}}
+    Browser allows autoplaying of sounds
+  {{/if}}
+```
+
+### Getters
 
 - `sound-metadata`
 ```hbs
@@ -126,7 +173,15 @@ npm install ember-stereo
   {{sound-position @url format=time}} #=> 00:20
 ```
 
+- `current-sound`
+```hbs
+  {{current-sound}} #=> currently playing/paused sound
+```
 
+- `find-loaded-sound`
+```hbs
+  {{find-loaded-sound @url}} #=> currently playing/paused sound
+```
 
 #### Service API
 `stereo` plays one sound at a time. Multiple sounds can be loaded and ready to go, but only one sound plays at a time. The currently playing sound is set to `currentSound` on the service, and most methods and properties on the service simply proxy to that sound.
@@ -176,6 +231,8 @@ export default class StereoComponent extends Component {
 } 
 ```
 
+- `playTask(urlsOrPromise, options)` the ember concurrency task that `play` calls. 
+
 - `pause()`
 Pauses the current sound
 
@@ -190,6 +247,9 @@ Moves the playhead of the current sound backwards by duration (in ms)
 
 - `load(urlsOrPromise, options)`
 Tries each stereo connection with each url and returns the ready `sound` from the first combination that works. The sound is cached internally so on subsequent load requests with the same url the already prepared sound will be returned. Calling `play` on the returned sound will start playback immediately.
+
+- `loadTask(urlsOrPromise, options)` the ember concurrency task that `load` calls. 
+
 
 ###### Gettable/Settable Properties
 - `volume`          (integer, 0-100)
@@ -253,6 +313,7 @@ Moves the playhead of the sound backwards by duration (in ms)
 - `isLoading` (boolean)
 - `isPlaying` (boolean)
 - `isStream` (boolean)
+- `isSeekable` (boolean)
 - `isFastForwardable` (boolean)
 - `isRewindable` (boolean)
 
@@ -274,6 +335,7 @@ The `stereo` service and the `sound` objects are extended with [Ember.Evented](h
 - `audio-will-fast-forward` ({sound, currentPosition, newPosition}) - fired before fast-forwarding a sound
 - `audio-position-will-change` ({sound, currentPosition, newPosition}) - fired before audio position change
 - `audio-position-changed` ({sound})
+- `audio-blocked` ({ sound }) - the sound was prevented from being played by the browser due to auto play restrictions
 
 ###### Stereo service events
 - `current-sound-changed` ({sound, previousSound}) - triggered when the current sound changes. On initial play, previousSound will be undefined.
@@ -341,6 +403,6 @@ A web stream: `/good/stream/test`
 A url that will fail: `/bad/stream/test`
 
 
-## [Writing Your Own Hifi Connection](CUSTOM_CONNECTIONS.md)
+## [Writing Your Own Stereo Connection](CUSTOM_CONNECTIONS.md)
 
 Do you need to support a funky audio format that stereo's built-in connections can't handle? Read more about how to write your own custom connection [here](CUSTOM_CONNECTIONS.md).

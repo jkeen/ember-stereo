@@ -32,6 +32,7 @@ const log = debug('ember-stereo');
 export const EVENT_MAP = [
   { event: 'audio-played', handler: '_relayPlayedEvent' },
   { event: 'audio-paused', handler: '_relayPausedEvent' },
+  { event: 'audio-blocked', handler: '_relayBlockedEvent' },
   { event: 'audio-ended', handler: '_relayEndedEvent' },
   { event: 'audio-duration-changed', handler: '_relayDurationChangedEvent' },
   { event: 'audio-position-changed', handler: '_relayPositionChangedEvent' },
@@ -78,7 +79,7 @@ export default class Stereo extends Service.extend(EmberEvented) {
 
     this.volume = this.defaultVolume;
     this.isReady = true;
-    this.throwErrorOnFailure = this.systemStereoOptions?.throwErrorOnFailure;
+    this.silenceErrors = this.systemStereoOptions?.silenceErrors;
 
     // Polls the current sound for position. We wanted to make it easy/flexible
     // for connection authors, and since we only play one sound at a time, we don't
@@ -106,6 +107,17 @@ export default class Stereo extends Service.extend(EmberEvented) {
 
   get loadedSounds() {
     return this.soundCache.cachedList
+  }
+
+  /**
+    * is user input needed to allow an autoplay request?
+    * @property isBlocked
+    * @type {Boolean}
+    * @readOnly
+    * @public
+  */
+  get isBlocked() {
+    return this.currentSound?.isBlocked || false;
   }
 
   /**
@@ -245,11 +257,11 @@ export default class Stereo extends Service.extend(EmberEvented) {
   }
   set volume(v) {
     if (this.currentSound) {
-      debug(`setting current sound volume = ${v}`);
+      log(`setting current sound volume = ${v}`);
       this.currentSound._setVolume(v);
     }
     this._volume = v;
-    debug(`setting volume = ${v}`);
+    log(`setting volume = ${v}`);
     this.trigger('volume-change', v);
   }
 
@@ -327,11 +339,11 @@ export default class Stereo extends Service.extend(EmberEvented) {
     options = assign({ metadata: {}, sharedAudioAccess }, options);
 
     let urlsToTry = yield resolveUrls(urlsOrPromise);
-    debug('ember-stereo')(`given urls: ${urlsToTry.join(', ')}`);
+    log(`given urls: ${urlsToTry.join(', ')}`);
     this.trigger('pre-load', urlsToTry);
     var sound = this.soundCache.find(urlsToTry);
     if (sound) {
-      debug('ember-stereo')('retreived sound from cache');
+      log('retreived sound from cache');
       return yield({sound});
     }
     else {
@@ -435,7 +447,7 @@ export default class Stereo extends Service.extend(EmberEvented) {
         return {sound, failures}
       }
       else {
-        return this._handlePlaybackError(sound, options)
+        return this._handlePlaybackError({sound, options})
       }
     }
     else {
@@ -443,14 +455,15 @@ export default class Stereo extends Service.extend(EmberEvented) {
     }
   }
 
-  _shouldThrowError(options) {
-    if (options) {
-      if (Object.keys(options || {}).includes('throwErrorOnFailure')) {
-        return options.throwErrorOnFailure;
-      }
-      else {
-        return this.systemStereoOptions.throwErrorOnFailure;
-      }
+  _shouldSilenceErrors(options) {
+    if (Object.keys(options || {}).includes('silenceErrors')) {
+      return options.silenceErrors;
+    }
+    else if (Object.keys(this.systemStereoOptions || {}).includes('silenceErrors')) {
+      return this.systemStereoOptions.silenceErrors;
+    }
+    else {
+      return false;
     }
   }
 
@@ -459,7 +472,7 @@ export default class Stereo extends Service.extend(EmberEvented) {
     this.errorCache.cache({ url: sound.url, error: sound.error, connectionKey: sound.connectionKey })
     this.trigger('audio-load-error', { sound: sound, failures: [strategy], error: sound.error })
 
-    if (this._shouldThrowError(options)) {
+    if (!this._shouldSilenceErrors(options)) {
       throw new Error((sound.error || 'stereo playback error'), { sound, failures: [strategy] });
     }
 
@@ -472,7 +485,7 @@ export default class Stereo extends Service.extend(EmberEvented) {
       failure = failures[0]
     }
 
-    if (this._shouldThrowError(options)) {
+    if (!this._shouldSilenceErrors(options)) {
       throw new Error((failure.error || 'stereo load error'), { failures });
     }
 
@@ -888,6 +901,9 @@ export default class Stereo extends Service.extend(EmberEvented) {
   _relayLoadedEvent(info) {
     this._relayEvent('audio-loaded', info);
   }
+  _relayBlockedEvent(info) {
+    this._relayEvent('audio-blocked', info);
+  }
   _relayLoadingEvent(info) {
     this._relayEvent('audio-loading', info);
   }
@@ -1110,7 +1126,14 @@ export default class Stereo extends Service.extend(EmberEvented) {
         debug('ember-stereo')(
           `Looks like the mobile browser blocked an autoplay trying to play sound with url: ${sound.url}`
         );
+        sound.isBlocked = true;
+        sound.trigger('audio-blocked')
       }, 2000);
+
+
+      sound.one('audio-load-error', () => {
+
+      })
 
       sound.one('audio-played', () => {
         document.removeEventListener('touchstart', touchPlay);
@@ -1119,4 +1142,6 @@ export default class Stereo extends Service.extend(EmberEvented) {
     // }
     sound.play(options);
   }
+
+
 }

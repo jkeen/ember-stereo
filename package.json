@@ -20,7 +20,7 @@
     "url": "https://github.com/jkeen/ember-stereo/"
   },
   "license": "MIT",
-  "author": "Jeff Keen, Brian Whitton",
+  "author": "Jeff Keen",
   "directories": {
     "doc": "doc",
     "test": "tests"

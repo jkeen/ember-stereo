@@ -1,3 +1,10 @@
-<DocsHero @logo="ember" @slimHeading="Ember Stereo" @byline="The easy way to play audio in your ember app." />
+<DocsHeader as |header|>
+  {{#header.link "diagnostic"}}
+  Diagnostic
+  {{/header.link}}
+</DocsHeader>
+<DocsHero @logo="ember" @slimHeading="Ember Stereo" @byline="Ember stereo makes it easy to play audio in your modern ember app" />
 
-{{docs/attention-getter}}
+<div class="docs-px-4 md:docs-px-8 lg:docs-px-20 docs-mx-auto md:docs-mx-0 docs-mt-6 md:docs-mt-12 md:docs-min-w-0 md:docs-flex-1 ember-view">
+  <Docs::AttentionGetter/>
+</div>

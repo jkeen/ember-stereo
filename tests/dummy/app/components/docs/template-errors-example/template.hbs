@@ -1,7 +1,8 @@
 <DocsDemo as |demo|>
   <demo.example @name="template-errors-example.hbs">
+    <p>Errors are not thrown when using template helpers</p>
     {{#let "https://invalid.example.url/t.mp3" as |url|}}
-      <button type="button" {{on 'click' (play-sound url)}}>
+      <button type="button" {{on 'click' (play-sound url)}} class="ui-button">
         {{#if (sound-is-playing url)}}
           Pause
         {{else}}

@@ -33,7 +33,7 @@ https://playback.dubbletrack.com/koop/1/segments/2021/06/20/17/01/T1624208490000
 /**
 * This class connects with the native audio element to create sounds.
 *
-* @class NativeAudio
+* @class M3U8
 * @extends BaseSound
 * @constructor
 */

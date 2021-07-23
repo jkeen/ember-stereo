@@ -8,3 +8,15 @@
   </demo.example>
   {{demo.snippet "autoplay.hbs"}}
 </DocsDemo>
+
+<DocsDemo as |demo|>
+  <demo.example @name="autoplay-popup.hbs">
+
+  <a id="launch_player" class="btn btn-outline-light" title="Try to autoplay audio" href="/autoplay/"
+    target="_blank" rel="noopener"
+    onclick="window.open(this.href, '../autoplay', 'resizable=yes,status=no,location=no,toolbar=no,menubar=no,fullscreen=no,scrollbars=no,dependent=no,width=320,left=20,height=350,top=20').focus(); return false;">
+    Open new page (source below) and try to autoplay
+  </a>
+  </demo.example>
+  {{demo.snippet "autoplay-example.hbs"}}
+</DocsDemo>

@@ -2,7 +2,7 @@ import Helper from '@ember/component/helper';
 import { dedupeTracked } from 'tracked-toolbox';
 import hasEqualIdentifiers from 'ember-stereo/-private/utils/has-equal-identifiers';
 import { inject as service } from '@ember/service';
-import debug from 'debug';
+import debugMessage from 'ember-stereo/-private/utils/debug-message';
 import { makeArray } from '@ember/array';
 /**
   A helper to display error details.
@@ -18,6 +18,7 @@ import { makeArray } from '@ember/array';
 const UNINITIALIZED = Object.freeze({});
 
 export default class SoundIsErrored extends Helper {
+  name = 'sound-is-errored';
   @service stereo;
 
   identifier = UNINITIALIZED;
@@ -58,7 +59,7 @@ export default class SoundIsErrored extends Helper {
     if (this.result.length === 1) { // only one connection
       var error = this.result[0];
       if (connectionName && error[connectionName]) {
-        debug(`ember-stereo:helpers:error-details:${identifier}`)(`render = ${error[connectionName]}`);
+        debugMessage(this, `render = ${error[connectionName]}`);
         return error[connectionName];
       }
       else {

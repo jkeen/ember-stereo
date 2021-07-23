@@ -1,5 +1,5 @@
 import StereoBaseIsHelper from 'ember-stereo/-private/helpers/is-helper';
-import debug from 'debug';
+import debugMessage from 'ember-stereo/-private/utils/debug-message';
 
 /**
   A helper to detect if a sound is loaded.
@@ -26,16 +26,14 @@ import debug from 'debug';
 */
 export default class SoundIsLoaded extends StereoBaseIsHelper {
   name = 'sound-is-loaded'
-  debugName = 'ember-stereo:helpers:sound-is-loaded'
 
   get result() {
     if (this.identifier == 'system') {
-      debug(`${this.debugName}:${this.identifier}`)(`render = ${!!this.stereo.currentSound}`)
+      debugMessage(this, `render = ${!!this.stereo.currentSound}`)
       return !!this.stereo.currentSound;
     }
     else {
-      debug(`${this.debugName}:${this.identifier}`)(`render = ${this.sound?.isLoaded}`)
-
+      debugMessage(this, `render = ${this.sound?.isLoaded}`)
       return (this.stereo.soundCache.cachedList || []).filter(url => this.sound && url === this.sound.url).length > 0;
     }
   }

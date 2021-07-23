@@ -22,8 +22,10 @@ The returned `sound` class has the same interface no matter which `connection` c
 
 Stereo offers three connection options, but only the native audio connection is included by default (to keep bundle size small). To include other audio connections, add them to your environment.js in the order you want them tried.
 
-```
+```js
   emberStereo: {
+    initialVolume: 100, // default
+    silenceErrors: false
     connections: [
       {name: 'NativeAudio'},
       {name: 'Howler'},

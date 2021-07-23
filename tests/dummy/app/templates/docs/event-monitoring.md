@@ -9,6 +9,7 @@ You can monitor events on both the `stereo` service for when any sound emits an 
     console.log(`${sound.url} started playing`)
   })
 
+  let sound = this.stereo.findLoaded(this.url);
   sound.on('audio-ended', ({sound}) => {
     console.log(`${sound.url} finished playing`)
   })

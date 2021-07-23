@@ -4,7 +4,7 @@ const {
   assert
 } = Ember;
 
-let Sound = class Sounds extends BaseSound {  
+let Sound = class Sounds extends BaseSound {
   static canPlayMimeType(/* extension */) {
     // check if connection can play file with this mime type
     return true;
@@ -69,6 +69,6 @@ let Sound = class Sounds extends BaseSound {
     // Stop playback and make sure no more audio is downloading
     assert("[stereo-connection: <%= name %>] #stop interface not implemented", false);
   }
-});
+}
 
 export default Sound;
