@@ -60,9 +60,6 @@ export default class SeekSound extends Helper {
           return false;
         }
       }
-      else if (this.stereo.currentSound) {
-        this.stereo.position = position
-      }
     };
   }
 }

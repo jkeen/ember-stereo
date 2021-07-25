@@ -12,7 +12,7 @@ import prepareOptions from "ember-stereo/-private/utils/prepare-options";
   @type Helper
   @param {String} url
   */
-export default class loadSound extends Helper {
+export default class LoadSound extends Helper {
   @service stereo;
 
   /**

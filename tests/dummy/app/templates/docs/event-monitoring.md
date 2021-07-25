@@ -1,6 +1,6 @@
 # Events
 
-You can monitor events on both the `stereo` service for when any sound emits an event, or on an individual sound for when that specific sound emits an event. For example
+You can monitor events on both the `stereo` service for when any sound emits an event, or on an individual sound for when that specific sound emits an event. For example, 
 
 ```js
 
@@ -11,7 +11,14 @@ You can monitor events on both the `stereo` service for when any sound emits an 
 
   let sound = this.stereo.findLoaded(this.url);
   sound.on('audio-ended', ({sound}) => {
-    console.log(`${sound.url} finished playing`)
+    this.sendEvent('finished-listening', {episodeId: sound.metadata.episodeId});
+  })
+
+  this.stereo.on('current-sound-interrupted', ({sound}) => {
+    this.sendEvent('quit-listening', {
+      episodeId: sound.metadata.episodeId, 
+      position: sound.position
+    });
   })
 ```
 
@@ -27,7 +34,6 @@ You can monitor events on both the `stereo` service for when any sound emits an 
 - `audio-position-changed` ({sound})
 
 ### Stereo service-only events
-
 - `current-sound-changed` ({sound, previousSound}) - triggered when the current sound changes. On initial play, previousSound will be undefined.
 - `current-sound-interrupted` ({sound, previousSound}) - triggered when a sound has been playing and a new one takes its place by being played, pausing the first one
 - `new-load-request` ({loadPromise, urlsOrPromise, options}) - triggered whenever `.load` or `.play` is called.

@@ -4,7 +4,7 @@ import Helper from '@ember/component/helper';
 /**
   A helper to fast forward a sound by x.
   ```hbs
-   <button {{on 'click' (fastforward-sound this.url increment=5000)}}>
+   <button {{on 'click' (fastforward-sound this.soundOrUrl increment=5000)}}>
     Fast Forward
   </button>
   ```
@@ -34,9 +34,6 @@ export default class FastForwardSound extends Helper {
         else {
           return false;
         }
-      }
-      else if (this.stereo.currentSound) {
-        this.stereo.fastForward(increment)
       }
     }
   }

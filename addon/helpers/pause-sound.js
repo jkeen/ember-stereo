@@ -28,9 +28,6 @@ export default class pauseSound extends Helper {
           return false;
         }
       }
-      else if (this.stereo.currentSound) {
-        this.stereo.pause()
-      }
     }
   }
 }

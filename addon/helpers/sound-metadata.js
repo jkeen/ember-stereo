@@ -24,14 +24,8 @@ export default class SoundMetadata extends StereoBaseIsHelper {
   @dedupeTracked metadata = {};
 
   get result() {
-    if (this.identifier == 'system') {
-      debugMessage(this, `metadata = ${JSON.stringify(this.stereo.currentSound?.metadata)}`)
-      this.metadata = this.stereo.currentSound?.metadata || {};
-    }
-    else {
-      debugMessage(this, `metadata = ${JSON.stringify(this.sound?.metadata)}`)
-      this.metadata = this.sound?.metadata || {};
-    }
+    debugMessage(this, `metadata = ${JSON.stringify(this.sound?.metadata)}`)
+    this.metadata = this.sound?.metadata || {};
 
     if (this.options?.key && this.metadata && get(this.metadata, this.options.key)) {
       return get(this.metadata, this.options.key);

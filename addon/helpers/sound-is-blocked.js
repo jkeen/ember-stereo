@@ -27,11 +27,6 @@ export default class SoundIsBlocked extends StereoBaseIsHelper {
   name = 'sound-is-blocked'
 
   get result() {
-    if (this.identifier == 'system') {
-      return this.stereo.isBlocked;
-    }
-    else {
-      return this.sound && this.sound.isBlocked;
-    }
+    return this.sound && this.sound.isBlocked;
   }
 }

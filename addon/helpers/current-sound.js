@@ -2,7 +2,7 @@ import { inject as service } from '@ember/service';
 import Helper from '@ember/component/helper';
 
 /**
-  A helper to get the currently playing/paused.
+  A helper to get the currently playing/paused sound.
   ```hbs
    {{current-sound}} #=> sound
 

@@ -1,9 +1,9 @@
 <DocsDemo as |demo|>
   <demo.example @name="autoplay.hbs">
     {{#if (autoplay-allowed)}}
-      Autoplay is allowed
+      Autoplay is allowed on this domain in your browser
     {{else}}
-      Autoplay is not allowed
+      Autoplay is not allowed on this domain in your browser
     {{/if}}
   </demo.example>
   {{demo.snippet "autoplay.hbs"}}
@@ -14,7 +14,7 @@
 
   <a id="launch_player" class="btn btn-outline-light" title="Try to autoplay audio" href="/autoplay/"
     target="_blank" rel="noopener"
-    onclick="window.open(this.href, '../autoplay', 'resizable=yes,status=no,location=no,toolbar=no,menubar=no,fullscreen=no,scrollbars=no,dependent=no,width=320,left=20,height=350,top=20').focus(); return false;">
+    onclick="window.open(this.href, '/autoplay', 'resizable=yes,status=no,location=no,toolbar=no,menubar=no,fullscreen=no,scrollbars=no,dependent=no,width=320,left=20,height=350,top=20').focus(); return false;">
     Open new page (source below) and try to autoplay
   </a>
   </demo.example>

@@ -20,6 +20,7 @@ Router.map(function() {
     this.route('metadata');
     this.route('error-handling');
     this.route('event-monitoring');
+    this.route('volume');
   });
 
   this.route('diagnostic', function() {

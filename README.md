@@ -1,6 +1,6 @@
 # ember-stereo
 
-## The easiest way to play audio in your ember app
+## The best way to play audio in your modern ember app
 
 ![Download count all time](https://img.shields.io/npm/dt/ember-stereo.svg) [![npm version](https://img.shields.io/npm/v/ember-stereo.svg?style=flat-square)](https://www.npmjs.com/package/ember-stereo) [![Ember Observer Score](http://emberobserver.com/badges/ember-stereo.svg)](http://emberobserver.com/addons/ember-stereo)
 [![Maintainability](https://api.codeclimate.com/v1/badges/24a53d2c7a91e15d7200/maintainability)](https://codeclimate.com/github/jkeen/ember-stereo/maintainability)
@@ -12,20 +12,11 @@ The `stereo` service makes it easy to play audio in the unfriendly landscape tha
 ## Installing The Addon
 
 ```shell
-npm install ember-stereo
+ember install ember-stereo
 ```
 
 ### Upgrading from `ember-hifi`
-  1. Find anything that says "hifi" and rename it "stereo"
-  2. Any event handlers that were expecting `(sound)` should be chnaged to `({sound})`
-    e.g. `this.hifi.on('event-name', (sound) => { // handler })` => `this.stereo.on('event-name', ({sound}) => { // handler })`
-  3. When audio playback fails we no longer throw an error, we just return an error object in the promise handler. 
-
-#### Enjoy the sweet improvements
-  1. Volume is now by default at 100. 
-  2. If you're using `ember-concurrency` and want to use tasks, change your `this.hifi.play()` and `this.hifi.load()` calls to use the task versions, at `this.stereo.playTask` and `this.stereo.loadTask`
-  3. Since we're using ember-concurrency we no longer have such 
-
+  Read the [upgrade guide](https://jkeen.github.com/ember-stereo)
 ### API
 
 #### Template Helpers

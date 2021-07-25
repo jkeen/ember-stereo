@@ -28,9 +28,6 @@ export default class stopSound extends Helper {
           return false;
         }
       }
-      else if (this.stereo.currentSound) {
-        this.stereo.stop()
-      }
     }
   }
 }

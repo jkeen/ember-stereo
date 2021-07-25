@@ -9,6 +9,8 @@
         <button {{on 'click' (fn (toggle-play-sound url metadata = (hash title="91.7 KOOP")))}} type="button" class="ui-button">
           {{#if (sound-is-playing url)}}
             Pause
+          {{else if (sound-is-loading url)}}
+            Loading…
           {{else}}
             Play KOOP
           {{/if}}
@@ -19,6 +21,8 @@
         <button {{on 'click' (fn (toggle-play-sound url metadata = (hash title="WNYC")))}} type="button" class="ui-button">
           {{#if (sound-is-playing url)}}
             Pause
+          {{else if (sound-is-loading url)}}
+            Loading…
           {{else}}
             Play WNYC
           {{/if}}

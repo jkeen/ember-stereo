@@ -80,8 +80,8 @@ export default class StereoBaseIsHelper extends Helper {
     }
   }
 
-  compute([identifier], {key = undefined}) {
-    this.options = {key};
+  compute([identifier], options = {}) {
+    this.options = options;
 
     if (identifier !== this.identifier) {
       this.waitForSound.cancelAll()
@@ -91,19 +91,20 @@ export default class StereoBaseIsHelper extends Helper {
       }
       else {
         this.sound = UNINITIALIZED
-        this.identifier = identifier || 'system';
+        this.identifier = identifier;
       }
     }
 
-    if (this.identifier !== 'system') {
-      this.sound = this.stereo.findLoaded(this.identifier)
-
-      if (this.sound) {
-        debugMessage(this, 'found sound already loaded');
+    this.sound = this.stereo.findLoaded(this.identifier)
+    if (this.sound) {
+      debugMessage(this, 'found sound already loaded');
+    }
+    else {
+      if (options.load) {
+        this.stereo.load(identifier).then(({ sound }) => this.sound = sound);
       }
       else {
         debugMessage(this, 'could not find loaded sound');
-
         resolveUrls(this.identifier).then(urls => {
           this.waitForSound.perform(urls);
         });

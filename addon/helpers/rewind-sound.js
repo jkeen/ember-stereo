@@ -30,9 +30,6 @@ export default class rewindSound extends Helper {
           return false;
         }
       }
-      else if (this.stereo.currentSound) {
-        this.stereo.rewind(increment)
-      }
     }
   }
 }

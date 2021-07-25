@@ -4,11 +4,6 @@ export default class FindLoadedSound extends StereoBaseIsHelper {
   name = 'find-loaded-sound'
 
   get result() {
-    if (this.identifier === 'system') {
-      return this.stereo.currentSound;
-    }
-    else {
-      return this.sound;
-    }
+    return this.sound;
   }
 }

@@ -5,16 +5,7 @@ import debugMessage from 'ember-stereo/-private/utils/debug-message';
 /**
   A helper to detect if a sound is fast-forwardable.
   ```hbs
-    {{#if (sound-is-fastforwardable this.url)}}
-      <p>The currently loaded sound is fast-forwardable</p>
-    {{else}}
-      <p>The currently loaded sound is not fast-forwardable</p>
-    {{/if}}
-  ```
-
-  Can also look for the currently loaded sound without an argument
-  ```hbs
-    {{#if (sound-is-fastforwardable)}}
+    {{#if (sound-is-fastforwardable this.urlOrSound)}}
       <p>The currently loaded sound is fast-forwardable</p>
     {{else}}
       <p>The currently loaded sound is not fast-forwardable</p>
@@ -24,20 +15,16 @@ import debugMessage from 'ember-stereo/-private/utils/debug-message';
   @class {{sound-is-fastforwardable}}
   @type Helper
   @param {String} url
+  @param {Boolean} options.load load the sound if it's not loaded?
+
 */
 
 export default class SoundIsFastForwardable extends StereoBaseIsHelper {
   name = 'sound-is-fastforwardable'
 
   get result() {
-    debugMessage(this, `render = ${this.stereo.isFastForwardable}`)
-
-    if (this.identifier === 'system') {
-      return this.stereo.isFastForwardable;
-    }
-    else {
-      return this.sound?.isFastForwardable;
-    }
+    debugMessage(this, `render = ${this.sound?.isFastForwardable}`)
+    return this.sound?.isFastForwardable;
   }
 }
 

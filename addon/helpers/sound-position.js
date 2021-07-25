@@ -1,10 +1,7 @@
-import { inject as service } from '@ember/service';
-import Helper from '@ember/component/helper';
-import hasEqualIdentifiers from 'ember-stereo/-private/utils/has-equal-identifiers';
+import StereoBaseIsHelper from 'ember-stereo/-private/helpers/is-helper';
 import {numericDuration} from 'ember-stereo/helpers/numeric-duration';
 import debugMessage from 'ember-stereo/-private/utils/debug-message';
 import {tracked} from '@glimmer/tracking';
-import { didCancel } from 'ember-concurrency';
 
 /**
   A helper to get a sound's position.
@@ -21,13 +18,8 @@ import { didCancel } from 'ember-concurrency';
   @returns {Float}
 */
 
-export default class SoundPosition extends Helper {
+export default class SoundPosition extends StereoBaseIsHelper {
   name = 'sound-position'
-  @service stereo;
-  @tracked sound;
-  @tracked result;
-
-  default = 0
 
   /**
     returns the position in milliseconds
@@ -38,38 +30,8 @@ export default class SoundPosition extends Helper {
     @return {Float}
   */
 
-  compute([identifier='system'], {format=false, defaultValue}) {
-    if (identifier !== this.identifier) {
-      this.identifier = identifier || 'system';
-      if (this.identifier == 'system') {
-        this.sound = this.stereo.currentSound
-        this.stereo.on('current-sound-changed', ({ sound }) => {
-          this.sound = sound;
-        })
-      }
-      else if (this.identifier !== 'system') {
-        let sound = this.stereo.findLoaded(this.identifier)
-        if (sound) {
-          this.sound = sound;
-        }
-        else {
-          this.stereo.on('new-load-request', async ({loadPromise, urlsOrPromise /*, options */}) => {
-            let isEqual = await hasEqualIdentifiers(this.identifier, urlsOrPromise);
-            if (isEqual) {
-              try {
-                loadPromise.then(({ sound }) => (this.sound = sound));
-              }
-              catch (e) {
-                if (!didCancel(e)) {
-                  throw e;
-                }
-              }
-
-            }
-          });
-        }
-      }
-    }
+  get result() {
+    let { format, defaultValue } = this.options;
     let result;
 
     if (format == 'percent' || format == 'percentage') {
@@ -95,9 +57,7 @@ export default class SoundPosition extends Helper {
       result = this.sound?.position;
     }
 
-    this.result = result;
-
-    debugMessage(this, `${format} render = ${this.result}`);
-    return this.result
+    debugMessage(this, `${format} render = ${result}`);
+    return result
   }
 }

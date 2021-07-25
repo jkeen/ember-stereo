@@ -11,7 +11,6 @@ $breakpoints: (
 
 @import "base";
 @import "diagnostic";
-@import "buttons";
 @import "sync";
 
 
@@ -33,64 +32,20 @@ $container-label-color: #EEE;
 
 $sound-background-color: #1b202b;
 
-$sound-accent-color: aqua;
+$sound-accent-color: #02BD9E;;
 $sound-text-color: $body-color;
 
 $text-color-normal: #AAA;
 $text-color-bright: #EEE;
 
+@import "components/buttons";
+@import "components/stereo-player";
+@import "components/autoplay";
 @import "components/sound-container";
 @import "components/service-display";
 @import "components/connection-display";
 @import "components/sound-display";
 @import "components/diagnostic-controls";
-
-.demo-sound-display, .stereo-player {
-  display: grid;
-  grid-auto-flow: column;
-  grid-auto-columns: min-content min-content min-content auto;
-  grid-gap: 11px;
-
-  padding: 10px;
-  border: 1px solid #EEE;
-}
-
-.demo-sound-position {
-  display: grid;
-  grid-template-columns: min-content auto min-content;
-  grid-gap: 10px;
-}
-
-.stereo-button {
-  white-space: nowrap;
-  display: inline-grid;
-  grid-gap: 5px;
-  grid-auto-flow: column;
-  align-items: center;
-  justify-items: center;
-}
-.stereo-button:disabled {
-  opacity: 0.3;
-  pointer-events: none;
-}
-
-.ui-button {
-  border: 1px solid #DDD;
-  border-radius: 5px;
-  padding: 5px 10px;
-  background-color: #FFF;
-
-  &:hover {
-    background-color: #EEE;
-  }
-
-  &.with-icon {
-    display: flex;
-    justify-content: center;
-    align-content: center;
-    line-height: 20px;
-  }
-}
 
 .hljs, .docs-md__code, .docs-bg-brand {
   background-color: #012941;
@@ -100,17 +55,3 @@ a {
   text-decoration: underline;
 }
 
-.autoplay-blocked-overlay {
-  background-color: rgba(0,0,0,0.8);
-  opacity: 1;
-  position: fixed;
-  left: 0;
-  right: 0;
-  top: 0;
-  bottom: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #FFF;
-  padding: 10px;
-}
