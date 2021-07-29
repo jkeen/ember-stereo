@@ -1,29 +1,96 @@
 <div class="diagnostic-controls">
   <div class="sound-container" data-title="Sound Loader">
-    <div class="sound test-sound">
-      <span class="test-sound-title-url">
-        <Input type="text" class="input" placeholder="url" @value={{url}}/>
-      </span>
-      <span class="test-sound-title">
-        <Input type="text" class="input" placeholder="title" @value={{title}} />
-      </span>
-      {{sound-error-details this.url}}
-
-      <div class="test-sound-actions">
-        <button href="#" class="button is-medium is-outline is-dark {{if this.loadCustomSound.isRunning " sound-is-loading"}}"
-          type="button" {{on 'click' (perform this.loadCustomSound)}}>Load</button>
-        <button href="#" class="button is-medium is-info {{if this.playCustomSound.isRunning " sound-is-loading"}}" type="button"
-          {{on 'click' (perform this.playCustomSound)}}>Play</button>
-      </div>
-      <div class="errors">
-        {{this.error}}
-      </div>
+    <div class="field">
+      <PowerSelect
+        @searchEnabled={{true}}
+        @options={{this.items}}
+        @selected={{this.selectedSound}}
+        @placeholder="Select a preset if ya want"
+        @searchField={{"title"}}
+        @onChange={{this.onPresetChange}} as |sound|>
+        {{sound.title}}
+      </PowerSelect>
     </div>
+    <div class="field">
+      <label class="input-label" for="url">
+        Url
+      </label>
+      <Input id="url" @type="text" class="input" @value={{this.url}} placeholder="Enter a URL" />
+    </div>
+    <div class="field">
+      <label class="input-label">
+        Connections
+      </label>
+      <FormRadioGroup @value={{this.connectionStrategy}} @onChange={{this.setConnectionStrategy}}
+        as |Radio|>
+        <Radio @value='default' @label="Automatic" @isInline={{true}} />
+        <Radio @value='specify' @label="Choose" @isInline={{true}} />
+      </FormRadioGroup>
 
-    <AnimatedContainer>
-      {{#animated-each @testSounds use=this.transition duration=250 as |item|}}
-      <TestSound @url={{item.url}} @title={{item.title}} @debug={{item.debug}} />
-      {{/animated-each}}
-    </AnimatedContainer>
+      {{#if (eq this.connectionStrategy 'default')}}
+        <StrategyBreakdown
+          class="strategy-preview"
+          @url={{this.url}}
+        />
+      {{else}}
+        <div class="form-checkbox-group">
+          {{#each this.connections as |conn|}}
+            <FormCheckbox
+              name={{conn}}
+              @label={{conn}}
+              @checked={{get this.selectedConnections conn}}
+              @onChange={{fn this.updateSelectedStrategies conn}}
+            />
+          {{/each}}
+        </div>
+      {{/if}}
+
+    </div>
+    {{!-- <div class="field">
+      <label class="input-label" for="url">
+        Metadata (JSON)
+      </label>
+      <Textarea id="metadata" class="input" placeholder="" />
+    </div> --}}
+
+    {{#if (sound-is-errored this.url)}}
+      <div class="field">
+        <label class="input-label" for="url">
+          Errors
+        </label>
+        <span class="errors">{{sound-error-details this.url}}</span>
+      </div>
+    {{/if}}
+
+    <div class="field actions">
+      <button {{on 'click' (load-sound this.url useConnections=this.useConnections)}} class="button with-icon" type="button" disabled={{or (sound-is-loaded this.url) (not this.url)}}>
+        {{#if (sound-is-loading this.url)}}
+          {{svg-jar "loading-outline" height=20 width=30 title="Loading" class="icon-spin"}}
+          Loading…
+        {{else if (sound-is-loaded this.url)}}
+          {{svg-jar "load" height=20 width=30 title="Load"}}Loaded
+        {{else}}
+          {{svg-jar "load" height=20 width=30 title="Load"}}Load
+        {{/if}}
+      </button>
+
+      <button {{on 'click' (toggle-play-sound this.url useConnections=this.useConnections)}} class="button with-icon" type="button" disabled={{not this.url}}>
+        {{#if (sound-is-playing this.url)}}
+          {{svg-jar "pause-outline" height=20 width=30 title="Pause"}}
+          Pause
+        {{else if (sound-is-loaded this.url)}}
+          {{svg-jar "resume-outline" height=20 width=30 title="Pause"}}
+          Resume
+        {{else if (sound-is-loading this.url)}}
+          {{svg-jar "loading-outline" height=20 width=30 title="Loading" class="icon-spin"}}
+          Loading
+        {{else}}
+          {{svg-jar "play-outline" height=20 width=30 title="Play"}}
+          Play
+        {{/if}}
+
+      </button>
+
+    </div>
   </div>
 </div>

@@ -4,7 +4,7 @@ import prepareOptions from "ember-stereo/-private/utils/prepare-options";
 /**
   A helper to load a sound
   ```hbs
-    <button {{on 'click' (load-sound this.url)}}>
+    <button {{on 'click' (load-sound @identifier}}>
       Load
     </button>
   ```
@@ -20,8 +20,8 @@ export default class LoadSound extends Helper {
     @param {String} [url]
     @return {Function}
   */
-  compute([urls], {options = {}, metadata = {}, remote=false}) {
-    options = prepareOptions({options, metadata, remote});
+  compute([urls], options = {}) {
+    options = prepareOptions(options);
 
     return () => {
       return this.stereo.load(urls, options).then((result) => result.sound);

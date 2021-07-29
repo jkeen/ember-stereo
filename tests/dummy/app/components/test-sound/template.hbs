@@ -5,7 +5,7 @@
   </span>
   <span>{{sound-error-details @url}}</span>
 
-  <div class="test-sound-actions">
+  <div class="actions">
     {{#if (sound-is-loaded @url)}}
     <button type="button" class="button is-link" disabled>Loaded</button>
     {{else if (sound-is-loading @url)}}

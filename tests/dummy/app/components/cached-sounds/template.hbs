@@ -1,7 +1,5 @@
-<AnimatedContainer>
-  <div class="sound-container loaded" data-title="Loaded Sounds">
-    {{#animated-each this.loadedItems use=this.transition duration=250 as |item|}}
-      <SoundDisplay @sound={{item}}/>
-    {{/animated-each}}
-  </div>
-</AnimatedContainer>
+<div class="sound-container loaded" data-title="Loaded Sounds">
+  {{#each this.loadedItems as |item|}}
+    <SoundDisplay @sound={{item}}/>
+  {{/each}}
+</div>

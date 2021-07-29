@@ -4,8 +4,8 @@ import Helper from '@ember/component/helper';
 /**
   A helper to rewind a sound by x.
   ```hbs
-  <button {{on 'click' (rewind-sound this.url increment=5000)}}>
-    Rewind
+  <button {{on 'click' (rewind-sound @identifier increment=15000)}}>
+    Rewind 15 seconds
   </button>
   ```
   @class {{rewind-sound}}

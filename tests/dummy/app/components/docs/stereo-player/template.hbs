@@ -2,25 +2,31 @@
 
 <div class="stereo-player">
   <div class="stereo-player-controls">
-    <button type="button" {{on 'click' (fastforward-sound @url increment=5000)}} disabled={{not (sound-is-rewindable @url)}}
+    <button {{on 'click' (rewind-sound @url increment=5000)}}
+      disabled={{not (sound-is-rewindable @url)}}
+      type="button"
       class="stereo-button">
-      {{svg-jar "skip-backward-outline" height=20 width=30 title="Skip Forward"}}
+      {{svg-jar "skip-backward-outline" height=20 width=30 title="Skip Backward"}}
     </button>
 
-    <button type="button" {{on 'click' (toggle-play-sound @url)}} class="stereo-button">
+    <button {{on 'click' (toggle-play-sound @url)}}
+      type="button"
+      class="stereo-button">
       {{#if (sound-is-playing @url)}}
-      {{svg-jar "pause-outline" height=20 width=30 title="Pause"}}
+        {{svg-jar "pause-outline" height=20 width=30 title="Pause"}}
       {{else if (sound-is-loaded @url)}}
-      {{svg-jar "resume-outline" height=20 width=30 title="Pause"}}
+        {{svg-jar "resume-outline" height=20 width=30 title="Pause"}}
       {{else if (sound-is-loading @url)}}
-      {{svg-jar "loading-outline" height=20 width=30 title="Loading" class="icon-spin"}}
+        {{svg-jar "loading-outline" height=20 width=30 title="Loading" class="icon-spin"}}
       {{else}}
-      {{svg-jar "play-outline" height=20 width=30 title="Play"}}
+        {{svg-jar "play-outline" height=20 width=30 title="Play"}}
       {{/if}}
     </button>
 
-    <button type="button" {{on 'click' (fastforward-sound @url increment=5000)}} disabled={{not (sound-is-fastforwardable
-      @url)}} class="stereo-button">
+    <button {{on 'click' (fastforward-sound @url increment=5000)}}
+      disabled={{not (sound-is-fastforwardable @url)}}
+      type="button"
+      class="stereo-button">
       {{svg-jar "skip-forward-outline" height=20 width=30 title="Skip Forward"}}
     </button>
   </div>
@@ -28,12 +34,32 @@
   <div class="stereo-player-position">
     {{sound-position @url format='time'}}
     <span class="range-container">
-      <Input type="range" @value={{sound-position @url format='percentage' }} {{on 'change' (seek-sound @url)}} disabled={{not
-      (sound-is-seekable @url)}} />
+      <Input {{on 'change' (seek-sound @url)}}
+        type="range"
+        @value={{sound-position @url format='percentage' }}
+        disabled={{not (sound-is-seekable @url)}} />
     </span>
     {{sound-duration @url format='time'}}
   </div>
+
+
+  {{!-- this doesn't show on mobile --}}
+{{!-- BEGIN-SNIPPET stereo-volume-control.hbs --}}
+  <div class="stereo-player-volume">
+    <span class="range-container">
+      <Input {{controls-stereo-volume}} type="range" />
+      <button type="button" {{on 'click' (toggle-mute)}}>
+        {{#if (gt (stereo-volume) 0)}}
+          {{svg-jar "volume-low-outline" height=20 width=30}}
+        {{else}}
+          {{svg-jar "volume-mute-outline" height=20 width=30}}
+        {{/if}}
+      </button>
+    </span>
+  </div>
+{{!-- END-SNIPPET --}}
 </div>
+
 {{#if (sound-is-errored @url)}}
 <div class="stereo-player-errors">
   {{sound-error-details @url}}

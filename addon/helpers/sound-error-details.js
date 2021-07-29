@@ -3,16 +3,21 @@ import { dedupeTracked } from 'tracked-toolbox';
 import hasEqualIdentifiers from 'ember-stereo/-private/utils/has-equal-identifiers';
 import { inject as service } from '@ember/service';
 import debugMessage from 'ember-stereo/-private/utils/debug-message';
+import resolveUrls from 'ember-stereo/-private/utils/resolve-urls';
+import hasEqualUrls from 'ember-stereo/-private/utils/has-equal-urls';
 import { makeArray } from '@ember/array';
 /**
   A helper to display error details.
   ```hbs
-    {{sound-error-details this.url}}
+    {{sound-error-details @identifier}}
+
+    {{sound-error-details @identifier connectionName="NativeAudio"}} // only display errors from native audio
   ```
 
   @class {{sound-error-details}}
   @type Helper
   @param {String} url
+  @param {String} connectionName?
 */
 
 const UNINITIALIZED = Object.freeze({});
@@ -22,7 +27,7 @@ export default class SoundIsErrored extends Helper {
   @service stereo;
 
   identifier = UNINITIALIZED;
-  @dedupeTracked result = UNINITIALIZED
+  @dedupeTracked url;
 
   /**
   returns the state
@@ -31,43 +36,25 @@ export default class SoundIsErrored extends Helper {
   @return {boolean}
   */
 
-  reset() {
-    this.result = UNINITIALIZED
+  get result() {
+    return this.stereo.cachedErrors.find(e => hasEqualUrls(e.url, this.url))
   }
 
   compute([identifier], {connectionName = 'NativeAudio'}) {
     if (identifier !== this.identifier) {
-      this.result = UNINITIALIZED; // if identifier changes, reinitialize sound
-      this.identifier = identifier || 'system';
-      if (this.identifier !== 'system') {
-        let result = this.stereo.errorCache.find(this.identifier)
-        if (result) {
-          this.result = makeArray(result);
-        }
-        else {
-          this.stereo.on('audio-load-error', async ({sound}) => {
-            let isEqual = await hasEqualIdentifiers(this.identifier, sound.url);
-            if (isEqual) {
-              this.result = this.stereo.errorCache.find(this.identifier)
-            }
-          });
-        }
-      }
+      this.identifier = identifier;
+      resolveUrls(this.identifier).then(url => this.url = url)
     }
 
     if (!this.result) { return }
-    if (this.result.length === 1) { // only one connection
-      var error = this.result[0];
-      if (connectionName && error[connectionName]) {
-        debugMessage(this, `render = ${error[connectionName]}`);
-        return error[connectionName];
-      }
-      else {
-        return error[Object.keys(error)[0]];
-      }
+
+    var error = this.result;
+    if (connectionName && error.errors[connectionName]) {
+      debugMessage(this, `render = ${error.errors[connectionName]}`);
+      return error[connectionName];
     }
-    else if (this.result.length > 0) {
-      return this.result
+    else {
+      return error.errors.generic || error.errors[Object.keys(error.errors)[0]];
     }
   }
 }

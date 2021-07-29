@@ -83,7 +83,8 @@ export default class EventDisplay extends Component {
 
   @action
   async displayEvent(e) {
-    console.log(`name: ${e.name}`); //eslint-disable-line
+    console.log(`$E = name: ${e.name}`); //eslint-disable-line
     console.log(e.data); //eslint-disable-line
+    window.$E = e.data
   }
 }

@@ -7,7 +7,6 @@ import Helper from '@ember/component/helper';
    {{#if (autoplay-allowed)}}
       Autoplay is allowed
    {{/if}}
-
    ```
 
   @class {{autoplay-allowed}}

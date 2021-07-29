@@ -6,19 +6,10 @@ import { inject as service } from '@ember/service';
 /**
   A helper to detect if a sound is errored.
   ```hbs
-    {{#if (sound-is-errored this.url)}}
-      <p>The currently loaded sound is errored</p>
+    {{#if (sound-is-errored @identifier}}
+      <p>This sound is errored</p>
     {{else}}
-      <p>The currently loaded sound is not errored</p>
-    {{/if}}
-  ```
-
-  Can also look for the currently loaded sound without an argument
-  ```hbs
-    {{#if (sound-is-errored)}}
-      <p>The currently loaded sound is errored</p>
-    {{else}}
-      <p>Sound is ok</p>
+      <p>This sound is not errored</p>
     {{/if}}
   ```
 
@@ -44,26 +35,13 @@ export default class SoundIsErrored extends Helper {
   * @param {Boolean} options.load load the sound if it's not loaded?
   */
   compute([identifier = 'system'], { connectionName }) {
-    if (identifier !== this.identifier) {
-      this.result = UNINITIALIZED; // if identifier changes, reinitialize sound
-      this.identifier = identifier || 'system';
-      if (this.identifier !== 'system') {
-        let error = this.stereo.errorCache.find(this.identifier);
+    let errors = this.stereo.cachedErrors.filter(async e => await hasEqualIdentifiers(e.url, identifier))
 
-        if (error && connectionName && error[connectionName]) {
-          this.result = true;
-        }
-        else if (error) {
-          this.result = true;
-        }
-        else {
-          this.stereo.on('audio-load-error', async ({sound}) => {
-            this.result = await hasEqualIdentifiers(this.identifier, sound.url);
-          });
-        }
-      }
+    if (connectionName) {
+      return errors.filter(e => e.connectionName === connectionName).length > 0
     }
-
-    return this.result === true;
+    else {
+      return errors.length > 0;
+    }
   }
 }

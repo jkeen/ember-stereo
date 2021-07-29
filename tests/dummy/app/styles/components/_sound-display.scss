@@ -315,25 +315,27 @@
   margin: 0;
   list-style-type: none;
 
-  li.is-success {
+  .is-success {
     color: $success;
   }
 
-  li.is-failure {
+  .is-failure {
     color: $danger;
   }
 
-  li.not-attempted {
-
+  .not-attempted {
+    svg {
+      color: #EEE;
+    }
   }
 
-  li.is-ineligible {
+  .is-ineligible {
     color: $disabled;
   }
 }
 
-.debug-event-tag {
-  background-color: lighten($sound-background-color, 20);
+.sound-tag {
+  background-color: lighten($sound-background-color, 10);
   display: inline-block;
   font-size: 11px;
   white-space: nowrap;
@@ -343,11 +345,11 @@
   text-decoration: none;
   border-radius: 3px;
 }
-.debug-event-tag:hover {
+.sound-tag:hover {
   background-color: lighten($sound-background-color, 30);
 }
 
-.debug-event-tag .debug-event-count {
+.sound-tag .sound-tag-title {
   border-right: 1px solid #333;
 	color: $sound-accent-color;
   display: inline-block;
@@ -355,7 +357,7 @@
 	padding: 0 5px;
 }
 
-.debug-event-tag .debug-event-name {
+.sound-tag .sound-tag-name {
   padding: 0 3px;
 }
 

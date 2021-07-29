@@ -80,6 +80,8 @@ export default class Sound extends Evented {
   @tracked duration = 0
   @tracked percentLoaded = 0
   @tracked metadata = {};
+  @tracked id3Tags = {}
+  @tracked _debug = {} // for internal debugging
 
   get debugName() {
     var parser = document.createElement('a');
@@ -135,6 +137,7 @@ export default class Sound extends Evented {
     const log = debug(this.debugName);
     log(...arguments);
   }
+
 
   constructor(args = {}) {
     super(...arguments);
@@ -206,6 +209,9 @@ export default class Sound extends Evented {
       this.isLoaded = true;
       if (audioLoaded) { audioLoaded(this); }
       this.debug('audio-loaded');
+      // mm.fetchFromUrl(this.url).then(metadata => {
+      //   this.id3Tags = metadata
+      // })
     });
 
     this.on('audio-loading', (info) => {

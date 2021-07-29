@@ -30,5 +30,4 @@ Router.map(function() {
 
   this.route('autoplay');
   this.route('not-found', { path: '/*path' });
-
 });

@@ -12,7 +12,7 @@
     </div>
 
     <span class="sound-display-top-bar-connection-name">
-      {{#let (find-loaded-sound @sound.url) as |sound|}}
+      {{#let this.loadedSound as |sound|}}
         {{#if sound}}
           {{#if sound.connectionName}}
             {{sound.connectionName}} Sound
@@ -21,22 +21,22 @@
             ({{sound.mimeType}})
           {{/if}}
         {{else}}
-        URL
+          Not Loaded
         {{/if}}
       {{/let}}
     </span>
 
     {{#if this.isCurrentSound}}
-    <span class="sound-display-top-bar-current">Current Sound</span>
+      <span class="sound-display-top-bar-current">Current Sound</span>
     {{/if}}
   </div>
 
   <div class="sound-display-title">
     <div class="sound-display-title-given">
-      {{sound-metadata @sound.url key='title'}}
+      {{sound-metadata this.url key='title'}}
     </div>
     <div class="sound-display-title-url">
-      {{@sound.url}}
+      {{this.url}}
     </div>
   </div>
 
@@ -44,109 +44,53 @@
     <SoundDisplay::Position @sound={{@sound}} />
 
     <div class="sound-control-buttons">
-      <a href="#" class="sound-control-button-item"></a>
-
-      {{#if (sound-is-rewindable @sound.url)}}
-      <button type="button" class="sound-control-button-item" {{on 'click' (fn (rewind-sound this.url increment=5000))}}>
+      {{#if (sound-is-rewindable this.url)}}
+      <button type="button" class="sound-control-button-item" {{on 'click' (fn (rewind-sound this.url increment=15000))}}>
         {{svg-jar "skip-backward-outline" class="stereo-icon" height="24" width="24"}}
       </button>
       {{/if}}
 
-      <button type="button" class="sound-control-button-item" {{on 'click' (toggle-play-sound @sound.url)}}>
-        {{#if (sound-is-loading @sound.url)}}
+      {{#if (not (or (sound-is-loaded this.url) (sound-is-loading this.url)))}}
+        <button type="button" class="sound-control-button-item" {{on 'click' (load-sound this.url)}}>
+          {{svg-jar "load" class="stereo-icon" height="48" width="48"}}
+        </button>
+      {{/if}}
+
+      <button type="button" class="sound-control-button-item" {{on 'click' (toggle-play-sound this.url)}}>
+        {{#if (sound-is-loading this.url)}}
           {{svg-jar "loading-outline" class="stereo-icon icon-spin" height="48" width="48"}}
-        {{else if (sound-is-playing @sound.url)}}
+        {{else if (sound-is-playing this.url)}}
           {{svg-jar "pause-outline" class="stereo-icon" height="48" width="48"}}
         {{else}}
           {{svg-jar "play-outline" class="stereo-icon" height="48" width="48"}}
         {{/if}}
       </button>
 
-      {{#if (sound-is-fastforwardable @sound.url)}}
-      <button type="button" class="sound-control-button-item" {{on 'click' (fastforward-sound @sound.url
-        increment=5000)}}>
+      {{#if (sound-is-fastforwardable this.url)}}
+      <button type="button" class="sound-control-button-item" {{on 'click' (fastforward-sound this.url
+        increment=15000)}}>
         {{svg-jar "skip-forward-outline" class="stereo-icon" height="24" width="24"}}
       </button>
       {{/if}}
 
-      <button type="button" class="sound-control-button-item" {{on 'click' (stop-sound @sound.url)}}>
+      {{#if (sound-is-loaded)}}
+      <button type="button" class="sound-control-button-item" {{on 'click' (stop-sound this.url)}}>
         {{svg-jar "stop-outline" class="stereo-icon" height="24" width="24"}}
       </button>
+      {{/if}}
     </div>
   </div>
 
-
   <div class="diagnostic-debug">
-    <h3>Strategy</h3>
-
-    <ul class="diagnostic-debug-strategy">
-      {{#each @sound.metadata.debug.results as |item|}}
-      {{#if item.didPlay}}
-      <li class="is-success">
-        {{fa-icon "check-square"}} {{item.connectionName}} succeeded
-      </li>
-      {{else if (and item.canPlay (not item.triedToPlay))}}
-      <li class="not-attempted">
-        {{fa-icon "square"}} {{item.connectionName}} was not attemped
-      </li>
-      {{else if (and item.canPlay item.triedToPlay)}}
-      <li class="is-failure">
-        {{fa-icon "skull"}} {{item.connectionName}} attempted and failed
-      </li>
-      {{else if (not item.canPlay)}}
-      <li class="is-ineligible">
-        {{fa-icon "times"}} {{item.connectionName}} ineligible, not attempted
-      </li>
-      {{/if}}
-      {{/each}}
-    </ul>
+    <h3>Connection</h3>
+    <StrategyBreakdown @url={{this.url}}/>
 
     <h3>Properties</h3>
-    <dl class="diagnostic-debug-list">
-      <dt>Id</dt>
-      <dd>{{@sound.debugName}}</dd>
-
-      <dt>isLoading</dt>
-      <dd>{{@sound.isLoading}}</dd>
-
-      <dt>isPlaying</dt>
-      <dd>{{@sound.isPlaying}}</dd>
-
-      <dt>isErrored</dt>
-      <dd>{{@sound.isErrored}}</dd>
-
-      <dt>hasPlayed</dt>
-      <dd>{{@sound.hasPlayed}}</dd>
-
-      <dt>duration</dt>
-      <dd>{{@sound.duration}}</dd>
-
-      <dt>position</dt>
-      <dd>{{@sound.position}}</dd>
-
-      <dt>isStream</dt>
-      <dd>{{@sound.isStream}}</dd>
-
-      <dt>isRewindable</dt>
-      <dd>{{@sound.isRewindable}}</dd>
-
-      <dt>isFastForwardable</dt>
-      <dd>{{@sound.isFastForwardable}}</dd>
-
-      <dt>percentLoaded</dt>
-      <dd>{{@sound.percentLoaded}}</dd>
-
-      <dt>metadata</dt>
-      <dd>{{json-stringify @sound.metadata}}</dd>
-
-      <dt>id3TagMetadata</dt>
-      <dd>{{json-stringify @sound.id3TagMetadata}}</dd>
-    </dl>
-
+    <SoundProperties @url={{this.url}}/>
 
     <h3>Events</h3>
-    {{#if (sound-is-loaded @sound.url)}}
-      <EventDisplay class="diagnostic-debug-events" @sound={{find-loaded-sound @sound.url}} />
+    {{#if this.loadedSound}}
+      <EventDisplay class="diagnostic-debug-events" @sound={{this.loadedSound}} />
     {{/if}}
   </div>
 

@@ -34,6 +34,7 @@ export default class NativeAudio extends BaseSound {
 
   setup() {
     let audio = this.requestControl();
+    audio.id = (new Date().getTime());
     audio.src = this.url;
     audio.crossOrigin="anonymous";
     this._registerEvents(audio);

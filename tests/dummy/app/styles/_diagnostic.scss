@@ -15,19 +15,59 @@
   margin-bottom: 20px;
 }
 
+.diagnostic-controls {
+  .field {
+    display: flex;
+    flex-direction: column;
+
+    label.input-label {
+      font-size: 12px;
+      text-transform: uppercase;
+      margin-bottom: 5px;
+    }
+    margin-top: 5px;
+    margin-bottom: 10px;
+  }
+
+  .input {
+    border: 1px solid #EEE;
+    padding: 5px;
+  }
+
+  .input-with-preset {
+    display: grid;
+    grid-template-columns: 4fr 2fr;
+  }
+
+  .actions {
+    margin-top: 10px;
+    display: flex;
+    flex-direction: row;
+    button + button {
+      margin-left: 5px;
+    }
+  }
+  .ember-basic-dropdown-trigger {
+    width: 100%;
+  }
+}
+
 .diagnostic-controls-header {
   margin: 10px 0;
 }
 
 .diagnostic-controls .button {
-  padding: 3px;
+  padding: 5px 5px;
   border: 1px solid #CCC;
   color: #333;
   background-color: #FFF;
   text-decoration: none;
   border-radius: 5px;
-  font-size: 12px;
-  &:not(.sound-is-loading):hover {
+  font-size: 16px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  &:not(.sound-is-loading, [disabled]):hover {
     background-color: #EEE;
   }
 
@@ -36,9 +76,100 @@
   }
 }
 
-.diagnostic-dj .errors {
+.diagnostic-controls .button.with-icon {
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-columns: 30px auto;
+
+  svg {
+    width: 25px;
+    height: 25px;
+  }
+
+  &[disabled] {
+    opacity: 0.5;
+  }
+}
+
+.diagnostic-controls .strategy-preview {
+  display: flex;
+  flex-direction: row;
+  justify-content: start;
+  align-items: flex-start;
+  padding: 0;
+
+
+  .ember-power-select-multiple-option {
+    font-size: 13px;
+    padding: 5px;
+    border: none;
+    background: none;
+    display: flex;
+    flex-direction: row;
+    margin-right: 5px;
+    padding: 5px;
+    column-gap: 6px;
+    align-items: center;
+  }
+
+  .connection-info {
+    display: flex;
+    flex-direction: column;
+    font-size: 13px;
+    padding: 5px;
+    border: 1px solid #EEE;
+    margin-right: 5px;
+    padding: 5px;
+
+    .connection-name {
+      font-size: 15px;
+    }
+
+    .connection-message {
+      // display: none;
+    }
+
+  }
+}
+
+.form-checkbox-group {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.form-checkbox .form-checkbox__label-container {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  border: 1px solid #EEE;
+  padding-left: 5px;
+
+  label {
+    padding: 10px 5px;
+  }
+}
+
+.form-radio-group {
+  .form-field-label {
+    display: block;
+    font-size: 12px;
+  }
+
+  .form-radio-group__form-radio {
+    clear: left;
+    display: inline-block;
+  }
+  .form-radio__label-container {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+}
+
+.errors {
   color: red;
-  font-size: 12px;
 }
 
 .diagnostic .stereo-button svg path {

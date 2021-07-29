@@ -6,9 +6,9 @@ import {tracked} from '@glimmer/tracking';
 /**
   A helper to get a sound's position.
   ```hbs
-   {{sound-position this.url}} #=> 144000
-   {{sound-position this.url format="time"}} #=> "02:24"
-   {{sound-position this.url format="percent"}} #=> "56"
+   {{sound-position @identifier}} #=> 144000
+   {{sound-position @identifier format="time"}} #=> "02:24"
+   {{sound-position @identifier format="percent"}} #=> "56"
 
    ```
 

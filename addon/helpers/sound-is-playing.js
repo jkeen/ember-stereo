@@ -4,10 +4,10 @@ import debugMessage from 'ember-stereo/-private/utils/debug-message';
 /**
 A helper to detect if a sound is playing.
 ```hbs
-{{#if (sound-is-playing this.urlOrSound)}}
-<p>This url is currently loading</p>
+{{#if (sound-is-playing @identifier)}}
+  <p>This sound is currently playing</p>
 {{else}}
-<p>This url is not currently loading</p>
+  <p>This sound is not currently playing</p>
 {{/if}}
 ```
 

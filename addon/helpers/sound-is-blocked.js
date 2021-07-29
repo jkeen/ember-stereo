@@ -1,21 +1,12 @@
 import StereoBaseIsHelper from 'ember-stereo/-private/helpers/is-helper';
 
 /**
-  A helper to detect if a sound is loaded.
+  A helper to detect if a sound is blocked.
   ```hbs
-    {{#if (sound-is-loaded this.url)}}
-      <p>The currently loaded sound is loaded</p>
+    {{#if (sound-is-blocked @identifier}}
+      <p>This sound has been blocked by browser autoplay. User intervention is required</p>
     {{else}}
-      <p>The currently loaded sound is not loaded</p>
-    {{/if}}
-  ```
-
-  Can also look for the currently loaded sound without an argument
-  ```hbs
-    {{#if (sound-is-loaded)}}
-      <p>The currently loaded sound is loaded</p>
-    {{else}}
-      <p>There is no current sound</p>
+      <p>This sound has not been blocked by browser autoplay</p>
     {{/if}}
   ```
 

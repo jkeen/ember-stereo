@@ -4,17 +4,17 @@ import debugMessage from 'ember-stereo/-private/utils/debug-message';
 /**
   A helper to detect if a sound is seekable.
   ```hbs
-    {{#if (sound-is-seekable this.urlOrSound)}}
-      <p>The currently loaded sound is seekable</p>
+    {{#if (sound-is-seekable @identifier)}}
+      <p>This sound is seekable</p>
     {{else}}
-      <p>The currently loaded sound is not seekable</p>
+      <p>This sound is not seekable</p>
     {{/if}}
   ```
 
   @class {{sound-is-seekable}}
   @type Helper
   @param {String} url
-  @param {Boolean} options.load load the sound if it's not loaded?
+  @param {Boolean} load? load the sound if it's not loaded
 */
 
 export default class SoundIsSeekable extends StereoBaseIsHelper {

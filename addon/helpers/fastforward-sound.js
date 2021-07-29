@@ -4,7 +4,7 @@ import Helper from '@ember/component/helper';
 /**
   A helper to fast forward a sound by x.
   ```hbs
-   <button {{on 'click' (fastforward-sound this.soundOrUrl increment=5000)}}>
+   <button {{on 'click' (fastforward-sound @identifier increment=5000)}}>
     Fast Forward
   </button>
   ```

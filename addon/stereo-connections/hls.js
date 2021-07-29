@@ -54,7 +54,7 @@ export default class HLSSound extends BaseSound {
     //   this._checkIfAudioIsReady();
     // });
 
-    // hls.on(HLS.Events.ERROR, (e, data) => this._onHLSError(e, data));
+    hls.on(HLS.Events.ERROR, (e, data) => this._onHLSError(e, data));
 
     hls.on(HLS.Events.MEDIA_ATTACHED, () => {
       this.debug('media attached');

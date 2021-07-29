@@ -1,53 +1,10 @@
-.test-sound {
-  padding: 2px 0;
-  font-size: 11px;
-  display: grid;
-  grid-template: "title url actions" auto /
-                 200px auto  min-content;
-  column-gap: 1em;
-}
 
-.test-sound input {
-  border: 1px solid #CCC;
-  width: 100%;
-  padding: 3px;
-}
-
-.test-sound-title {
-  display: flex;
-  flex-direction: row;
-  font-weight: bold;
-  grid-area: title;
-  white-space: nowrap;
-
-  .tag {
-    background-color: #DDD;
-    border-radius: 4px;
-    color: white;
-    padding: 1px 5px;
-    line-height: 18px;
-    margin-left: 10px;
-    font-size: 10px;
-    text-transform: uppercase;
-  }
-}
-.test-sound-title {
-  grid-area: title;
-}
-.test-sound-title-url {
-  grid-area: url;
-  display: flex;
-  flex-direction: row;
-  grid-area: url;
-  text-overflow: clip;
-}
-
-.test-sound-actions {
+.actions {
   white-space: nowrap;
   grid-area: actions;
 }
 
-// .test-sound-actions .button[data-stereo-state='playing'] {
+// .actions .button[data-stereo-state='playing'] {
 //   background-color: green;
 // }
 

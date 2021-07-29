@@ -1,17 +1,10 @@
-<DiagnosticControls @class="diagnostic-controls" @testSounds={{@model.testSounds}} />
-
 <div class="diagnostic">
   <div class="diagnostic-display">
     <div class="sound-container" data-title="Stereo Service">
       <ServiceDisplay />
     </div>
-    <div class="sound-container" data-title="Stereo Connections">
-      <div class="service-display-connections">
-        {{#each @model.connections as |connection|}}
-          <ConnectionDisplay @connection={{connection}} />
-        {{/each}}
-      </div>
-    </div>
+
+    <DiagnosticControls @class="diagnostic-controls" @testSounds={{@model.testSounds}} />
 
     <CachedSounds />
   </div>

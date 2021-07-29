@@ -4,55 +4,43 @@ import move from 'ember-animated/motions/move';
 import { parallel } from 'ember-animated';
 import scale from 'ember-animated/motions/scale';
 import { task } from 'ember-concurrency';
+import { makeArray } from '@ember/array';
+import { tracked } from '@glimmer/tracking';
+import { trackedReset } from 'tracked-toolbox';
+import { action } from '@ember/object';
 
 export default class DiagnosticControls extends Component {
   @service stereo
+  @tracked selectedSound = undefined;
+  @tracked selectedConnections = Object.fromEntries(this.connections.map(c => [c, true]))
+  @tracked url;
+  @tracked connectionStrategy = 'default'
+  @tracked useConnections = null;
 
-  get dormantItems() {
-    return this.args.testSounds.filter(item => !this.stereo.soundCache._cache[item.url]);
+  connections = this.stereo.connections
+
+  get items() {
+    return this.args.testSounds;
   }
 
-  @task({drop: true})
-  * playCustomSound() {
-    yield this.stereo.play(this.url, {
-      metadata: {
-        title: this.title
-      }
-    }).catch(({failures}) => {
-      console.error(failures);
-    });
-  }
-
-  @task({drop: true})
-  * loadCustomSound() {
-    try {
-      yield this.stereo.load(this.url, {
-        metadata: {
-          title: this.title
-        }
-      }).catch(({failures}) => {
-        console.error(failures);
-      });
+  @action
+  setConnectionStrategy(option) {
+    this.connectionStrategy = option;
+    if (this.connectionStrategy === 'default') {
+      this.useConnections = null;
     }
-    catch(e) {
-      this.set('error', e);
-    }
+
   }
 
-  //eslint-disable-next-line
-  *transition(context) {
-     let { keptSprites, sentSprites, receivedSprites } = context;
+  @action
+  updateSelectedStrategies(name, _enabled, event) {
+    this.selectedConnections[name] = event.target.checked
+    this.useConnections = this.connections.filter(name => !!this.selectedConnections[name]);
+  }
 
-     keptSprites.forEach(sprite => {
-       parallel(move(sprite), scale(sprite));
-     });
-
-     sentSprites.forEach(sprite => {
-       parallel(move(sprite), scale(sprite));
-     });
-
-     receivedSprites.forEach(sprite => {
-       sprite.moveToFinalPosition();
-     });
-   }
+  @action
+  onPresetChange(selection) {
+    this.url = selection.url
+    this.selectedSound = null;
+  }
 }

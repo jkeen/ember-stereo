@@ -5,8 +5,8 @@ import Helper from '@ember/component/helper';
 /**
   A helper to stop a sound
   ```hbs
-    <button {{on 'click' (stop-sound this.url)}}>
-      Play
+    <button {{on 'click' (stop-sound @identifier}}>
+      Stop
     </button>
   ```
   @class {{stop-sound}}

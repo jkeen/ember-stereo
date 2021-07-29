@@ -4,8 +4,11 @@ import Helper from '@ember/component/helper';
 /**
   A helper to get the currently playing/paused sound.
   ```hbs
-   {{current-sound}} #=> sound
+   {{current-sound}}
 
+   {{#if (sound-is-playing (current-sound))}}
+     Something in this app is playing!
+   {{/if}}
    ```
 
   @class {{current-sound}}

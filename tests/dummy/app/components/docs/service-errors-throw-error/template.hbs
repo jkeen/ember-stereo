@@ -1,6 +1,6 @@
 <DocsDemo as |demo|>
   <demo.example @name="service-errors-wild-west.hbs">
-    <p>This is what happens when you don't catch the error</p>
+    <p>This is what happens when you don't catch the error (open your console)</p>
     <div style="display: flex; justify-content: space-between;">
       <button {{on 'click' (fn this.togglePlaySound "https://invalid.example.url/4.mp3" )}} type="button" class="ui-button">
         {{#if this.sound.isPlaying}}

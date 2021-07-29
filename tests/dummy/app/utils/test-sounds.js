@@ -1,6 +1,6 @@
 
 export const AAC_STREAM = {
-  title: 'AAC Stream',
+  title: 'WNYC Live Stream (aac)',
   url: 'https://fm939.wnyc.org/wnycfm.aac',
   expectedValues: {
     url: 'https://fm939.wnyc.org/wnycfm.aac',
@@ -15,7 +15,7 @@ export const AAC_STREAM = {
 };
 
 export const HLS_STREAM = {
-  title: 'HLS Stream',
+  title: 'WNYC Live Stream (hls)',
   url: 'https://hls-live.wnyc.org/wnycfm/playlist.m3u8',
   expectedValues: {
     url: 'https://hls-live.wnyc.org/wnycfm/playlist.m3u8',
@@ -30,7 +30,7 @@ export const HLS_STREAM = {
 }
 
 export const MP3_ON_DEMAND_2 = {
-  title: 'MP3 On Demand 2',
+  title: 'Brian Lehrer Show (mp3)',
   url: 'https://audio.wnyc.org/bl/bl011421dpod.mp3',
   expectedValues: {
     url: 'https://audio.wnyc.org/bl/bl011421dpod.mp3',
@@ -45,7 +45,7 @@ export const MP3_ON_DEMAND_2 = {
 }
 
 export const MP3_ON_DEMAND = {
-  title: 'MP3 On Demand',
+  title: 'On The Media (mp3)',
   url: 'https://www.podtrac.com/pts/redirect.mp3/audio.wnyc.org/otm/otm04212017pod.mp3',
   expectedValues: {
     url: 'https://www.podtrac.com/pts/redirect.mp3/audio.wnyc.org/otm/otm04212017pod.mp3',
@@ -60,7 +60,7 @@ export const MP3_ON_DEMAND = {
 };
 
 export const STREAM_WITHOUT_EXTENSION = {
-  title: 'WQXR Stream (no extension)',
+  title: 'WQXR Live Stream (no mime type)',
   url: 'https://stream.wqxr.org/wqxr',
   expectedValues: {
     url: 'https://stream.wqxr.org/wqxr',
@@ -75,7 +75,7 @@ export const STREAM_WITHOUT_EXTENSION = {
 };
 
 export const HLS_LIVE_STREAM = {
-  title: "KUTX HLS Stream",
+  title: "KUTX Live Stream  (hls)",
   url: "https://kut-hls.streamguys1.com/kut2/playlist.m3u8",
   expectedValues: {
     duration: Infinity,
@@ -89,13 +89,18 @@ export const HLS_LIVE_STREAM = {
 }
 
 export const KOOP_STREAM = {
-  title: "KOOP",
+  title: "KOOP Live Stream (aac)",
   url: "https://streaming.koop.org/stream.mp3"
 }
 
 export const INVALID_STREAM = {
   title: "Invalid Stream",
   url: "https://streaming.koop.org/streamz.mp3"
+}
+
+export const OGG_FILE = {
+  title: "Test Sound (ogg)",
+  url: "https://file-examples-com.github.io/uploads/2017/11/file_example_OOG_1MG.ogg"
 }
 
 export default [
@@ -106,5 +111,6 @@ export default [
   HLS_LIVE_STREAM,
   STREAM_WITHOUT_EXTENSION,
   KOOP_STREAM,
+  OGG_FILE,
   INVALID_STREAM
 ]

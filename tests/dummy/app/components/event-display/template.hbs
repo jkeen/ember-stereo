@@ -1,8 +1,8 @@
 {{#each this.eventListGroupings as |e|}}
-  <button type="button" class="debug-event-tag" {{on 'click' (fn this.displayEvent e)}} data-event-type={{e.type}}>
+  <button type="button" class="sound-tag" {{on 'click' (fn this.displayEvent e)}} data-event-type={{e.type}}>
     {{#if (gt e.count 1)}}
-      <span class="debug-event-count">{{e.count}}</span>
+      <span class="sound-tag-title">{{e.count}}</span>
     {{/if}}
-    <span class="debug-event-name">{{e.name}}</span>
+    <span class="sound-tag-name">{{e.name}}</span>
   </button>
 {{/each}}

@@ -85,7 +85,7 @@ module('Integration | Helper | sound-is-loading', function(hooks) {
     service.loadConnections([{ name: 'DummyConnection' }]);
     this.set('url', '/good/3/silence.mp3')
 
-    await render(hbs`{{#if (sound-is-loading)}}sound-is-loading{{else}}is-not-loading{{/if}}`);
+    await render(hbs`{{#if (sound-is-loading this.url)}}sound-is-loading{{else}}is-not-loading{{/if}}`);
     assert.equal(this.element.textContent.trim(), 'is-not-loading', 'helper reports not loading');
 
     service.load(this.url).then(async () => {

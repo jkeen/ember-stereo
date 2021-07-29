@@ -4,7 +4,7 @@ import Helper from "@ember/component/helper";
 /**
   A helper to load a sound
   ```hbs
-    <button {{on 'click' (play-sound this.url)}}>
+    <button {{on 'click' (play-sound @identifier}}>
       Play
     </button>
   ```

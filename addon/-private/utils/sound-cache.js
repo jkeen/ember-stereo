@@ -3,6 +3,10 @@ import debug from 'debug';
 import { tracked } from '@glimmer/tracking';
 import StereoUrl from 'ember-stereo/-private/utils/stereo-url';
 import Sound from 'ember-stereo/stereo-connections/base';
+import BaseSound from 'ember-stereo/stereo-connections/base';
+import hasEqualIdentifiers from './has-equal-identifiers';
+import hasEqualUrls from './has-equal-urls';
+
 /**
 * This class caches sound objects based on urls. You shouldn't have to interact with this class.
 *
@@ -68,15 +72,20 @@ export default class SoundCache {
    *
    * @param {Sound} sound
    */
-  remove(sound) {
+  remove(identifier) {
     if (this.isDestroyed) return;
-    let identifier = new StereoUrl(sound.url).key
+    if (identifier instanceof BaseSound) {
+      identifier = identifier.url
+    }
 
-    debug(this.name)(`removing sound from cache with url: ${sound.url}`);
-    if (this._cache[identifier]) {
-      delete this._cache[identifier];
+    let url = Object.keys(this._cache).find(key => hasEqualUrls(key, identifier))
+
+    debug(this.name)(`removing sound from cache with url: ${identifier}`);
+    if (this._cache[url]) {
+      delete this._cache[url];
       this.cachedCount = Object.keys(this._cache).length
       this.cachedList = Object.keys(this._cache);
+      this.cachedSounds = Object.values(this._cache);
     }
   }
 

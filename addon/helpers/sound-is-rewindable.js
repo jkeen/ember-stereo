@@ -4,16 +4,17 @@ import debugMessage from 'ember-stereo/-private/utils/debug-message';
 /**
   A helper to detect if a sound is rewindable.
   ```hbs
-    {{#if (sound-is-rewindable this.urlOrSound)}}
-      <p>The sound with this.url is rewindable</p>
+    {{#if (sound-is-rewindable @identifier)}}
+      <p>This sound is rewindable</p>
     {{else}}
-      <p>The sound with this.url is not rewindable</p>
+      <p>This sound is not rewindable</p>
     {{/if}}
   ```
 
   @class {{sound-is-rewindable}}
   @type Helper
   @param {String} url
+  @param {Boolean} load? load the sound if it's not loaded
 */
 
 export default class SoundIsRewindable extends StereoBaseIsHelper {

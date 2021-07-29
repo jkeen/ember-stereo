@@ -34,9 +34,9 @@ export default class Howler extends BaseSound {
         sound.trigger('audio-ready', {sound});
       },
       onpause: function() {
-        if (!sound.isPlaying) {
+        // if (!sound.isPlaying) {
           sound.trigger('audio-paused', {sound});
-        }
+        // }
       },
       onplay: function() {
         sound.trigger('audio-played', {sound});

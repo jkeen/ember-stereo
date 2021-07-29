@@ -33,7 +33,7 @@ export default class StereoBaseIsHelper extends Helper {
     debugMessage(this, 'waiting for audio-loaded or audio-played');
 
     while (this.waitingForSound) {
-      let { sound } = yield race([waitForEvent(this.stereo, 'audio-loaded'), waitForEvent(this.stereo, 'audio-played')])
+      let { sound } = yield race([waitForEvent(this.stereo, 'audio-loaded'), waitForEvent(this.stereo, 'audio-played'), waitForEvent(this.stereo, 'audio-load-error')])
       if (sound && hasEqualUrls(sound.url, identifier)) {
         this.isLoading = false;
         this.sound = sound;
@@ -51,7 +51,6 @@ export default class StereoBaseIsHelper extends Helper {
 
     while (this.waitingForSound) {
       var sound = null;
-      debugMessage(this, 'waiting for new-load-request');
       let { loadPromise, urlsOrPromise, options } = yield waitForEvent(this.stereo, 'new-load-request')
       let urls = yield resolveUrls(urlsOrPromise);
 
@@ -61,9 +60,15 @@ export default class StereoBaseIsHelper extends Helper {
         try {
           loadPromise.then(value => {
             sound = value.sound
+
+            if (value.failures && !value.sound) { // inline error
+              this.isLoading = false
+            }
+
           })
         } catch(e) {
           if (!didCancel(e)) {
+            this.isLoading = false
             throw e;
           }
         }
@@ -93,21 +98,18 @@ export default class StereoBaseIsHelper extends Helper {
         this.sound = UNINITIALIZED
         this.identifier = identifier;
       }
-    }
 
-    this.sound = this.stereo.findLoaded(this.identifier)
-    if (this.sound) {
-      debugMessage(this, 'found sound already loaded');
-    }
-    else {
-      if (options.load) {
-        this.stereo.load(identifier).then(({ sound }) => this.sound = sound);
-      }
-      else {
-        debugMessage(this, 'could not find loaded sound');
-        resolveUrls(this.identifier).then(urls => {
-          this.waitForSound.perform(urls);
-        });
+      this.sound = this.stereo.findLoaded(this.identifier)
+
+      if (!this.sound) {
+        if (options.load) {
+          this.stereo.load(identifier).then(({ sound }) => this.sound = sound);
+        }
+        else {
+          resolveUrls(this.identifier).then(urls => {
+            this.waitForSound.perform(urls);
+          });
+        }
       }
     }
 

@@ -6,9 +6,9 @@ import { get } from '@ember/object';
 A helper to detect if a sound is playing.
 ```hbs
 
-{{sound-metadata}} // system
+{{sound-metadata (current-sound)}} // currently loaded sound metadata hash
 
-{{sound-metadata this.url key=foo}}
+{{sound-metadata @identifier key=title}} // metadata 'title' on sound matching @identifier
 ```
 ```
 

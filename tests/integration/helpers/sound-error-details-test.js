@@ -10,7 +10,7 @@ module('Integration | Helper | sound-error-details', function(hooks) {
     let service = this.owner.lookup('service:stereo');
     service.loadConnections([{name: 'DummyConnection'}]);
     this.url = '/bad/codec-error/silence.mp3';
-    await service.load(this.url);
+    await service.load(this.url, { silenceErrors: true });
     await render(hbs`{{sound-error-details this.url}}`);
     assert.equal(this.element.textContent.trim(), 'codec-error');
   });

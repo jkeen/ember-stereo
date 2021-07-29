@@ -39,7 +39,6 @@ export default class CachedSound extends Component {
         let connectionName = sprite.element.getAttribute(
           "data-connection-name"
         );
-        sprite.startAtSprite(beacons[connectionName]);
         parallel(move(sprite, { easing: easeIn, duration: 500 }));
       });
   }

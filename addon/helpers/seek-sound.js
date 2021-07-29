@@ -2,10 +2,10 @@ import { inject as service } from "@ember/service";
 import Helper from "@ember/component/helper";
 
 /**
-  A helper to load a sound
+  A helper to seek a sound
   ```hbs
-    <button {{on 'click' (seek-sound this.url 20 unit=percentage)}}>
-      Play
+    <button {{on 'click' (seek-sound @identifier 15000)}}>
+      Jump ahead 15s
     </button>
   ```
   @class {{seek-sound}}
