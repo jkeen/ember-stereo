@@ -1,5 +1,4 @@
-import { inject as service } from "@ember/service";
-import Helper from "@ember/component/helper";
+import StereoBaseActionHelper from 'ember-stereo/-private/helpers/action-helper';
 
 /**
   A helper to load a sound
@@ -14,20 +13,13 @@ import Helper from "@ember/component/helper";
 
 
   */
-export default class pauseSound extends Helper {
-  @service stereo;
-
-  compute([identifier] /*, metadata = {} */) {
-    return () => {
-      if (identifier) {
-        let sound = this.stereo.findLoaded(identifier)
-        if (sound) {
-          return sound.pause()
-        }
-        else {
-          return false;
-        }
-      }
+export default class pauseSound extends StereoBaseActionHelper {
+  performAction(sound) {
+    if (sound) {
+      sound.pause()
+    }
+    else {
+      return false
     }
   }
 }

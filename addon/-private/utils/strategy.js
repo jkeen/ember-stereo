@@ -8,10 +8,10 @@ export default class Strategy {
   constructor(connection, url, config = {}) {
     this.connection = connection
 
-    let stereoUrl = new StereoUrl(url);
+    this.stereoUrl = new StereoUrl(url);
 
-    this.url = stereoUrl.url
-    this.mimeTYpe = stereoUrl.mimeType;
+    this.url = this.stereoUrl.url
+    this.mimeTYpe = this.stereoUrl.mimeType;
     this.config = config
   }
 
@@ -48,7 +48,7 @@ export default class Strategy {
   }
 
   get canPlay() {
-    return this.connection.canPlay(this.url);
+    return this.connection.canPlay(this.stereoUrl);
   }
 
   createSound() {

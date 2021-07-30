@@ -1,10 +1,10 @@
 # Upgrading from Hifi
 
-If you're coming from [ember-hifi](http://github.com/nypublicradio/ember-hifi), welcome! Lots has changed and lots has improved
+If you're coming from [ember-hifi](http://github.com/nypublicradio/ember-hifi), welcome! A few things have changed and lots has improved
 ### Why upgrade?
 
 1. Handy template helpers make things ridiculously simpler!
-2. Stereo uses ember-concurrency tasks instead of a home rolled mixture of rat nested promises I devised back in 2015 when that sort of thing was in vogue. This particular variety I cooked up would sometimes throw errors ya just couldn't catch.  If you're using `ember-concurrency` tasks you can change your `play` and `load` calls to use the task versions, at `this.stereo.playTask` and `this.stereo.loadTask`
+2. Stereo uses ember-concurrency tasks instead of the home rolled mixture of rat nested promises I devised back in 2015 when that sort of thing was in vogue. If you're using `ember-concurrency` tasks in your app you can change your `play` and `load` calls to use the task versions, at `this.stereo.playTask` and `this.stereo.loadTask`
 3. Improved tooling to help deal with autoplay problems. An `audio-blocked` event was added, as well as an `autoplay-allowed` helper and a `sound-is-blocked` helper to help deal with autoplay issues
 4. Better defaults. Volume is now by default at 100, aka system volume. You can set `initialVolume: 50` in the environment configuration if you want to keep it at its former level.
 5. Better docs, better tests, better future!

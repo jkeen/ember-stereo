@@ -268,10 +268,10 @@ export default class Sound extends Evented {
 
   togglePause() {
     if (this.isPlaying) {
-      this.pause();
+      return this.pause();
     }
     else {
-      this.play();
+      return this.play();
     }
   }
 

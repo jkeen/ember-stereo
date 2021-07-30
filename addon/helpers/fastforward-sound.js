@@ -1,5 +1,4 @@
-import { inject as service } from '@ember/service';
-import Helper from '@ember/component/helper';
+import StereoBaseActionHelper from 'ember-stereo/-private/helpers/action-helper';
 
 /**
   A helper to fast forward a sound by x.
@@ -14,27 +13,13 @@ import Helper from '@ember/component/helper';
   @param {String} increment
 */
 
-export default class FastForwardSound extends Helper {
-  @service stereo;
-
-  /**
-    @method compute
-    @param {String} [url]
-    @return {Function}
-  */
-  compute([identifier], options = {}) {
-    let increment = parseInt((options["increment"] || 5000), 10);
-
-    return () => {
-      if (identifier) {
-        let sound = this.stereo.findLoaded(identifier)
-        if (sound) {
-          return sound.fastForward(increment);
-        }
-        else {
-          return false;
-        }
-      }
+export default class fastForwardSound extends StereoBaseActionHelper {
+  performAction(sound) {
+    if (sound) {
+      sound.fastforward(this.options?.increment || 15000)
+    }
+    else {
+      return false
     }
   }
 }

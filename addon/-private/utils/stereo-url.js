@@ -1,13 +1,25 @@
 import { getMimeType } from "./mime-types";
-
+import { tracked } from '@glimmer/tracking';
 
 export default class StereoUrl {
-  el = document.createElement('a')
-  options = {}
+  @tracked el = document.createElement('a')
+  @tracked options = {}
   constructor(input, options = {}) {
     if (input) {
+      this.input = input;
       if (input.then) {
-        input.then(u => this.el.href = u)
+        Promise.resolve(input).then(res => {
+          console.log(res)
+          if (res.url) {
+            this.el.href = res.url
+          }
+          else if (typeof res === 'string') {
+            this.el.href = res;
+          }
+          if (res.mimeType) {
+            this.options = { mimeType: res.mimeType }
+          }
+        })
       }
       else if (input.url) {
         this.el.href = input.url

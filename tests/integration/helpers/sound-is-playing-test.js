@@ -30,17 +30,6 @@ module('Integration | Helper | sound-is-playing', function(hooks) {
     assert.equal(this.element.textContent.trim(), 'sound-is-playing', 'helper reports playing');
   });
 
-  test('it renders system playing status without arguments', async function(assert) {
-    let service = this.owner.lookup('service:stereo')
-    service.loadConnections([{name: 'DummyConnection'}]);
-    this.set('url', '/good/10/silence.mp3')
-    await render(hbs`{{#if (sound-is-playing)}}sound-is-playing{{else}}is-not-playing{{/if}}`);
-    assert.equal(this.element.textContent.trim(), 'is-not-playing', 'helper reports not playing');
-    await service.play(this.url)
-    assert.equal(service.isPlaying, true, 'service says it is playing');
-    assert.equal(this.element.textContent.trim(), 'sound-is-playing', 'helper reports playing');
-  });
-
   test('it renders correct status if sound changes', async function(assert) {
     let service = this.owner.lookup('service:stereo')
     service.loadConnections([{name: 'DummyConnection'}]);

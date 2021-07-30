@@ -1,5 +1,4 @@
-import { inject as service } from '@ember/service';
-import Helper from '@ember/component/helper';
+import StereoBaseActionHelper from 'ember-stereo/-private/helpers/action-helper';
 
 /**
   A helper to rewind a sound by x.
@@ -14,22 +13,13 @@ import Helper from '@ember/component/helper';
   @param {String} increment
 */
 
-export default class rewindSound extends Helper {
-  @service stereo;
-
-  compute([compare], options = {}) {
-    let increment = parseInt((options["increment"] || 5000), 10);
-
-    return () => {
-      if (compare) {
-        let sound = this.stereo.findLoaded(compare)
-        if (sound) {
-          return sound.rewind(increment);
-        }
-        else {
-          return false;
-        }
-      }
+export default class rewindSound extends StereoBaseActionHelper {
+  performAction(sound) {
+    if (sound) {
+      sound.rewind(this.options?.increment || 15000)
+    }
+    else {
+      return false
     }
   }
 }

@@ -5,20 +5,25 @@ import { tracked } from '@glimmer/tracking';
 
 export default class AutoplayGotchas extends Component {
   @tracked sound
-  @tracked error;
+  @tracked url;
   @service stereo;
 
   // BEGIN-SNIPPET autoplay-gotchas.js
 
+
+  async fetchUrl() {
+    return new Promise((resolve) => {
+      setTimeout(() => resolve("https://streaming.koop.org/stream.aac"), 2000)
+    })
+  }
+
   @action
-  async togglePlaySound(url) {
-    if (this.sound) {
-      this.sound.togglePause();
-    }
-    else {
-      let { sound, error, failures } = await this.stereo.load(url, { silenceErrors: true });
-      this.sound = sound;
-    }
+  async togglePlaySound() {
+
+    this.url = await this.fetchUrl()
+
+    let { sound } = await this.stereo.load(this.url, { silenceErrors: true });
+    await sound.play();
   }
   // END-SNIPPET autoplay-gotchas.js
 }

@@ -20,8 +20,8 @@ export default class SoundIsLoaded extends StereoBaseIsHelper {
 
   get result() {
     debugMessage(this, `render = ${this.sound?.isLoaded}`)
-    let isLoaded = (this.stereo.soundCache.cachedList || []).filter(url => this.sound && url === this.sound.url).length > 0;
+    // let isLoaded = this.stereo.cachedSounds.filter(url => this.sound && url === this.sound.url).length > 0;
 
-    return (isLoaded && this.sound && !this.sound.isLoading)
+    return (this.sound && !this.sound.isLoading)
   }
 }

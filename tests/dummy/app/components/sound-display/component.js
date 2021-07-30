@@ -9,20 +9,20 @@ import hasEqualUrls from 'ember-stereo/-private/utils/has-equal-urls';
 export default class SoundDisplay extends Component {
   @service stereo;
   @tracked selectedConnections = this.stereo.connections
-  @trackedReset('args.sound') willTryStrategies = [];
-  @trackedReset('args.sound') specifiedUrl = this.args.sound?.url;
+  @tracked resolvedUrl;
+  @trackedReset('args.url') willTryStrategies = [];
 
   get url() {
     if (this.loadedSound) {
       return this.loadedSound.url
     }
     else {
-      return this.specifiedUrl || this.args.sound?.url
+      return this.args.url
     }
   }
 
   get loadedSound() {
-    return this.stereo.loadedSounds.find(sound => hasEqualUrls(sound.url, this.specifiedUrl))
+    return this.stereo.loadedSounds.find(sound => hasEqualUrls(sound.url, this.resolvedUrl))
   }
 
   get allConnections() {
@@ -36,7 +36,7 @@ export default class SoundDisplay extends Component {
   @action
   async removeSound() {
     this.loadedSound?.stop();
-    this.stereo.removeSound(this.args.sound)
+    this.stereo.removeSound(this.url)
 
     if (this.args.onRemoval) {
       this.args.onRemoval();

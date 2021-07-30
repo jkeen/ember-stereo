@@ -1,15 +1,21 @@
 <h1>The sounds that have the same URLs should all change to playing when one plays</h1>
 <div class="sync-grid">
   <div>
-
-
+    <h3>Urls</h3>
     {{#each @model.testSounds as |testSound|}}
-      <SoundDisplay @sound={{testSound}}/>
+      <SoundDisplay @url={{testSound.url}}/>
     {{/each}}
   </div>
   <div>
-    {{#each @model.testSounds as |testSound|}}
-      <SoundDisplay @sound={{testSound}}/>
+    <h3>Urls Objects</h3>
+    {{#each @model.testSoundObjects as |testSound|}}
+    <SoundDisplay @url={{testSound}} />
+    {{/each}}
+  </div>
+  <div>
+    <h3>Urls Promises</h3>
+    {{#each @model.testSoundPromises as |testSound|}}
+      <SoundDisplay @url={{testSound}}/>
     {{/each}}
   </div>
 </div>

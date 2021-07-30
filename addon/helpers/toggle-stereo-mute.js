@@ -6,15 +6,15 @@ import Helper from '@ember/component/helper';
   ```hbs
   A helper to stop a sound
   ```hbs
-    <button {{on 'click' (toggle-mute)}}>
+    <button {{on 'click' (toggle-stereo-mute)}}>
       Toggle Mute
     </button>
   ```
-  @class {{toggle-mute}}
+  @class {{toggle-stereo-mute}}
   @type Helper
   */
 
-export default class StereoToggleMute extends Helper {
+export default class ToggleStereoMute extends Helper {
   @service stereo;
 
   compute() {

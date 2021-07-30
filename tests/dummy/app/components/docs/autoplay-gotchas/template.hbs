@@ -3,18 +3,18 @@
   <demo.example @name="autoplay-gotchas.hbs">
     <p>You can silence the thrown errors and handle them inline</p>
     <div>
-      {{#let "https://streaming.koop.org/stream.aac" as |url|}}
-        <button {{on 'click' (fn this.togglePlaySound url)}} type="button"
+      {{!-- {{#let "https://streaming.koop.org/stream.aac" as |url|}} --}}
+        <button {{on 'click' (fn this.togglePlaySound)}} type="button"
           class="ui-button">
-          {{#if (sound-is-blocked url)}}
+          {{#if (sound-is-blocked this.url)}}
             Autoplay Blocked!
-          {{else if (sound-is-playing url)}}
+          {{else if (sound-is-playing this.url)}}
             Pause
           {{else}}
             Play Sound
           {{/if}}
         </button>
-      {{/let}}
+      {{!-- {{/let}} --}}
     </div>
 
     {{#if this.error}}

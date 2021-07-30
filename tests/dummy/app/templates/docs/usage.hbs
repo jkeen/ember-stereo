@@ -9,7 +9,6 @@ Different browsers support different audio formats, so stereo lets you try multi
       this.onDemandUrl
     ) as |urls| }}
 
-
     <button type="button" {{on 'click' (toggle-play-sound urls)}}>
       {{#if (sound-is-playing urls)}}
         Pause
@@ -101,20 +100,6 @@ Currently Playing Sound Display
   {{demo.snippet "sound-duration-and-position-cs.hbs"}}
   {{demo.snippet "application-controller.js"}}
 </DocsDemo>
-
-Volume Control
-<DocsDemo as |demo|>
-  <demo.example @name="stereo-volume.hbs">
-    <input type="range" {{stereo-volume initialVolume='100'}} />
-
-  </demo.example>
-  {{demo.snippet "stereo-volume.hbs"}}
-  {{demo.snippet "application-controller.js"}}
-</DocsDemo>
-
-
-
-
 
 
 {{!--

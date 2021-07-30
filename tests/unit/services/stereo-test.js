@@ -62,9 +62,9 @@ module('Unit | Service | stereo', function(hooks) {
 
     await service.load(testUrl);
 
-    assert.ok(howlerSpy.calledOnce, "howler canPlay should have been called");
-    assert.ok(nativeSpy.calledOnce, "nativeSpy canPlay should have been called");
-    assert.ok(localSpy.calledOnce, "local canPlay should have been called");
+    assert.ok(howlerSpy.callCount > 0, "howler canPlay should have been called");
+    assert.ok(nativeSpy.callCount > 0, "nativeSpy canPlay should have been called");
+    assert.ok(localSpy.callCount > 0, "local canPlay should have been called");
 
     assert.equal(howlerCreateSpy.callCount, 0, "Howler connection should not have been used");
     assert.equal(nativeCreateSpy.callCount, 0, "Native connection should not have been used");
@@ -314,7 +314,7 @@ module('Unit | Service | stereo', function(hooks) {
 
   test("consumer can specify a mime type for a url", async function(assert) {
     const service = this.owner.lookup('service:stereo').loadConnections(['LocalDummyConnection'])
-    let fileObject = {url: "/test/sound-without-extension", mimeType: "audio/mpeg"};
+    let fileObject = { url: "/test/sound-without-extension", mimeType: "audio/mpeg" };
 
     let LocalDummyConnection = get(service, `_connections.LocalDummyConnection`);
 
@@ -324,8 +324,8 @@ module('Unit | Service | stereo', function(hooks) {
     });
     await service.load(fileObject);
 
-    assert.ok(mimeTypeSpy.calledOnce, "local canPlayMimeType should have been called");
-    assert.ok(createSpy.calledOnce, "A sound should have been created using the local dummy connection");
+    assert.ok(mimeTypeSpy.callCount > 0, "local canPlayMimeType should have been called");
+    assert.ok(createSpy.callCount > 0, "A sound should have been created using the local dummy connection");
   });
 
   test("if a mime type cannot be determined, try to play it anyway", async function(assert) {

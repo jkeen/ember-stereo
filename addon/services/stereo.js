@@ -28,8 +28,6 @@ import Ember from 'ember';
 
 const DEFAULT_CONNECTIONS = [{ name: 'NativeAudio' }, { name: 'Howler' }, { name: 'HLS' }];
 
-const log = debug('ember-stereo');
-
 export const EVENT_MAP = [
   { event: 'audio-played', handler: '_relayPlayedEvent' },
   { event: 'audio-paused', handler: '_relayPausedEvent' },
@@ -259,11 +257,11 @@ export default class Stereo extends Service.extend(EmberEvented) {
   }
   set volume(v) {
     if (this.currentSound) {
-      log(`setting current sound volume = ${v}`);
+      debug('ember-stereo')(`setting current sound volume = ${v}`);
       this.currentSound._setVolume(v);
     }
     this._volume = v;
-    log(`setting volume = ${v}`);
+    debug('ember-stereo')(`setting volume = ${v}`);
     this.trigger('volume-change', v);
   }
 
@@ -336,61 +334,65 @@ export default class Stereo extends Service.extend(EmberEvented) {
    */
 
   @task({ debug: true, maxConcurrency: 5, restartable: true })
-  *loadTask(urlsOrPromise, options) {
-    var sharedAudioAccess = this._createAndUnlockAudio();
-    options = assign({ metadata: {}, sharedAudioAccess }, options);
+  loadTask = {
+    urls: [],
+    *perform(urlsOrPromise, options) {
+      let _this = this.context
 
+      var sharedAudioAccess = _this._createAndUnlockAudio();
+      options = assign({ metadata: {}, sharedAudioAccess }, options);
 
-    let urlsToTry = yield resolveUrls(urlsOrPromise);
-    this.errorCache.remove(urlsToTry)
-    log(`given urls: ${urlsToTry.join(', ')}`);
-    this.trigger('pre-load', urlsToTry);
-    var sound = this.soundCache.find(urlsToTry);
-    if (sound) {
-      log('retreived sound from cache');
-      return yield({sound});
-    }
-    else {
-      var strategies = this._prepareAllStrategies(urlsToTry, options);
-      if (strategies.filter(s => s.canPlay).length === 0) {
-        return this._handlePreloadError({ urlsToTry, options })
+      let urlsToTry = yield resolveUrls(urlsOrPromise);
+      this.set('urls', urlsToTry);
+
+      _this.errorCache.remove(urlsToTry)
+      debug('ember-stereo')(`given urls: ${urlsToTry.join(', ')}`);
+      _this.trigger('pre-load', urlsToTry);
+      var sound = _this.soundCache.find(urlsToTry);
+      if (sound) {
+        debug('ember-stereo')('retreived sound from cache');
+        return yield ({ sound });
       }
       else {
-        var success = false
-        let failures = []
-
-        for (let strategy of strategies) {
-          if (strategy.canPlay) { // worth trying
-            let result = yield this.tryLoadingSound.perform(strategy);
-            if (result.error) {
-              failures.push(strategy);
-            }
-            if (result.sound) {
-              sound = result.sound
-              success = true;
-              break;
-            }
-          }
-        }
-
-        if (success && sound) {
-          this.handleCurrentSoundTransition.perform(sound)
-          sound.metadata = options.metadata // set current sound metadata
-          this.soundCache.cache(sound);
-          this.oneAtATime.register(sound) // On audio-played this pauses all the other sounds. One at a time!
-          sound._debug = strategies;
-
-          return { sound, failures };
+        var strategies = _this._prepareAllStrategies(urlsToTry, options);
+        if (strategies.filter(s => s.canPlay).length === 0) {
+          return _this._handlePreloadError({ urlsToTry, options })
         }
         else {
-          return this._handleLoadError({ urlsToTry, failures, options, strategies })
+          var success = false
+          let failures = []
+
+          for (let strategy of strategies) {
+            if (strategy.canPlay) { // worth trying
+              let result = yield _this.tryLoadingSound.perform(strategy);
+              if (result.error) {
+                failures.push(strategy);
+              }
+              if (result.sound) {
+                sound = result.sound
+                success = true;
+                break;
+              }
+            }
+          }
+
+          if (success && sound) {
+            _this.handleCurrentSoundTransition.perform(sound)
+            sound.metadata = options.metadata // set current sound metadata
+            _this.soundCache.cache(sound);
+            _this.oneAtATime.register(sound) // On audio-played this pauses all the other sounds. One at a time!
+            sound._debug = strategies;
+
+            return { sound, failures };
+          }
+          else {
+            return _this._handleLoadError({ urlsToTry, failures, options, strategies })
+          }
         }
       }
-
-      return { sound, failures };
     }
-  }
 
+  }
 
   @task
   * handleCurrentSoundTransition(sound) {
@@ -554,10 +556,10 @@ export default class Stereo extends Service.extend(EmberEvented) {
   togglePause() {
     assert('[ember-stereo] Nothing is playing.', this.currentSound);
     if (this.isPlaying) {
-      this.currentSound.pause();
+      return this.currentSound.pause();
     }
     else {
-      this.currentSound.play();
+      return this.currentSound.play();
     }
   }
 
@@ -723,15 +725,7 @@ export default class Stereo extends Service.extend(EmberEvented) {
   */
 
   findLoaded(identifiers) {
-    var sound;
-
-    makeArray(identifiers).map(u => new StereoUrl(u)).forEach((stereoUrl) => {
-      if (!sound) {
-        sound = this.soundCache.find(stereoUrl.url);
-      }
-    });
-
-    return sound;
+    return this.soundCache.find(identifiers);
   }
 
   /**
@@ -755,6 +749,27 @@ export default class Stereo extends Service.extend(EmberEvented) {
       this.currentSound = null;
     }
   }
+
+  /**
+  * Wait for sound to load
+  *
+  * @method waitForLoaded
+  * @private
+  * @param {Object} strategy a connection strategy object
+  * @param {Sound} sound a sound object to play
+  * @async
+  * @return {Object} { sound }
+  **/
+  @task
+  *waitForLoadedSound(identifier) {
+
+
+
+
+
+    return { sound }
+  }
+
 
   /**
   * Wait for sound to succeed

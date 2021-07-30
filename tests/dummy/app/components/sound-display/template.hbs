@@ -2,7 +2,7 @@
   {{~if this.isCurrentSound ' is-current-sound '~}}
   {{~if this.isPlaying ' sound-is-playing '~}}
   {{~if this.showDebugInfo ' show-debug-info '~}}"
-  data-connection-name="{{@sound.connectionName}}"
+  data-connection-name="{{this.loadedSound.connectionName}}"
 >
   <div class="sound-display-top-bar">
     <div class="sound-display-top-bar-actions">
@@ -73,7 +73,7 @@
       </button>
       {{/if}}
 
-      {{#if (sound-is-loaded)}}
+      {{#if (sound-is-loaded this.url)}}
       <button type="button" class="sound-control-button-item" {{on 'click' (stop-sound this.url)}}>
         {{svg-jar "stop-outline" class="stereo-icon" height="24" width="24"}}
       </button>

@@ -25,7 +25,7 @@ module.exports = function (environment) {
       defaultPrefix: 'fas'
     },
     emberStereo: {
-      debug: true,
+      debug: false,
       connections: [
         {name: 'NativeAudio'},
         {name: 'Howler'},

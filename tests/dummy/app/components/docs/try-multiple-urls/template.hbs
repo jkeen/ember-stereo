@@ -1,11 +1,13 @@
 <DocsDemo as |demo|>
   <demo.example @name="try-multiple-urls-via-service.hbs">
     <div style="display: flex; justify-content: space-between;">
-      <button {{on 'click' this.play}} type="button" class="ui-button">
+      <button {{on 'click' (perform this.playTask)}} type="button" class="ui-button">
         {{#if this.sound.isPlaying}}
-        Pause
+          Pause
+        {{else if this.playTask.isRunning}}
+          Loading…
         {{else}}
-        Play Sound
+          Play Sound
         {{/if}}
       </button>
     </div>
@@ -27,6 +29,8 @@
         <button {{on 'click' (toggle-play-sound urls )}} type="button" class="ui-button">
           {{#if (sound-is-playing urls)}}
             Pause
+          {{else if (sound-is-loading urls)}}
+            Loading…
           {{else}}
             Play Sound
           {{/if}}

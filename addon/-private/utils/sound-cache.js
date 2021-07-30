@@ -2,9 +2,7 @@ import { A as emberArray, makeArray } from '@ember/array';
 import debug from 'debug';
 import { tracked } from '@glimmer/tracking';
 import StereoUrl from 'ember-stereo/-private/utils/stereo-url';
-import Sound from 'ember-stereo/stereo-connections/base';
 import BaseSound from 'ember-stereo/stereo-connections/base';
-import hasEqualIdentifiers from './has-equal-identifiers';
 import hasEqualUrls from './has-equal-urls';
 
 /**
@@ -42,17 +40,7 @@ export default class SoundCache {
   find(identifiers) {
     let cache = this._cache;
 
-    let stereoUrls = makeArray(identifiers).map(identity => {
-      if (identity instanceof StereoUrl) {
-        return identity
-      }
-      else if (identity instanceof Sound) {
-        return new StereoUrl(identity.url);
-      }
-      else if (typeof identity === 'string') {
-        return new StereoUrl(identity);
-      }
-    })
+    let stereoUrls = makeArray(identifiers).map(identity => new StereoUrl(identity))
 
     let sounds       = emberArray(stereoUrls).map(url => cache[url.key]);
     let foundSounds  = emberArray(sounds).compact();

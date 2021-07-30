@@ -15,7 +15,8 @@ module('Integration | Helper | sound-is-blocked', function(hooks) {
     assert.equal(this.element.textContent.trim(), '', 'does not need user input');
     await service.play(this.url);
 
-    service.findLoaded(this.url).isBlocked = true
+    let sound = await service.findLoaded(this.url)
+    sound.isBlocked = true
     await render(hbs`{{#if (sound-is-blocked this.url)}}needs input{{/if}}`);
     assert.equal(this.element.textContent.trim(), 'needs input', 'needs user input');
   });
