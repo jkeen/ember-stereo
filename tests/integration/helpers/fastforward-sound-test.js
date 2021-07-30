@@ -10,12 +10,12 @@ module('Integration | Helper | fastforward-sound', function(hooks) {
   test('it fast forwards', async function(assert) {
     let service = this.owner.lookup('service:stereo');
     service.loadConnections ([{name: 'DummyConnection'}]);
-    this.url = '/good/10000/silence.mp3';
+    this.url = '/good/20000/silence.mp3';
     let { sound } = await service.load(this.url);
     assert.equal(sound.position, 0, 'position is zero')
     await render (hbs`<button type="button" {{on 'click' (fastforward-sound this.url)}}>fast forward</button>`);
     await click('button');
-    assert.equal (sound.position, 5000, 'position is 5000');
+    assert.equal (sound.position, 15000, 'position is 15000');
   });
 
   test('it fast forwards in custom increment', async function(assert) {

@@ -17,6 +17,13 @@ import debugMessage from 'ember-stereo/-private/utils/debug-message';
   @param {Boolean} load? load the sound if it's not loaded
 */
 
+/**
+  @method compute
+  @param {Any} identifier url, urls, url objects, promise that resolves to a url
+  @param {Boolean} load? load the sound if it's not loaded
+  @return {Boolean}
+*/
+
 export default class SoundIsRewindable extends StereoBaseIsHelper {
   name = 'sound-is-rewindable'
 

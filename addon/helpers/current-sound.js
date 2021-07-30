@@ -13,9 +13,12 @@ import Helper from '@ember/component/helper';
 
   @class {{current-sound}}
   @type Helper
-  @returns {Sound}
 */
 
+/**
+  @method compute
+  @returns {Sound} returns current sound
+*/
 export default class currentSound extends Helper {
   @service stereo;
 

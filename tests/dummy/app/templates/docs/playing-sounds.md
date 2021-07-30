@@ -1,11 +1,7 @@
 
 # Playing Sounds
 
-Stereo can load sounds by providing an individual or an array of urls, specifically: 
-
-- a url string, e.g `https://streaming.koop.org/stream.mp3`
-- an object with a `url` property and a `mimeType` property, e.g `{url: 'https://stream.wqxr.org/wqxr', mimeType: 'audio/aac' }`
-- a promise that resolves to one of the above.
+Stereo can load sounds by providing a url, or an object with a `.url` property. If you don't know the URL of the audio at page load, you can also provide `stereo` (or any stereo helper) with a promise that resolves to a `url`. 
 
 Template action helpers like [load-sound](/docs/api/helpers/load-sound), [play-sound](/docs/api/helpers/play-sound), [toggle-play-sound](/docs/api/helpers/toggle-play-sound), [seek-sound](/docs/api/helpers/seek-sound), [rewind-sound](/docs/api/helpers/rewind-sound), [fastforward-sound](/docs/api/helpers/fastforward-sound), and [stop-sound](/docs/api/helpers/stop-sound) all take a url, and are used like this: 
 

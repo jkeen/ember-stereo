@@ -1,27 +1,23 @@
 import { getMimeType } from "./mime-types";
 import { tracked } from '@glimmer/tracking';
-
+import { isArray } from '@ember/array';
 export default class StereoUrl {
-  @tracked el = document.createElement('a')
+  el = document.createElement('a')
   @tracked options = {}
   constructor(input, options = {}) {
+    if (!input) {
+      throw new Error("can't create URL without any input")
+    }
+
     if (input) {
-      this.input = input;
-      if (input.then) {
-        Promise.resolve(input).then(res => {
-          console.log(res)
-          if (res.url) {
-            this.el.href = res.url
-          }
-          else if (typeof res === 'string') {
-            this.el.href = res;
-          }
-          if (res.mimeType) {
-            this.options = { mimeType: res.mimeType }
-          }
-        })
+      if (isArray(input)) {
+        input = input[0]
       }
-      else if (input.url) {
+
+      this.input = input;
+
+      // assert("StereoUrl can not take a thennable as an input", input.then)
+      if (input.url) {
         this.el.href = input.url
       }
       else if (typeof input === 'string') {
@@ -31,7 +27,7 @@ export default class StereoUrl {
       if (input.mimeType) {
         this.options = { mimeType: input.mimeType }
       }
-      else if (options?.mimeType) {
+      else if (options.mimeType) {
         this.options = { mimeType: options.mimeType }
       }
     }
@@ -53,6 +49,9 @@ export default class StereoUrl {
   get href() {
     return this.el.href
   }
+  set href(u) {
+    this.el.href = u
+  }
 
   get pathname() {
     return this.el.pathname;
@@ -60,6 +59,9 @@ export default class StereoUrl {
 
   get url() {
     return this.el.href
+  }
+  set url(u) {
+    this.el.href = u
   }
 
   toString() {

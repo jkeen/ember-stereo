@@ -1,5 +1,22 @@
 .sync-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  column-gap: 10px;
+  display: flex;
+  flex-direction: column;
+  row-gap: 20px;
+
+  .sync-block {
+    border: 1px dotted #AAA;
+    padding: 10px;
+
+    > p {
+      margin: 5px 0;
+      font-size: 13px;
+    }
+
+    .sounds {
+      margin-top: 15px;
+      display: flex;
+      column-gap: 10px;
+      align-items: flex-start;
+    }
+  }
 }

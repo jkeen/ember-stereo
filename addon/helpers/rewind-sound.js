@@ -9,11 +9,15 @@ import StereoBaseActionHelper from 'ember-stereo/-private/helpers/action-helper'
   ```
   @class {{rewind-sound}}
   @type Helper
-  @param {String} url
-  @param {String} increment
 */
 
 export default class rewindSound extends StereoBaseActionHelper {
+  /**
+    @method compute
+    @param {Any} identifier url, urls, url objects, promise that resolves to a url
+    @param {Integer} increment time in ms
+    @return {Function}
+  */
   performAction(sound) {
     if (sound) {
       sound.rewind(this.options?.increment || 15000)

@@ -17,7 +17,7 @@ export default class DiagnosticControls extends Component {
   @tracked connectionStrategy = 'default'
   @tracked useConnections = null;
 
-  connections = this.stereo.connections
+  connections = this.stereo.connectionLoader.connections
 
   get items() {
     return this.args.testSounds;

@@ -299,7 +299,10 @@
 }
 
 .diagnostic-debug h3 {
+  display: flex;
+  justify-content: space-between;
   margin-top: 10px;
+  align-items: center;
   &:first-child {
     margin-top: 0;
   }
@@ -334,6 +337,14 @@
   }
 }
 
+.sound-info {
+  background-color: lighten($sound-background-color, 10);
+  display: inline-block;
+  font-size: 11px;
+  margin: 2px;
+  padding: 3px;
+}
+
 .sound-tag {
   background-color: lighten($sound-background-color, 10);
   display: inline-block;
@@ -359,6 +370,16 @@
 
 .sound-tag .sound-tag-name {
   padding: 0 3px;
+}
+
+.inspect-sound {
+  cursor: pointer;
+  font-size: 11px;
+  border-radius: 5px;
+  padding: 1px 3px;
+  border-radius: 5px;
+  text-transform: uppercase;
+  text-decoration: underline;
 }
 
 .diagnostic-debug-list {

@@ -28,5 +28,6 @@ export default async function resolveUrls(urlsOrPromise) {
   let resolved = await Promise.resolve(resolveFunction(urlsOrPromise));
   let rawUrls = prepare(resolved)
   let resolvedUrls = rawUrls.map(u => (new StereoUrl(u))); // keep custom mime type in there if provided
+
   return resolvedUrls
 }

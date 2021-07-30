@@ -2,7 +2,7 @@
   <demo.example @name="stereo-volume.hbs">
     <div class="stereo-player-volume">
       <span class="range-container">
-        <Input {{controls-stereo-volume}} type="range" />
+        <Input {{stereo-volume}} type="range" />
         <button type="button" {{on 'click' (toggle-stereo-mute)}}>
           {{#if (gt (stereo-volume) 0)}}
           {{svg-jar "volume-low-outline" height=20 width=30}}

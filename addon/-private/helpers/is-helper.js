@@ -1,20 +1,16 @@
 import { inject as service } from '@ember/service';
 import Helper from '@ember/component/helper';
 import { dedupeTracked } from 'tracked-toolbox';
-import { task, waitForEvent, waitForProperty, race, all, timeout, didCancel} from 'ember-concurrency';
 import BaseSound from 'ember-stereo/stereo-connections/base';
-import resolveUrls from 'ember-stereo/-private/utils/resolve-urls';
-import hasEqualUrls from 'ember-stereo/-private/utils/has-equal-urls';
-import hasEqualIdentifiers from 'ember-stereo/-private/utils/has-equal-identifiers';
-import debugMessage from 'ember-stereo/-private/utils/debug-message';
 
-const UNINITIALIZED = Object.freeze({});
+const UNINITIALIZED = null;
 export default class StereoBaseIsHelper extends Helper {
   @service stereo;
 
   identifier = UNINITIALIZED;
   @dedupeTracked task = UNINITIALIZED
-  @dedupeTracked sound = UNINITIALIZED
+  @dedupeTracked soundProxy = UNINITIALIZED
+  @dedupeTracked _sound = UNINITIALIZED
   @dedupeTracked options = UNINITIALIZED
 
   /**
@@ -24,88 +20,45 @@ export default class StereoBaseIsHelper extends Helper {
   @return {boolean}
   */
 
-  get waitingForSound() {
-    return !this.sound?.url
+  get isLoading() {
+    return (this.sound && this.sound.isLoading) || (this.soundProxy && this.soundProxy.isLoading)
   }
 
-  @task
-  * watchForAudioLoaded(identifier) {
-    while (this.waitingForSound) {
-      let { sound } = yield race([
-        waitForEvent(this.stereo, 'audio-loaded'),
-        waitForEvent(this.stereo, 'audio-played'),
-        waitForEvent(this.stereo, 'audio-load-error')
-      ])
-
-      if (sound) {
-        if (yield hasEqualIdentifiers(sound.url, identifier)) {
-          this.sound = sound;
-        }
-      }
-
-      if (Ember.testing) {
-        break;
-      }
+  get sound() {
+    if (this._sound) {
+      return this._sound;
     }
+    else if (this.soundProxy && this.soundProxy.isResolved) {
+      return this.soundProxy.value
+    }
+
+    return null;
   }
 
-  @task
-  * waitForSound(identifier) {
-    this.watchForAudioLoaded.perform(identifier)
-
-    while (this.waitingForSound) {
-      let identifierUrls = yield resolveUrls(identifier)
-      yield waitForProperty(this.stereo.loadTask, 'last.urls', (urls) => {
-        return hasEqualUrls(urls, identifierUrls)
-      });
-
-      this.task = this.stereo.loadTask.last
-      let result = yield waitForProperty(this.stereo.loadTask, 'last.value');
-      this.sound = result.sound;
-
-      if (Ember.testing) {
-        break;
-      }
-    }
+  get result() {
+    return false;
   }
 
   compute([identifier], options = {}) {
     this.options = options;
 
     if (identifier !== this.identifier) {
-      this.waitForSound.cancelAll()
-      this.watchForAudioLoaded.cancelAll();
+      this.identifier = identifier
 
       if (identifier instanceof BaseSound) {
-        this.sound = identifier;
-        this.identifier = identifier.url;
+        this._sound = identifier;
       }
-      else {
-        this.sound = UNINITIALIZED
-        this.identifier = identifier
-        this.sound = this.stereo.findLoaded(identifier)
+      if (identifier) {
+        this.soundProxy = this.stereo.soundProxy(identifier);
       }
 
       if (!this.sound) {
         if (options.load) {
-          this.stereo.load(this.identifier).then(({ sound }) => this.sound = sound);
-        }
-        else {
-          resolveUrls(this.identifier).then(stereoUrls => {
-            stereoUrls.forEach(stereoUrl => this.waitForSound.perform(stereoUrl.url));
-          });
+          this.stereo.load(identifier, this.options);
         }
       }
     }
 
     return this.result;
-  }
-
-  get isLoading() {
-    return this.task && this.task.isRunning
-  }
-
-  get result() {
-    return false;
   }
 }

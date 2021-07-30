@@ -1,7 +1,6 @@
 import StereoBaseIsHelper from 'ember-stereo/-private/helpers/is-helper';
 import {numericDuration} from 'ember-stereo/helpers/numeric-duration';
 import debugMessage from 'ember-stereo/-private/utils/debug-message';
-import {tracked} from '@glimmer/tracking';
 
 /**
   A helper to get a sound's position.
@@ -14,21 +13,16 @@ import {tracked} from '@glimmer/tracking';
 
   @class {{sound-position}}
   @type Helper
-  @param {String} url
-  @returns {Float}
 */
 
+/**
+  @method compute
+  @param {Any} identifier url, urls, url objects, promise that resolves to a url
+  @param {String} format time, percent,
+  @return {Float}
+*/
 export default class SoundPosition extends StereoBaseIsHelper {
   name = 'sound-position'
-
-  /**
-    returns the position in milliseconds
-    @method compute
-    @param {String} [url]
-  * @param {Object} options
-  * @param {String} options.format time, percent,
-    @return {Float}
-  */
 
   get result() {
     let { format, defaultValue } = this.options;

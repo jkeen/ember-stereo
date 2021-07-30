@@ -9,10 +9,13 @@ import StereoBaseActionHelper from 'ember-stereo/-private/helpers/action-helper'
   ```
   @class {{pause-sound}}
   @type Helper
-  @param {String} url
-
-
   */
+
+/**
+  @method compute
+  @param {Any} identifier url, urls, url objects, promise that resolves to a url
+  @returns {Function}
+*/
 export default class pauseSound extends StereoBaseActionHelper {
   performAction(sound) {
     if (sound) {

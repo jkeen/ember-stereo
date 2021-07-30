@@ -7,7 +7,7 @@
   <div class="sound-display-top-bar">
     <div class="sound-display-top-bar-actions">
       <button type="button" class="sound-display-top-bar-remove-sound is-small" {{on 'click' this.removeSound}}>
-        {{fa-icon "times-circle"}}
+        <FaIcon @icon="times-circle" />
       </button>
     </div>
 
@@ -33,7 +33,7 @@
 
   <div class="sound-display-title">
     <div class="sound-display-title-given">
-      {{sound-metadata this.url key='title'}}
+      {{or @title (sound-metadata this.url key='title')}}
     </div>
     <div class="sound-display-title-url">
       {{this.url}}
@@ -41,7 +41,7 @@
   </div>
 
   <div class="sound-display-controls">
-    <SoundDisplay::Position @sound={{@sound}} />
+    <SoundDisplay::Position @sound={{find-loaded-sound this.url}} />
 
     <div class="sound-control-buttons">
       {{#if (sound-is-rewindable this.url)}}
@@ -56,7 +56,7 @@
         </button>
       {{/if}}
 
-      <button type="button" class="sound-control-button-item" {{on 'click' (toggle-play-sound this.url)}}>
+      <button type="button" class="sound-control-button-item" {{on 'click' (toggle-play-sound this.url metadata=(hash title = @title))}}>
         {{#if (sound-is-loading this.url)}}
           {{svg-jar "loading-outline" class="stereo-icon icon-spin" height="48" width="48"}}
         {{else if (sound-is-playing this.url)}}
@@ -85,7 +85,24 @@
     <h3>Connection</h3>
     <StrategyBreakdown @url={{this.url}}/>
 
-    <h3>Properties</h3>
+    {{#let (find-loaded-sound this.url) as |sound|}}
+      {{#if this.usingSingleAudioElement}}
+        <h3>Shared Audio Element</h3>
+        <p>One audio element shared between many sounds</p>
+      {{else}}
+        <h3>Audio Element</h3>
+      {{/if}}
+      <div class="sound-info">
+        {{sound.audioElement.outerHTML}}
+      </div>
+    {{/let}}
+
+    <h3>Properties
+    <button type="button" class="inspect-sound" {{on 'click' (fn this.inspectSound (find-loaded-sound this.url))}}>
+      Inspect
+    </button>
+    </h3>
+
     <SoundProperties @url={{this.url}}/>
 
     <h3>Events</h3>
@@ -97,10 +114,10 @@
   <button type="button" class="diagnostic-debug-toggle" {{on 'click' (toggle "showDebugInfo" this)}}>
     {{#if this.showDebugInfo}}
     <span>Hide Debug</span>
-    {{fa-icon "angle-up"}}
+    <FaIcon @icon="angle-up" />
     {{else}}
     <span>Show Debug</span>
-    {{fa-icon "angle-down"}}
+    <FaIcon @icon="angle-down" />
     {{/if}}
   </button>
 

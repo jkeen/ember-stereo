@@ -18,29 +18,23 @@ export default class Sound extends Evented {
     this.config = config;
   }
 
-  static canPlay(stereoUrl) {
-    let usablePlatform = this.canUseConnection(stereoUrl.toString());
+  static canPlay(url, mimeType) {
+    let usablePlatform = this.canUseConnection(url);
     if (!usablePlatform) {
       return false;
     }
 
-    if (stereoUrl.mimeType) {
-      return this.canPlayMimeType(stereoUrl.mimeType);
+    mimeType = mimeType || url.mimeType || getMimeType(url)
+
+    if (mimeType) {
+      return this.canPlayMimeType(mimeType);
     }
     else {
-      let url = stereoUrl.toString();
-      let mimeType = getMimeType(url);
-
-      if (!mimeType) {
-        /* eslint-disable no-console */
-        console.warn(`Could not determine mime type for ${url}`);
-        console.warn('Attempting to play urls with an unknown mime type can be bad for performance. See documentation for more info.');
-        /* eslint-enable no-console */
-        return true;
-      }
-      else {
-        return this.canPlayMimeType(mimeType);
-      }
+      /* eslint-disable no-console */
+      console.warn(`Could not determine mime type for ${url}`);
+      console.warn('Attempting to play urls with an unknown mime type can be bad for performance. See documentation for more info.');
+      /* eslint-enable no-console */
+      return true;
     }
   }
 
@@ -138,7 +132,6 @@ export default class Sound extends Evented {
     log(...arguments);
   }
 
-
   constructor(args = {}) {
     super(...arguments);
 
@@ -209,9 +202,6 @@ export default class Sound extends Evented {
       this.isLoaded = true;
       if (audioLoaded) { audioLoaded(this); }
       this.debug('audio-loaded');
-      // mm.fetchFromUrl(this.url).then(metadata => {
-      //   this.id3Tags = metadata
-      // })
     });
 
     this.on('audio-loading', (info) => {
@@ -221,6 +211,10 @@ export default class Sound extends Evented {
       if (audioLoading) { audioLoading(this, info && info.percentLoaded); }
       this.debug('audio-loading');
     });
+
+    this.on('audio-duration-changed', () => {
+      this.duration = this._audioDuration();
+    })
 
     this.on('audio-blocked', () => {
       this.isBlocked = true;

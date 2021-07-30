@@ -9,14 +9,18 @@ import StereoBaseActionHelper from 'ember-stereo/-private/helpers/action-helper'
   ```
   @class {{fastforward-sound}}
   @type Helper
-  @param {String} url
-  @param {String} increment
 */
 
+/**
+  @method compute
+  @param {Any} identifier url, urls, url objects, promise that resolves to a url
+  @param {Integer} increment time in ms
+  @returns {Function}
+*/
 export default class fastForwardSound extends StereoBaseActionHelper {
   performAction(sound) {
     if (sound) {
-      sound.fastforward(this.options?.increment || 15000)
+      sound.fastForward(this.options.increment || 15000)
     }
     else {
       return false

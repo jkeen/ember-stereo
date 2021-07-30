@@ -9,7 +9,7 @@ const dummyOps = {
 };
 
 function stubConnectionCreateWithSuccess(service, connectionName, sandbox = sinon) {
-  let Connection = get(service, `_connections.${connectionName}`);
+  let Connection = service.connectionLoader.get(connectionName)
   sandbox.stub(Connection, 'canPlay').returns(true);
 
   let stub = sandbox.stub(Connection.prototype, 'setup')
@@ -19,7 +19,7 @@ function stubConnectionCreateWithSuccess(service, connectionName, sandbox = sino
 }
 
 function stubConnectionCreateWithFailure(service, connectionName, sandbox = sinon) {
-  let Connection =  get(service, `_connections.${connectionName}`);
+  let Connection = service.connectionLoader.get(connectionName)
   sandbox.stub(Connection, 'canPlay').returns(true);
   let stub = sandbox.stub(Connection.prototype, 'setup')
   return stub.callsFake(function() {

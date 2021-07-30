@@ -39,7 +39,7 @@
       </div>
       <div class="service-display-volume">
         <SoundDisplay::Volume/>
-        <Input type="range" {{controls-stereo-volume}}/>
+        <Input type="range" {{stereo-volume}}/>
       </div>
 
     </div>
@@ -51,10 +51,10 @@
   <button type="button" class="diagnostic-debug-toggle" {{on 'click' (toggle "showDebugInfo" this)}}>
     {{#if this.showDebugInfo}}
       <span>Hide Debug</span>
-      {{fa-icon "angle-up"}}
+      <FaIcon @icon="angle-up" />
     {{else}}
       <span>Show Debug</span>
-      {{fa-icon "angle-down"}}
+      <FaIcon @icon="angle-down" />
     {{/if}}
   </button>
 </div>

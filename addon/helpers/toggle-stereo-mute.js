@@ -14,6 +14,10 @@ import Helper from '@ember/component/helper';
   @type Helper
   */
 
+/**
+  @method compute
+  @returns {Function}
+*/
 export default class ToggleStereoMute extends Helper {
   @service stereo;
 

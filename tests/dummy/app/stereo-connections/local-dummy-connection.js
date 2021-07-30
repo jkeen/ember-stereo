@@ -5,8 +5,6 @@ export default class LocalDummySound extends BaseSound {
     return 'Local Dummy Connection';
   }
 
-  static key = 'LocalDummyConnection'
-
   willDestroy() {}
 
   currentPosition() {}

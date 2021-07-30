@@ -40,7 +40,7 @@ export default class SoundCache {
   find(identifiers) {
     let cache = this._cache;
 
-    let stereoUrls = makeArray(identifiers).map(identity => new StereoUrl(identity))
+    let stereoUrls   = makeArray(identifiers).map(identity => new StereoUrl(identity))
 
     let sounds       = emberArray(stereoUrls).map(url => cache[url.key]);
     let foundSounds  = emberArray(sounds).compact();

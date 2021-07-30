@@ -23,6 +23,13 @@ export default class SoundMetadata extends StereoBaseIsHelper {
   name = 'sound-metadata'
   @dedupeTracked metadata = {};
 
+  /**
+    @method compute
+    @param {Any} identifier url, urls, url objects, promise that resolves to a url
+    @param {String} key? name of the key to fetch
+    @return {Any}
+  */
+
   get result() {
     debugMessage(this, `metadata = ${JSON.stringify(this.sound?.metadata)}`)
     this.metadata = this.sound?.metadata || {};

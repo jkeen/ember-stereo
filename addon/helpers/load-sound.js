@@ -10,16 +10,18 @@ import prepareOptions from "ember-stereo/-private/utils/prepare-options";
   ```
   @class {{load-sound}}
   @type Helper
-  @param {String} url
   */
 export default class LoadSound extends Helper {
   @service stereo;
 
   /**
     @method compute
-    @param {String} [url]
-    @return {Function}
+    @param {Any} identifier url, urls, url objects, promise that resolves to a url
+    @param {Hash} metadata? metadata that should be included with the sound
+    @param {[String]} useConnections? array of connection names in preference order
+    @returns {Function}
   */
+
   compute([urls], options = {}) {
     options = prepareOptions(options);
 

@@ -6,7 +6,7 @@ import { inject as service } from '@ember/service';
 /**
   A helper to detect if a sound is errored.
   ```hbs
-    {{#if (sound-is-errored @identifier}}
+    {{#if (sound-is-errored @identifier)}}
       <p>This sound is errored</p>
     {{else}}
       <p>This sound is not errored</p>
@@ -20,20 +20,18 @@ import { inject as service } from '@ember/service';
 
 const UNINITIALIZED = Object.freeze({});
 
-
+/**
+  @method compute
+  @param {Any} identifier url, urls, url objects, promise that resolves to a url
+  @param {String} format time, ms, s,
+  @param {Boolean} load load the sound if it's not loaded?
+*/
 export default class SoundIsErrored extends Helper {
   name = 'sound-is-errored';
   @service stereo;
   @dedupeTracked result = false;
   identifier = UNINITIALIZED;
 
-  /**
-    @method compute
-    @param {String} [url]
-  * @param {Object} options
-  * @param {String} options.format time, ms, s,
-  * @param {Boolean} options.load load the sound if it's not loaded?
-  */
   compute([identifier = 'system'], { connectionName }) {
     let errors = this.stereo.cachedErrors.filter(async e => hasEqualUrls(e.url, identifier))
 

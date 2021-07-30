@@ -11,9 +11,13 @@ A helper to detect if a sound is playing.
 {{/if}}
 ```
 
-@class {{sound-is-playing}}
-@type Helper
-@param {String} url
+  @class {{sound-is-playing}}
+  @type Helper
+*/
+/**
+  @method compute
+  @param {Any} identifier url, urls, url objects, promise that resolves to a url
+  @return {Boolean}
 */
 
 export default class SoundIsPlaying extends StereoBaseIsHelper {

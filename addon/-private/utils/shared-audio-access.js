@@ -1,5 +1,6 @@
 import debug from 'debug';
 const log = debug('ember-stereo:shared-audio-access');
+import { tracked } from '@glimmer/tracking';
 
 /***
 * @class SharedAudioAccess
@@ -18,6 +19,10 @@ const log = debug('ember-stereo:shared-audio-access');
  */
 
 export default class SharedAudioAccess {
+
+  @tracked audioElement;
+  @tracked owner;
+
   debug(message) {
     log(message);
   }
@@ -25,7 +30,7 @@ export default class SharedAudioAccess {
   unlock(andPlay) {
     if (!this.audioElement) {
       this.debug('creating new audio element');
-      let audioElement = this._createElement();
+      let audioElement = SharedAudioAccess.createElement();
       this.audioElement = audioElement;
 
       if (andPlay) {
@@ -40,20 +45,20 @@ export default class SharedAudioAccess {
     let owner = this.owner;
 
     if ((owner !== who) && owner) {
-      who.debug("I need audio control");
+      who.debug("[shared-audio-access] I need audio control");
       this.debug("coordinating peaceful transfer of power");
     }
 
     if (owner) {
       owner.releaseControl();
       if ((owner !== who) && owner) {
-        owner.debug("I've released audio control");
+        owner.debug("[shared-audio-access] I've released audio control");
       }
     }
 
     this.owner = who;
     if (owner !== who) {
-      who.debug("I have control now");
+      who.debug("[shared-audio-access] I have control now");
     }
     return this.audioElement;
   }
@@ -68,12 +73,16 @@ export default class SharedAudioAccess {
     }
   }
 
-  _createElement() {
-    return document.createElement('audio');
-  }
-
   _reset() {
     this.owner = null;
     this.audioElement = null;
+  }
+
+  static createElement() {
+    let audio = document.createElement('audio');
+    audio.setAttribute('preload', 'auto');
+    audio.setAttribute('id', new Date().getTime());
+
+    return audio;
   }
 }

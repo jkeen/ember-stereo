@@ -2,7 +2,7 @@
   <div class="sound-container" data-title="Sound Loader">
     <div class="field">
       <PowerSelect
-        @searchEnabled={{true}}
+        @searchEnabled={{false}}
         @options={{this.items}}
         @selected={{this.selectedSound}}
         @placeholder="Select a preset if ya want"
@@ -28,9 +28,7 @@
       </FormRadioGroup>
 
       {{#if (eq this.connectionStrategy 'default')}}
-        <StrategyBreakdown
-          class="strategy-preview"
-          @url={{this.url}}
+        <StrategyBreakdown class="strategy-preview" @url={{this.url}}
         />
       {{else}}
         <div class="form-checkbox-group">

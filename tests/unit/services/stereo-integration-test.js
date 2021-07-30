@@ -21,22 +21,31 @@ module('Unit | Service | stereo integration test.js', function(hooks) {
   hooks.beforeEach(function() {
     this.owner.register('service:stereo', dummyStereo);
     this.stereo = this.owner.lookup('service:stereo')
+    this.stereo.loadConnections([{name: 'DummyConnection'}])
+
   });
 
   hooks.afterEach(function() {
     window.onerror = originalOnError;
   });
 
+  test('it activates local connections', function (assert) {
+    const service = this.owner.lookup('service:stereo')
+    service.loadConnections([{ name: 'LocalDummyConnection', config: { 'testOption': 'dummy' } }])
+
+    assert.deepEqual(service.connectionLoader.names, ['LocalDummyConnection'], 'it activated the LocalDummyConnection');
+    assert.equal(service.connectionLoader.get('LocalDummyConnection').config.testOption, 'dummy', 'it passes config options to the LocalDummyConnection');
+  });
+
   test('playing good url works', async function(assert) {
-    let service = this.owner.factoryFor('service:audio').create({})
+    let service = this.owner.lookup('service:audio')
+
     let { sound } = await service.playGood()
     assert.ok(sound);
   });
 
-  // TODO: figure out how to effectively handle these errors.
-  skip('playing a blank url fails', async function(assert) {
-    catchExpectedErrors(["[ember-stereo] URLs must be provided"]);
-    let service = this.owner.factoryFor('service:audio').create({});
+  test('playing a blank url fails', async function(assert) {
+    let service = this.owner.lookup('service:audio')
     let failures, results;
 
     try {

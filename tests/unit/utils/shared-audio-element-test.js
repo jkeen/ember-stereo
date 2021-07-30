@@ -8,11 +8,11 @@ module('Unit | Utility | shared audio element', function(hooks) {
   let sharedAudioAccess;
   hooks.beforeEach(function() {
     sharedAudioAccess = new SharedAudioAccess();
-    sinon.stub(sharedAudioAccess, '_createElement').returns(audioElement);
+    sinon.stub(SharedAudioAccess, 'createElement').returns(audioElement);
   });
 
   hooks.afterEach(function() {
-    sharedAudioAccess._createElement.restore();
+    SharedAudioAccess.createElement.restore();
   });
 
   test('it works', function(assert) {

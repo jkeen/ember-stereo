@@ -13,12 +13,20 @@ import StereoBaseActionHelper from 'ember-stereo/-private/helpers/action-helper'
   @param {String} position
   */
 export default class SeekSound extends StereoBaseActionHelper {
+  /**
+    @method compute
+    @param {Any} identifier url, urls, url objects, promise that resolves to a url
+    @param {Integer} position
+    @param {String} unit? 'percentage' or 'seconds', defaults to 'percentage'
+    @return {Function}
+  */
+
   performAction(sound, eventOrItem) {
     if (sound) {
-      let unit = (this.options["unit"] || "percentage");
+      let unit = (this.options.unit || "percentage");
       let value = this.options.position === undefined ? eventOrItem : this.options.position
 
-      if (eventOrItem?.target?.type == "range") {
+      if (eventOrItem && eventOrItem.target?.type == "range") {
         value = eventOrItem?.target?.value
         unit = "percentage";
       }

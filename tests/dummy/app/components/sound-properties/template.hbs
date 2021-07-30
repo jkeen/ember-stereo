@@ -1,6 +1,5 @@
 {{#let (find-loaded-sound @url) as |sound|}}
   {{#let (array 'isLoading' 'isPlaying' 'hasPlayed' 'duration' 'isStream' 'isRewindable' 'isFastForwardable' 'percentLoaded') as |props|}}
-
     <SoundProperties::Prop @title='id' @data={{sound.debugName}}></SoundProperties::Prop>
     {{#each props as |propName|}}
       <SoundProperties::Prop @title={{propName}} @data={{get sound propName}}></SoundProperties::Prop>

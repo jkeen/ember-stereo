@@ -1,23 +1,17 @@
-<h1>The sounds that have the same URLs should all change to playing when one plays</h1>
+<h1>Sync Test</h1>
 <div class="sync-grid">
-  <div>
-    <h3>Urls</h3>
-    {{#each @model.testSounds as |testSound|}}
-      <SoundDisplay @url={{testSound.url}}/>
-    {{/each}}
-  </div>
-  <div>
-    <h3>Urls Objects</h3>
-    {{#each @model.testSoundObjects as |testSound|}}
-    <SoundDisplay @url={{testSound}} />
-    {{/each}}
-  </div>
-  <div>
-    <h3>Urls Promises</h3>
-    {{#each @model.testSoundPromises as |testSound|}}
-      <SoundDisplay @url={{testSound}}/>
-    {{/each}}
-  </div>
+  {{#each @model.testSounds as |testSound|}}
+    <div class="sync-block">
+      <p><a target="_blank" rel="noopener noreferrer" href="{{testSound.url}}">{{testSound.url}}</a></p>
+      <p>Each player below is provided a different identifier (a string, an object, and a promise that resolves to a string) that resolves to the same URL. Each player should stay in sync.</p>
+      <div class="sounds">
+        <SoundDisplay @url={{testSound.url}} @title={{testSound.title}} />
+        <SoundDisplay @url={{testSound.urlObject}} @title={{testSound.title}} />
+        <SoundDisplay @url={{testSound.urlPromise}} @title={{testSound.title}} />
+      </div>
+
+    </div>
+  {{/each}}
 </div>
 
 

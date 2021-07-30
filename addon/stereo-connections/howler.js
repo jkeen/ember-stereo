@@ -100,7 +100,8 @@ export default class Howler extends BaseSound {
     if (sounds && sounds.length > 0) {
       let element = (sounds[0])._node;
       if (element) {
-        element.setAttribute('crossOrigin', 'anonymous');
+        element.setAttribute('crossorigin', 'anonymous');
+        element.setAttribute('preload', 'metadata');
         return element;
       }
     }

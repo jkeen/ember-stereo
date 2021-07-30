@@ -1,12 +1,9 @@
 /**
+  @class {{stereo-volume}}
+  @type Modifier
 
-  ```hbs
-  ```hbs
-    <input type="range" {{controls-stereo-volume}} />
-  ```
-  @class {{controls-stereo-volume}}
-  @type helper
-  */
+  @method {{stereo-volume}}
+*/
 
 import { action } from '@ember/object';
 import { inject as service } from '@ember/service';

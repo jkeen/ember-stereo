@@ -15,14 +15,17 @@ import prepareOptions from "ember-stereo/-private/utils/prepare-options";
   @param {Object} options
   @param {Object} metadata
   */
+
+/**
+  @method compute
+  @param {Any} identifier url, urls, url objects, promise that resolves to a url
+  @param {Hash} metadata? metadata that should be included with the sound
+  @param {[String]} useConnections? array of connection names in preference order
+  @returns {Function}
+*/
 export default class PlaySound extends Helper {
   @service stereo;
 
-  /**
-    @method compute
-    @param {String} [url]
-    @return {Function}
-  */
   compute([urls], options = {}) {
     prepareOptions(options)
     return async () => {

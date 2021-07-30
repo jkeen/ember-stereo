@@ -17,7 +17,7 @@ module('Integration | Helper | rewind-sound', function(hooks) {
       hbs`<button type="button" {{on 'click' (rewind-sound this.url)}}>fast forward</button>`
     );
     await click('button');
-    assert.equal(sound.position, 1000, 'position is 1000');
+    assert.equal(sound.position, 0, 'position is 0');
   });
 
   test('it rewinds custom increment', async function (assert) {

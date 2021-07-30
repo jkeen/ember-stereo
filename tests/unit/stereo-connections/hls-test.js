@@ -77,7 +77,7 @@ module('Unit | Connection | HLS', function(hooks) {
   });
 
   test("On first media error stream will attempt a retry", function(assert) {
-    let sound = new (this.owner.factoryFor('ember-stereo@stereo-connection:hls', {}).class)({url: goodUrl, timeout: false});
+    let sound = new HLSConnection({url: goodUrl, timeout: false});
 
     let {
       destroySpy, switchSpy, recoverSpy
@@ -136,12 +136,14 @@ module('Unit | Connection | HLS', function(hooks) {
   test("If we 404, we give up", function(assert) {
     assert.expect(2);
     let done = assert.async();
-    let sound = new (this.owner.factoryFor('ember-stereo@stereo-connection:hls', {}).class)({
+
+    let Connection = this.owner.lookup('service:stereo').connectionLoader.get('HLS')
+    let sound = new Connection({
       url: badUrl,
       timeout: 1
     })
 
-    sound.on('audio-load-error', function() {
+    sound.one('audio-load-error', function() {
       assert.ok(true, "should have triggered audio load error");
       done();
     });

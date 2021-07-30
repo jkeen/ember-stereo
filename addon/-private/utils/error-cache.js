@@ -73,7 +73,10 @@ export default class ErrorCache  {
 
     let errorObject = this._cache[identifier];
     errorObject.url = url;
-    errorObject.errors = {}
+
+    if (!errorObject.errors) {
+      errorObject.errors = {}
+    }
 
     if (!connectionKey) {
       errorObject.errors.generic = error;

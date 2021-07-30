@@ -11,9 +11,14 @@ import StereoBaseIsHelper from 'ember-stereo/-private/helpers/is-helper';
    ```
   @class {{sound-duration}}
   @type Helper
-  @param {String} [url]
-* @param {String} format? time, ms,
-* @param {Boolean} load? load the sound if it's not loaded?
+  */
+
+/**
+  @method compute
+  @param {Any} identifier url, urls, url objects, promise that resolves to a url
+  @param {String} format? time, ms,
+  @param {String} defaultValue? time when duration is unknown
+  @param {Boolean} load? load the sound if it's not loaded?
   @returns {any}
 */
 export default class SoundDuration extends StereoBaseIsHelper {
@@ -22,19 +27,19 @@ export default class SoundDuration extends StereoBaseIsHelper {
   get result() {
     let { defaultValue, format } = this.options
     let result = defaultValue;
-    if (this.sound?.duration === Infinity) {
-      //this is a stream
-      result = defaultValue || "∞";
-    } else {
-      if (format == "time") {
-        if (this.sound?.duration) {
-          result = numericDuration([this.sound?.duration]);
+
+    if (format == "time") {
+      if (this.sound?.duration) {
+        if (this.sound?.duration === Infinity) {
+          result = "∞";
         } else {
-          result = defaultValue || "--:--";
+          result = numericDuration([this.sound?.duration]);
         }
       } else {
-        result = this.sound?.duration || defaultValue;
+        result = defaultValue || "--:--";
       }
+    } else {
+      result = this.sound?.duration || defaultValue;
     }
 
     debugMessage(this, `render = ${result}`);

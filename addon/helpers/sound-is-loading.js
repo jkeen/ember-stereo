@@ -13,9 +13,13 @@ import debugMessage from 'ember-stereo/-private/utils/debug-message';
 
   @class {{sound-is-loading}}
   @type Helper
-  @param {String} url
 */
 
+/**
+  @method compute
+  @param {Any} identifier url, urls, url objects, promise that resolves to a url
+  @return {Boolean}
+*/
 export default class SoundIsLoading extends StereoBaseIsHelper {
   name = 'sound-is-loading'
 

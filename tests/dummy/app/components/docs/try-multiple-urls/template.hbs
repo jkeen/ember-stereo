@@ -1,6 +1,7 @@
 <DocsDemo as |demo|>
   <demo.example @name="try-multiple-urls-via-service.hbs">
-    <div style="display: flex; justify-content: space-between;">
+    <p>Trying multiple sounds with the service</p>
+    <div>
       <button {{on 'click' (perform this.playTask)}} type="button" class="ui-button">
         {{#if this.sound.isPlaying}}
           Pause
@@ -24,9 +25,9 @@
 <DocsDemo as |demo|>
   <demo.example @name="try-multiple-urls.hbs">
     <p>Using template helpers to try multiple sounds</p>
-    <div style="display: flex; justify-content: space-between;">
+    <div>
       {{#let (array "https://failing.example.url/try.mp3" "https://streaming.koop.org/stream.mp3") as |urls|}}
-        <button {{on 'click' (toggle-play-sound urls )}} type="button" class="ui-button">
+        <button {{on 'click' (toggle-play-sound urls)}} type="button" class="ui-button">
           {{#if (sound-is-playing urls)}}
             Pause
           {{else if (sound-is-loading urls)}}

@@ -52,11 +52,14 @@ export default class DummyConnection extends BaseSound {
   }
 
   getInfoFromUrl() {
-    let stereoUrl = new StereoUrl(this.url)
     if (!this.url) {
       return {};
-    } else if (stereoUrl.pathname.startsWith('/') && stereoUrl.pathname.length > 1) {
-      let [, result, lengthOrError, name] = stereoUrl.pathname.split('/');
+    }
+
+    this.url = new StereoUrl(this.url);
+
+    if (this.url.pathname && this.url.pathname.startsWith('/') && this.url.pathname.length > 1) {
+      let [, result, lengthOrError, name] = this.url.pathname.split('/');
       /*eslint no-console: 0 */
       if (!(result && lengthOrError && name)) {
         console.error(
@@ -65,7 +68,6 @@ export default class DummyConnection extends BaseSound {
         );
       }
       else {
-
         if (result === 'good' && !(lengthOrError === 'stream' || parseInt(lengthOrError) > 0)) {
           console.error(
             '[dummy-connection] url format should be "/:result/:length/:name"'

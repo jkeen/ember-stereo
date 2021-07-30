@@ -3,6 +3,7 @@ import { run } from '@ember/runloop';
 import BaseSound from 'ember-stereo/stereo-connections/base';
 import Ember from 'ember';
 import { task } from 'ember-concurrency';
+import SharedAudioAccess from 'ember-stereo/-private/utils/shared-audio-access';
 // These are the events we're watching for
 const AUDIO_EVENTS = ['loadstart', 'durationchange', 'loadedmetadata', 'loadeddata', 'progress', 'canplay', 'canplaythrough', 'error', 'playing', 'pause', 'ended', 'emptied', 'timeupdate'];
 
@@ -34,9 +35,7 @@ export default class NativeAudio extends BaseSound {
 
   setup() {
     let audio = this.requestControl();
-    audio.id = (new Date().getTime());
     audio.src = this.url;
-    audio.crossOrigin="anonymous";
     this._registerEvents(audio);
 
     if (Ember.testing) {
@@ -84,6 +83,9 @@ export default class NativeAudio extends BaseSound {
       case 'error':
         this._onAudioError(e.target.error);
         break;
+      case 'onloadedmetadata':
+
+        break;
       case 'playing':
         this._onAudioPlayed();
         break;
@@ -99,6 +101,9 @@ export default class NativeAudio extends BaseSound {
         break;
       case 'ended':
         this._onAudioEnded();
+        break;
+      case 'seeked':
+        this._onPositionChange();
         break;
       case 'timeupdate':
         this._onPositionChange();
@@ -119,7 +124,7 @@ export default class NativeAudio extends BaseSound {
       return sharedAudioAccess.audioElement;
     }
     else {
-      let audioElement = (this._audioElement || document.createElement('audio'));
+      let audioElement = (this._audioElement || SharedAudioAccess.createElement());
       this._audioElement = audioElement;
 
       return audioElement;
@@ -200,7 +205,7 @@ export default class NativeAudio extends BaseSound {
   }
 
   _onAudioDurationChanged() {
-    this.trigger('audio-duration-changed', { sound: this });
+    this.trigger('audio-duration-changed', { sound: this, duration: this._audioDuration() });
   }
 
   _onAudioPlayed() {
@@ -216,7 +221,7 @@ export default class NativeAudio extends BaseSound {
   _onAudioError(error) {
     if (error.name === 'NotAllowedError') {
       this.stop();
-      this.trigger('audio-blocked', { sound: this, error: error.message });
+      this.trigger('audio-blocked', { sound: this, error: error.message, event: error });
     }
     else {
       let message = "";
@@ -231,7 +236,7 @@ export default class NativeAudio extends BaseSound {
           message = 'Decoder error.';
           break;
         case error.MEDIA_ERR_SRC_NOT_SUPPORTED:
-          message = 'Audio source format is not supported.';
+          message = error.message || 'Audio source format is not supported.';
           break;
         default:
           message = error.message;
@@ -239,7 +244,7 @@ export default class NativeAudio extends BaseSound {
       }
 
       this.debug(`audio element threw error ${message}`);
-      this.trigger('audio-load-error', { sound: this, error: message });
+      this.trigger('audio-load-error', { sound: this, error: message, event: error });
     }
   }
 

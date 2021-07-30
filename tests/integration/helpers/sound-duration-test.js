@@ -50,6 +50,9 @@ module('Integration | Helper | sound-duration', function (hooks) {
 
     await service.load(this.url)
     await render(hbs`{{sound-duration this.url}}`);
+    assert.equal(this.element.textContent.trim(), 'Infinity');
+
+    await render(hbs`{{sound-duration this.url format='time'}}`);
     assert.equal(this.element.textContent.trim(), '∞');
   });
 

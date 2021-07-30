@@ -1,5 +1,8 @@
 <ul class="diagnostic-debug-strategy" ...attributes>
   {{#each this.strategyResults as |item|}}
-    <StrategyBreakdown::Connection @item={{item}} @loadWasAttempted={{this.loadWasAttempted}} />
+    <StrategyBreakdown::Connection
+      @item={{item}}
+      @loadWasAttempted={{this.loadWasAttempted}}
+    />
   {{/each}}
 </ul>
