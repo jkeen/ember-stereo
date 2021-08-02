@@ -3,6 +3,13 @@ import { tracked } from '@glimmer/tracking';
 import { task } from 'ember-concurrency';
 import { isEmpty } from '@ember/utils';
 
+/**
+* This class lazy loads sounds based on identifiers
+*
+* @class SoundProxy
+* @type {Util}
+*/
+
 export default class SoundProxy {
   @tracked isLoading = false;
   @tracked url;
@@ -18,7 +25,7 @@ export default class SoundProxy {
 
   @task
   *resolveUrl(identifier) {
-    let url = yield this.stereo.resolveIdentifier.perform(identifier)
+    let url = yield this.stereo.resolveIdentifier.perform(identifier).catch()
 
     if (!isEmpty(url)) {
       this.url = url;

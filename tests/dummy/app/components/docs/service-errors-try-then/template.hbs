@@ -1,7 +1,7 @@
 <DocsDemo as |demo|>
   <demo.example @name="service-errors-try-then.hbs">
     <p>Using a try/then/catch on the promise</p>
-    <div style="display: flex; justify-content: space-between;">
+    <div>
       <button {{on 'click' (fn this.togglePlaySound "https://invalid.example.url/1.mp3" )}} type="button" class="ui-button">
         {{#if this.sound.isPlaying}}
         Pause

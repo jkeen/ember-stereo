@@ -8,14 +8,14 @@ import StereoBaseActionHelper from 'ember-stereo/-private/helpers/action-helper'
     </button>
   ```
   @class {{stop-sound}}
-  @type Helper
+  @type {Helper}
   @param {String} url
   */
 
 /**
   @method compute
   @param {Any} identifier url, urls, url objects, promise that resolves to a url
-  @returns {Function}
+  @return {Function}
 */
 export default class stopSound extends StereoBaseActionHelper {
   performAction(sound) {

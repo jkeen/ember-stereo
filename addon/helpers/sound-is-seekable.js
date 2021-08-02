@@ -12,7 +12,7 @@ import debugMessage from 'ember-stereo/-private/utils/debug-message';
   ```
 
   @class {{sound-is-seekable}}
-  @type Helper
+  @type {Helper}
 */
 
 /**

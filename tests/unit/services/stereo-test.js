@@ -856,4 +856,12 @@ module('Unit | Service | stereo', function(hooks) {
     assert.equalUrls(cacheSpy.firstCall.args[0].url, `${url}?foo=bar`, 'cache lookup with expected value');
     assert.equalUrls(findSpy.secondCall.args[0], [cacheSpy.firstCall.args[0].url], 'lookup key is the same as the cached key');
   });
+
+  test("currenly playing sound does not pause until load has succeeded", function(assert) {
+
+  })
+
+  test("after sound completes, its position is reset to zero", function() {
+
+  })
 });

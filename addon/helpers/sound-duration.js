@@ -10,7 +10,7 @@ import StereoBaseIsHelper from 'ember-stereo/-private/helpers/is-helper';
    <p>Duration of sound that this helper just tried to load in h:mm:ss {{sound-duration identifier format=time load=true}}</p>
    ```
   @class {{sound-duration}}
-  @type Helper
+  @type {Helper}
   */
 
 /**
@@ -19,7 +19,7 @@ import StereoBaseIsHelper from 'ember-stereo/-private/helpers/is-helper';
   @param {String} format? time, ms,
   @param {String} defaultValue? time when duration is unknown
   @param {Boolean} load? load the sound if it's not loaded?
-  @returns {any}
+  @return {any}
 */
 export default class SoundDuration extends StereoBaseIsHelper {
   name = 'sound-duration'

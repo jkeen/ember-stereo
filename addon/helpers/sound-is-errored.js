@@ -14,7 +14,7 @@ import { inject as service } from '@ember/service';
   ```
 
   @class {{sound-is-errored}}
-  @type Helper
+  @type {Helper}
   @param {String} url
 */
 

@@ -1,19 +1,19 @@
 import { registerWaiter } from '@ember/test';
 import { later } from '@ember/runloop';
-import { module, test, skip } from 'qunit';
+import { module, test } from 'qunit';
 import { setupTest } from 'ember-qunit';
 import { dummyStereo } from '../../../tests/helpers/stereo-integration-helpers';
-import Ember from 'ember';
+// import Ember from 'ember';
 
-let originalOnError = Ember.onerror;
-function catchExpectedErrors(expectedErrors) {
-  Ember.onerror = function(error) {
-    if (!expectedErrors.includes(error.message.replace(/(Uncaught\s)?Error:\s/, ""))) {
-      // some environments will throw Uncaught Error, some will throw Error
-      originalOnError.apply(window, arguments);
-    }
-  }
-}
+// let originalOnError = Ember.onerror;
+// function catchExpectedErrors(expectedErrors) {
+//   Ember.onerror = function(error) {
+//     if (!expectedErrors.includes(error.message.replace(/(Uncaught\s)?Error:\s/, ""))) {
+//       // some environments will throw Uncaught Error, some will throw Error
+//       originalOnError.apply(window, arguments);
+//     }
+//   }
+// }
 
 module('Unit | Service | stereo integration test.js', function(hooks) {
   setupTest(hooks);
@@ -25,9 +25,9 @@ module('Unit | Service | stereo integration test.js', function(hooks) {
 
   });
 
-  hooks.afterEach(function() {
-    window.onerror = originalOnError;
-  });
+  // hooks.afterEach(function() {
+  //   window.onerror = originalOnError;
+  // });
 
   test('it activates local connections', function (assert) {
     const service = this.owner.lookup('service:stereo')

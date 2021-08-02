@@ -9,14 +9,14 @@ import Helper from '@ember/component/helper';
    {{/if}}
    ```
   @class {{autoplay-allowed}}
-  @type Helper
-  @returns {Boolean}
+  @type {Helper}
+  @return {Boolean}
 */
 
 /**
   @method compute
   @param {Any} identifier url, urls, url objects, promise that resolves to a url
-  @returns {Boolean}
+  @return {Boolean}
 */
 export default class autoPlayAllowed extends Helper {
   @service stereo;

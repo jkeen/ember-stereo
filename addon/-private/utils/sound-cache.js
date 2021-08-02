@@ -9,6 +9,7 @@ import hasEqualUrls from './has-equal-urls';
 * This class caches sound objects based on urls. You shouldn't have to interact with this class.
 *
 * @class SoundCache
+* @type {Util}
 * @private
 * @constructor
 */
@@ -33,8 +34,8 @@ export default class SoundCache {
 
   /**
    * find - finds sounds in the cache by urls
-   *
-   * @param {string} urls
+   * @method find
+   * @param {String} identifiers
    * @return {Sound}
    */
   find(identifiers) {
@@ -58,6 +59,7 @@ export default class SoundCache {
   /**
    * remove - removes a sound from the cache
    *
+   * @method remove
    * @param {Sound} sound
    */
   remove(identifier) {
@@ -79,7 +81,7 @@ export default class SoundCache {
 
   /**
    * cache - caches the sound by the url
-   *
+   * @method cache
    * @param  {Sound} sound
    */
   cache(sound) {

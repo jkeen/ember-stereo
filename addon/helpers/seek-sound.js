@@ -8,7 +8,7 @@ import StereoBaseActionHelper from 'ember-stereo/-private/helpers/action-helper'
     </button>
   ```
   @class {{seek-sound}}
-  @type Helper
+  @type {Helper}
   @param {String} url
   @param {String} position
   */

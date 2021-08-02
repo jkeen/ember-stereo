@@ -11,13 +11,13 @@ import StereoBaseIsHelper from 'ember-stereo/-private/helpers/is-helper';
   ```
 
   @class {{sound-is-blocked}}
-  @type Helper
+  @type {Helper}
   @param {String} url
 */
 /**
   @method compute
   @param {Any} identifier url, urls, url objects, promise that resolves to a url
-  @returns {Boolean}
+  @return {Boolean}
 */
 export default class SoundIsBlocked extends StereoBaseIsHelper {
   name = 'sound-is-blocked'

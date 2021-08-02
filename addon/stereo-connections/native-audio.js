@@ -337,13 +337,13 @@ export default class NativeAudio extends BaseSound {
     try {
       yield audio.play().catch(e => {
         if (retryCount < 2) {
-          this.playTask.perform({ position, retryCount: retryCount + 1 });
+          this.playTask.perform({ position, retryCount: retryCount + 1 }).catch()
         }
         this._onAudioError(e)
       });
     } catch(e) {
       if (retryCount < 2) {
-        this.playTask.perform({ position, retryCount: retryCount + 1 });
+        this.playTask.perform({ position, retryCount: retryCount + 1 }).catch()
       }
       this._onAudioError(e)
     } finally {

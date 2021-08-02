@@ -13,7 +13,7 @@ import debugMessage from 'ember-stereo/-private/utils/debug-message';
   ```
 
   @class {{sound-is-fastforwardable}}
-  @type Helper
+  @type {Helper}
 */
 
 /**

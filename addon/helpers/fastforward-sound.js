@@ -8,14 +8,14 @@ import StereoBaseActionHelper from 'ember-stereo/-private/helpers/action-helper'
   </button>
   ```
   @class {{fastforward-sound}}
-  @type Helper
+  @type {Helper}
 */
 
 /**
   @method compute
   @param {Any} identifier url, urls, url objects, promise that resolves to a url
   @param {Integer} increment time in ms
-  @returns {Function}
+  @return {Function}
 */
 export default class fastForwardSound extends StereoBaseActionHelper {
   performAction(sound) {

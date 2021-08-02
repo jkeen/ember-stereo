@@ -17,12 +17,12 @@ import Helper from '@ember/component/helper';
 
     ```
   @class {{stereo-volume}}
-  @type Helper
+  @type {Helper}
   */
 
 /**
   @method compute
-  @returns {Integer}
+  @return {Integer}
 */
 export default class StereoVolume extends Helper {
   @service stereo;

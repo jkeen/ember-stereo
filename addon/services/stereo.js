@@ -1,13 +1,9 @@
 import { A as emberArray, makeArray } from '@ember/array';
 import { assert } from '@ember/debug';
 import { assign } from '@ember/polyfills';
-import { dasherize } from '@ember/string';
-import { copy } from '@ember/object/internals';
 import { getOwner } from '@ember/application';
 import { later, cancel, bind, next } from '@ember/runloop';
-import { Promise } from 'rsvp';
 import { race, waitForProperty, didCancel, task, waitForEvent } from 'ember-concurrency';
-import { set, get } from '@ember/object';
 import { tracked } from '@glimmer/tracking';
 import debug from 'debug';
 import config from 'ember-get-config';
@@ -22,12 +18,9 @@ import SharedAudioAccess from 'ember-stereo/-private/utils/shared-audio-access';
 import SoundCache from 'ember-stereo/-private/utils/sound-cache';
 import ObjectCache from 'ember-stereo/-private/utils/object-cache';
 import Strategizer from 'ember-stereo/-private/utils/strategizer';
-import Strategy from 'ember-stereo/-private/utils/strategy';
 import StereoUrl from 'ember-stereo/-private/utils/stereo-url';
 import SoundProxy from 'ember-stereo/-private/utils/sound-proxy';
 import ConnectionLoader from 'ember-stereo/-private/utils/connection-loader';
-
-import Ember from 'ember';
 
 const DEFAULT_CONNECTIONS = [{ name: 'NativeAudio' }, { name: 'Howler' }, { name: 'HLS' }];
 
@@ -107,10 +100,6 @@ export default class Stereo extends Service.extend(EmberEvented) {
   */
   @tracked currentSound = null;
   @tracked errorCache = null;
-
-  get loadedSounds() {
-    return this.soundCache.cachedList
-  }
 
   /**
     * is user input needed to allow an autoplay request?
@@ -280,7 +269,6 @@ export default class Stereo extends Service.extend(EmberEvented) {
   }
   set isMobileDevice(v) {
     this._isMobileDevice = v;
-    return v;
   }
 
   /**
@@ -410,7 +398,7 @@ export default class Stereo extends Service.extend(EmberEvented) {
   }
 
   @task
-  * handleCurrentSoundTransition(sound) {
+  *handleCurrentSoundTransition(sound) {
     yield waitForEvent(sound, 'audio-played');
 
     let previousSound = this.currentSound;
@@ -465,16 +453,15 @@ export default class Stereo extends Service.extend(EmberEvented) {
 
   @task({maxConcurrency: 1, restartable: true})
   *playTask(urlsOrPromise, options = {}) {
-    if (this.isPlaying) {
-      this.trigger('current-sound-interrupted', {sound: this.currentSound});
-      this.pause();
-    }
-
     options = assign({ metadata: {} }, options);
     let loadPromise = this.loadTask.perform(urlsOrPromise, options);
     this.trigger('new-load-request', { loadPromise, urlsOrPromise, options }); //urls: Promise.resolve(resolveUrls(urlsOrPromise))
-
     let { sound, failures } = yield loadPromise;
+
+    if (this.isPlaying) {
+      this.trigger('current-sound-interrupted', { sound: this.currentSound });
+      this.pause();
+    }
 
     if (sound) {
       this._registerEvents(sound);
@@ -679,6 +666,9 @@ export default class Stereo extends Service.extend(EmberEvented) {
    * Set the current sound and wire up all the events the sound fires so they
    * trigger through the service, remove the ones on the previous current sound,
    * and set the new current sound to the system volume
+   * @method _setCurrentSound
+   * @param {Sound} sound
+   * @private
    */
   _setCurrentSound(sound) {
     if (this.isDestroyed || this.isDestroying) {
@@ -922,14 +912,8 @@ export default class Stereo extends Service.extend(EmberEvented) {
     })
   }
 
-  /**
-    Named functions so Ember Evented can successfully register/unregister them
-  */
+  // Named functions so Ember Evented can successfully register/unregister them
 
-  /**
-   * Fired when audio is played
-   * @event 'audio-played'
-   */
   _relayPlayedEvent(info) {
     this._relayEvent('audio-played', info);
   }

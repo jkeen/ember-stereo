@@ -173,6 +173,7 @@ export default class Sound extends Evented {
 
     this.on('audio-ended', () => {
       this.isPlaying = false;
+      this.position = 0;
       if (audioEnded) { audioEnded(this); }
       this.debug('audio-ended');
     });

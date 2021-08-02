@@ -12,7 +12,7 @@ import debugMessage from 'ember-stereo/-private/utils/debug-message';
   ```
 
   @class {{sound-is-rewindable}}
-  @type Helper
+  @type {Helper}
   @param {String} url
   @param {Boolean} load? load the sound if it's not loaded
 */

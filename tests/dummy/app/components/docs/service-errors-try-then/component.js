@@ -17,7 +17,7 @@ export default class ServiceExample extends Component {
       this.sound.togglePause();
     }
     else {
-      this.stereo.play(url).then(({ sound, error, failures }) => {
+      this.stereo.play(url).then(({ sound, /* error, failures */}) => {
         this.sound = sound;
       }).catch(e => {
         this.error = e.message

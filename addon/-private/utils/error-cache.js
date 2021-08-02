@@ -8,6 +8,7 @@ import hasEqualUrls from 'ember-stereo/-private/utils/has-equal-urls';
 * This class caches errors based on urls. You shouldn't have to interact with this class.
 *
 * @class ErrorCache
+* @type {Util}
 * @private
 * @constructor
 */
@@ -32,7 +33,7 @@ export default class ErrorCache  {
 
   /**
    * find - finds sounds in the cache by urls
-   *
+   * @method find
    * @param {string} urls
    * @return {Sound}
    */
@@ -59,11 +60,6 @@ export default class ErrorCache  {
     })
   }
 
-  /**
-   * cache - caches the errors on connection/url
-   *
-   * @param  {Sound} sound
-   */
   cache({url, error, connectionKey, debugInfo}) {
     let identifier = new StereoUrl(url).key
 

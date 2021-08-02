@@ -67,7 +67,7 @@ export default class Strategizer {
     return connections;
   }
 
-/** Given a list of urls, prepare the strategy that we think will succeed best
+ /* Given a list of urls, prepare the strategy that we think will succeed best
   *
   * Breadth first: we try each url on each compatible connection in order
   * [{connection: NativeAudio, url: url1},
@@ -76,7 +76,7 @@ export default class Strategizer {
   *  {connection: NativeAudio, url: url2},
   *  {connection: HLS, url: url2},
   *  {connection: Other, url: url2}]
-  */
+ */
 
   @cached
   get strategies() {
@@ -87,10 +87,10 @@ export default class Strategizer {
       });
     });
     if (this.useMobileStrategy) {
-      /**
-       * Take our standard strategy and reorder it to prioritize native audio
-       * first since it's most likely to succeed and play immediately with our
-       * audio unlock logic
+     /*
+      * Take our standard strategy and reorder it to prioritize native audio
+      * first since it's most likely to succeed and play immediately with our
+      * audio unlock logic
 
       * we try each url on each compatible connection in order
       * [{connection: NativeAudio, url: url1},
@@ -99,6 +99,7 @@ export default class Strategizer {
       *  {connection: Other, url: url1},
       *  {connection: HLS, url: url2},
       *  {connection: Other, url: url2}]
+      *
       * */
 
       let nativeStrategies = strategies.filter(f => f.connectionKey == 'NativeAudio');

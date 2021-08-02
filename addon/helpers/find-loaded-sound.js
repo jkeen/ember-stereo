@@ -8,7 +8,7 @@ import StereoBaseIsHelper from 'ember-stereo/-private/helpers/is-helper';
    {{/let}}
   ```
   @class {{find-loaded-sound}}
-  @type Helper
+  @type {Helper}
 */
 
 export default class FindLoadedSound extends StereoBaseIsHelper {
@@ -17,7 +17,7 @@ export default class FindLoadedSound extends StereoBaseIsHelper {
   /**
     @method compute
     @param {Any} identifier url, urls, url objects, promise that resolves to a url
-    @returns {Sound}
+    @return {Sound}
   */
 
   get result() {

@@ -1,12 +1,6 @@
 import Component from '@glimmer/component';
 import { inject as service } from '@ember/service';
-import move from 'ember-animated/motions/move';
-import { parallel } from 'ember-animated';
-import scale from 'ember-animated/motions/scale';
-import { task } from 'ember-concurrency';
-import { makeArray } from '@ember/array';
 import { tracked } from '@glimmer/tracking';
-import { trackedReset } from 'tracked-toolbox';
 import { action } from '@ember/object';
 
 export default class DiagnosticControls extends Component {

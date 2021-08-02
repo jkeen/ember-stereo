@@ -3,7 +3,7 @@ import { dedupeTracked } from 'tracked-toolbox';
 import { inject as service } from '@ember/service';
 import debugMessage from 'ember-stereo/-private/utils/debug-message';
 import hasEqualUrls from 'ember-stereo/-private/utils/has-equal-urls';
-import { makeArray } from '@ember/array';
+
 /**
   A helper to display error details.
   ```hbs
@@ -13,14 +13,14 @@ import { makeArray } from '@ember/array';
   ```
 
   @class {{sound-error-details}}
-  @type Helper
+  @type {Helper}
 */
 
 /**
   @method compute
   @param {Any} identifier url, urls, url objects, promise that resolves to a url
   @param {String} connectionName? name of connection's errors to get
-  @returns {any}
+  @return {any}
 */
 
 const UNINITIALIZED = null;
@@ -38,7 +38,7 @@ export default class SoundIsErrored extends Helper {
   compute([identifier], {connectionName = 'NativeAudio'}) {
     if (identifier !== this.identifier) {
       this.identifier = identifier;
-      this.stereo.resolveIdentifier.perform(this.identifier).then(url => this.url = url).catch(e => {})
+      this.stereo.resolveIdentifier.perform(this.identifier).then(url => this.url = url).catch()
     }
 
     if (!this.result) { return }

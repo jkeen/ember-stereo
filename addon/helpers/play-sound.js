@@ -10,7 +10,7 @@ import prepareOptions from "ember-stereo/-private/utils/prepare-options";
     </button>
   ```
   @class {{play-sound}}
-  @type Helper
+  @type {Helper}
   @param {String} url
   @param {Object} options
   @param {Object} metadata
@@ -21,7 +21,7 @@ import prepareOptions from "ember-stereo/-private/utils/prepare-options";
   @param {Any} identifier url, urls, url objects, promise that resolves to a url
   @param {Hash} metadata? metadata that should be included with the sound
   @param {[String]} useConnections? array of connection names in preference order
-  @returns {Function}
+  @return {Function}
 */
 export default class PlaySound extends Helper {
   @service stereo;

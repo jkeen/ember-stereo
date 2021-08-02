@@ -12,7 +12,7 @@ A helper to detect if a sound is playing.
 ```
 
   @class {{sound-is-playing}}
-  @type Helper
+  @type {Helper}
 */
 /**
   @method compute

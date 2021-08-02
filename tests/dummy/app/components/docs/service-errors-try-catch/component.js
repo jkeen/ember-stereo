@@ -18,7 +18,7 @@ export default class ServiceExample extends Component {
     }
     else {
       try {
-        let { sound, error, failures } = await this.stereo.play(url);
+        let { sound, error, /* failures */ } = await this.stereo.play(url);
         this.sound = sound;
       }
       catch (e) {

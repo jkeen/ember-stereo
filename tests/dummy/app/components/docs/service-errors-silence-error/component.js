@@ -17,7 +17,7 @@ export default class ServiceExample extends Component {
       this.sound.togglePause();
     }
     else {
-      let { sound, error, failures } = await this.stereo.play(url, { silenceErrors: true });
+      let { sound, error, /* failures */ } = await this.stereo.play(url, { silenceErrors: true });
       this.sound = sound;
       this.error = error
     }

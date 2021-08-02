@@ -3,21 +3,17 @@ import debugMessage from 'ember-stereo/-private/utils/debug-message';
 import { dedupeTracked } from 'tracked-toolbox';
 import { get } from '@ember/object';
 /**
-A helper to detect if a sound is playing.
-```hbs
+  A helper to detect if a sound is playing.
+  ```hbs
+  {{sound-metadata (current-sound)}} // currently loaded sound metadata hash
+  {{sound-metadata @identifier key=title}} // metadata 'title' on sound matching @identifier
+  ```
 
-{{sound-metadata (current-sound)}} // currently loaded sound metadata hash
-
-{{sound-metadata @identifier key=title}} // metadata 'title' on sound matching @identifier
-```
-```
-
-@class {{sound-metadata}}
-@type Helper
-@param {String} url
-@returns {Object}
+  @class {{sound-metadata}}
+  @type {Helper}
+  @param {String} url
+  @return {Object}
 */
-
 
 export default class SoundMetadata extends StereoBaseIsHelper {
   name = 'sound-metadata'

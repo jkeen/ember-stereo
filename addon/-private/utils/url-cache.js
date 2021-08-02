@@ -13,7 +13,7 @@ export default class UrlCache extends ObjectCache {
 
   /**
    * Caches promise resolutions to urls, or just resolves the urls
-   *
+   * @method resolve
    * @param {Any} identifier
    * @return {Sound}
    */

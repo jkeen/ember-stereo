@@ -28,6 +28,6 @@ Router.map(function() {
     this.route('sync')
   });
 
-  this.route('autoplay');
+  this.route('autoplay-test');
   this.route('not-found', { path: '/*path' });
 });

@@ -8,7 +8,7 @@ import StereoBaseActionHelper from 'ember-stereo/-private/helpers/action-helper'
   </button>
   ```
   @class {{rewind-sound}}
-  @type Helper
+  @type {Helper}
 */
 
 export default class rewindSound extends StereoBaseActionHelper {
