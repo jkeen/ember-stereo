@@ -8,6 +8,7 @@ export default class DiagnosticControls extends Component {
   @tracked selectedSound = undefined;
   @tracked selectedConnections = Object.fromEntries(this.connections.map(c => [c, true]))
   @tracked url;
+  @tracked metadata;
   @tracked connectionStrategy = 'default'
   @tracked useConnections = null;
 
@@ -32,9 +33,20 @@ export default class DiagnosticControls extends Component {
     this.useConnections = this.connections.filter(name => !!this.selectedConnections[name]);
   }
 
+  get formattedMetadata() {
+    try {
+      return JSON.parse(this.metadata)
+    } catch(e) {
+      return {}
+    }
+  }
+
   @action
   onPresetChange(selection) {
     this.url = selection.url
+    this.metadata = JSON.stringify({
+      title: selection.title
+    })
     this.selectedSound = null;
   }
 }

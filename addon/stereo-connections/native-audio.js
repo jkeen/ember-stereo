@@ -197,11 +197,15 @@ export default class NativeAudio extends BaseSound {
   }
 
   _onAudioProgress() {
-    this.trigger('audio-loading', { sound: this, ...this._calculatePercentLoaded() });
+    if (!this.isStream) {
+      this.trigger('audio-loading', { sound: this, ...this._calculatePercentLoaded() });
+    }
   }
 
   _onPositionChange() {
-    this.trigger('audio-position-changed', { sound: this });
+    if (!this.isStream) {
+      this.trigger('audio-position-changed', { sound: this, position: this.position });
+    }
   }
 
   _onAudioDurationChanged() {

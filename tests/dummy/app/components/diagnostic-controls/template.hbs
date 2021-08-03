@@ -44,12 +44,12 @@
       {{/if}}
 
     </div>
-    {{!-- <div class="field">
+    <div class="field">
       <label class="input-label" for="url">
         Metadata (JSON)
       </label>
-      <Textarea id="metadata" class="input" placeholder="" />
-    </div> --}}
+      <Textarea id="metadata" class="input" placeholder="" @value={{this.metadata}}/>
+    </div>
 
     {{#if (sound-is-errored this.url)}}
       <div class="field">
@@ -61,7 +61,7 @@
     {{/if}}
 
     <div class="field actions">
-      <button {{on 'click' (load-sound this.url useConnections=this.useConnections)}} class="button with-icon" type="button" disabled={{or (sound-is-loaded this.url) (not this.url)}}>
+      <button {{on 'click' (load-sound this.url useConnections=this.useConnections metadata=this.formattedMetadata)}} class="button with-icon" type="button" disabled={{or (sound-is-loaded this.url) (not this.url)}}>
         {{#if (sound-is-loading this.url)}}
           {{svg-jar "loading-outline" height=20 width=30 title="Loading" class="icon-spin"}}
           Loading…
@@ -72,7 +72,7 @@
         {{/if}}
       </button>
 
-      <button {{on 'click' (toggle-play-sound this.url useConnections=this.useConnections)}} class="button with-icon" type="button" disabled={{not this.url}}>
+      <button {{on 'click' (toggle-play-sound this.url useConnections=this.useConnections metadata=this.formattedMetadata)}} class="button with-icon" type="button" disabled={{not this.url}}>
         {{#if (sound-is-playing this.url)}}
           {{svg-jar "pause-outline" height=20 width=30 title="Pause"}}
           Pause

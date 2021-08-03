@@ -118,7 +118,11 @@ export default class Sound extends Evented {
     return this._position;
   }
   set position(v) {
-    this.trigger('audio-position-will-change', { sound: this, currentPosition: this._currentPosition(), newPosition: v });
+    this.trigger('audio-position-will-change', {
+      sound: this,
+      currentPosition: this._currentPosition(),
+      newPosition: v
+    });
 
     this._position = this._setPosition(v);
   }

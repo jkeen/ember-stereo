@@ -2,7 +2,7 @@
   {{#let (array 'isLoading' 'isPlaying' 'hasPlayed' 'duration' 'isStream' 'isRewindable' 'isFastForwardable' 'percentLoaded') as |props|}}
     <SoundProperties::Prop @title='id' @data={{sound.debugName}}></SoundProperties::Prop>
     {{#each props as |propName|}}
-      <SoundProperties::Prop @title={{propName}} @data={{get sound propName}}></SoundProperties::Prop>
+      <SoundProperties::Prop @title={{propName}} @data={{or (get sound propName) 'false'}}></SoundProperties::Prop>
     {{/each}}
     <SoundProperties::Prop @title='duration' @data={{sound-duration sound format="time" }}></SoundProperties::Prop>
     <SoundProperties::Prop @title='position' @data={{sound-position sound format="time"}}></SoundProperties::Prop>

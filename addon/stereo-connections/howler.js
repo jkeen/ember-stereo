@@ -81,7 +81,7 @@ export default class Howler extends BaseSound {
         }
       },
       onseek: function() {
-        sound.trigger('audio-position-changed', {sound});
+        sound.trigger('audio-position-changed', { sound });
       }
     }, this.options);
 
