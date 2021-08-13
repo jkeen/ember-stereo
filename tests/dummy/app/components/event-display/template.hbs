@@ -1,8 +1,0 @@
-{{#each this.eventListGroupings as |e|}}
-  <button type="button" class="sound-tag" {{on 'click' (fn this.displayEvent e)}} data-event-type={{e.type}}>
-    {{#if (gt e.count 1)}}
-      <span class="sound-tag-title">{{e.count}}</span>
-    {{/if}}
-    <span class="sound-tag-name">{{e.name}}</span>
-  </button>
-{{/each}}

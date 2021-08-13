@@ -1,20 +1,29 @@
+{{! template-lint-disable no-inline-styles }}
+
 <DocsDemo as |demo|>
-  <demo.example @name="service-errors-silence-errors.hbs">
+  <demo.example @name='service-errors-silence-errors.hbs'>
     <p>You can silence the thrown errors and handle them inline</p>
-    <div style="display: flex; justify-content: space-between;">
-      <button {{on 'click' (fn this.togglePlaySound "https://invalid.example.url/1.mp3" )}} type="button" class="ui-button">
+    <div style='flex place-content-between'>
+      <button
+        {{on
+          'click'
+          (fn this.togglePlaySound 'https://invalid.example.url/1.mp3')
+        }}
+        type='button'
+        class='ui-button'
+      >
         {{#if this.sound.isPlaying}}
-        Pause
+          Pause
         {{else}}
-        Play Sound
+          Play Sound
         {{/if}}
       </button>
     </div>
 
     {{#if this.error}}
-    <div style="color: red;">{{this.error}}</div>
+      <div class='text-red text-sm px-1 py-2'>{{this.error}}</div>
     {{/if}}
   </demo.example>
-  {{demo.snippet "service-errors-silence-errors.js"}}
-  {{demo.snippet "service-errors-silence-errors.hbs"}}
+  {{demo.snippet 'service-errors-silence-errors.js'}}
+  {{demo.snippet 'service-errors-silence-errors.hbs'}}
 </DocsDemo>

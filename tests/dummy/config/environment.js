@@ -28,9 +28,9 @@ module.exports = function (environment) {
       debug: false,
       alwaysUseSingleAudioElement: true,
       connections: [
-        {name: 'NativeAudio'},
-        {name: 'Howler'},
-        {name: 'HLS'}
+        { name: 'NativeAudio' },
+        { name: 'Howler' },
+        { name: 'HLS' }
       ]
     }
   };

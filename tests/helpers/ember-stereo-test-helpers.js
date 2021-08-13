@@ -1,5 +1,4 @@
 import { next } from '@ember/runloop';
-import { get } from '@ember/object';
 import sinon from 'sinon';
 
 const dummyOps = {

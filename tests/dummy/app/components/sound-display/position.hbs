@@ -1,0 +1,26 @@
+<div class='flex flex-col'>
+  <div
+    {{sound-position-track @url}}
+    class='relative h-3 p-1 bg-gray-200 rounded
+      {{if
+        (and (not (sound-is-seekable @url)) (sound-is-playing @url))
+        'from-primary-lighter to-primary-darker via-gray-100 bg-gradient-to-r animate-gradient-x'
+      }}'
+  >
+    <div
+      style={{html-safe
+        (concat 'width: ' (sound-position @url format='percentage') '%')
+      }}
+      class='h-full pointer-events-none rounded-xl bg-primary-lighter'
+    ></div>
+  </div>
+  <div class='flex justify-between mt-1 text-xs'>
+    <span>
+      {{sound-position @url format='time'}}
+    </span>
+    <span>
+      {{sound-duration @url format='time'}}
+    </span>
+  </div>
+
+</div>

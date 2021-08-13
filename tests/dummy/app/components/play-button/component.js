@@ -5,7 +5,7 @@ export default class PlayButtonComponent extends Component {
   @action
 
 
-  draw(data, canvas, options, /* frame */) {
+  draw(data, canvas /*, options, frame */) {
     let h = canvas.height;
     let w = canvas.width;
     let ctx = canvas.getContext('2d');

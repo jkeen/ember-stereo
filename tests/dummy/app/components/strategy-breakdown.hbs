@@ -1,0 +1,21 @@
+<ol ...attributes>
+  {{#each this.strategyResults as |item|}}
+    {{#if (has-block)}}
+      {{yield
+        (hash
+          item=item
+          loadWasAttempted=this.loadWasAttempted
+          info=(strategy-status item loadWasAttempted=this.loadWasAttempted)
+        )
+      }}
+    {{else}}
+      <StrategyBreakdown::Connection
+        @item={{item}}
+        @loadWasAttempted={{this.loadWasAttempted}}
+        @allowSelection={{@allowSelection}}
+        @selectedConnections={{@selectedConnections}}
+        @onUpdateConnections={{@onUpdateConnections}}
+      />
+    {{/if}}
+  {{/each}}
+</ol>

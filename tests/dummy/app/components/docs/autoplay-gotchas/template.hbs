@@ -1,27 +1,29 @@
-
 <DocsDemo as |demo|>
-  <demo.example @name="autoplay-gotchas.hbs">
+  <demo.example @name='autoplay-gotchas.hbs'>
     <p>You can silence the thrown errors and handle them inline</p>
     <div>
       {{!-- {{#let "https://streaming.koop.org/stream.aac" as |url|}} --}}
-        <button {{on 'click' (fn this.togglePlaySound)}} type="button"
-          class="ui-button">
-          {{#if (sound-is-blocked this.url)}}
-            Autoplay Blocked!
-          {{else if (sound-is-playing this.url)}}
-            Pause
-          {{else}}
-            Play Sound
-          {{/if}}
-        </button>
+      <button
+        {{on 'click' this.togglePlaySound}}
+        type='button'
+        class='ui-button'
+      >
+        {{#if (sound-is-blocked this.url)}}
+          Autoplay Blocked!
+        {{else if (sound-is-playing this.url)}}
+          Pause
+        {{else}}
+          Play Sound
+        {{/if}}
+      </button>
       {{!-- {{/let}} --}}
     </div>
 
     {{#if this.error}}
-      <div style="color: red;">{{this.error}}</div>
+      <div class='text-red text-sm px-1 py-2'>{{this.error}}</div>
     {{/if}}
   </demo.example>
 
-  {{demo.snippet "autoplay-gotchas.js"}}
-  {{demo.snippet "autoplay-gotchas.hbs"}}
+  {{demo.snippet 'autoplay-gotchas.js'}}
+  {{demo.snippet 'autoplay-gotchas.hbs'}}
 </DocsDemo>

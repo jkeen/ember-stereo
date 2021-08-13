@@ -1,17 +1,25 @@
-<h1>Sync Test</h1>
-<div class="sync-grid">
+<h1 class="text-xl">Sync Test</h1>
+<p class="my-2 text-base">Each player below is provided a different identifier
+  (a string, an object, and a promise that resolves to a string) that resolves
+  to the same URL. Each row of players should stay in sync.</p>
+<div class="flex flex-col mb-3">
   {{#each @model.testSounds as |testSound|}}
-    <div class="sync-block">
-      <p><a target="_blank" rel="noopener noreferrer" href="{{testSound.url}}">{{testSound.url}}</a></p>
-      <p>Each player below is provided a different identifier (a string, an object, and a promise that resolves to a string) that resolves to the same URL. Each player should stay in sync.</p>
-      <div class="sounds">
+    <div class="mb-4">
+      <p><a
+          target="_blank"
+          rel="noopener noreferrer"
+          href="{{testSound.url}}"
+        >{{testSound.url}}</a></p>
+
+      <div class="flex gap-2 mt-3 border-gray-700 border-t-1">
         <SoundDisplay @url={{testSound.url}} @title={{testSound.title}} />
         <SoundDisplay @url={{testSound.urlObject}} @title={{testSound.title}} />
-        <SoundDisplay @url={{testSound.urlPromise}} @title={{testSound.title}} />
+        <SoundDisplay
+          @url={{testSound.urlPromise}}
+          @title={{testSound.title}}
+        />
       </div>
 
     </div>
   {{/each}}
 </div>
-
-

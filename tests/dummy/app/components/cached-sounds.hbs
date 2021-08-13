@@ -1,0 +1,8 @@
+<ComponentLabel @title={{this.loadedSoundCountSentence}} />
+<div
+  class='grid items-start content-start justify-start flex-1 grid-cols-2 gap-2'
+>
+  {{#each this.loadedItems as |item|}}
+    <SoundDisplay @url={{item.url}} />
+  {{/each}}
+</div>

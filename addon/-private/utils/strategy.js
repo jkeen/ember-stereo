@@ -1,4 +1,5 @@
 import { tracked } from '@glimmer/tracking';
+import { cached } from 'tracked-toolbox';
 export default class Strategy {
   @tracked stereoUrl;
   @tracked config
@@ -51,16 +52,19 @@ export default class Strategy {
     return this.config.options;
   }
 
+  @cached
   get canUseConnection() {
     if (!this.url) { return false }
     return this.connection.canUseConnection(this.url);
   }
 
+  @cached
   get canPlayMimeType() {
     if (!this.url) { return false }
     return this.connection.canPlayMimeType(this.mimeType);
   }
 
+  @cached
   get canPlay() {
     if (!this.url) { return false }
     return this.connection.canPlay(this.url, this.mimeType);

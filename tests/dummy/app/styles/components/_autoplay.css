@@ -1,0 +1,3 @@
+.autoplay-blocked-overlay {
+   @apply opacity-80 bg-black text-white fixed left-0 right-0 top-0 bottom-0 flex items-center justify-center p-2
+}

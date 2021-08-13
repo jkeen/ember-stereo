@@ -55,7 +55,7 @@ export const KUTX_STREAM = {
 }
 
 export const HLS_LIVE_STREAM = {
-  title: "KUTX Live Stream  (hls)",
+  title: "KUTX Live Stream (hls)",
   url: "https://kut-hls.streamguys1.com/kutx/playlist.m3u8",
 }
 

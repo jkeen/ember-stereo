@@ -1,20 +1,27 @@
 <DocsDemo as |demo|>
-  <demo.example @name="service-errors-try-catch.hbs">
+  <demo.example @name='service-errors-try-catch.hbs'>
     <p>Using a try/catch block with async/await</p>
-    <div style="display: flex; justify-content: space-between;">
-      <button {{on 'click' (fn this.togglePlaySound "https://invalid.example.url/1.mp3")}} type="button" class="ui-button">
+    <div>
+      <button
+        {{on
+          'click'
+          (fn this.togglePlaySound 'https://invalid.example.url/1.mp3')
+        }}
+        type='button'
+        class='ui-button'
+      >
         {{#if this.sound.isPlaying}}
-        Pause
+          Pause
         {{else}}
-        Play Sound
+          Play Sound
         {{/if}}
       </button>
     </div>
 
     {{#if this.error}}
-    <div style="color: red;">{{this.error}}</div>
+      <div class='text-red text-sm px-1 py-2'>{{this.error}}</div>
     {{/if}}
   </demo.example>
-  {{demo.snippet "service-errors-try-catch.js"}}
-  {{demo.snippet "service-errors-try-catch.hbs"}}
+  {{demo.snippet 'service-errors-try-catch.js'}}
+  {{demo.snippet 'service-errors-try-catch.hbs'}}
 </DocsDemo>

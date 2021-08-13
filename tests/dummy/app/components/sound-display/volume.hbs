@@ -1,0 +1,15 @@
+<div
+  class='flex justify-between'
+  {{did-insert this.didInsert}}
+  {{recognize-gesture 'pan' 'tap'}}
+  {{on 'pan' (fn this.handlePan this.stereo.volume)}}
+  {{on 'panend' this.handlePanEnd}}
+  {{on 'tap' this.handleTap}}
+>
+  {{#each this.numOfNotches as |item time|}}
+    <span
+      class='w-2 h-2 rounded
+        {{if (lte time this.activeNotches) 'bg-primary' 'bg-gray-200'}}'
+    ></span>
+  {{/each}}
+</div>

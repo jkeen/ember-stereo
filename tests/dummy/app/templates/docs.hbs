@@ -4,7 +4,7 @@
   {{/header.link}}
 </DocsHeader>
 <DocsViewer @media={{this.media}} as |viewer|>
-  <viewer.nav @media={{this.media}} @isShowingMenu={{isShowingMenu}} as |nav|>
+  <viewer.nav @media={{this.media}} @isShowingMenu={{@isShowingMenu}} as |nav|>
     {{nav.section "Overview"}}
       {{nav.item "Intro" "docs.index"}}
       {{nav.item "Configuration" "docs.configuration"}}

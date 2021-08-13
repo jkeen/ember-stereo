@@ -33,12 +33,11 @@
 
   <div class="stereo-player-position">
     {{sound-position @url format='time'}}
-    <span class="range-container">
-      <Input {{on 'change' (seek-sound @url)}}
-        type="range"
-        @value={{sound-position @url format='percentage' }}
-        disabled={{not (sound-is-seekable @url)}} />
-    </span>
+    <Input {{on 'change' (seek-sound @url)}}
+      type="range"
+      class="flex-auto flex-shrink w-16 lg:w-1/6"
+      @value={{sound-position @url format='percentage' }}
+      disabled={{not (sound-is-seekable @url)}} />
     {{sound-duration @url format='time'}}
   </div>
 
@@ -46,16 +45,17 @@
   {{!-- this doesn't show on mobile --}}
 {{!-- BEGIN-SNIPPET stereo-volume-control.hbs --}}
   <div class="stereo-player-volume">
-    <span class="range-container">
-      <Input {{stereo-volume}} type="range" />
-      <button type="button" {{on 'click' (toggle-stereo-mute)}}>
-        {{#if (gt (stereo-volume) 0)}}
-          {{svg-jar "volume-low-outline" height=20 width=30}}
-        {{else}}
-          {{svg-jar "volume-mute-outline" height=20 width=30}}
-        {{/if}}
-      </button>
-    </span>
+    <Input {{stereo-volume}}
+      type="range"
+      class="flex-auto flex-shrink w-16 lg:w-1/6"
+    />
+    <button type="button" {{on 'click' (toggle-stereo-mute)}}>
+      {{#if (gt (stereo-volume) 0)}}
+        {{svg-jar "volume-low-outline" height=20 width=30}}
+      {{else}}
+        {{svg-jar "volume-mute-outline" height=20 width=30}}
+      {{/if}}
+    </button>
   </div>
 {{!-- END-SNIPPET --}}
 </div>

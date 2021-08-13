@@ -1,0 +1,96 @@
+<li class='relative items-start text-base'>
+  {{#let
+    (unique-id)
+    (strategy-status @item loadWasAttempted=@loadWasAttempted)
+    (includes @item.key @selectedConnections)
+    as |id status selected|
+  }}
+    <label
+      class='relative block px-2 py-1 my-2 border border-gray-300 rounded-md shadow-sm cursor-pointer hover:border-gray-400 focus:outline-none'
+    >
+      {{#if @allowSelection}}
+        <Input
+          class='sr-only'
+          type='checkbox'
+          @checked={{selected}}
+          {{on 'click' (fn @onUpdateConnections @item.key selected)}}
+        />
+      {{else}}
+        <Input
+          class='sr-only'
+          type='checkbox'
+          @disabled={{true}}
+          @selected={{not (eq status.summary 'ineligible')}}
+        />
+      {{/if}}
+
+      <p for={{id}} class='text-current'>{{@item.connectionName}}</p>
+
+      <p id='{{id}}-description' class='block text-sm opacity-50'>
+        {{#if
+          (and
+            @allowSelection
+            (includes @item.key @selectedConnections)
+            (eq status.summary 'ineligible')
+          )
+        }}
+          It doesn't look like it'll work, but we'll try it anyway
+        {{else}}
+          {{status.message}}
+
+        {{/if}}
+
+      </p>
+      <div
+        class='{{if selected 'border-primary' 'border-transparent'}}
+          absolute border-2 rounded-lg pointer-events-none -inset-px'
+        aria-hidden='true'
+      ></div>
+    </label>
+    {{!--
+      <div class='flex flex-col items-center gap-1 p-1 text-sm'>
+        {{#if @allowSelection}}
+          <Input
+            type='checkbox'
+            class='absolute rounded-sm top-2 left-2'
+            @checked={{includes @item.key @selectedConnections}}
+            {{on
+              'click'
+              (fn
+                @onUpdateConnections
+                @item.key
+                (includes @item.key @selectedConnections)
+              )
+            }}
+          />
+        {{else}}
+          <InputToggle
+            @disabled={{true}}
+            @selected={{not (eq status.summary 'ineligible')}}
+          />
+        {{/if}}
+
+        <label
+          for={{id}}
+          class='font-medium text-current
+            {{if (eq status.summary 'ineligible') 'line-through'}}'
+        >{{@item.connectionName}}</label>
+
+        <span id='{{id}}-description' class='text-current opacity-50'>
+          {{#if
+            (and
+              @allowSelection
+              (includes @item.key @selectedConnections)
+              (eq status.summary 'ineligible')
+            )
+          }}
+            It doesn't look like it'll work, but we'll try it anyway
+          {{else}}
+            {{status.message}}
+
+          {{/if}}
+
+        </span> --}}
+
+  {{/let}}
+</li>

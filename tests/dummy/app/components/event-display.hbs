@@ -1,0 +1,11 @@
+<div>
+  {{#each this.eventListGroupings as |e|}}
+    <SoundProperties::Prop
+      @title={{e.name}}
+      @data={{if (gt e.count 1) e.count false}}
+      {{on 'click' (fn this.displayEvent e)}}
+      data-event-type={{e.type}}
+      class='cursor-pointer hover:shadow-md hover:bg-primary-lighter'
+    />
+  {{/each}}
+</div>

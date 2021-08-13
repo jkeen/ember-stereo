@@ -22,32 +22,32 @@ export default class Howler extends BaseSound {
     let urls = makeArray(this.url);
     let sound = this;
     let options = Object.assign({
-      src:      urls,
+      src: urls,
       autoplay: false,
-      preload:  true,
-      html5:    true,
-      volume:   1,
-      onload: function() {
+      preload: true,
+      html5: true,
+      volume: 1,
+      onload: function () {
         sound.url = this._src;
         sound.howl = this;
-        sound.trigger('audio-loaded', {sound});
-        sound.trigger('audio-ready', {sound});
+        sound.trigger('audio-loaded', { sound });
+        sound.trigger('audio-ready', { sound });
       },
-      onpause: function() {
+      onpause: function () {
         // if (!sound.isPlaying) {
-          sound.trigger('audio-paused', {sound});
+        sound.trigger('audio-paused', { sound });
         // }
       },
-      onplay: function() {
-        sound.trigger('audio-played', {sound});
+      onplay: function () {
+        sound.trigger('audio-played', { sound });
       },
-      onend: function() {
-        sound.trigger('audio-ended', {sound});
+      onend: function () {
+        sound.trigger('audio-ended', { sound });
       },
-      onstop: function() {
-        sound.trigger('audio-paused', {sound});
+      onstop: function () {
+        sound.trigger('audio-paused', { sound });
       },
-      onloaderror: function(id, code) {
+      onloaderror: function (id, code) {
         var MEDIA_NOT_ALLOWED = 0;
         var MEDIA_ERR_ABORTED = 1;
         var MEDIA_ERR_NETWORK = 2;
@@ -80,7 +80,7 @@ export default class Howler extends BaseSound {
           sound.trigger('audio-load-error', { sound, error: message });
         }
       },
-      onseek: function() {
+      onseek: function () {
         sound.trigger('audio-position-changed', { sound });
       }
     }, this.options);
@@ -123,10 +123,10 @@ export default class Howler extends BaseSound {
   }
 
   _setVolume(volume) {
-    this.howl?.volume(volume/100);
+    this.howl?.volume(volume / 100);
   }
 
-  play({position} = {}) {
+  play({ position } = {}) {
     this.isLoading = true
     this.debug('#play');
     if (typeof position !== 'undefined') {

@@ -1,16 +1,16 @@
 <DocsHeader as |header|>
-  {{#header.link "diagnostic"}}
-  Diagnostic
+  {{#header.link 'diagnostic'}}
+    Diagnostic
   {{/header.link}}
 </DocsHeader>
 <DocsViewer as |viewer|>
   <viewer.nav @media={{this.media}} as |nav|>
-    {{nav.section "Diagnostic"}}
-    {{nav.item "Main" "diagnostic.index"}}
-    {{nav.item "Sync" "diagnostic.sync"}}
+    {{nav.section 'Diagnostic'}}
+    {{nav.item 'Main' 'diagnostic.index'}}
+    {{nav.item 'Sync' 'diagnostic.sync'}}
   </viewer.nav>
 
-  <viewer.main @media={{this.media}} >
+  <viewer.main @media={{this.media}}>
     {{outlet}}
   </viewer.main>
 </DocsViewer>

@@ -1,8 +1,12 @@
 <DocsDemo as |demo|>
-  <demo.example @name="try-multiple-urls-via-service.hbs">
+  <demo.example @name='try-multiple-urls-via-service.hbs'>
     <p>Trying multiple sounds with the service</p>
     <div>
-      <button {{on 'click' (perform this.playTask)}} type="button" class="ui-button">
+      <button
+        {{on 'click' (perform this.playTask)}}
+        type='button'
+        class='ui-button'
+      >
         {{#if this.sound.isPlaying}}
           Pause
         {{else if this.playTask.isRunning}}
@@ -14,20 +18,29 @@
     </div>
 
     {{#if this.error}}
-    <div style="color: red;">{{this.error}}</div>
+      <div class='text-red text-sm px-1 py-2'>{{this.error}}</div>
     {{/if}}
   </demo.example>
-  {{demo.snippet "try-multiple-urls-via-service.js"}}
-  {{demo.snippet "try-multiple-urls-via-service.hbs"}}
+  {{demo.snippet 'try-multiple-urls-via-service.js'}}
+  {{demo.snippet 'try-multiple-urls-via-service.hbs'}}
 </DocsDemo>
 
-
 <DocsDemo as |demo|>
-  <demo.example @name="try-multiple-urls.hbs">
+  <demo.example @name='try-multiple-urls.hbs'>
     <p>Using template helpers to try multiple sounds</p>
     <div>
-      {{#let (array "https://failing.example.url/try.mp3" "https://streaming.koop.org/stream.mp3") as |urls|}}
-        <button {{on 'click' (toggle-play-sound urls)}} type="button" class="ui-button">
+      {{#let
+        (array
+          'https://failing.example.url/try.mp3'
+          'https://streaming.koop.org/stream.mp3'
+        )
+        as |urls|
+      }}
+        <button
+          {{on 'click' (toggle-play-sound urls)}}
+          type='button'
+          class='ui-button'
+        >
           {{#if (sound-is-playing urls)}}
             Pause
           {{else if (sound-is-loading urls)}}
@@ -38,10 +51,12 @@
         </button>
 
         {{#if (sound-is-errored urls)}}
-          <div style="color: red;">{{sound-error-details urls}}</div>
+          <div class='text-red text-sm px-1 py-2'>{{sound-error-details
+              urls
+            }}</div>
         {{/if}}
       {{/let}}
     </div>
   </demo.example>
-  {{demo.snippet "try-multiple-urls.hbs"}}
+  {{demo.snippet 'try-multiple-urls.hbs'}}
 </DocsDemo>

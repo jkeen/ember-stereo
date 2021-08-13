@@ -1,0 +1,120 @@
+<div
+  class='p-2 text-blue-900 border rounded-md bg-gray-50'
+  data-connection-name='{{this.loadedSound.connectionName}}'
+  ...attributes
+>
+  <div class='flex justify-between mb-3'>
+    <span class='text-xs'>
+      {{#let this.loadedSound as |sound|}}
+        {{#if sound}}
+          {{#if sound.connectionName}}
+            {{sound.connectionName}}
+            Sound
+          {{/if}}
+          {{#if sound.mimeType}}
+            ({{sound.mimeType}})
+          {{/if}}
+        {{else}}
+          Not Loaded
+        {{/if}}
+      {{/let}}
+    </span>
+    <button type='button' class='w-4 h-4' {{on 'click' this.removeSound}}>
+      {{svg-jar 'close' class='w-4 h-4 text-gray-400 hover:text-gray-600'}}
+    </button>
+  </div>
+
+  <span
+    class='{{unless this.isCurrentSound 'opacity-0'}}
+      flex justify-center p-1 -ml-2 -mr-2 my-2 text-sm font-bold text-center text-white uppercase transform bg-primary-lighter'
+  >Current Sound</span>
+
+  <div class='flex flex-col mb-4'>
+    <div class='text-center'>
+      {{or @title (sound-metadata this.url key='title')}}
+    </div>
+    <div class='text-sm text-center opacity-50'>
+      {{this.url}}
+    </div>
+  </div>
+
+  <SoundDisplay::Position @url={{this.url}} />
+  <SoundDisplay::Controls @url={{this.url}} />
+
+  <DebugDetails @show={{this.showDebugInfo}} as |d|>
+    {{#let (find-loaded-sound this.url) as |sound|}}
+      <d.Section
+        @title={{if
+          this.usingSingleAudioElement
+          'Shared Audio Element'
+          'Audio Element'
+        }}
+      >
+        <:button>
+          <button
+            type='button'
+            class='text-sm underline uppercase'
+            {{on 'click' (fn this.inspectSound (find-loaded-sound this.url))}}
+          >
+            Inspect
+          </button>
+        </:button>
+
+        {{#if this.usingSingleAudioElement}}
+          <p>One audio element shared between many sounds</p>
+        {{/if}}
+        <div class='p-2 text-xs border border-gray-300 rounded-md bg-gray-50'>
+          {{sound.audioElement.outerHTML}}
+        </div>
+
+      </d.Section>
+    {{/let}}
+
+    <d.Section @title='Connections'>
+      <StrategyBreakdown
+        @url={{this.url}}
+        class='flex flex-col gap-1 justify-items-stretch'
+        as |data|
+      >
+        <li class='inline text-{{data.info.color}}'>
+          <span class='text-sm'>
+            {{svg-jar
+              (concat 'connection-' data.info.status)
+              class='inline w-4 h-4'
+            }}
+            {{data.item.name}}
+          </span>
+          <span class='text-sm opacity-70'>{{data.info.message}}</span>
+        </li>
+
+      </StrategyBreakdown>
+    </d.Section>
+
+    <d.Section @title='Properties'>
+      <SoundProperties @url={{this.url}} />
+    </d.Section>
+
+    {{#let (find-loaded-sound this.url) as |sound|}}
+      <d.Section @title='Events'>
+        <EventDisplay @sound={{sound}} />
+      </d.Section>
+    {{/let}}
+  </DebugDetails>
+
+  <button
+    type='button'
+    class='flex items-center justify-center w-full p-1 text-center text-primary hover:text-primary-darker'
+    {{on 'click' (toggle 'showDebugInfo' this)}}
+  >
+    {{#if this.showDebugInfo}}
+      <span class='sr-only'>Hide Debug</span>
+      {{svg-jar 'angle-up' class='w-4 h-4'}}
+    {{else}}
+      <span class='sr-only'></span>
+      {{svg-jar 'angle-down' class='w-4 h-4'}}
+    {{/if}}
+  </button>
+
+  {{yield}}
+
+</div>

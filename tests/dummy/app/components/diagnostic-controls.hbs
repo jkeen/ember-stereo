@@ -1,0 +1,218 @@
+<ComponentLabel @title='Sound Loader' />
+<form
+  ...attributes
+  {{on
+    'submit'
+    (prevent-default
+      (play-sound
+        this.url
+        useConnections=this.useConnections
+        metadata=this.formattedMetadata
+      )
+    )
+  }}
+>
+  <div>
+    <div class='my-2'>
+      <label
+        for='url'
+        class='block text-base font-medium text-gray-700'
+      >URL</label>
+
+      <div class='flex mt-1 rounded-md shadow-sm'>
+        <div class='relative flex items-stretch flex-grow focus-within:z-10'>
+          <Input
+            id='url'
+            class='block w-full border-gray-300 rounded-none rounded-l-md focus:ring-primary focus:border-primary sm:text-sm'
+            @type='text'
+            @value={{this.url}}
+            placeholder='Enter a URL'
+          />
+        </div>
+        <select
+          id='preset'
+          name='preset'
+          class='relative inline-flex items-center w-24 px-4 py-2 -ml-px text-sm font-medium text-gray-700 border border-gray-300 rounded-r-md bg-gray-50 hover:bg-gray-100 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary'
+          {{on 'input' (fn this.onPresetChange)}}
+        >
+          <option>Preset</option>
+          {{#each this.items as |item|}}
+            <option {{on 'click' (fn this.onPresetChange item)}}>
+              {{item.title}}
+            </option>
+          {{/each}}
+        </select>
+      </div>
+
+    </div>
+
+    <div class='my-2'>
+      <label
+        for='url'
+        class='block text-base font-medium text-gray-700'
+      >Metadata</label>
+      <Textarea
+        id='metadata'
+        class='block w-full h-10 pr-12 border-gray-300 rounded-md focus:ring-primary focus:border-primary sm:text-sm'
+        placeholder=''
+        @value={{this.metadata}}
+      />
+    </div>
+
+    <div class='my-2'>
+      <label
+        class='block my-2 text-base font-medium text-gray-700'
+      >Connections</label>
+      <div class='flex flex-row gap-2 px-1 my-1'>
+        <label>
+          <input
+            class='border-gray-300 text-primary focus:ring-primary'
+            type='radio'
+            name='strategy'
+            value='default'
+            checked={{eq this.connectionStrategy 'default'}}
+            {{on 'change' this.setConnectionStrategy}}
+          />
+          Automatic
+        </label>
+
+        <label>
+          <input
+            class='border-gray-300 text-primary focus:ring-primary'
+            type='radio'
+            name='strategy'
+            value='choose'
+            checked={{eq this.connectionStrategy 'choose'}}
+            {{on 'change' this.setConnectionStrategy}}
+          />
+          Choose
+        </label>
+      </div>
+      {{#if (eq this.connectionStrategy 'default')}}
+        <StrategyBreakdown class='grid' @url={{this.url}} as |data|>
+          <li class='inline text-{{data.info.color}}'>
+            <span class='text-sm'>
+              {{svg-jar
+                (concat 'connection-' data.info.status)
+                class='inline w-4 h-4'
+              }}
+              {{data.item.name}}
+            </span>
+            <span class='text-sm opacity-70'>{{data.info.message}}</span>
+          </li>
+        </StrategyBreakdown>
+      {{else}}
+        <StrategyBreakdown
+          class='grid grid-cols-3 gap-2'
+          @url={{this.url}}
+          @selectedConnections={{this.selectedConnections}}
+          @onUpdateConnections={{this.updateSelectedStrategies}}
+          @allowSelection={{not (eq this.connectionStrategy 'default')}}
+        />
+      {{/if}}
+    </div>
+
+    {{#if (sound-is-errored this.url)}}
+      <div class='flex gap-1 p-3 text-red'>
+        <span>{{sound-error-details this.url}}</span>
+      </div>
+    {{/if}}
+
+    <div class='flex gap-2'>
+      <button
+        {{on
+          'click'
+          (load-sound
+            this.url
+            useConnections=this.useConnections
+            metadata=this.formattedMetadata
+          )
+        }}
+        class='ui-button with-icon'
+        type='button'
+        disabled={{or (sound-is-loaded this.url) (not this.url)}}
+      >
+        {{#if (sound-is-loading this.url)}}
+          {{svg-jar
+            'loading-outline'
+            width=20
+            height=25
+            title='Loading'
+            class='w-5 h-5 mr-3 -ml-1 icon-spin'
+          }}
+          Loading…
+        {{else if (sound-is-loaded this.url)}}
+          {{svg-jar
+            'load'
+            width=20
+            height=25
+            title='Load'
+            class='w-5 h-5 mr-3 -ml-1'
+          }}Loaded
+        {{else}}
+          {{svg-jar
+            'load'
+            width=20
+            height=25
+            title='Load'
+            class='w-5 h-5 mr-3 -ml-1'
+          }}Load
+        {{/if}}
+      </button>
+
+      <button
+        {{on
+          'click'
+          (toggle-play-sound
+            this.url
+            useConnections=this.useConnections
+            metadata=this.formattedMetadata
+          )
+        }}
+        class='ui-button with-icon'
+        type='button'
+        disabled={{not this.url}}
+      >
+        {{#if (sound-is-playing this.url)}}
+          {{svg-jar
+            'pause-outline'
+            class='w-5 h-5 mr-3 -ml-1'
+            width=20
+            height=25
+            title='Pause'
+          }}
+          Pause
+        {{else if (sound-is-loaded this.url)}}
+          {{svg-jar
+            'resume-outline'
+            class='w-5 h-5 mr-3 -ml-1'
+            width=20
+            height=25
+            title='Pause'
+          }}
+          Resume
+        {{else if (sound-is-loading this.url)}}
+          {{svg-jar
+            'loading-outline'
+            width=20
+            height=25
+            title='Loading'
+            class='w-5 h-5 mr-3 -ml-1 icon-spin'
+          }}
+          Loading
+        {{else}}
+          {{svg-jar
+            'play-outline'
+            width=20
+            height=25
+            class='w-5 h-5 mr-3 -ml-1'
+            title='Play'
+          }}
+          Play
+        {{/if}}
+
+      </button>
+
+    </div>
+  </div>
+</form>

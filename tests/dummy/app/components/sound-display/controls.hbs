@@ -1,0 +1,68 @@
+<div class='flex justify-center gap-3 p-5'>
+  <button
+    type='button'
+    disabled={{not (sound-is-rewindable @url)}}
+    class='text-primary hover:text-primary-darker disabled:opacity-30'
+    {{on 'click' (fn (rewind-sound @url increment=15000))}}
+  >
+    {{svg-jar
+      'skip-backward-outline'
+      class='stereo-icon'
+      height='24'
+      width='24'
+    }}
+  </button>
+
+  {{#if (not (or (sound-is-loaded @url) (sound-is-loading @url)))}}
+    <button
+      type='button'
+      class='text-primary hover:text-primary-darker disabled:opacity-30'
+      {{on 'click' (load-sound @url)}}
+    >
+      {{svg-jar 'load' class='stereo-icon' height='48' width='48'}}
+    </button>
+  {{/if}}
+
+  <button
+    type='button'
+    class='text-primary hover:text-primary-darker disabled:opacity-30'
+    {{on 'click' (toggle-play-sound @url metadata=(hash title=@title))}}
+  >
+    {{#if (sound-is-loading @url)}}
+      {{svg-jar
+        'loading-outline'
+        class='stereo-icon icon-spin'
+        height='48'
+        width='48'
+      }}
+    {{else if (sound-is-playing @url)}}
+      {{svg-jar 'pause-outline' class='stereo-icon' height='48' width='48'}}
+    {{else}}
+      {{svg-jar 'play-outline' class='stereo-icon' height='48' width='48'}}
+    {{/if}}
+  </button>
+
+  <button
+    disabled={{not (sound-is-fastforwardable @url)}}
+    type='button'
+    class='text-primary hover:text-primary-darker disabled:opacity-30'
+    {{on 'click' (fastforward-sound @url increment=15000)}}
+  >
+    {{svg-jar
+      'skip-forward-outline'
+      class='stereo-icon'
+      height='24'
+      width='24'
+    }}
+  </button>
+
+  {{#if (sound-is-loaded @url)}}
+    <button
+      type='button'
+      class='text-primary hover:text-primary-darker disabled:opacity-30'
+      {{on 'click' (stop-sound @url)}}
+    >
+      {{svg-jar 'stop-outline' class='stereo-icon' height='24' width='24'}}
+    </button>
+  {{/if}}
+</div>

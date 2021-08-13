@@ -1,11 +1,11 @@
-<div class="diagnostic">
-  <div class="diagnostic-display">
-    <div class="sound-container" data-title="Stereo Service">
-      <ServiceDisplay />
-    </div>
+<div>
+  <ServiceDisplay class='mb-12' />
 
-    <DiagnosticControls @class="diagnostic-controls" @testSounds={{@model.testSounds}} />
+  <DiagnosticControls
+    @class='diagnostic'
+    @testSounds={{@model.testSounds}}
+    class='mb-12'
+  />
 
-    <CachedSounds />
-  </div>
+  <CachedSounds />
 </div>

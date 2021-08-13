@@ -1,0 +1,52 @@
+<ComponentLabel @title='Stereo Service' />
+
+<div class='flex flex-col p-2 border border-gray-400 rounded-md' ...attributes>
+  <div class='flex'>
+    <div
+      class='flex flex-col justify-between flex-grow p-2 text-center align-middle border border-gray-400 rounded-md'
+    >
+      <p class='font-lg'>
+        {{sound-metadata (current-sound) key='title'}}
+      </p>
+      <p class='text-xs text-gray-500'>
+        {{get (current-sound) 'url'}}
+      </p>
+      <SoundDisplay::Position @url={{current-sound}} @class='flex flex-col' />
+    </div>
+
+    <div class='flex flex-col p-2'>
+      <SoundDisplay::Controls @url={{current-sound}} />
+
+      <div class='service-display-volume'>
+        <SoundDisplay::Volume />
+        <Input @type='range' {{stereo-volume}} />
+        {{!template-lint-disable require-input-label}}
+      </div>
+
+    </div>
+  </div>
+
+  <div class='{{if this.showDebugInfo 'visible' 'hidden'}}'>
+    <DebugDetails as |d|>
+      <d.Section @title='Events'>
+        <:default>
+          <EventDisplay @service={{this.stereo}} />
+        </:default>
+      </d.Section>
+
+    </DebugDetails>
+  </div>
+  <button
+    type='button'
+    class='flex items-center justify-center w-full p-2 text-center text-primary hover:text-primary-darker'
+    {{on 'click' (toggle 'showDebugInfo' this)}}
+  >
+    {{#if this.showDebugInfo}}
+      <span class='sr-only'>Hide Debug</span>
+      {{svg-jar 'angle-up' class='w-4 h-4'}}
+    {{else}}
+      <span class='sr-only'>Show Debug</span>
+      {{svg-jar 'angle-down' class='w-4 h-4'}}
+    {{/if}}
+  </button>
+</div>

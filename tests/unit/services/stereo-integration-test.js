@@ -1,4 +1,4 @@
-import { registerWaiter } from '@ember/test';
+// import { registerWaiter } from '@ember/test';
 import { later } from '@ember/runloop';
 import { module, test } from 'qunit';
 import { setupTest } from 'ember-qunit';
@@ -83,9 +83,9 @@ module('Unit | Service | stereo integration test.js', function(hooks) {
   });
 
   test('it simulates play', function(assert) {
-    registerWaiter(this, function() {
-      return this.sound && this.sound._tickInterval * ticks === this.sound._currentPosition();
-    });
+    // registerWaiter(this, function() {
+    //   return this.sound && this.sound._tickInterval * ticks === this.sound._currentPosition();
+    // });
     let done = assert.async();
     assert.expect(3);
     let service = this.owner.factoryFor('service:audio').create({});

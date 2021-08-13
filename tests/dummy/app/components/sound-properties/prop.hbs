@@ -1,0 +1,12 @@
+<div
+  class='inline-block px-2 py-1 text-xs break-all border border-gray-300 rounded bg-gray-50'
+  ...attributes
+>
+  <span class='px-1'>{{@title}}</span>
+
+  {{#if @data}}
+    <span class='pl-1 border-l border-gray-300'>{{@data}}</span>
+  {{else if (has-block)}}
+    <span class='pl-1 border-l border-gray-300'>{{yield}}</span>
+  {{/if}}
+</div>

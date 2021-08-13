@@ -1,6 +1,6 @@
 import hasEqualUrls from 'ember-stereo/-private/utils/has-equal-urls';
 import { tracked } from '@glimmer/tracking';
-import { task } from 'ember-concurrency';
+import { task, waitForProperty } from 'ember-concurrency';
 import { isEmpty } from '@ember/utils';
 
 /**
@@ -21,6 +21,21 @@ export default class SoundProxy {
     this.stereo.on('loadTask:started', this.onStart.bind(this))
     this.stereo.on('loadTask:errored', this.onFinish.bind(this))
     this.stereo.on('loadTask:succeeded', this.onFinish.bind(this))
+  }
+
+  @task
+  *waitForLoad() {
+    yield waitForProperty(this, 'value')
+  }
+
+  afterLoad(callback) {
+    try {
+      this.waitForLoad.perform().then(() => {
+        callback(this.value)
+      }).catch()
+    } catch (e) {
+
+    }
   }
 
   @task
