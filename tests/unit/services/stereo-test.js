@@ -286,7 +286,7 @@ module('Unit | Service | stereo', function (hooks) {
     assert.equal(service.get('volume'), 75, "volume should be 75");
     service.toggleMute(); // muted
     assert.equal(service.get('volume'), 0, "volume should be zero");
-    assert.equal(service.get('isMuted'), true, "volume should be muted");
+    assert.true(service.get('isMuted'), "volume should be muted");
     service.toggleMute(); // unmuted
     assert.equal(service.get('volume'), 75, "volume should be reset to previous level");
   });
@@ -480,7 +480,7 @@ module('Unit | Service | stereo', function (hooks) {
     })
 
     service.loadConnections(['DummyConnection'])
-    assert.equal(service.useSharedAudioAccess, true);
+    assert.true(service.useSharedAudioAccess);
   });
 
   test("shared audio element should be passed if alwaysUseSingleAudioElement config option is specified", async function (assert) {
@@ -630,15 +630,15 @@ module('Unit | Service | stereo', function (hooks) {
 
     await service.play(s1url)
     await settled();
-    assert.equal(sound1PlayEventTriggered, true, "sound 1 play event should have been triggered");
+    assert.true(sound1PlayEventTriggered, "sound 1 play event should have been triggered");
 
     let { sound } = await service.play(s2url);
     await settled();
 
-    assert.equal(sound1PauseEventTriggered, true, "sound 1 pause event should have been triggered");
-    assert.equal(sound2PlayEventTriggered, true, "sound 2 play event should have been triggered");
+    assert.true(sound1PauseEventTriggered, "sound 1 pause event should have been triggered");
+    assert.true(sound2PlayEventTriggered, "sound 2 play event should have been triggered");
     sound.pause();
-    assert.equal(sound2PauseEventTriggered, false, "sound 2 pause event should not have been triggered");
+    assert.false(sound2PauseEventTriggered, "sound 2 pause event should not have been triggered");
   });
 
   test("service triggers `current-sound-changed` event when sounds change", async function (assert) {

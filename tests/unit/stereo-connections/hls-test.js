@@ -46,11 +46,11 @@ module('Unit | Connection | HLS', function(hooks) {
     assert.expect(badUrls.length + goodUrls.length);
 
     badUrls.forEach(url => {
-      assert.equal(HLSConnection.canPlay(url), false, `Should not play file with ${url}`);
+      assert.false(HLSConnection.canPlay(url), `Should not play file with ${url}`);
     });
 
     goodUrls.forEach(url => {
-      assert.equal(HLSConnection.canPlay(url), true, `Should be able to play file with ${url}`);
+      assert.true(HLSConnection.canPlay(url), `Should be able to play file with ${url}`);
     });
   });
 
@@ -68,11 +68,11 @@ module('Unit | Connection | HLS', function(hooks) {
     assert.expect(badFiles.length + goodFiles.length);
 
     badFiles.forEach(url => {
-      assert.equal(HLSConnection.canPlay(url), false, `Should not play file with mime type ${url.mimeType}`);
+      assert.false(HLSConnection.canPlay(url), `Should not play file with mime type ${url.mimeType}`);
     });
 
     goodFiles.forEach(url => {
-      assert.equal(HLSConnection.canPlay(url), true, `Should be able to play file with ${url.mimeType}`);
+      assert.true(HLSConnection.canPlay(url), `Should be able to play file with ${url.mimeType}`);
     });
   });
 

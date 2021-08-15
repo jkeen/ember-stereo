@@ -8,173 +8,245 @@
 
 This addon exposes a `stereo` service which produces `Sound` objects which represent a playable piece of audio.
 
-The `stereo` service makes it easy to play audio in the unfriendly landscape that is the current state of audio on the web. Forget worrying about formats and browsers and just give `stereo` a list of URLs to try and it'll play the first one that works.
-## Installing The Addon
+- Ember.js v3.20 or above
+- Ember CLI v3.20 or above
+- Node.js v10 or above
 
 ```shell
 ember install ember-stereo
 ```
 
 ### Upgrading from `ember-hifi`
-  Read the [upgrade guide](https://jkeen.github.com/ember-stereo)
+
+Read the [upgrade guide](https://jkeen.github.com/ember-stereo)
+
 ### API
 
 #### Template Helpers
-`ember-stereo` includes many template helpers for interacting with audio files
 
+`ember-stereo` includes many template helpers for interacting with audio files
 
 ##### Actions
 
 - `play-sound`
+
 ```hbs
-  <button type="button" class="button is-link" {{on 'click' (play-sound @url)}}>Play</button>
+<button
+  type='button'
+  class='button is-link'
+  {{on 'click' (play-sound @url)}}
+>Play</button>
 ```
 
 - `load-sound`
+
 ```hbs
-  <button type="button" class="button is-link" {{on 'click' (load-sound @url)}}>Play</button>
+<button
+  type='button'
+  class='button is-link'
+  {{on 'click' (load-sound @url)}}
+>Play</button>
 ```
 
 - `pause-sound`
+
 ```hbs
-  <button type="button" class="button is-link" {{on 'click' (pause-sound @url)}}>Pause</button>
+<button
+  type='button'
+  class='button is-link'
+  {{on 'click' (pause-sound @url)}}
+>Pause</button>
 ```
 
 - `stop-sound`
+
 ```hbs
-<button type="button" class="button is-link" {{on 'click' (stop-sound @url)}}>Stop</button>
+<button
+  type='button'
+  class='button is-link'
+  {{on 'click' (stop-sound @url)}}
+>Stop</button>
 ```
 
 - `fastforward-sound`
+
 ```hbs
-<button type="button" class="button is-link" {{on 'click' (fastforward-sound @url increment=5000)}}>Fast Forward</button>
+<button
+  type='button'
+  class='button is-link'
+  {{on 'click' (fastforward-sound @url increment=5000)}}
+>Fast Forward</button>
 ```
 
 - `rewind-sound`
+
 ```hbs
-<button type="button" class="button is-link" {{on 'click' (rewind-sound @url increment=5000)}}>Rewind</button>
+<button
+  type='button'
+  class='button is-link'
+  {{on 'click' (rewind-sound @url increment=5000)}}
+>Rewind</button>
 ```
 
 - `seek-sound`
+
 ```hbs
-<button type="button" class="button is-link" {{on 'click' (seek-sound @url position=5000)}}>Seek</button>
+<button
+  type='button'
+  class='button is-link'
+  {{on 'click' (seek-sound @url position=5000)}}
+>Seek</button>
 ```
 
 - `toggle-play-sound`
+
 ```hbs
-<button type="button" class="button is-link" {{on 'click' (toggle-play-sound @url)}}>Play/Pause</button>
+<button
+  type='button'
+  class='button is-link'
+  {{on 'click' (toggle-play-sound @url)}}
+>Play/Pause</button>
 ```
 
 ##### Conditionals
+
 - `sound-is-errored`
 
 ```hbs
-  {{#if (sound-is-errored @url)}}
-    {{sound-error-details @url}}
-  {{/if}}
+{{#if (sound-is-errored @url)}}
+  {{sound-error-details @url}}
+{{/if}}
 ```
 
 - `sound-is-fastforwardable`
 
 ```hbs
-  {{#if (sound-is-fastforwardable @url)}}
-    <button type="button" class="button is-link" {{on 'click' (fastforward-sound @url increment=5000)}}>Fast Forward</button>
-  {{/if}}
+{{#if (sound-is-fastforwardable @url)}}
+  <button
+    type='button'
+    class='button is-link'
+    {{on 'click' (fastforward-sound @url increment=5000)}}
+  >Fast Forward</button>
+{{/if}}
 ```
 
 - `sound-is-rewindable`
 
 ```hbs
-  {{#if (sound-is-rewindable @url)}}
-    <button type="button" class="button is-link" {{on 'click' (rewind-sound @url increment=5000)}}>Fast Forward</button>
-  {{/if}}
+{{#if (sound-is-rewindable @url)}}
+  <button
+    type='button'
+    class='button is-link'
+    {{on 'click' (rewind-sound @url increment=5000)}}
+  >Fast Forward</button>
+{{/if}}
 ```
 
 - `sound-is-loaded`
+
 ```hbs
-  {{#if (sound-is-loaded @url)}}
-    sound is loaded and ready to play
-  {{/if}}
+{{#if (sound-is-loaded @url)}}
+  sound is loaded and ready to play
+{{/if}}
 ```
 
 - `sound-is-loading`
+
 ```hbs
-  {{#if (sound-is-loading @url)}}
-    [show loading spinner]
-  {{/if}}
+{{#if (sound-is-loading @url)}}
+  [show loading spinner]
+{{/if}}
 ```
 
 - `sound-is-playing`
+
 ```hbs
-  {{#if (sound-is-playing @url)}}
-    <button type="button" class="button is-link" {{on 'click' (pause-sound @url)}}>Pause</button>
-  {{/if}}
+{{#if (sound-is-playing @url)}}
+  <button
+    type='button'
+    class='button is-link'
+    {{on 'click' (pause-sound @url)}}
+  >Pause</button>
+{{/if}}
 ```
 
 - `sound-is-rewindable`
+
 ```hbs
-  {{#if (sound-is-rewindable @url)}}
-    Sound is rewindable
-  {{/if}}
+{{#if (sound-is-rewindable @url)}}
+  Sound is rewindable
+{{/if}}
 ```
 
 - `sound-is-fastforwardable`
+
 ```hbs
-  {{#if (sound-is-rewindable @url)}}
-    Sound is fastforwardable
-  {{/if}}
+{{#if (sound-is-rewindable @url)}}
+  Sound is fastforwardable
+{{/if}}
 ```
 
 - `sound-is-seekable`
+
 ```hbs
-  {{#if (sound-is-rewindable @url)}}
-    Sound is fastforwardable
-  {{/if}}
+{{#if (sound-is-rewindable @url)}}
+  Sound is fastforwardable
+{{/if}}
 ```
 
 - `sound-is-blocked`
+
 ```hbs
-  {{#if (sound-is-blocked @url)}}
-    Browser has blocked auto play, needs user input
-  {{/if}}
+{{#if (sound-is-blocked @url)}}
+  Browser has blocked auto play, needs user input
+{{/if}}
 ```
 
 - `autoplay-allowed`
+
 ```hbs
-  {{#if (autoplay-allowed @url)}}
-    Browser allows autoplaying of sounds
-  {{/if}}
+{{#if (autoplay-allowed @url)}}
+  Browser allows autoplaying of sounds
+{{/if}}
 ```
 
 ### Getters
 
 - `sound-metadata`
+
 ```hbs
-  {{sound-metadata @url}}
+{{sound-metadata @url}}
 ```
 
 - `sound-duration(@url, load=false, format=false)`
+
 ```hbs
-  {{sound-duration @url load=true format=time}}
+{{sound-duration @url load=true format=time}}
 ```
 
 - `sound-position(@url, format=false defaultValue=0)`
+
 ```hbs
-  {{sound-position @url format=percentage}} #=> 12
-  {{sound-position @url format=time}} #=> 00:20
+{{sound-position @url format=percentage}}
+#=> 12
+{{sound-position @url format=time}}
+#=> 00:20
 ```
 
 - `current-sound`
+
 ```hbs
-  {{current-sound}} #=> currently playing/paused sound
+{{current-sound}} #=> currently playing/paused sound
 ```
 
 - `find-loaded-sound`
+
 ```hbs
-  {{find-loaded-sound @url}} #=> currently playing/paused sound
+{{find-loaded-sound @url}} #=> currently playing/paused sound
 ```
 
 #### Service API
+
 `stereo` plays one sound at a time. Multiple sounds can be loaded and ready to go, but only one sound plays at a time. The currently playing sound is set to `currentSound` on the service, and most methods and properties on the service simply proxy to that sound.
 
 ###### Methods
@@ -202,8 +274,9 @@ export default class StereoComponent extends Component {
 
     })
   }
-} 
+}
 ```
+
 If you already know the URLs, just pass them in.
 
 ```javascript
@@ -219,33 +292,34 @@ export default class StereoComponent extends Component {
 
     })
   }
-} 
+}
 ```
 
-- `playTask(urlsOrPromise, options)` the ember concurrency task that `play` calls. 
+- `playTask(urlsOrPromise, options)` the ember concurrency task that `play` calls.
 
 - `pause()`
-Pauses the current sound
+  Pauses the current sound
 
 - `togglePause()`
-Toggles the play state of the current sound
+  Toggles the play state of the current sound
 
 - `fastForward(duration)`
-Moves the playhead of the current sound forwards by duration (in ms)
+  Moves the playhead of the current sound forwards by duration (in ms)
 
 - `rewind(duration)`
-Moves the playhead of the current sound backwards by duration (in ms)
+  Moves the playhead of the current sound backwards by duration (in ms)
 
 - `load(urlsOrPromise, options)`
-Tries each stereo connection with each url and returns the ready `sound` from the first combination that works. The sound is cached internally so on subsequent load requests with the same url the already prepared sound will be returned. Calling `play` on the returned sound will start playback immediately.
+  Tries each stereo connection with each url and returns the ready `sound` from the first combination that works. The sound is cached internally so on subsequent load requests with the same url the already prepared sound will be returned. Calling `play` on the returned sound will start playback immediately.
 
-- `loadTask(urlsOrPromise, options)` the ember concurrency task that `load` calls. 
-
+- `loadTask(urlsOrPromise, options)` the ember concurrency task that `load` calls.
 
 ###### Gettable/Settable Properties
-- `volume`          (integer, 0-100)
+
+- `volume` (integer, 0-100)
 
 System volume. Bind a range element to this property for a simple volume control
+
 ```javascript
 
 //component.js
@@ -258,9 +332,10 @@ export default Component.extend({
 {{input type="range" value=stereo.volume}}
 ```
 
-- `position`        (integer, in ms)
+- `position` (integer, in ms)
 
 Here's a silly way to make a position control, too.
+
 ```javascript
 //component.js
 export default Component.extend({
@@ -273,34 +348,38 @@ export default Component.extend({
 
 ###### Read Only Properties
 
-- `isLoading`         (boolean)
-- `isPlaying`         (boolean)
-- `isStream`          (boolean)
+- `isLoading` (boolean)
+- `isPlaying` (boolean)
+- `isStream` (boolean)
 - `isFastForwardable` (boolean)
-- `isRewindable`      (boolean)
+- `isRewindable` (boolean)
 
-- `duration`          (integer, in ms)
-- `percentLoaded`     (integer 0-100, when available)
+- `duration` (integer, in ms)
+- `percentLoaded` (integer 0-100, when available)
 
-- `currentSound`      the currently loaded sound
+- `currentSound` the currently loaded sound
 
 ### Sound API
+
 ###### Methods
+
 - `play()`
-Plays the sound
+  Plays the sound
 - `pause()`
-Pauses the sound
+  Pauses the sound
 - `togglePause()`
-Toggles the play state of the sound
+  Toggles the play state of the sound
 - `fastForward(duration)`
-Moves the playhead of the sound forwards by duration (in ms)
+  Moves the playhead of the sound forwards by duration (in ms)
 - `rewind(duration)`
-Moves the playhead of the sound backwards by duration (in ms)
+  Moves the playhead of the sound backwards by duration (in ms)
 
 ###### Gettable/Settable Properties
+
 - `position` (integer, in ms)
 
 ###### Read Only Properties
+
 - `isLoading` (boolean)
 - `isPlaying` (boolean)
 - `isStream` (boolean)
@@ -313,6 +392,7 @@ Moves the playhead of the sound backwards by duration (in ms)
 - `url` the url of the sound
 
 ### Events
+
 The `stereo` service and the `sound` objects are extended with [Ember.Evented](https://www.emberjs.com/api/classes/Ember.Evented.html). You can subscribe to the following events in your application.
 
 ###### Triggered on both the sound and relayed through the stereo service
@@ -329,6 +409,7 @@ The `stereo` service and the `sound` objects are extended with [Ember.Evented](h
 - `audio-blocked` ({ sound }) - the sound was prevented from being played by the browser due to auto play restrictions
 
 ###### Stereo service events
+
 - `current-sound-changed` ({sound, previousSound}) - triggered when the current sound changes. On initial play, previousSound will be undefined.
 - `current-sound-interrupted` ({sound, previousSound}) - triggered when a sound has been playing and a new one takes its place by being played, pausing the first one
 - `new-load-request` ({loadPromise, urlsOrPromise, options}) - triggered whenever `.load` or `.play` is called.
@@ -347,6 +428,7 @@ The `stereo` service and the `sound` objects are extended with [Ember.Evented](h
 For mobile browsers, we'll first try all the URLs on the NativeAudio using a technique to (hopefully) get around any autoplaying restrictions that sometimes require mobile users to click a play button twice.
 
 ## Test Helpers
+
 #### Acceptance Tests
 
 Import this helper into acceptance tests to stub out stereo.
@@ -392,7 +474,6 @@ A 10 second audio clip: `/good/10000/test`
 A web stream: `/good/stream/test`
 
 A url that will fail: `/bad/stream/test`
-
 
 ## [Writing Your Own Stereo Connection](CUSTOM_CONNECTIONS.md)
 

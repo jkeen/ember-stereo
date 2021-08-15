@@ -53,20 +53,20 @@
         <:button>
           <button
             type='button'
-            class='text-sm underline uppercase'
+            class='text-xs underline uppercase'
             {{on 'click' (fn this.inspectSound (find-loaded-sound this.url))}}
           >
             Inspect
           </button>
         </:button>
-
-        {{#if this.usingSingleAudioElement}}
-          <p>One audio element shared between many sounds</p>
-        {{/if}}
-        <div class='p-2 text-xs border border-gray-300 rounded-md bg-gray-50'>
-          {{sound.audioElement.outerHTML}}
-        </div>
-
+        <:default>
+          {{#if this.usingSingleAudioElement}}
+            <p>One audio element shared between many sounds</p>
+          {{/if}}
+          <div class='p-2 text-xs border border-gray-300 rounded-md bg-gray-50'>
+            {{sound.audioElement.outerHTML}}
+          </div>
+        </:default>
       </d.Section>
     {{/let}}
 

@@ -10,11 +10,11 @@ module('Integration | Helper | toggle-play-sound', function(hooks) {
     let service = this.owner.lookup('service:stereo');
     service.loadConnections([{ name: 'DummyConnection' }]);
     this.url = '/good/1000/silence.mp3';
-    assert.equal(service.isPlaying, false, 'not playing');
+    assert.false(service.isPlaying, 'not playing');
     await render (hbs`<button type="button" {{on 'click' (toggle-play-sound this.url)}}>toggle</button>`);
     await click('button');
-    assert.equal(service.isPlaying, true, 'is playing');
+    assert.true(service.isPlaying, 'is playing');
     await click('button');
-    assert.equal(service.isPlaying, false, 'is not playing');
+    assert.false(service.isPlaying, 'is not playing');
   });
 });

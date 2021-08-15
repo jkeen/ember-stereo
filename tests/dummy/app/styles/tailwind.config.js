@@ -77,6 +77,7 @@ module.exports = {
     }
   },
   plugins: [
+    require('tailwindcss-theming'),
     require('@tailwindcss/forms')(),
   ],
 };

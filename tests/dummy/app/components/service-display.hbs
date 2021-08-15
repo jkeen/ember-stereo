@@ -1,9 +1,12 @@
 <ComponentLabel @title='Stereo Service' />
 
-<div class='flex flex-col p-2 border border-gray-400 rounded-md' ...attributes>
+<div
+  class='flex flex-col p-2 text-blue-900 border rounded-md bg-gray-50'
+  ...attributes
+>
   <div class='flex'>
     <div
-      class='flex flex-col justify-between flex-grow p-2 text-center align-middle border border-gray-400 rounded-md'
+      class='flex flex-col justify-between flex-grow p-2 text-center align-middle border border-gray-200 rounded-md shadow-lg shadow-inner'
     >
       <p class='font-lg'>
         {{sound-metadata (current-sound) key='title'}}
@@ -26,16 +29,14 @@
     </div>
   </div>
 
-  <div class='{{if this.showDebugInfo 'visible' 'hidden'}}'>
-    <DebugDetails as |d|>
-      <d.Section @title='Events'>
-        <:default>
-          <EventDisplay @service={{this.stereo}} />
-        </:default>
-      </d.Section>
+  <DebugDetails @show={{this.showDebugInfo}} class='mt-4' as |d|>
+    <d.Section @title='Events'>
+      <:default>
+        <EventDisplay @service={{this.stereo}} />
+      </:default>
+    </d.Section>
 
-    </DebugDetails>
-  </div>
+  </DebugDetails>
   <button
     type='button'
     class='flex items-center justify-center w-full p-2 text-center text-primary hover:text-primary-darker'

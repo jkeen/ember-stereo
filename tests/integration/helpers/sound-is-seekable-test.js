@@ -14,7 +14,7 @@ module('Integration | Helper | sound-is-seekable', function(hooks) {
     this.set('url', '/good/10/rewindable-test.mp3')
     await service.play(this.url)
     await render(hbs`{{#if (sound-is-seekable this.url)}}sound-is-seekable{{else}}is-not-seekable{{/if}}`);
-    assert.equal(service.isSeekable, true, "service says its seekable");
+    assert.true(service.isSeekable, "service says its seekable");
     assert.equal(this.element.textContent.trim(), 'sound-is-seekable', "helper says its seekable");
 
     this.set('url', '/good/stream/stream.mp3')

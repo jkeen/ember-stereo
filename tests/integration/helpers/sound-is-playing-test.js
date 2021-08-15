@@ -14,7 +14,7 @@ module('Integration | Helper | sound-is-playing', function(hooks) {
     await render(hbs`{{#if (sound-is-playing this.url)}}sound-is-playing{{else}}is-not-playing{{/if}}`);
     assert.equal(this.element.textContent.trim(), 'is-not-playing', 'helper reports not playing');
     await service.play(this.url)
-    assert.equal(service.isPlaying, true, 'service reports playing');
+    assert.true(service.isPlaying, 'service reports playing');
     assert.equal(this.element.textContent.trim(), 'sound-is-playing', 'helper reports playing');
   });
 
@@ -26,7 +26,7 @@ module('Integration | Helper | sound-is-playing', function(hooks) {
     await render(hbs`{{#if (sound-is-playing this.url)}}sound-is-playing{{else}}is-not-playing{{/if}}`);
     assert.equal(this.element.textContent.trim(), 'is-not-playing', 'helper reports not playing');
     await service.play(this.url)
-    assert.equal(service.isPlaying, true, 'service reports playing');
+    assert.true(service.isPlaying, 'service reports playing');
     assert.equal(this.element.textContent.trim(), 'sound-is-playing', 'helper reports playing');
   });
 
@@ -44,7 +44,7 @@ module('Integration | Helper | sound-is-playing', function(hooks) {
     assert.equal(this.element.textContent.trim(), 'sound-is-playing');
     this.set('url2', '/good/5/second-silence.mp3')
     await service.play(this.url2);
-    assert.equal(service.isPlaying, true);
+    assert.true(service.isPlaying);
     assert.equal(this.element.textContent.trim(), 'is-not-playing');
   });
 });

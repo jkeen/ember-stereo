@@ -11,8 +11,7 @@
 @import './components/_diagnostic-controls.css';
 /* @import './components/_stereo-player.css'; */
 html {
-  /* --brand-primary: #02bd9e; */
-  --brand-primary: #6366f1;
+  --brand-primary: #02bd9e;
 }
 
 :root {

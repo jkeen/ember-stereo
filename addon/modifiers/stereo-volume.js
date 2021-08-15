@@ -8,7 +8,6 @@
 import { action } from '@ember/object';
 import { inject as service } from '@ember/service';
 import Modifier from 'ember-modifier';
-
 export default class StereoVolumeModifier extends Modifier {
   @service stereo;
 
@@ -22,6 +21,15 @@ export default class StereoVolumeModifier extends Modifier {
 
   get options() {
     return this.args.named;
+  }
+
+
+  @action
+  handleTap(e) {
+    var rect = e.target.getBoundingClientRect();
+    var x = e.clientX - rect.left; //x position within the element.
+    let volumeLevel = parseInt((x / rect.width) * 100, 10)
+    this.stereo.volume = volumeLevel;
   }
 
   @action onChange(event) {
@@ -39,15 +47,22 @@ export default class StereoVolumeModifier extends Modifier {
     if (this.isRangeControl) {
       this.element.setAttribute('max', 100);
       this.element.setAttribute('min', 0);
+      this.element.addEventListener('change', this.onChange, true);
       this.element.value = this.stereo.volume;
+    }
+    else {
+      this.element.addEventListener('click', this.handleTap, true);
     }
 
     this.stereo.on('volume-change', this.onStereoVolumeChange);
-    this.element.addEventListener('change', this.onChange, true);
   }
 
   willRemove() {
+    if (this.isRangeControl) {
+      this.element.removeEventListener('change', this.onChange, true);
+    } else {
+      this.element.removeEventListener('click', this.handleTap, true);
+    }
     this.stereo.off('volume-change', this.onStereoVolumeChange);
-    this.element.removeEventListener('change', this.onChange, true);
   }
 }

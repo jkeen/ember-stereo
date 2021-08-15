@@ -1,7 +1,7 @@
 {{! // BEGIN-SNIPPET autoplay-example.hbs }}
 
-<div class="mb-4">
-  <h3 class="text-lg font-bold">Ember-Stereo Autoplay Test</h3>
+<div class='mb-4'>
+  <h3 class='text-lg font-bold'>Ember-Stereo Autoplay Test</h3>
   {{#if (autoplay-allowed)}}
     This audio should automatically play without user input
   {{else}}
@@ -9,36 +9,36 @@
   {{/if}}
 </div>
 
-{{#let "https://streaming.koop.org/stream.mp3" as |url|}}
+{{#let 'https://streaming.koop.org/stream.mp3' as |url|}}
   <button
-    type="button"
-    class="ui-button with-icon max-w-min"
-    {{on "click" (toggle-play-sound url)}}
+    type='button'
+    class='ui-button with-icon max-w-min'
+    {{on 'click' (toggle-play-sound url)}}
     {{did-insert (play-sound url)}}
   >
     {{#if (sound-is-playing url)}}
-      {{svg-jar "pause-outline" height=20 width=30 title="Pause"}}
+      {{svg-jar 'pause-outline' height=20 width=30 title='Pause'}}
       Playing
     {{else if (sound-is-loaded url)}}
-      {{svg-jar "resume-outline" height=20 width=30 title="Pause"}}
+      {{svg-jar 'resume-outline' height=20 width=30 title='Pause'}}
       Resume
     {{else if (sound-is-loading url)}}
       {{svg-jar
-        "loading-outline"
+        'loading-outline'
         height=20
         width=30
-        title="Loading"
-        class="icon-spin"
+        title='Loading'
+        class='icon-spin'
       }}
       Loading
     {{else}}
-      {{svg-jar "play-outline" height=20 width=30 title="Play"}}
+      {{svg-jar 'play-outline' height=20 width=30 title='Play'}}
       Play
     {{/if}}
   </button>
 
   {{#if (sound-is-blocked url)}}
-    <div class="autoplay-blocked-overlay" {{on "mousedown" (play-sound url)}}>
+    <div class='autoplay-blocked-overlay' {{on 'mousedown' (play-sound url)}}>
       Oy! The audio was blocked by the browser and someone's gotta give this
       overlay a click in order for audio to resume
     </div>

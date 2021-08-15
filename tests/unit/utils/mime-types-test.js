@@ -16,6 +16,6 @@ module('Unit | Utility | mime types', function() {
     assert.equal(mp3Mime, 'audio/mpeg');
     assert.equal(mp3MimeWithParams, 'audio/mpeg');
     assert.equal(m3u8Mime, 'application/vnd.apple.mpegurl');
-    assert.equal(unknownMime, false);
+    assert.false(unknownMime);
   });
 });

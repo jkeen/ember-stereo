@@ -89,7 +89,7 @@ module('Unit | Connection | Native Audio', function(hooks) {
 
     sound.pause();
 
-    assert.equal(sound.audioElement.hasAttribute('src'), false, "audio src attribute is not set");
+    assert.false(sound.audioElement.hasAttribute('src'), "audio src attribute is not set");
     assert.equal(loadSpy.callCount, 1, "load was called");
     assert.equal(stopSpy.callCount, 1, "stop was called");
   });

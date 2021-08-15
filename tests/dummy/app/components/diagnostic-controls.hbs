@@ -33,7 +33,7 @@
           id='preset'
           name='preset'
           class='relative inline-flex items-center w-24 px-4 py-2 -ml-px text-sm font-medium text-gray-700 border border-gray-300 rounded-r-md bg-gray-50 hover:bg-gray-100 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary'
-          {{on 'input' (fn this.onPresetChange)}}
+          {{on 'input' this.onPresetChange}}
         >
           <option>Preset</option>
           {{#each this.items as |item|}}

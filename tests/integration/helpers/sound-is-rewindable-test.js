@@ -13,7 +13,7 @@ module('Integration | Helper | sound-is-rewindable', function(hooks) {
     this.set('url', '/good/10/rewindable-test.mp3')
     await service.play(this.url)
     await render(hbs`{{#if (sound-is-rewindable this.url)}}sound-is-rewindable{{else}}is-not-rewindable{{/if}}`);
-    assert.equal(service.isRewindable, true, "service says its rewindable");
+    assert.true(service.isRewindable, "service says its rewindable");
     assert.equal(this.element.textContent.trim(), 'sound-is-rewindable', "helper says its rewindable");
 
     this.set('url', '/good/stream/stream.mp3')

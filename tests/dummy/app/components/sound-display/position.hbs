@@ -1,6 +1,6 @@
 <div class='flex flex-col'>
   <div
-    {{sound-position-track @url}}
+    {{sound-position-slider @url}}
     class='relative h-3 p-1 bg-gray-200 rounded
       {{if
         (and (not (sound-is-seekable @url)) (sound-is-playing @url))

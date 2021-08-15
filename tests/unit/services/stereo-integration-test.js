@@ -53,7 +53,7 @@ module('Unit | Service | stereo integration test.js', function(hooks) {
     } catch(r) {
       results = r;
       failures = results.failures;
-      assert.ok(!failures, "should not be failures");
+      assert.notOk(failures, "should not be failures");
     }
   });
 
@@ -79,7 +79,7 @@ module('Unit | Service | stereo integration test.js', function(hooks) {
 
     let { sound } = await stereo.load('/good/stream/test')
     assert.equal(sound.duration, Infinity, "duration should be infinity");
-    assert.equal(sound.isStream, true, "should be stream");
+    assert.true(sound.isStream, "should be stream");
   });
 
   test('it simulates play', function(assert) {
@@ -98,7 +98,7 @@ module('Unit | Service | stereo integration test.js', function(hooks) {
       assert.equal(sound._currentPosition(), 0, "initial position should be 0");
       later(() => {
         assert.equal(sound._currentPosition(), tickInterval * ticks, `position should be ${tickInterval * ticks}`);
-        assert.equal(sound.isPlaying, true, "should be playing");
+        assert.true(sound.isPlaying, "should be playing");
         done();
         sound.stop();
       }, (tickInterval * (ticks + 1)))
