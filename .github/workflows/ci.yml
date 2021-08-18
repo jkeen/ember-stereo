@@ -1,113 +1,213 @@
-name: CI
+name: CI/CD
 
-# based on:
-#  - https://github.com/NullVoxPopuli/eslint-plugin-decorator-position/blob/master/.github/workflows/lint.yml
-#  - https://github.com/NullVoxPopuli/ember-autostash-modifier/blob/master/.github/workflows/ci.yml
-#  - https://github.com/emberjs/ember-test-helpers/blob/master/.github/workflows/ci-build.yml
-#  - https://github.com/NullVoxPopuli/ember-jsqr/blob/master/.github/workflows/tests.yml
 on:
-  pull_request:
   push:
-    # filtering branches here prevents duplicate builds from pull_request and push
     branches:
-      - main
-  schedule:
-    - cron: '0 3 * * 0' # every Sunday at 3am
+      - master
+  pull_request:
 
 env:
-  CI: true
+  NODE_VERSION: 12
 
 jobs:
-  tests:
-    if: "! contains(toJSON(github.event.commits.*.message), '[skip ci]')"
-    name: Base Tests
-    timeout-minutes: 5
+  lint:
+    name: Lint files
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node:
-        - "12"
-        - "14"
+    timeout-minutes: 7
     steps:
-    - uses: actions/checkout@v2
-    - uses: volta-cli/action@v1
-      with:
-        node-version: ${{ matrix.node }}
+      - name: Check out a copy of the repo
+        uses: actions/checkout@v2
 
-    - run: yarn install --frozen-lockfile
-
-    - name: Test with ${{ matrix.node }}
-      run: yarn test
-
-  floating-dependencies:
-    if: "! contains(toJSON(github.event.commits.*.message), '[skip ci]')"
-    name: Floating Dependencies
-    timeout-minutes: 5
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node:
-        - "12"
-        - "14"
-
-    steps:
-      - uses: actions/checkout@v2
-      - uses: volta-cli/action@v1
+      - name: Use Node.js ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v2-beta
         with:
-          node-version: ${{ matrix.node }}
+          node-version: ${{ env.NODE_VERSION }}
 
-      - run: yarn install --no-lockfile
+      - name: Get Yarn cache path
+        id: yarn-cache-dir-path
+        run: echo "::set-output name=dir::$(yarn cache dir)"
 
-      - name: Test with Node ${{ matrix.node }}
-        run: yarn test
+      - name: Cache Yarn cache and node_modules
+        id: cache-dependencies
+        uses: actions/cache@v2
+        with:
+          path: |
+            ${{ steps.yarn-cache-dir-path.outputs.dir }}
+            node_modules
+            test-apps/new-addon/node_modules
+          key: ${{ runner.os }}-${{ env.NODE_VERSION }}-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: ${{ runner.os }}-${{ env.NODE_VERSION }}-
 
-  try-scenarios:
-    if: "! contains(toJSON(github.event.commits.*.message), '[skip ci]')"
-    name: "Compatibility"
-    timeout-minutes: 5
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+        if: steps.cache-dependencies.outputs.cache-hit != 'true'
+
+      - name: Lint
+        run: yarn lint
+
+
+  test-addon-floating:
+    name: Test addon (floating dependencies)
     runs-on: ubuntu-latest
-    needs: tests
-
     strategy:
       fail-fast: true
       matrix:
-        ember-try-scenario:
-          - ember-lts-3.8
-          - ember-lts-3.12
-          - ember-lts-3.16
-          - ember-lts-3.20
-          - ember-lts-3.24
-          - ember-release
-          - ember-beta
-          - ember-canary
-          # - embroider
-          - ember-classic
+        script-name:
+          - 'ember'
+          - 'node'
+          - 'test-apps'
+    timeout-minutes: 7
     steps:
-      - uses: actions/checkout@v2
-      - uses: volta-cli/action@v1
+      - name: Check out a copy of the repo
+        uses: actions/checkout@v2
+
+      - name: Use Node.js ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v2-beta
         with:
-          node-version: 12.x
-      - name: install dependencies
-        run: yarn install --frozen-lockfile
-      - name: test
-        run: node_modules/.bin/ember try:one ${{ matrix.ember-try-scenario }} --skip-cleanup
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Install dependencies
+        run: yarn install --no-lockfile --non-interactive
+
+      - name: Test
+        run: yarn test:${{ matrix.script-name }}
 
 
-  publish:
-    name: Release
+  test-addon-locked:
+    name: Test addon (locked dependencies)
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
-    needs: [tests, floating-dependencies, try-scenarios]
-
+    strategy:
+      fail-fast: true
+      matrix:
+        script-name:
+          - 'ember'
+          - 'node'
+          - 'test-apps'
+    timeout-minutes: 7
     steps:
-      - uses: actions/checkout@v2
-        with:
-          persist-credentials: false
-      - uses: volta-cli/action@v1
-      - run: yarn install
+      - name: Check out a copy of the repo
+        uses: actions/checkout@v2
 
-      - name: Release
-        env:
-          GITHUB_TOKEN: ${{ secrets.GH_PAT }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: yarn semantic-release
+      - name: Use Node.js ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v2-beta
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Get Yarn cache path
+        id: yarn-cache-dir-path
+        run: echo "::set-output name=dir::$(yarn cache dir)"
+
+      - name: Cache Yarn cache and node_modules
+        id: cache-dependencies
+        uses: actions/cache@v2
+        with:
+          path: |
+            ${{ steps.yarn-cache-dir-path.outputs.dir }}
+            node_modules
+            test-apps/new-addon/node_modules
+          key: ${{ runner.os }}-${{ env.NODE_VERSION }}-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: ${{ runner.os }}-${{ env.NODE_VERSION }}-
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+        if: steps.cache-dependencies.outputs.cache-hit != 'true'
+
+      - name: Test
+        run: yarn test:${{ matrix.script-name }}
+
+
+  test-compatibility:
+    name: Test compatibility
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+      matrix:
+        scenario:
+          - 'ember-lts-3.16'
+          - 'ember-lts-3.20'
+          - 'ember-release'
+          - 'ember-beta'
+          - 'ember-canary'
+          - 'ember-default-with-jquery'
+          - 'ember-classic'
+          - 'ember-concurrency-2.x'
+    timeout-minutes: 7
+    steps:
+      - name: Check out a copy of the repo
+        uses: actions/checkout@v2
+
+      - name: Use Node.js ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v2-beta
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Get Yarn cache path
+        id: yarn-cache-dir-path
+        run: echo "::set-output name=dir::$(yarn cache dir)"
+
+      - name: Cache Yarn cache and node_modules
+        id: cache-dependencies
+        uses: actions/cache@v2
+        with:
+          path: |
+            ${{ steps.yarn-cache-dir-path.outputs.dir }}
+            node_modules
+            test-apps/new-addon/node_modules
+          key: ${{ runner.os }}-${{ env.NODE_VERSION }}-${{ matrix.scenario }}-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: ${{ runner.os }}-${{ env.NODE_VERSION }}-${{ matrix.scenario }}-
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+        if: steps.cache-dependencies.outputs.cache-hit != 'true'
+
+      - name: Test
+        run: yarn test:ember-compatibility ${{ matrix.scenario }}
+
+
+  deploy-app:
+    name: Deploy app
+    needs: [lint, test-addon-floating, test-addon-locked, test-compatibility]
+    runs-on: ubuntu-latest
+    timeout-minutes: 7
+    # Only run on pushes to the default branch
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+    steps:
+      - name: Check out a copy of the repo
+        uses: actions/checkout@v2
+
+      - name: Set up Git user
+        run: |
+          # Set up a Git user for committing
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@users.noreply.github.com"
+
+          # Copy the Git Auth from the local config
+          git config --global "http.https://github.com/.extraheader" \
+            "$(git config --local --get http.https://github.com/.extraheader)"
+
+      - name: Use Node.js ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v2-beta
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Get Yarn cache path
+        id: yarn-cache-dir-path
+        run: echo "::set-output name=dir::$(yarn cache dir)"
+
+      - name: Cache Yarn cache and node_modules
+        id: cache-dependencies
+        uses: actions/cache@v2
+        with:
+          path: |
+            ${{ steps.yarn-cache-dir-path.outputs.dir }}
+            node_modules
+            test-apps/new-addon/node_modules
+          key: ${{ runner.os }}-${{ env.NODE_VERSION }}-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: ${{ runner.os }}-${{ env.NODE_VERSION }}-
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+        if: steps.cache-dependencies.outputs.cache-hit != 'true'
+
+      - name: Deploy
+        run: yarn deploy

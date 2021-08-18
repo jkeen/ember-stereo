@@ -1,28 +1,28 @@
 <DocsDemo as |demo|>
-  <demo.example @name="autoplay.hbs">
+  <demo.example @name='autoplay.hbs'>
     {{#if (autoplay-allowed)}}
       Autoplay is allowed on this domain in your browser
     {{else}}
       Autoplay is not allowed on this domain in your browser
     {{/if}}
   </demo.example>
-  {{demo.snippet "autoplay.hbs"}}
+  {{demo.snippet 'autoplay.hbs'}}
 </DocsDemo>
 
 <DocsDemo as |demo|>
-  <demo.example @name="autoplay-popup.hbs">
+  <demo.example @name='autoplay-popup.hbs'>
 
     <a
-      id="launch_player"
-      class="underline text-primary"
-      title="Try to autoplay audio"
-      href="/autoplay-test/"
-      target="_blank"
-      rel="noopener noreferrer"
+      id='launch_player'
+      class='underline text-accent-0'
+      title='Try to autoplay audio'
+      href='/autoplay-test/'
+      target='_blank'
+      rel='noopener noreferrer'
       onclick="window.open(this.href, '/autoplay-test', 'resizable=yes,status=no,location=no,toolbar=no,menubar=no,fullscreen=no,scrollbars=no,dependent=no,width=320,left=20,height=350,top=20').focus(); return false;"
     >
       Open new page (source below) and try to autoplay
     </a>
   </demo.example>
-  {{demo.snippet "autoplay-example.hbs"}}
+  {{demo.snippet 'autoplay-example.hbs'}}
 </DocsDemo>

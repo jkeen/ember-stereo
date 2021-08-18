@@ -1,7 +1,7 @@
 <h1 class='text-xl'>Sync Test</h1>
 <p class='my-2 text-base'>Each player below is provided a different identifier
-  (a string, an object, and a promise that resolves to a string) that resolves
-  to the same URL. Each row of players should stay in sync.</p>
+  format (a string, an object, and a promise), but each identifier resolves to
+  the same URL. Each set of players should stay in sync.</p>
 <div class='flex flex-col mb-3'>
   {{#each @model.testSounds as |testSound|}}
     <div class='mb-4'>
@@ -12,7 +12,7 @@
         >{{testSound.url}}</a></p>
 
       <div
-        class='grid items-start content-start justify-start flex-1 grid-cols-3 gap-2'
+        class='grid items-start content-start justify-start flex-1 gap-2 md:grid-cols-3'
       >
         <SoundDisplay @url={{testSound.url}} @title={{testSound.title}} />
         <SoundDisplay @url={{testSound.urlObject}} @title={{testSound.title}} />

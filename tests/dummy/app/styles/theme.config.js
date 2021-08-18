@@ -1,64 +1,116 @@
 
 const { ThemeManager, Theme } = require('tailwindcss-theming/api');
+const { TinyColor } = require('@ctrl/tinycolor')
 
-const base = new Theme()
-  .addColors({
-    'accent': '',
-    'accent-secondary': '',
-    'accent-tertiary': '',
-    'accent-quarternary': '',
-    'background': '',
-    'background-secondary': '',
-    'background-tertiary': '',
-    'background-quarternary': '',
-    'label': '',
-    'label-secondary': '',
-    'label-tertiary': '',
-    'label-quarternary': '',
-    'separator': '',
-    'opaque-separator': '',
-    'link': '',
+const palette = {
+  // Polar night
+  nord0: '#2E3440',
+  nord1: '#3B4252',
+  nord2: '#434c5e',
+  nord3: '#4C566A',
 
-    'success': '',
-    'failure': '',
-    'alert': '',
+  // Snow storm
+  nord4: '#D8DEE9',
+  nord5: '#E5E9F0',
+  nord6: '#ECEFF4',
 
-    'c-gray': '',
-    'c-gray-2': '',
-    'c-gray-3': '',
-    'c-gray-4': '',
-    'c-gray-5': '',
-    'c-gray-6': '',
-  });
+  // Frost
+  nord7: '#8FBCBB', // 00BCB8
+  nord8: '#88C0D0', // 00A2D0
+  nord9: '#81A1C1', // 0061C1
+  nord10: '#5E81AC', //004DAC
+
+  // Aurora
+  nord11: '#BF616A',
+  nord12: '#D08770',
+  nord13: '#EBCB8B',
+  nord14: '#A3BE8C',
+  nord15: '#B48EAD',
+
+  white: '#FFFFFF'
+};
 
 const dark = new Theme()
   .addColors({
-    'accent': '',
-    'accent-secondary': '',
-    'accent-tertiary': '',
-    'accent-quarternary': '',
-    'background': '',
-    'background-secondary': '',
-    'background-tertiary': '',
-    'background-quarternary': '',
-    'label': '',
-    'label-secondary': '',
-    'label-tertiary': '',
-    'label-quarternary': '',
-    'separator': '',
-    'opaque-separator': '',
-    'link': '',
-    'system-success': '',
-    'system-failure': '',
-    'system-alert': '',
-    'gray': '',
-    'gray-2': '',
-    'gray-3': '',
-    'gray-4': '',
-    'gray-5': '',
-    'gray-6': '',
-  });
+    'accent': {
+      0: '#00BCB8',
+      1: '#00A2D0',
+      2: '#0061C1',
+      3: '#004DAC',
+    },
+    'on-accent': {
+      0: '#FFF',
+    },
+    'background': '#FFF',
+    'on-background': palette.nord0,
+    'surface': {
+      0: palette.nord0,
+      1: palette.nord1,
+      2: palette.nord2,
+      3: palette.nord3,
+    },
+    'on-surface': {
+      0: palette.nord4,
+      1: palette.nord5,
+      2: palette.nord6,
+      3: palette.nord6,
+    },
+    'attention': {
+      'primary': palette.nord7,
+      'secondary': palette.nord8,
+      'tertiary': palette.nord9,
+      'quaternary': palette.nord10,
+    },
+    'danger': '#f14668',
+    'on-danger': '#F9FAFA',
+    'success': '#00BCB8',
+    'on-success': '#F9FAFA',
+    'current': 'currentColor',
+  })
+  .addCustomVariant('hover', (c) => new TinyColor(c).darken(5), ['accent-0'])
 
-module.exports = new ThemeManager()
-  .setDefaultTheme(base)          // Sets the `base` theme as the default theme.
-  .setDefaultDarkTheme(dark);     // Sets the `dark` theme as the default theme for users that prefer the `dark` scheme.
+const light = new Theme()
+  .addColors({
+    'accent': {
+      0: '#00BCB8',
+      1: '#00A2D0',
+      2: '#0061C1',
+      3: '#004DAC',
+    },
+    'on-accent': {
+      0: palette.nord4,
+    },
+    'background': '#FFF',
+    'on-background': palette.nord0,
+    'surface': {
+      0: palette.nord4,
+      1: palette.nord5,
+      2: palette.nord6,
+      3: palette.nord6,
+    },
+    'on-surface': {
+      0: palette.nord0,
+      1: palette.nord1,
+      2: palette.nord2,
+      3: palette.nord3,
+    },
+    'attention': {
+      'primary': palette.nord7,
+      'secondary': palette.nord8,
+      'tertiary': palette.nord9,
+      'quaternary': palette.nord10,
+    },
+    'danger': '#f14668',
+    'on-danger': '#F9FAFA',
+    'success': '#00BCB8',
+    'on-success': '#F9FAFA',
+    'current': 'currentColor',
+  })
+  .addCustomVariant('hover', (c) => new TinyColor(c).darken(5), ['accent-0'])
+
+const StereoTheme = new ThemeManager()
+  .setDefaultTheme(dark.targetable())
+// .setDefaultLightTheme(light.setName('light').targetable())
+// .setDefaultDarkTheme(dark.setName('dark').targetable());
+
+module.exports = StereoTheme;

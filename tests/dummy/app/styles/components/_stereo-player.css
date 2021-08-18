@@ -1,17 +1,17 @@
 .ui-button {
-  @apply inline-flex items-center px-3 py-1 font-medium text-white border border-transparent rounded-md shadow-sm bg-primary hover:bg-primary-darker focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary;
+  @apply inline-flex items-center px-3 py-1 text-lg border rounded-md shadow-sm text-on-accent-0 bg-accent-0 hover:bg-accent-0-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent-0;
 }
 
-/* .ui-button.with-icon {
-  @apply gap-1;
-} */
-
 .stereo-player {
-  @apply container flex content-center gap-4 p-2 mx-auto border rounded place-items-center;
+  @apply container flex content-center gap-4 p-2 mx-auto border rounded place-items-center bg-background border-on-surface-0;
 }
 
 .stereo-player-position {
   @apply flex items-center flex-grow w-full gap-2 whitespace-nowrap;
+}
+
+.stereo-player input[type='range'] {
+  @apply bg-on-surface-2;
 }
 
 .stereo-player-controls {
@@ -23,24 +23,10 @@
 }
 
 .stereo-button {
-  @apply inline-flex items-center px-1 py-1 text-base font-medium text-gray-500 border border-transparent rounded-md shadow-none focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary;
+  @apply inline-flex items-center px-1 py-1 text-base font-medium border rounded-md shadow-none text-surface-0 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent-0 border-on-surface-3;
 }
 
 .stereo-button:disabled,
 .ui-button:disabled {
-  @apply pointer-events-none opacity-30;
-}
-
-.icon-spin {
-  animation: spin 1s infinite 0s;
-}
-@keyframes spin {
-  0% {
-    transform: rotate(0deg);
-    -webkit-transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-    -webkit-transform: rotate(360deg);
-  }
+  @apply opacity-50 pointer-events-none;
 }

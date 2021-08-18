@@ -6,7 +6,8 @@
     as |id status selected|
   }}
     <label
-      class='relative block px-2 py-1 my-2 border border-gray-300 rounded-md shadow-sm cursor-pointer hover:border-gray-400 focus:outline-none'
+      class='{{unless selected 'opacity-50'}}
+        hover:border-surface-3 relative block px-2 py-1 my-2 border rounded-md shadow-sm cursor-pointer bg-on-surface-3 border-on-surface-0 text-on-background hover:border-gray-400 focus:outline-none'
     >
       {{#if @allowSelection}}
         <Input
@@ -24,7 +25,7 @@
         />
       {{/if}}
 
-      <p for={{id}} class='text-current'>{{@item.connectionName}}</p>
+      <p for={{id}} class='text-sm text-current'>{{@item.connectionName}}</p>
 
       <p id='{{id}}-description' class='block text-sm opacity-50'>
         {{#if
@@ -41,11 +42,11 @@
         {{/if}}
 
       </p>
-      <div
-        class='{{if selected 'border-primary' 'border-transparent'}}
+      {{!-- <div
+        class='{{if selected 'border-accent-0'}}
           absolute border-2 rounded-lg pointer-events-none -inset-px'
         aria-hidden='true'
-      ></div>
+      ></div> --}}
     </label>
     {{!--
       <div class='flex flex-col items-center gap-1 p-1 text-sm'>

@@ -1,19 +1,21 @@
 <ComponentLabel @title='Stereo Service' />
 
 <div
-  class='flex flex-col p-2 text-blue-900 border rounded-md bg-gray-50'
+  class='flex flex-col p-2 mb-12 border rounded-md text-on-surface-0 bg-surface-2 border-surface-0'
   ...attributes
 >
-  <div class='flex'>
+  <div class='md:flex'>
     <div
-      class='flex flex-col justify-between flex-grow p-2 text-center align-middle border border-gray-200 rounded-md shadow-lg shadow-inner'
+      class='flex flex-col justify-end flex-grow h-40 p-2 text-center align-middle border rounded-md shadow-inner md:h-auto bg-surface-1 border-surface-3'
     >
-      <p class='font-lg'>
-        {{sound-metadata (current-sound) key='title'}}
-      </p>
-      <p class='text-xs text-gray-500'>
-        {{get (current-sound) 'url'}}
-      </p>
+      <div class='flex flex-col justify-around gap-2 mb-4'>
+        <p class='font-lg'>
+          {{sound-metadata (current-sound) key='title'}}
+        </p>
+        <p class='text-xs text-on-surface'>
+          {{get (current-sound) 'url'}}
+        </p>
+      </div>
       <SoundDisplay::Position @url={{current-sound}} @class='flex flex-col' />
     </div>
 
@@ -22,7 +24,7 @@
 
       <div class='service-display-volume'>
         <SoundDisplay::Volume />
-        <Input @type='range' {{stereo-volume}} />
+        <Input class='bg-surface-1' @type='range' {{stereo-volume}} />
         {{!template-lint-disable require-input-label}}
       </div>
 
@@ -39,7 +41,7 @@
   </DebugDetails>
   <button
     type='button'
-    class='flex items-center justify-center w-full p-2 text-center text-primary hover:text-primary-darker'
+    class='flex items-center justify-center w-full p-2 text-center text-accent-0 hover:text-accent-0-hover'
     {{on 'click' (toggle 'showDebugInfo' this)}}
   >
     {{#if this.showDebugInfo}}

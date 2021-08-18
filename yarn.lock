@@ -1156,10 +1156,10 @@
   resolved "https://registry.yarnpkg.com/@csstools/sass-import-resolve/-/sass-import-resolve-1.0.0.tgz#32c3cdb2f7af3cd8f0dca357b592e7271f3831b5"
   integrity sha512-pH4KCsbtBLLe7eqUrw8brcuFO8IZlN36JjdKlOublibVdAIPHCzEnpBWOVUXK5sCf+DpBi8ZtuWtjF0srybdeA==
 
-"@ctrl/tinycolor@^2.5.3":
-  version "2.6.1"
-  resolved "https://registry.yarnpkg.com/@ctrl/tinycolor/-/tinycolor-2.6.1.tgz#0e78cc836a1fd997a9a22fa1c26c555411882160"
-  integrity sha512-xKN3lAA+xbNhP+JX3sLhzA65IGiKqun/Yf9jBlZX7Og0SxlCrrqKxqTd6ccn20fv3Cgcvq6KnjPhnmS+v7uAwQ==
+"@ctrl/tinycolor@^3.1.4":
+  version "3.4.0"
+  resolved "https://registry.yarnpkg.com/@ctrl/tinycolor/-/tinycolor-3.4.0.tgz#c3c5ae543c897caa9c2a68630bed355be5f9990f"
+  integrity sha512-JZButFdZ1+/xAfpguQHoabIXkcqRRKpMrWKBkpEZZyxfY9C1DpADFB8PEqGSTeFr135SaTRfKqGKx5xSCLI7ZQ==
 
 "@ember-data/adapter@3.27.1":
   version "3.27.1"
@@ -14994,13 +14994,13 @@ table@^6.0.9:
     string-width "^4.2.0"
     strip-ansi "^6.0.0"
 
-tailwindcss-theming@^3.0.0-beta.1:
-  version "3.0.0-beta.1"
-  resolved "https://registry.yarnpkg.com/tailwindcss-theming/-/tailwindcss-theming-3.0.0-beta.1.tgz#4d3fb0b2bb27e1ffe1129c5df9379aed81a6db37"
-  integrity sha512-CVYveuKeM/lQVcfb6tDLCBy84c95zD31VSAaQwZlloViIh8DG2tVAqwyYuhdZXRLahbb68+QN/aJ5e8cnrz/Aw==
+tailwindcss-theming@^3.0.0-beta.3:
+  version "3.0.0-beta.3"
+  resolved "https://registry.yarnpkg.com/tailwindcss-theming/-/tailwindcss-theming-3.0.0-beta.3.tgz#7cbd672d29418987de9f2cc64a2185186f56f83d"
+  integrity sha512-wNgd7CBGlq9GsbMI80b8K62iYhkIsZ08AmF9c/flEcQCpXH+Kj5kddhFCfO6qdUk8jygD/5UeSXJUA3knNUrbA==
   dependencies:
-    "@ctrl/tinycolor" "^2.5.3"
-    lodash "^4.17.15"
+    "@ctrl/tinycolor" "^3.1.4"
+    lodash "^4.17.20"
 
 tailwindcss@1.9.6:
   version "1.9.6"

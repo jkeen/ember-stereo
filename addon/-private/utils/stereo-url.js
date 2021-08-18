@@ -42,6 +42,7 @@ export default class StereoUrl {
     }
   }
 
+  // this is the key used for comparisons
   get key() {
     return `${this.el.origin}${this.el.pathname}`
   }

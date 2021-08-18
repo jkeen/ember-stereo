@@ -1,5 +1,5 @@
 <div
-  class='p-2 text-blue-900 border rounded-md bg-gray-50'
+  class='p-2 border rounded-md text-on-surface-0 bg-surface-1 border-surface-3'
   data-connection-name='{{this.loadedSound.connectionName}}'
   ...attributes
 >
@@ -20,13 +20,16 @@
       {{/let}}
     </span>
     <button type='button' class='w-4 h-4' {{on 'click' this.removeSound}}>
-      {{svg-jar 'close' class='w-4 h-4 text-gray-400 hover:text-gray-600'}}
+      {{svg-jar
+        'close'
+        class='w-4 h-4 text-on-surface-2 opacity-30 hover:opacity-100'
+      }}
     </button>
   </div>
 
   <span
     class='{{unless this.isCurrentSound 'opacity-0'}}
-      flex justify-center p-1 -ml-2 -mr-2 my-2 text-sm font-bold text-center text-white uppercase transform bg-primary-lighter'
+      flex justify-center p-1 -ml-2 -mr-2 my-2 text-xs font-bold text-center text-on-surface-0 uppercase transform bg-accent-0'
   >Current Sound</span>
 
   <div class='flex flex-col mb-4'>
@@ -63,7 +66,9 @@
           {{#if this.usingSingleAudioElement}}
             <p>One audio element shared between many sounds</p>
           {{/if}}
-          <div class='p-2 text-xs border border-gray-300 rounded-md bg-gray-50'>
+          <div
+            class='p-2 text-xs border rounded-md border-surface-0 bg-surface-3'
+          >
             {{sound.audioElement.outerHTML}}
           </div>
         </:default>
@@ -76,7 +81,12 @@
         class='flex flex-col gap-1 justify-items-stretch'
         as |data|
       >
-        <li class='inline text-{{data.info.color}}'>
+        <li
+          class='inline
+            {{if (eq data.info.status 'failure') ' text-danger '}}
+            {{if (eq data.info.status 'success') ' text-success '}}
+            '
+        >
           <span class='text-sm'>
             {{svg-jar
               (concat 'connection-' data.info.status)
@@ -103,7 +113,7 @@
 
   <button
     type='button'
-    class='flex items-center justify-center w-full p-1 text-center text-primary hover:text-primary-darker'
+    class='flex items-center justify-center w-full p-1 text-center text-accent-0 hover:text-accent-0-hover'
     {{on 'click' (toggle 'showDebugInfo' this)}}
   >
     {{#if this.showDebugInfo}}

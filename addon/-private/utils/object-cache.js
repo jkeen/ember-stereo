@@ -30,10 +30,12 @@ export default class ObjectCache {
   }
 
   store(identifier, value) {
-    if (identifier.then || (typeof identifier === 'object')) {
-      this.objectCache.set(identifier, value)
-    } else {
-      this.keyCache[identifier] = value
+    if (identifier) {
+      if (identifier.then || (typeof identifier === 'object')) {
+        this.objectCache.set(identifier, value)
+      } else {
+        this.keyCache[identifier] = value
+      }
     }
   }
 }

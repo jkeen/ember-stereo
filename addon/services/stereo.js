@@ -488,9 +488,9 @@ export default class Stereo extends Service.extend(EmberEvented) {
         return this._handlePlaybackError({ sound, options })
       }
     }
-    // else {
-    //   return this._handleLoadError({failures, options})
-    // }
+    else {
+      return this._handleLoadError({ failures, options })
+    }
   }
 
   _shouldSilenceErrors(options) {

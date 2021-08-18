@@ -2,7 +2,7 @@
   <button
     type='button'
     disabled={{not (sound-is-rewindable @url)}}
-    class='text-primary hover:text-primary-darker disabled:opacity-30'
+    class='text-accent-0 hover:text-accent-0-hover disabled:opacity-30'
     {{on 'click' (fn (rewind-sound @url increment=15000))}}
   >
     {{svg-jar
@@ -16,7 +16,7 @@
   {{#if (not (or (sound-is-loaded @url) (sound-is-loading @url)))}}
     <button
       type='button'
-      class='text-primary hover:text-primary-darker disabled:opacity-30'
+      class='text-accent-0 hover:text-accent-0-hover disabled:opacity-30'
       {{on 'click' (load-sound @url)}}
     >
       {{svg-jar 'load' class='stereo-icon' height='48' width='48'}}
@@ -25,13 +25,13 @@
 
   <button
     type='button'
-    class='text-primary hover:text-primary-darker disabled:opacity-30'
+    class='text-accent-0 hover:text-accent-0-hover disabled:opacity-30'
     {{on 'click' (toggle-play-sound @url metadata=(hash title=@title))}}
   >
     {{#if (sound-is-loading @url)}}
       {{svg-jar
         'loading-outline'
-        class='stereo-icon icon-spin'
+        class='stereo-icon animate-spin'
         height='48'
         width='48'
       }}
@@ -45,7 +45,7 @@
   <button
     disabled={{not (sound-is-fastforwardable @url)}}
     type='button'
-    class='text-primary hover:text-primary-darker disabled:opacity-30'
+    class='text-accent-0 hover:text-accent-0-hover disabled:opacity-30'
     {{on 'click' (fastforward-sound @url increment=15000)}}
   >
     {{svg-jar
@@ -59,7 +59,7 @@
   {{#if (sound-is-loaded @url)}}
     <button
       type='button'
-      class='text-primary hover:text-primary-darker disabled:opacity-30'
+      class='text-accent-0 hover:text-accent-0-hover disabled:opacity-30'
       {{on 'click' (stop-sound @url)}}
     >
       {{svg-jar 'stop-outline' class='stereo-icon' height='24' width='24'}}

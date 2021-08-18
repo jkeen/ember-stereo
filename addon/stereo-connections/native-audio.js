@@ -67,7 +67,7 @@ export default class NativeAudio extends BaseSound {
 
     this.debug(`Handling '${eventName}' event from audio element`);
 
-    switch(eventName) {
+    switch (eventName) {
       case 'loadeddata':
         var audio = this.audioElement;
         // Firefox doesn't fire a 'canplay' event until after you call *play* on
@@ -118,7 +118,7 @@ export default class NativeAudio extends BaseSound {
     // If we have control, return the shared element
     // if we don't have control, return the internal cloned element
 
-    let sharedAudioAccess  = this.sharedAudioAccess;
+    let sharedAudioAccess = this.sharedAudioAccess;
 
     if (sharedAudioAccess && sharedAudioAccess.hasControl(this)) {
       return sharedAudioAccess.audioElement;
@@ -156,7 +156,7 @@ export default class NativeAudio extends BaseSound {
     try {
       shadowAudio.currentTime = audio.currentTime;
     }
-    catch(e) {
+    catch (e) {
       this.debug('Errored while trying to save audio current time');
       this.debug(e);
     }
@@ -174,8 +174,8 @@ export default class NativeAudio extends BaseSound {
   }
 
   restoreState() {
-    let sharedElement     = this.audioElement;
-    let internalElement   = this._audioElement;
+    let sharedElement = this.audioElement;
+    let internalElement = this._audioElement;
 
     if (this.sharedAudioAccess && internalElement) {
       this.debug('Restoring audio state…');
@@ -185,11 +185,11 @@ export default class NativeAudio extends BaseSound {
           sharedElement.currentTime = internalElement.currentTime;
         }
         if (internalElement.volume) {
-          sharedElement.volume      = internalElement.volume;
+          sharedElement.volume = internalElement.volume;
         }
         this.debug('Restored audio state');
       }
-      catch(e) {
+      catch (e) {
         this.debug('Errored while trying to restore audio state');
         this.debug(e);
       }
@@ -271,7 +271,7 @@ export default class NativeAudio extends BaseSound {
     if (audio && audio.buffered && audio.buffered.length) {
       let ranges = audio.buffered;
       let totals = [];
-      for( var index = 0; index < ranges.length; index++ ) {
+      for (var index = 0; index < ranges.length; index++) {
         totals.push(ranges.end(index) - ranges.start(index));
       }
 
@@ -281,7 +281,7 @@ export default class NativeAudio extends BaseSound {
       this.debug(`duration: ${this._audioDuration()}`);
       this.debug(`percent loaded = ${(total / audio.duration) * 100}`);
 
-      return {percentLoaded: (total / audio.duration)};
+      return { percentLoaded: (total / audio.duration) };
     }
     else {
       return 0;
@@ -323,8 +323,8 @@ export default class NativeAudio extends BaseSound {
     }
   }
 
-  @task({maxConcurrency: 1, drop: true})
-  *playTask({position, retryCount }) {
+  @task({ maxConcurrency: 1, drop: true })
+  *playTask({ position, retryCount }) {
     this.isLoading = true
     retryCount = retryCount || 0
     let audio = this.requestControl();
@@ -345,7 +345,7 @@ export default class NativeAudio extends BaseSound {
         }
         this._onAudioError(e)
       });
-    } catch(e) {
+    } catch (e) {
       if (retryCount < 2) {
         this.playTask.perform({ position, retryCount: retryCount + 1 }).catch()
       }
@@ -355,8 +355,8 @@ export default class NativeAudio extends BaseSound {
     }
   }
 
-  play({position} = {}) {
-    return this.playTask.perform({position});
+  play({ position } = {}) {
+    return this.playTask.perform({ position });
   }
 
   pause() {
@@ -384,8 +384,25 @@ export default class NativeAudio extends BaseSound {
   }
 
   loadAudio(audio) {
+    this.defeatBrowserCaching()
+
     if (!this.urlsAreEqual(audio.src, this.url)) {
       audio.setAttribute('src', this.url);
+    }
+  }
+
+  defeatBrowserCaching() {
+    // https://stackoverflow.com/questions/65740471/html-audio-internet-stream-caching-issue
+    // Sometimes the browser can cache streams and when trying to play the stream live
+    // after having it paused it will interleave the old cached version and the current live version
+    // in an schizophrenically bonkers way. This appends a #timestamp to the end of the url in a way
+    // that should overcome that
+
+    if (this.isStream) {
+      let a = document.createElement('a');
+      a.href = this.url
+      a.hash = new Date().getTime();
+      this.url = a.href;
     }
   }
 
@@ -403,7 +420,7 @@ export default class NativeAudio extends BaseSound {
 
   teardown() {
     let audio = this.requestControl();
-    this.trigger('_will_destroy', { sound: this});
+    this.trigger('_will_destroy', { sound: this });
     this._unregisterEvents(audio);
   }
 }

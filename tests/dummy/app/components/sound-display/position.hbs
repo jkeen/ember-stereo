@@ -1,17 +1,21 @@
 <div class='flex flex-col'>
   <div
     {{sound-position-slider @url}}
-    class='relative h-3 p-1 bg-gray-200 rounded
-      {{if
-        (and (not (sound-is-seekable @url)) (sound-is-playing @url))
-        'from-primary-lighter to-primary-darker via-gray-100 bg-gradient-to-r animate-gradient-x'
-      }}'
+    class='relative h-3 p-1 rounded bg-surface-2'
   >
+    <div
+      class='{{if
+          (and (not (sound-is-seekable @url)) (sound-is-playing @url))
+          'absolute inset-1 rounded-md shadow-inset from-accent-0 to-accent-2  bg-gradient-to-r animate-gradient-x animated'
+        }}'
+    >
+
+    </div>
     <div
       style={{html-safe
         (concat 'width: ' (sound-position @url format='percentage') '%')
       }}
-      class='h-full pointer-events-none rounded-xl bg-primary-lighter'
+      class='h-full transition-all pointer-events-none rounded-xl bg-accent-0'
     ></div>
   </div>
   <div class='flex justify-between mt-1 text-xs'>

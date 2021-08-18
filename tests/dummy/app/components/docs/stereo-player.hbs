@@ -1,70 +1,88 @@
-{{!-- BEGIN-SNIPPET stereo-player.hbs --}}
+{{! BEGIN-SNIPPET stereo-player.hbs }}
 
-<div class="stereo-player">
-  <div class="stereo-player-controls">
-    <button {{on 'click' (rewind-sound @url increment=5000)}}
+<div class='stereo-player'>
+  <div class='stereo-player-controls'>
+    <button
+      {{on 'click' (rewind-sound @url increment=5000)}}
       disabled={{not (sound-is-rewindable @url)}}
-      type="button"
-      class="stereo-button">
-      {{svg-jar "skip-backward-outline" height=20 width=30 title="Skip Backward"}}
+      type='button'
+      class='stereo-button'
+    >
+      {{svg-jar
+        'skip-backward-outline'
+        height=20
+        width=30
+        title='Skip Backward'
+      }}
     </button>
 
-    <button {{on 'click' (toggle-play-sound @url)}}
-      type="button"
-      class="stereo-button">
+    <button
+      {{on 'click' (toggle-play-sound @url)}}
+      type='button'
+      class='stereo-button'
+    >
       {{#if (sound-is-playing @url)}}
-        {{svg-jar "pause-outline" height=20 width=30 title="Pause"}}
+        {{svg-jar 'pause-outline' height=20 width=30 title='Pause'}}
       {{else if (sound-is-loaded @url)}}
-        {{svg-jar "resume-outline" height=20 width=30 title="Pause"}}
+        {{svg-jar 'resume-outline' height=20 width=30 title='Pause'}}
       {{else if (sound-is-loading @url)}}
-        {{svg-jar "loading-outline" height=20 width=30 title="Loading" class="icon-spin"}}
+        {{svg-jar
+          'loading-outline'
+          height=20
+          width=30
+          title='Loading'
+          class='animate-spin'
+        }}
       {{else}}
-        {{svg-jar "play-outline" height=20 width=30 title="Play"}}
+        {{svg-jar 'play-outline' height=20 width=30 title='Play'}}
       {{/if}}
     </button>
 
-    <button {{on 'click' (fastforward-sound @url increment=5000)}}
+    <button
+      {{on 'click' (fastforward-sound @url increment=5000)}}
       disabled={{not (sound-is-fastforwardable @url)}}
-      type="button"
-      class="stereo-button">
-      {{svg-jar "skip-forward-outline" height=20 width=30 title="Skip Forward"}}
+      type='button'
+      class='stereo-button'
+    >
+      {{svg-jar 'skip-forward-outline' height=20 width=30 title='Skip Forward'}}
     </button>
   </div>
 
-  <div class="stereo-player-position">
+  <div class='stereo-player-position'>
     {{sound-position @url format='time'}}
-    <Input {{on 'change' (seek-sound @url)}}
-      type="range"
-      class="flex-auto flex-shrink w-16 lg:w-1/6"
-      @value={{sound-position @url format='percentage' }}
-      disabled={{not (sound-is-seekable @url)}} />
+    <Input
+      {{on 'change' (seek-sound @url)}}
+      type='range'
+      class='flex-auto flex-shrink w-16 lg:w-1/6'
+      @value={{sound-position @url format='percentage'}}
+      disabled={{not (sound-is-seekable @url)}}
+    />
     {{sound-duration @url format='time'}}
   </div>
 
-
-  {{!-- this doesn't show on mobile --}}
-{{!-- BEGIN-SNIPPET stereo-volume-control.hbs --}}
-  <div class="stereo-player-volume">
-    <Input {{stereo-volume}}
-      type="range"
-      class="flex-auto flex-shrink w-16 lg:w-1/6"
+  {{! this doesn't show on mobile }}
+  {{! BEGIN-SNIPPET stereo-volume-control.hbs }}
+  <div class='stereo-player-volume'>
+    <Input
+      {{stereo-volume}}
+      type='range'
+      class='flex-auto flex-shrink w-16 lg:w-1/6'
     />
-    <button type="button" {{on 'click' (toggle-stereo-mute)}}>
+    <button type='button' {{on 'click' (toggle-stereo-mute)}}>
       {{#if (gt (stereo-volume) 0)}}
-        {{svg-jar "volume-low-outline" height=20 width=30}}
+        {{svg-jar 'volume-low-outline' height=20 width=30}}
       {{else}}
-        {{svg-jar "volume-mute-outline" height=20 width=30}}
+        {{svg-jar 'volume-mute-outline' height=20 width=30}}
       {{/if}}
     </button>
   </div>
-{{!-- END-SNIPPET --}}
+  {{! END-SNIPPET }}
 </div>
 
 {{#if (sound-is-errored @url)}}
-<div class="stereo-player-errors">
-  {{sound-error-details @url}}
-</div>
+  <div class='stereo-player-errors'>
+    {{sound-error-details @url}}
+  </div>
 {{/if}}
 
-
-{{!-- END-SNIPPET --}}
+{{! END-SNIPPET }}

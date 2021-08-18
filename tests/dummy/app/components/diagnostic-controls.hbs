@@ -16,14 +16,14 @@
     <div class='my-2'>
       <label
         for='url'
-        class='block text-base font-medium text-gray-700'
+        class='block text-base font-medium text-on-background'
       >URL</label>
 
       <div class='flex mt-1 rounded-md shadow-sm'>
         <div class='relative flex items-stretch flex-grow focus-within:z-10'>
           <Input
             id='url'
-            class='block w-full border-gray-300 rounded-none rounded-l-md focus:ring-primary focus:border-primary sm:text-sm'
+            class='block w-full rounded-none rounded-l-md sm:text-sm | border-on-surface-0 focus:ring-accent-0 focus:border-accent-0'
             @type='text'
             @value={{this.url}}
             placeholder='Enter a URL'
@@ -32,7 +32,7 @@
         <select
           id='preset'
           name='preset'
-          class='relative inline-flex items-center w-24 px-4 py-2 -ml-px text-sm font-medium text-gray-700 border border-gray-300 rounded-r-md bg-gray-50 hover:bg-gray-100 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary'
+          class='relative inline-flex items-center w-24 px-4 py-2 -ml-px text-sm font-medium border border-on-surface-0 rounded-r-md text-surface-2 bg-on-surface-3 hover:bg-on-surface-3 focus:outline-none focus:ring-1 focus:ring-accent-0 focus:border-accent-0'
           {{on 'input' this.onPresetChange}}
         >
           <option>Preset</option>
@@ -49,11 +49,11 @@
     <div class='my-2'>
       <label
         for='url'
-        class='block text-base font-medium text-gray-700'
+        class='block text-base font-medium text-on-surface'
       >Metadata</label>
       <Textarea
         id='metadata'
-        class='block w-full h-10 pr-12 border-gray-300 rounded-md focus:ring-primary focus:border-primary sm:text-sm'
+        class='block w-full h-10 pr-12 rounded-md border-on-surface-0 focus:ring-accent-0 focus:border-accent-0 sm:text-sm'
         placeholder=''
         @value={{this.metadata}}
       />
@@ -61,36 +61,47 @@
 
     <div class='my-2'>
       <label
-        class='block my-2 text-base font-medium text-gray-700'
+        class='block my-2 text-base font-medium text-on-surface'
       >Connections</label>
-      <div class='flex flex-row gap-2 px-1 my-1'>
-        <label>
-          <input
-            class='border-gray-300 text-primary focus:ring-primary'
-            type='radio'
-            name='strategy'
-            value='default'
-            checked={{eq this.connectionStrategy 'default'}}
-            {{on 'change' this.setConnectionStrategy}}
-          />
-          Automatic
-        </label>
 
-        <label>
-          <input
-            class='border-gray-300 text-primary focus:ring-primary'
-            type='radio'
-            name='strategy'
-            value='choose'
-            checked={{eq this.connectionStrategy 'choose'}}
-            {{on 'change' this.setConnectionStrategy}}
-          />
-          Choose
-        </label>
-      </div>
-      {{#if (eq this.connectionStrategy 'default')}}
+      {{#let (sound-is-loaded this.url) as |loaded|}}
+        <div class='flex flex-row gap-2 px-1 my-1 {{if loaded 'opacity-50'}}'>
+          <label>
+            <input
+              class='border-on-surface-0 text-accent-0 focus:ring-accent-0'
+              type='radio'
+              name='strategy'
+              disabled={{loaded}}
+              value='default'
+              checked={{eq this.connectionStrategy 'default'}}
+              {{on 'change' this.setConnectionStrategy}}
+            />
+            Automatic
+          </label>
+
+          <label>
+            <input
+              class='border-on-surface-0 text-accent-0 focus:ring-accent-0'
+              type='radio'
+              name='strategy'
+              disabled={{loaded}}
+              value='choose'
+              checked={{eq this.connectionStrategy 'choose'}}
+              {{on 'change' this.setConnectionStrategy}}
+            />
+            Choose
+          </label>
+        </div>
+      {{/let}}
+      {{#if
+        (or (eq this.connectionStrategy 'default') (sound-is-loaded this.url))
+      }}
         <StrategyBreakdown class='grid' @url={{this.url}} as |data|>
-          <li class='inline text-{{data.info.color}}'>
+          <li
+            class='inline
+              {{if (eq data.info.status 'failure') 'text-danger'}}
+              {{if (eq data.info.status 'success') 'text-success'}}'
+          >
             <span class='text-sm'>
               {{svg-jar
                 (concat 'connection-' data.info.status)
@@ -112,13 +123,7 @@
       {{/if}}
     </div>
 
-    {{#if (sound-is-errored this.url)}}
-      <div class='flex gap-1 p-3 text-red'>
-        <span>{{sound-error-details this.url}}</span>
-      </div>
-    {{/if}}
-
-    <div class='flex gap-2'>
+    <div class='flex items-center gap-2'>
       <button
         {{on
           'click'
@@ -128,7 +133,7 @@
             metadata=this.formattedMetadata
           )
         }}
-        class='ui-button with-icon'
+        class='inline-flex items-center px-3 py-2 border rounded-md shadow-sm disabled:opacity-50 disabled:pointer-events-none text-on-accent-0 bg-accent-0 hover:bg-accent-0-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent-0'
         type='button'
         disabled={{or (sound-is-loaded this.url) (not this.url)}}
       >
@@ -138,7 +143,7 @@
             width=20
             height=25
             title='Loading'
-            class='w-5 h-5 mr-3 -ml-1 icon-spin'
+            class='w-5 h-5 mr-3 -ml-1 animate-spin'
           }}
           Loading…
         {{else if (sound-is-loaded this.url)}}
@@ -169,7 +174,7 @@
             metadata=this.formattedMetadata
           )
         }}
-        class='ui-button with-icon'
+        class='inline-flex items-center px-3 py-2 border rounded-md shadow-sm disabled:opacity-50 disabled:pointer-events-none text-on-accent-0 bg-accent-0 hover:bg-accent-0-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent-0'
         type='button'
         disabled={{not this.url}}
       >
@@ -197,7 +202,7 @@
             width=20
             height=25
             title='Loading'
-            class='w-5 h-5 mr-3 -ml-1 icon-spin'
+            class='w-5 h-5 mr-3 -ml-1 animate-spin'
           }}
           Loading
         {{else}}
@@ -212,6 +217,12 @@
         {{/if}}
 
       </button>
+
+      {{#if (sound-is-errored this.url)}}
+        <div class='flex gap-1 p-3 text-danger'>
+          <span>{{sound-error-details this.url}}</span>
+        </div>
+      {{/if}}
 
     </div>
   </div>
