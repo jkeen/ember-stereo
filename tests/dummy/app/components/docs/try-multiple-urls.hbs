@@ -1,6 +1,6 @@
 <DocsDemo as |demo|>
   <demo.example @name='try-multiple-urls-via-service.hbs'>
-    <p>Trying multiple sounds with the service</p>
+    <p>Trying multiple urls with the service</p>
     <div>
       <button
         {{on 'click' (perform this.playTask)}}
@@ -18,7 +18,7 @@
     </div>
 
     {{#if this.error}}
-      <div class='text-danger text-sm px-1 py-2'>{{this.error}}</div>
+      <div class='px-1 py-2 text-sm text-danger'>{{this.error}}</div>
     {{/if}}
   </demo.example>
   {{demo.snippet 'try-multiple-urls-via-service.js'}}
@@ -27,7 +27,7 @@
 
 <DocsDemo as |demo|>
   <demo.example @name='try-multiple-urls.hbs'>
-    <p>Using template helpers to try multiple sounds</p>
+    <p>Using template helpers to try multiple urls</p>
     <div>
       {{#let
         (array
@@ -51,7 +51,7 @@
         </button>
 
         {{#if (sound-is-errored urls)}}
-          <div class='text-danger text-sm px-1 py-2'>{{sound-error-details
+          <div class='px-1 py-2 text-sm text-danger'>{{sound-error-details
               urls
             }}</div>
         {{/if}}
