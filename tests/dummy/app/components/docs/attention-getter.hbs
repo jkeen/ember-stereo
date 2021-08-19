@@ -5,7 +5,7 @@
     {{#let 'sounds/attention.wav' as |url|}}
       <button
         type='button'
-        {{on 'click' (play-sound url)}}
+        {{on 'click' (toggle-play-sound url)}}
         class='flex items-center gap-1'
       >
         {{#if (sound-is-playing url)}}

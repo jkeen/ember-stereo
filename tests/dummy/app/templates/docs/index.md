@@ -1,4 +1,6 @@
-### **`ember-stereo`** is an addon that makes it easy to handle all sorts of audio files in your ember octane app.
+### **`ember-stereo`**
+
+<span class="text-xl">is an addon that makes it easy to handle all sorts of audio files in your ember octane app.</span>
 
 {{docs/attention-getter}}
 
