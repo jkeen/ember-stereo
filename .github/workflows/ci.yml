@@ -162,7 +162,7 @@ jobs:
 
   deploy-app:
     name: Deploy app
-    needs: [lint, test-addon-floating, test-addon-locked, test-compatibility]
+    # needs: [lint, test-addon-floating, test-addon-locked, test-compatibility]
     runs-on: ubuntu-latest
     timeout-minutes: 7
     # Only run on pushes to the default branch
@@ -206,4 +206,14 @@ jobs:
         if: steps.cache-dependencies.outputs.cache-hit != 'true'
 
       - name: Deploy
-        run: yarn deploy
+        steps:
+          - uses: actions/checkout@v2
+          - uses: volta-cli/action@v1
+
+          - run: echo "ADDON_DOCS_VERSION_PATH=${GITHUB_REF##*/}" >> $GITHUB_ENV
+          - if: contains(github.ref , 'main') != true
+            run: echo "ADDON_DOCS_UPDATE_LATEST=true" >> $GITHUB_ENV
+          - run: yarn install
+          - env:
+              DEPLOY_KEY: ${{ secrets.DEPLOY_KEY }}
+            run: yarn ember deploy production --verbose --activate
