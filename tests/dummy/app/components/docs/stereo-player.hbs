@@ -2,36 +2,21 @@
 
 <div class='stereo-player'>
   <div class='stereo-player-controls'>
-    <button
-      {{on 'click' (rewind-sound @url increment=5000)}}
-      disabled={{not (sound-is-rewindable @url)}}
-      type='button'
-      class='stereo-button'
-    >
-      {{svg-jar
-        'skip-backward-outline'
-        height=20
-        width=30
-        title='Skip Backward'
-      }}
+    <button {{on 'click' (rewind-sound @identifier increment=5000)}}
+      disabled={{not (sound-is-rewindable @identifier)}} type='button' class='stereo-button'>
+      {{svg-jar 'skip-backward-outline' height=20 width=30 title='Skip Backward'}}
     </button>
 
     <button
-      {{on 'click' (toggle-play-sound @url)}}
+      {{on 'click' (toggle-play-sound @identifier)}}
       type='button'
       class='stereo-button'
     >
-      {{#if (sound-is-playing @url)}}
+      {{#if (sound-is-playing @identifier)}}
         {{svg-jar 'pause-outline' height=20 width=30 title='Pause'}}
-      {{else if (sound-is-loading @url)}}
-        {{svg-jar
-          'loading-outline'
-          height=20
-          width=30
-          title='Loading'
-          class='animate-spin'
-        }}
-      {{else if (sound-is-loaded @url)}}
+      {{else if (sound-is-loading @identifier)}}
+        {{svg-jar 'loading-outline' height=20 width=30 title='Loading' class='animate-spin'}}
+      {{else if (sound-is-loaded @identifier)}}
         {{svg-jar 'resume-outline' height=20 width=30 title='Pause'}}
       {{else}}
         {{svg-jar 'play-outline' height=20 width=30 title='Play'}}
@@ -39,29 +24,26 @@
     </button>
 
     <button
-      {{on 'click' (fastforward-sound @url increment=5000)}}
-      disabled={{not (sound-is-fastforwardable @url)}}
-      type='button'
-      class='stereo-button'
+      {{on 'click' (fastforward-sound @identifier increment=5000)}}
+      disabled={{not (sound-is-fastforwardable @identifier)}} type='button' class='stereo-button'
     >
       {{svg-jar 'skip-forward-outline' height=20 width=30 title='Skip Forward'}}
     </button>
   </div>
 
   <div class='stereo-player-position'>
-    {{sound-position @url format='time'}}
-    {{#if (sound-is-seekable @url)}}
+    {{sound-position @identifier format='time'}}
+    {{#if (sound-is-seekable @identifier)}}
       <Input
-        {{on 'change' (seek-sound @url)}}
-        type='range'
-        class='flex-auto flex-shrink w-16 lg:w-1/6'
-        @value={{sound-position @url format='percentage'}}
-        disabled={{not (sound-is-seekable @url)}}
+        type='range' class='flex-auto flex-shrink w-16 lg:w-1/6'
+        {{on 'change' (seek-sound @identifier)}}
+        @value={{sound-position @identifier format='percentage'}}
+        disabled={{not (sound-is-seekable @identifier)}}
       />
     {{else}}
       <div
         class='{{if
-            (sound-is-playing @url)
+            (sound-is-playing @identifier)
             'from-accent-0 to-accent-2 bg-gradient-to-r animate-gradient-x animated'
             'bg-on-surface-3'
           }}
@@ -69,16 +51,12 @@
       >
       </div>
     {{/if}}
-    {{sound-duration @url format='time'}}
+    {{sound-duration @identifier format='time'}}
   </div>
 
   {{! BEGIN-SNIPPET stereo-volume-control.hbs }}
   <div class='stereo-player-volume'>
-    <Input
-      {{stereo-volume}}
-      type='range'
-      class='flex-auto flex-shrink w-16 lg:w-1/6'
-    />
+    <Input {{stereo-volume}} type='range' class='flex-auto flex-shrink w-16 lg:w-1/6'/>
     <button type='button' {{on 'click' (toggle-stereo-mute)}}>
       {{#if (gt (stereo-volume) 0)}}
         {{svg-jar 'volume-low-outline' height=20 width=30}}
@@ -90,9 +68,9 @@
   {{! END-SNIPPET }}
 </div>
 
-{{#if (sound-is-errored @url)}}
+{{#if (sound-is-errored @identifier)}}
   <div class='stereo-player-errors'>
-    {{sound-error-details @url}}
+    {{sound-error-details @identifier}}
   </div>
 {{/if}}
 

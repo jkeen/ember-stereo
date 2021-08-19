@@ -356,14 +356,13 @@ export default class Stereo extends Service.extend(EmberEvented) {
     }
     else {
       try {
-
         var strategizer = new Strategizer(urlsToTry, options)
 
         if (strategizer.strategies.filter(s => s.canPlay).length == 0) {
           return this._handlePreloadError({ urlsToTry, options, strategies: strategizer.strategies })
         }
       } catch (e) {
-        return this._handlePreloadError({ urlsToTry, options, strategies: strategizer.strategies })
+        return this._handlePreloadError({ urlsToTry, options, strategies: (strategizer?.strategies || []) })
       }
 
       var success = false

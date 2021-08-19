@@ -1,0 +1,14 @@
+{{! template-lint-disable no-inline-styles }}
+
+<DocsDemo as |demo|>
+  <demo.example @name='play-button-no-status.hbs'>
+    <button
+      {{on 'click' (toggle-play-sound @identifier)}}
+      type='button'
+      class='ui-button'
+    >
+      Play/Pause
+    </button>
+  </demo.example>
+  {{demo.snippet 'play-button-no-status.hbs'}}
+</DocsDemo>

@@ -34,7 +34,7 @@ Read the [upgrade guide](https://jkeen.github.com/ember-stereo)
 <button
   type='button'
   class='button is-link'
-  {{on 'click' (play-sound @url)}}
+  {{on 'click' (play-sound @identifier)}}
 >Play</button>
 ```
 
@@ -44,7 +44,7 @@ Read the [upgrade guide](https://jkeen.github.com/ember-stereo)
 <button
   type='button'
   class='button is-link'
-  {{on 'click' (load-sound @url)}}
+  {{on 'click' (load-sound @identifier)}}
 >Play</button>
 ```
 
@@ -54,7 +54,7 @@ Read the [upgrade guide](https://jkeen.github.com/ember-stereo)
 <button
   type='button'
   class='button is-link'
-  {{on 'click' (pause-sound @url)}}
+  {{on 'click' (pause-sound @identifier)}}
 >Pause</button>
 ```
 
@@ -64,7 +64,7 @@ Read the [upgrade guide](https://jkeen.github.com/ember-stereo)
 <button
   type='button'
   class='button is-link'
-  {{on 'click' (stop-sound @url)}}
+  {{on 'click' (stop-sound @identifier)}}
 >Stop</button>
 ```
 
@@ -74,7 +74,7 @@ Read the [upgrade guide](https://jkeen.github.com/ember-stereo)
 <button
   type='button'
   class='button is-link'
-  {{on 'click' (fastforward-sound @url increment=5000)}}
+  {{on 'click' (fastforward-sound @identifier increment=5000)}}
 >Fast Forward</button>
 ```
 
@@ -84,7 +84,7 @@ Read the [upgrade guide](https://jkeen.github.com/ember-stereo)
 <button
   type='button'
   class='button is-link'
-  {{on 'click' (rewind-sound @url increment=5000)}}
+  {{on 'click' (rewind-sound @identifier increment=5000)}}
 >Rewind</button>
 ```
 
@@ -94,7 +94,7 @@ Read the [upgrade guide](https://jkeen.github.com/ember-stereo)
 <button
   type='button'
   class='button is-link'
-  {{on 'click' (seek-sound @url position=5000)}}
+  {{on 'click' (seek-sound @identifier position=5000)}}
 >Seek</button>
 ```
 
@@ -104,7 +104,7 @@ Read the [upgrade guide](https://jkeen.github.com/ember-stereo)
 <button
   type='button'
   class='button is-link'
-  {{on 'click' (toggle-play-sound @url)}}
+  {{on 'click' (toggle-play-sound @identifier)}}
 >Play/Pause</button>
 ```
 
@@ -113,19 +113,19 @@ Read the [upgrade guide](https://jkeen.github.com/ember-stereo)
 - `sound-is-errored`
 
 ```hbs
-{{#if (sound-is-errored @url)}}
-  {{sound-error-details @url}}
+{{#if (sound-is-errored @identifier)}}
+  {{sound-error-details @identifier}}
 {{/if}}
 ```
 
 - `sound-is-fastforwardable`
 
 ```hbs
-{{#if (sound-is-fastforwardable @url)}}
+{{#if (sound-is-fastforwardable @identifier)}}
   <button
     type='button'
     class='button is-link'
-    {{on 'click' (fastforward-sound @url increment=5000)}}
+    {{on 'click' (fastforward-sound @identifier increment=5000)}}
   >Fast Forward</button>
 {{/if}}
 ```
@@ -133,11 +133,11 @@ Read the [upgrade guide](https://jkeen.github.com/ember-stereo)
 - `sound-is-rewindable`
 
 ```hbs
-{{#if (sound-is-rewindable @url)}}
+{{#if (sound-is-rewindable @identifier)}}
   <button
     type='button'
     class='button is-link'
-    {{on 'click' (rewind-sound @url increment=5000)}}
+    {{on 'click' (rewind-sound @identifier increment=5000)}}
   >Fast Forward</button>
 {{/if}}
 ```
@@ -145,7 +145,7 @@ Read the [upgrade guide](https://jkeen.github.com/ember-stereo)
 - `sound-is-loaded`
 
 ```hbs
-{{#if (sound-is-loaded @url)}}
+{{#if (sound-is-loaded @identifier)}}
   sound is loaded and ready to play
 {{/if}}
 ```
@@ -153,7 +153,7 @@ Read the [upgrade guide](https://jkeen.github.com/ember-stereo)
 - `sound-is-loading`
 
 ```hbs
-{{#if (sound-is-loading @url)}}
+{{#if (sound-is-loading @identifier)}}
   [show loading spinner]
 {{/if}}
 ```
@@ -161,11 +161,11 @@ Read the [upgrade guide](https://jkeen.github.com/ember-stereo)
 - `sound-is-playing`
 
 ```hbs
-{{#if (sound-is-playing @url)}}
+{{#if (sound-is-playing @identifier)}}
   <button
     type='button'
     class='button is-link'
-    {{on 'click' (pause-sound @url)}}
+    {{on 'click' (pause-sound @identifier)}}
   >Pause</button>
 {{/if}}
 ```
@@ -173,7 +173,7 @@ Read the [upgrade guide](https://jkeen.github.com/ember-stereo)
 - `sound-is-rewindable`
 
 ```hbs
-{{#if (sound-is-rewindable @url)}}
+{{#if (sound-is-rewindable @identifier)}}
   Sound is rewindable
 {{/if}}
 ```
@@ -181,7 +181,7 @@ Read the [upgrade guide](https://jkeen.github.com/ember-stereo)
 - `sound-is-fastforwardable`
 
 ```hbs
-{{#if (sound-is-rewindable @url)}}
+{{#if (sound-is-rewindable @identifier)}}
   Sound is fastforwardable
 {{/if}}
 ```
@@ -189,7 +189,7 @@ Read the [upgrade guide](https://jkeen.github.com/ember-stereo)
 - `sound-is-seekable`
 
 ```hbs
-{{#if (sound-is-rewindable @url)}}
+{{#if (sound-is-rewindable @identifier)}}
   Sound is fastforwardable
 {{/if}}
 ```
@@ -197,7 +197,7 @@ Read the [upgrade guide](https://jkeen.github.com/ember-stereo)
 - `sound-is-blocked`
 
 ```hbs
-{{#if (sound-is-blocked @url)}}
+{{#if (sound-is-blocked @identifier)}}
   Browser has blocked auto play, needs user input
 {{/if}}
 ```
@@ -205,7 +205,7 @@ Read the [upgrade guide](https://jkeen.github.com/ember-stereo)
 - `autoplay-allowed`
 
 ```hbs
-{{#if (autoplay-allowed @url)}}
+{{#if (autoplay-allowed @identifier)}}
   Browser allows autoplaying of sounds
 {{/if}}
 ```
@@ -215,21 +215,21 @@ Read the [upgrade guide](https://jkeen.github.com/ember-stereo)
 - `sound-metadata`
 
 ```hbs
-{{sound-metadata @url}}
+{{sound-metadata @identifier}}
 ```
 
-- `sound-duration(@url, load=false, format=false)`
+- `sound-duration(@identifier, load=false, format=false)`
 
 ```hbs
-{{sound-duration @url load=true format=time}}
+{{sound-duration @identifier load=true format=time}}
 ```
 
-- `sound-position(@url, format=false defaultValue=0)`
+- `sound-position(@identifier, format=false defaultValue=0)`
 
 ```hbs
-{{sound-position @url format=percentage}}
+{{sound-position @identifier format=percentage}}
 #=> 12
-{{sound-position @url format=time}}
+{{sound-position @identifier format=time}}
 #=> 00:20
 ```
 
@@ -242,7 +242,7 @@ Read the [upgrade guide](https://jkeen.github.com/ember-stereo)
 - `find-loaded-sound`
 
 ```hbs
-{{find-loaded-sound @url}} #=> currently playing/paused sound
+{{find-loaded-sound @identifier}} #=> currently playing/paused sound
 ```
 
 #### Service API

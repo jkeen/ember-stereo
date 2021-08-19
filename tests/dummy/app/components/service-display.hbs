@@ -12,7 +12,7 @@
         <p class='font-lg'>
           {{sound-metadata (current-sound) key='title'}}
         </p>
-        <p class='text-xs text-on-surface'>
+        <p class='text-xs break-all text-on-surface'>
           {{get (current-sound) 'url'}}
         </p>
       </div>
@@ -34,7 +34,7 @@
   <DebugDetails @show={{this.showDebugInfo}} class='mt-4' as |d|>
     <d.Section @title='Events'>
       <:default>
-        <EventDisplay @service={{this.stereo}} />
+        <EventDisplay />
       </:default>
     </d.Section>
 

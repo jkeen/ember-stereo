@@ -1,17 +1,17 @@
 <button
   class='play-sound-button'
   type='button'
-  {{on 'click' (toggle-play-sound @url metadata=@metadata)}}
+  {{on 'click' (toggle-play-sound @identifier metadata=@metadata)}}
 >
   <div class='play-sound-button-bg'></div>
-  {{#if (sound-is-errored @url)}}
+  {{#if (sound-is-errored @identifier)}}
     {{svg-jar 'bomb-outline' class='stereo-icon' height='48' width='48'}}
-  {{else if (sound-is-playing @url)}}
+  {{else if (sound-is-playing @identifier)}}
     {{svg-jar 'pause-outline' class='stereo-icon' height='48' width='48'}}
     {{!-- {{else if (sound-is-playing-elsewhere @url)}}
         {{svg-jar "pause-outline" class="stereo-icon" height="48" width="48"}}
  --}}
-  {{else if (sound-is-loading @url)}}
+  {{else if (sound-is-loading @identifier)}}
     {{svg-jar
       'loading-outline'
       class='stereo-icon animate-spin'

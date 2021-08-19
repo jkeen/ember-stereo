@@ -2,7 +2,7 @@ import hasEqualUrls from 'ember-stereo/-private/utils/has-equal-urls';
 import { tracked } from '@glimmer/tracking';
 import { task, waitForProperty } from 'ember-concurrency';
 import { isEmpty } from '@ember/utils';
-
+import debug from 'debug';
 /**
 * This class lazy loads sounds based on identifiers
 *

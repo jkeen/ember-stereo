@@ -1,7 +1,10 @@
 <DocsDemo as |demo|>
-  <demo.example @name="stereo-player-example.hbs">
-    <Docs::StereoPlayer @url={{@url}} class="demo-sound-display"/>
+  <demo.example @name='stereo-player-example.hbs'>
+    <Docs::StereoPlayer
+      @identifier={{@identifier}}
+      class='demo-sound-display'
+    />
   </demo.example>
 
-  {{demo.snippet "stereo-player.hbs"}}
+  {{demo.snippet 'stereo-player.hbs'}}
 </DocsDemo>

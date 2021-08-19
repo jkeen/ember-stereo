@@ -1,28 +1,35 @@
 # Events
 
-You can monitor events on both the `stereo` service for when any sound emits an event, or on an individual sound for when that specific sound emits an event. For example, 
+You can monitor events on both the `stereo` service for when any sound emits an event, or on an individual sound for when that specific sound emits an event. For example,
 
 ```js
+// Log when any sound starts playing
+this.stereo.on('audio-played', ({ sound }) => {
+  console.log(`${sound.url} started playing`);
+});
 
-  // Log when any sound starts playing
-  this.stereo.on('audio-played', ({sound}) => {
-    console.log(`${sound.url} started playing`)
-  })
+let sound = await this.stereo.findLoaded(this.url);
+sound.on('audio-ended', ({ sound }) => {
+  this.sendEvent('finished-listening', { episodeId: sound.metadata.episodeId });
+});
 
-  let sound = await this.stereo.findLoaded(this.url);
-  sound.on('audio-ended', ({sound}) => {
-    this.sendEvent('finished-listening', {episodeId: sound.metadata.episodeId});
-  })
-
-  this.stereo.on('current-sound-interrupted', ({sound}) => {
-    this.sendEvent('quit-listening', {
-      episodeId: sound.metadata.episodeId, 
-      position: sound.position
-    });
-  })
+this.stereo.on('current-sound-interrupted', ({ sound }) => {
+  this.sendEvent('quit-listening', {
+    episodeId: sound.metadata.episodeId,
+    position: sound.position,
+  });
+});
 ```
 
+### Example
+
+Here's a long audio file, play around with it and see the events that are triggered below. Clicking on the event will put it in your javascript console.
+{{docs/stereo-player identifier="https://archive.org/download/KmartOctober1989/Kmart%20October%201989.ogg"}}
+
+{{docs/event-display url="https://archive.org/download/KmartOctober1989/Kmart%20October%201989.ogg"}}
+
 ### Triggered on both the sound and relayed through the stereo service
+
 - `audio-played` ({ sound }) - the sound started playing
 - `audio-paused` ({ sound }) - the sound was paused
 - `audio-ended` ({ sound }) - the sound finished playing
@@ -34,6 +41,7 @@ You can monitor events on both the `stereo` service for when any sound emits an 
 - `audio-position-changed` ({sound})
 
 ### Stereo service-only events
+
 - `current-sound-changed` ({sound, previousSound}) - triggered when the current sound changes. On initial play, previousSound will be undefined.
 - `current-sound-interrupted` ({sound, previousSound}) - triggered when a sound has been playing and a new one takes its place by being played, pausing the first one
 - `new-load-request` ({loadPromise, urlsOrPromise, options}) - triggered whenever `.load` or `.play` is called.

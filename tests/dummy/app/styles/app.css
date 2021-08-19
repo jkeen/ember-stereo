@@ -39,8 +39,6 @@ input[type='range']::-webkit-slider-thumb,
 input[type='range']::-moz-slider-thumb,
 input[type='range']::slider-thumb {
   @apply w-6 h-5 appearance-none rounded-xl cursor-move-x;
-
-  /* background-color: var(--range-color); */
 }
 
 input[type='range']::-webkit-range-track,

@@ -12,11 +12,7 @@ These are the helpers that start with a verb, and you'll use them to perform an 
 
 [`load-sound`](/docs/api/helpers/load-sound), [`play-sound`](/docs/api/helpers/play-sound), [`toggle-play-sound`](/docs/api/helpers/toggle-play-sound), [`seek-sound`](/docs/api/helpers/seek-sound), [`rewind-sound`](/docs/api/helpers/rewind-sound), [`fastforward-sound`](/docs/api/helpers/fastforward-sound), and [`stop-sound`](/docs/api/helpers/stop-sound) are all basically used like this:
 
-```hbs
-<button {{on 'click' (toggle-play-sound @url)}} type='button'>
-  Play/Pause
-</button>
-```
+{{docs/play-button-no-status identifier="/sounds/tic-tac-toe.m4a"}}
 
 ### Template Helpers
 
@@ -28,17 +24,7 @@ These are the helpers that generally start with `sound`, and you'll use them to 
 
 All these helpers take an identifier as an argument which can be a `url` string, an object with a `url` property, a loaded sound object, or even a promise that resolves to one of the previous items.
 
-```hbs
-<button {{on 'click' (toggle-play-sound @url)}} type='button'>
-  {{#if (sound-is-loading @url)}}
-    Loading…
-  {{else if (sound-is-playing @url)}}
-    Pause
-  {{else}}
-    Play
-  {{/if}}
-</button>
-```
+{{docs/play-button-with-status identifier="/sounds/tic-tac-toe.m4a"}}
 
 ### Modifiers
 

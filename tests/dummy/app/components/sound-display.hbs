@@ -36,7 +36,7 @@
     <div class='text-center'>
       {{or @title (sound-metadata this.url key='title')}}
     </div>
-    <div class='text-sm text-center opacity-50'>
+    <div class='text-sm text-center break-all opacity-50'>
       {{this.url}}
     </div>
   </div>
@@ -114,11 +114,9 @@
       <SoundProperties @url={{this.url}} />
     </d.Section>
 
-    {{#let (find-loaded-sound this.url) as |sound|}}
-      <d.Section @title='Events'>
-        <EventDisplay @sound={{sound}} />
-      </d.Section>
-    {{/let}}
+    <d.Section @title='Events'>
+      <EventDisplay @url={{this.url}} />
+    </d.Section>
   </DebugDetails>
 
   <button

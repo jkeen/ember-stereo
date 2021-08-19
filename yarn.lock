@@ -6736,7 +6736,7 @@ ember-cli-addon-docs@ember-learn/ember-cli-addon-docs:
     ember-cli-version-checker "^5.1.0"
     ember-code-snippet "^3.0.0"
     ember-composable-helpers "^4.4.1"
-    ember-concurrency "^2.0.0"
+    ember-concurrency "^2.1.2"
     ember-decorators "^6.1.1"
     ember-fetch "^8.0.2"
     ember-get-config "^0.3.0"
