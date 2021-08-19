@@ -10,10 +10,9 @@
         {{/if}}
       </button>
       {{#if (sound-is-errored url)}}
-        Errors:
-        <div class='px-1 py-2 text-sm text-danger'>{{sound-error-details
-            url
-          }}</div>
+
+        <div class='px-1 py-2 text-sm text-danger'>Errors:
+          {{sound-error-details url}}</div>
       {{/if}}
     {{/let}}
   </demo.example>

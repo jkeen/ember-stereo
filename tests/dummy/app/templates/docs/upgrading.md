@@ -1,6 +1,7 @@
 # Upgrading from Hifi
 
 If you're coming from [ember-hifi](http://github.com/nypublicradio/ember-hifi), welcome! A few things have changed and lots has improved
+
 ### Why upgrade?
 
 1. Handy template helpers make things ridiculously simpler!
@@ -10,15 +11,19 @@ If you're coming from [ember-hifi](http://github.com/nypublicradio/ember-hifi), 
 5. Better docs, better tests, better future!
 
 ### Upgrade your existing app
-  1. Find anything that says "hifi", "ember-hifi", or "emberHifi" and rename it "stereo", "ember-stereo", or "emberStereo", respectively. The hifi service is probably the one you'll have the most of, and maybe your environment config. 
-  2. Any event handlers that were expecting `(sound)` should now have a new signature and need to be changed to `({sound})`
-    e.g. 
+
+1. Find anything that says "hifi", "ember-hifi", or "emberHifi" and rename it "stereo", "ember-stereo", or "emberStereo", respectively. The hifi service is probably the one you'll have the most of, and maybe your environment config.
+2. Any event handlers that were expecting `(sound)` should now have a new signature and need to be changed to `({sound})`
+   e.g.
+
+
     ```js
     //BEFORE
-    this.hifi.on('event-name', (sound) => { /* handler */ }) 
-    
+    this.hifi.on('event-name', (sound) => { /* handler */ })
+
     //AFTER
     this.stereo.on('event-name', ({sound}) => { /* handler */ })
     ```
-  3. Whatever tricks you had implement to do in order to catch that uncatchable 'All Promises Failed' error in `hifi` you can remove them. `play` and `load` requests will now fail sanely. And if you don't want them to throw errors at all, instead returning the error as part of the response, you can pass `silenceErrors: true` as an option.
-  4. `this.stereo.connections` has been renamed to `this.stereo.connectionNames`. `this.stereo.connections` now returns the actual connection objects.
+
+3. Whatever tricks you had implement to do in order to catch that uncatchable 'All Promises Failed' error in `hifi` you can remove them. `play` and `load` requests will now fail sanely. And if you don't want them to throw errors at all, instead returning the error as part of the response, you can pass `silenceErrors: true` as an option.
+4. `this.stereo.connections` has been renamed to `this.stereo.connectionNames`. `this.stereo.connections` now returns the actual connection objects.

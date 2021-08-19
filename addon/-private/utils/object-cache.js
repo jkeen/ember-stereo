@@ -1,7 +1,7 @@
 import { tracked } from '@glimmer/tracking';
 
 /**
-* This class caches objects resolutions. You shouldn't have to interact with this class.
+* This class caches things based on a strings or objects. You shouldn't have to interact with this class.
 *
 * @class ObjectCache
 * @private

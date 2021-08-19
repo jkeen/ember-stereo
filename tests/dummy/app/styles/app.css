@@ -13,6 +13,9 @@ html {
 :root {
   --brand-primary: #00bcb8;
 }
+.docs-border-r {
+  border-right: 0;
+}
 
 /* .docs-bg-white,
 body > .ember-view {
@@ -58,7 +61,7 @@ input[type='range']::range-progress {
 }
 
 input[type='range']:disabled {
-  opacity: 0.2;
+  opacity: 0.6;
 }
 
 pre.htmlbars,

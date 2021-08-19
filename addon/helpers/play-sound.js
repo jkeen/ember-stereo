@@ -27,12 +27,12 @@ export default class PlaySound extends Helper {
   @service stereo;
 
   compute([urls], options = {}) {
-    prepareOptions(options)
+    options = prepareOptions(options)
     return async () => {
       try {
         let { sound } = await this.stereo.play(urls, options)
         return sound;
-      } catch(e) {
+      } catch (e) {
         return false;
       }
     };

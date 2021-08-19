@@ -24,6 +24,11 @@ export const STREAM_WITHOUT_EXTENSION = {
   url: 'https://stream.wqxr.org/wqxr',
 };
 
+export const THE_CURRENT_STREAM = {
+  title: "The Current Live Stream (aac)",
+  url: "https://current.stream.publicradio.org/kcmp.aac"
+}
+
 export const KOOP_STREAM = {
   title: "KOOP Live Stream (aac)",
   url: "https://streaming.koop.org/stream.aac"
@@ -64,10 +69,17 @@ export const HLS_FIXED_TEST = {
   url: 'https://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8'
 }
 
+export const KMART_SHOPPERS = {
+  title: 'Attention K-Mart Shoppers',
+  url: 'https://archive.org/download/KmartOctober1989/Kmart%20October%201989.ogg'
+}
+
 let testSounds = [
   KUT_STREAM,
   KOOP_STREAM,
+  THE_CURRENT_STREAM,
   OGG_WITH_CORS,
+  KMART_SHOPPERS,
   OGG_FILE,
   KUTX_STREAM,
   WNYC_HLS_STREAM,

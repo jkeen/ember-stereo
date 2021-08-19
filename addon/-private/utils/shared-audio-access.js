@@ -8,7 +8,7 @@ const log = debug('ember-stereo:shared-audio-access');
 
 /**
  * This class handles sharing a single audio element between multiple sounds.
- * A desktop browser can generally handle multiple <audio> elements, but mobile
+ * A desktop browser can generally handle multiple `audio` elements, but mobile
  * browsers require some extra consideration. Using a single element and switching
  * out the src allows us to play a piece of audio seamlessly without requiring
  * an extra click by the user to get around strict autoplay restrictions

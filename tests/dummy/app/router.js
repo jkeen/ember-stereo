@@ -6,11 +6,11 @@ export default class Router extends AddonDocsRouter {
   rootURL = config.rootURL;
 }
 
-Router.map(function() {
-  docsRoute(this, function() {
+Router.map(function () {
+  docsRoute(this, function () {
     /* Your docs routes go here */
     this.route('install')
-    this.route('configuration')
+    this.route('overview')
     this.route('upgrading')
 
     this.route('usage')
@@ -23,7 +23,7 @@ Router.map(function() {
     this.route('volume');
   });
 
-  this.route('diagnostic', function() {
+  this.route('diagnostic', function () {
     this.route('index')
     this.route('sync')
   });

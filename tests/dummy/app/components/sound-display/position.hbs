@@ -12,6 +12,7 @@
 
     </div>
     <div
+      data-position-percent={{sound-position @url format='percentage'}}
       style={{html-safe
         (concat 'width: ' (sound-position @url format='percentage') '%')
       }}

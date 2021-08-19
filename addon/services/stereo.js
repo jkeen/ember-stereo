@@ -623,9 +623,6 @@ export default class Stereo extends Service.extend(EmberEvented) {
 
   _handleLoadError({ /* urlsToTry */ failures, options, strategies }) {
     let errorMessage = this._errorMessageFromFailures(failures)
-    if (!this._shouldSilenceErrors(options)) {
-      throw new Error((errorMessage || 'stereo load error'), { failures });
-    }
 
     let url = null
     makeArray(failures).forEach(sound => {
@@ -634,6 +631,9 @@ export default class Stereo extends Service.extend(EmberEvented) {
     })
     this.trigger('audio-load-error', { sound: { url }, failures: failures, error: errorMessage })
 
+    if (!this._shouldSilenceErrors(options)) {
+      throw new Error((errorMessage || 'stereo load error'), { failures });
+    }
     return { failures, error: errorMessage }
   }
 

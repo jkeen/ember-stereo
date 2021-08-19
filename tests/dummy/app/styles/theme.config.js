@@ -65,6 +65,9 @@ const dark = new Theme()
     'on-danger': '#F9FAFA',
     'success': '#00BCB8',
     'on-success': '#F9FAFA',
+    'gray': palette.nord1,
+    'white': '#FFF',
+    'light-gray': palette.nord0,
     'current': 'currentColor',
   })
   .addCustomVariant('hover', (c) => new TinyColor(c).darken(5), ['accent-0'])

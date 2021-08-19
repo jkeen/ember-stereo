@@ -3,7 +3,7 @@
 }
 
 .stereo-player {
-  @apply container flex content-center gap-4 p-2 mx-auto border rounded place-items-center bg-background border-on-surface-0;
+  @apply container flex flex-col content-center gap-4 p-2 mx-auto border rounded sm:flex-row place-items-center bg-background border-on-surface-0;
 }
 
 .stereo-player-position {

@@ -6,12 +6,12 @@
       <button
         type='button'
         {{on 'click' (play-sound url)}}
-        class='inline-grid grid-flow-col gap-1 place-items-center'
+        class='flex items-center gap-1'
       >
         {{#if (sound-is-playing url)}}
-          <span>{{svg-jar 'pause-outline' height=16 width=16}}</span>
+          {{svg-jar 'pause-outline' height=16 width=16}}
         {{else}}
-          <span>{{svg-jar 'play-outline' width=16 height=16}}</span>
+          {{svg-jar 'play-outline' width=16 height=16}}
         {{/if}}
         Really, it's easy
       </button>
