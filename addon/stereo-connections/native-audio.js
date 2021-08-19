@@ -2,7 +2,7 @@ import { A } from '@ember/array';
 import { run } from '@ember/runloop';
 import BaseSound from 'ember-stereo/stereo-connections/base';
 import Ember from 'ember';
-import { task } from 'ember-concurrency';
+import { task, didCancel } from 'ember-concurrency';
 import SharedAudioAccess from 'ember-stereo/-private/utils/shared-audio-access';
 // These are the events we're watching for
 const AUDIO_EVENTS = ['loadstart', 'durationchange', 'loadedmetadata', 'loadeddata', 'progress', 'canplay', 'canplaythrough', 'error', 'playing', 'pause', 'ended', 'emptied', 'timeupdate'];
@@ -119,16 +119,20 @@ export default class NativeAudio extends BaseSound {
     // if we don't have control, return the internal cloned element
 
     let sharedAudioAccess = this.sharedAudioAccess;
-
     if (sharedAudioAccess && sharedAudioAccess.hasControl(this)) {
       return sharedAudioAccess.audioElement;
     }
-    else {
-      let audioElement = (this._audioElement || SharedAudioAccess.createElement());
-      this._audioElement = audioElement;
 
-      return audioElement;
+    return this.internalElement;
+  }
+
+  get internalElement() {
+    if (!this._internalElement) {
+      this._internalElement = document.createElement('audio');
+      this._internalElement.setAttribute('preload', 'auto');
     }
+
+    return this._internalElement;
   }
 
   releaseControl() {
@@ -148,20 +152,18 @@ export default class NativeAudio extends BaseSound {
 
   _saveState(audio) {
     this.debug('Saving audio state');
-    let shadowAudio = document.createElement('audio');
-    this._audioElement = shadowAudio;
-    shadowAudio.preload = 'none';
-    shadowAudio.src = audio.src;
+
+    this.internalElement.src = audio.src;
 
     try {
-      shadowAudio.currentTime = audio.currentTime;
+      this.internalElement.currentTime = audio.currentTime;
     }
     catch (e) {
       this.debug('Errored while trying to save audio current time');
       this.debug(e);
     }
 
-    shadowAudio.volume = audio.volume;
+    this.internalElement.volume = audio.volume;
     this.debug('Saved audio state');
   }
 
@@ -175,7 +177,7 @@ export default class NativeAudio extends BaseSound {
 
   restoreState() {
     let sharedElement = this.audioElement;
-    let internalElement = this._audioElement;
+    let internalElement = this.internalElement;
 
     if (this.sharedAudioAccess && internalElement) {
       this.debug('Restoring audio state…');
@@ -306,7 +308,7 @@ export default class NativeAudio extends BaseSound {
 
   _currentPosition() {
     let audio = this.audioElement;
-    return audio.currentTime * 1000;
+    return audio?.currentTime * 1000;
   }
 
   _setPosition(position) {
@@ -340,14 +342,18 @@ export default class NativeAudio extends BaseSound {
     this.debug('telling audio to play');
     try {
       yield audio.play().catch(e => {
-        if (retryCount < 2) {
-          this.playTask.perform({ position, retryCount: retryCount + 1 }).catch()
-        }
-        this._onAudioError(e)
-      });
+        throw e;
+      })
     } catch (e) {
       if (retryCount < 2) {
-        this.playTask.perform({ position, retryCount: retryCount + 1 }).catch()
+        try {
+          this.playTask.perform({ position, retryCount: retryCount + 1 })
+        }
+        catch (e) {
+          if (!didCancel(e)) {
+            throw e;
+          }
+        }
       }
       this._onAudioError(e)
     } finally {
@@ -356,7 +362,13 @@ export default class NativeAudio extends BaseSound {
   }
 
   play({ position } = {}) {
-    return this.playTask.perform({ position });
+    try {
+      return this.playTask.perform({ position });
+    } catch (e) {
+      if (!didCancel(e)) {
+        throw e;
+      }
+    }
   }
 
   pause() {

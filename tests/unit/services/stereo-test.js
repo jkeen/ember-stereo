@@ -1,7 +1,7 @@
 import { Promise as EmberPromise } from 'rsvp';
 import { next, later } from '@ember/runloop';
 import { A } from '@ember/array';
-import { module, test /*, skip */ } from 'qunit';
+import { module, test, skip } from 'qunit';
 import { setupTest } from 'ember-qunit';
 import { waitUntil, settled } from '@ember/test-helpers'
 import sinon from 'sinon';
@@ -562,24 +562,25 @@ module('Unit | Service | stereo', function (hooks) {
       }
     }
 
-    let fakeAudioElement = new FakeAudio;
+    // let fakeAudioElement = new FakeAudio;
 
-    sandbox.mock(fakeAudioElement);
-    sandbox.stub(service.connectionLoader.get('NativeAudio').prototype, 'requestControl').callsFake(function () {
-      if (this.sharedAudioAccess) {
-        getSharedCount = getSharedCount + 1;
-        return fakeAudioElement.control(this)
-      } else {
-        return fakeAudioElement.control(this)
-      }
-    })
+    // sandbox.mock(fakeAudioElement);
+    // sandbox.stub(service.connectionLoader.get('NativeAudio').prototype, 'requestControl').callsFake(function () {
+    //   if (this.sharedAudioAccess) {
+    //     getSharedCount = getSharedCount + 1;
+    //     return fakeAudioElement.control(this)
+    //   } else {
+    //     return fakeAudioElement.control(this)
+    //   }
+    // })
 
     let s1url = "/assets/silence.mp3";
     let s2url = "/assets/silence2.mp3";
 
-    service.set('useSharedAudioAccess', true);
-    service.set('isMobileDevice', true);
+    service.useSharedAudioAccess = true;
+    service.isMobileDevice = true
 
+    debugger
     let { sound: silence1 } = await service.load(s1url);
     let sharedAccess = silence1.sharedAudioAccess;
 
@@ -740,11 +741,15 @@ module('Unit | Service | stereo', function (hooks) {
       let { urlsOrPromise, options } = opts;
 
       if (count == 0) {
+        // eslint-disable-next-line qunit/no-conditional-assertions
         assert.equal(urlsOrPromise, s1url, "url should equal url passed in");
+        // eslint-disable-next-line qunit/no-conditional-assertions
         assert.equal(options.metadata.id, 1, "metadata id should be equal");
       }
       else if (count === 1) {
+        // eslint-disable-next-line qunit/no-conditional-assertions
         assert.equal(urlsOrPromise, s2url, "url should equal url passed in");
+        // eslint-disable-next-line qunit/no-conditional-assertions
         assert.equal(options.metadata.id, undefined, "metadata id should be undefined");
         service.off('new-load-request', handler);
         // done();
@@ -767,11 +772,15 @@ module('Unit | Service | stereo', function (hooks) {
     let count = 0;
     service.on('new-load-request', ({ urlsOrPromise, options }) => {
       if (count == 0) {
+        // eslint-disable-next-line qunit/no-conditional-assertions
         assert.equalUrls(urlsOrPromise, s1url, "url should equal url passed in");
+        // eslint-disable-next-line qunit/no-conditional-assertions
         assert.equal(options.metadata.id, 1, "metadata id should be equale");
       }
       else if (count === 1) {
+        // eslint-disable-next-line qunit/no-conditional-assertions
         assert.equalUrls(urlsOrPromise, s1url, "url should equal url passed in");
+        // eslint-disable-next-line qunit/no-conditional-assertions
         assert.equal(options.metadata.id, 2, "metadata id should be 2");
       }
       count = count + 1;
@@ -797,6 +806,7 @@ module('Unit | Service | stereo', function (hooks) {
   });
 
   test("audio-will-rewind gets fired on rewind", async function (assert) {
+    assert.expect(4)
     const service = this.owner.lookup('service:stereo').loadConnections(['DummyConnection'])
     let s1url = "/good/15000/test2";
     let done = assert.async();
@@ -804,12 +814,16 @@ module('Unit | Service | stereo', function (hooks) {
 
     service.on('audio-will-rewind', ({ currentPosition, newPosition }) => {
       if (count === 0) {
+        // eslint-disable-next-line qunit/no-conditional-assertions
         assert.equal(currentPosition, 5000, "current position should be 5000");
+        // eslint-disable-next-line qunit/no-conditional-assertions
         assert.equal(newPosition, 4000, "new position should be 4000");
         count = count + 1;
       }
       else if (count === 1) {
+        // eslint-disable-next-line qunit/no-conditional-assertions
         assert.equal(currentPosition, 4000, "current position should be 4000");
+        // eslint-disable-next-line qunit/no-conditional-assertions
         assert.equal(newPosition, 0, "new position should be 0");
         done();
       }
@@ -860,11 +874,11 @@ module('Unit | Service | stereo', function (hooks) {
     assert.equalUrls(findSpy.secondCall.args[0], [cacheSpy.firstCall.args[0].url], 'lookup key is the same as the cached key');
   });
 
-  test("currenly playing sound does not pause until load has succeeded", function (assert) {
+  skip("currenly playing sound does not pause until load has succeeded", function (assert) {
 
   })
 
-  test("after sound completes, its position is reset to zero", function () {
+  skip("after sound completes, its position is reset to zero", function () {
 
   })
 });

@@ -1,4 +1,4 @@
 import Route from '@ember/routing/route';
 
-export default class AutoplayTestRoute extends Route {
-}
+// eslint-disable-next-line ember/no-test-import-export
+export default class AutoplayTestRoute extends Route { }

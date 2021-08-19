@@ -1,18 +1,18 @@
 import { A } from '@ember/array';
 import { setupTest } from 'ember-qunit';
 import sinon from 'sinon';
-import { module, test } from 'qunit';
+import { module, test, skip } from 'qunit';
 import HLSConnection from 'ember-stereo/stereo-connections/hls';
 import { setupHLSSpies, throwMediaError } from '../../helpers/hls-test-helpers';
 
 let sandbox;
 const goodUrl = "http://example.org/good.m3u8";
-const badUrl  = "http://example.org/bad.m3u8";
+const badUrl = "http://example.org/bad.m3u8";
 
-module('Unit | Connection | HLS', function(hooks) {
+module('Unit | Connection | HLS', function (hooks) {
   setupTest(hooks);
 
-  hooks.beforeEach(function() {
+  hooks.beforeEach(function () {
     sandbox = sinon.createSandbox({
       useFakeServer: true
     });
@@ -26,11 +26,11 @@ module('Unit | Connection | HLS', function(hooks) {
     });
   });
 
-  hooks.afterEach(function() {
+  hooks.afterEach(function () {
     sandbox.restore();
   });
 
-  test("HLS connection should say it can play files with m3u8 extension", function(assert) {
+  test("HLS connection should say it can play files with m3u8 extension", function (assert) {
     let goodUrls = A([
       "http://example.org/test.m3u8",
       "http://example.org/test.m3u8?query_params",
@@ -54,15 +54,15 @@ module('Unit | Connection | HLS', function(hooks) {
     });
   });
 
-  test("HLS connection should report playability of file objects", function(assert) {
+  test("HLS connection should report playability of file objects", function (assert) {
     let goodFiles = A([
-      {url: "http://example.org/test.m3u8", mimeType: "application/vnd.apple.mpegurl"},
+      { url: "http://example.org/test.m3u8", mimeType: "application/vnd.apple.mpegurl" },
     ]);
 
     let badFiles = A([
-      {url: "http://example.org/test.mp3", mimeType: "audio/mpeg"},
-      {url: "http://example.org/test.aac", mimeType: "audio/aac"},
-      {url: "http://example.org/test.wav", mimeType: "audio/wav"}
+      { url: "http://example.org/test.mp3", mimeType: "audio/mpeg" },
+      { url: "http://example.org/test.aac", mimeType: "audio/aac" },
+      { url: "http://example.org/test.wav", mimeType: "audio/wav" }
     ]);
 
     assert.expect(badFiles.length + goodFiles.length);
@@ -76,8 +76,8 @@ module('Unit | Connection | HLS', function(hooks) {
     });
   });
 
-  test("On first media error stream will attempt a retry", function(assert) {
-    let sound = new HLSConnection({url: goodUrl, timeout: false});
+  test("On first media error stream will attempt a retry", function (assert) {
+    let sound = new HLSConnection({ url: goodUrl, timeout: false });
 
     let {
       destroySpy, switchSpy, recoverSpy
@@ -90,9 +90,11 @@ module('Unit | Connection | HLS', function(hooks) {
     assert.equal(destroySpy.callCount, 0, "should not destroy");
   });
 
-  test("On second media error stream will try switching codecs", function(assert) {
-    let sound = new (this.owner.factoryFor('ember-stereo@stereo-connection:hls', {}).class)({url: goodUrl,
-      timeout: false})
+  test("On second media error stream will try switching codecs", function (assert) {
+    let sound = new (this.owner.factoryFor('ember-stereo@stereo-connection:hls', {}).class)({
+      url: goodUrl,
+      timeout: false
+    })
 
     let {
       destroySpy, switchSpy, recoverSpy
@@ -106,15 +108,15 @@ module('Unit | Connection | HLS', function(hooks) {
     assert.equal(destroySpy.callCount, 0, "should not destroy");
   });
 
-  test("On third media error we will give up", function(assert) {
+  test("On third media error we will give up", function (assert) {
     let done = assert.async();
     let sound = new (this.owner.factoryFor('ember-stereo@stereo-connection:hls', {}).class)({
       url: goodUrl,
       timeout: false
     })
-    let loadErrorFired  = false;
+    let loadErrorFired = false;
 
-    sound.on('audio-load-error', function() {
+    sound.on('audio-load-error', function () {
       loadErrorFired = true;
       done();
     });
@@ -133,7 +135,7 @@ module('Unit | Connection | HLS', function(hooks) {
     assert.ok(loadErrorFired, "should have triggered audio load error");
   });
 
-  test("If we 404, we give up", function(assert) {
+  test("If we 404, we give up", function (assert) {
     assert.expect(2);
     let done = assert.async();
 
@@ -143,7 +145,7 @@ module('Unit | Connection | HLS', function(hooks) {
       timeout: 1
     })
 
-    sound.one('audio-load-error', function() {
+    sound.one('audio-load-error', function () {
       assert.ok(true, "should have triggered audio load error");
       done();
     });
@@ -151,10 +153,10 @@ module('Unit | Connection | HLS', function(hooks) {
     assert.ok(sound);
   });
 
-  // test('it surfaces currentTime if EXT-PROGRAM-DATE-TIME is present')
+  skip('it surfaces currentTime if EXT-PROGRAM-DATE-TIME is present')
 
-  // test('it reads HLS comments as id3metadata.title')
+  skip('it reads HLS comments as id3metadata.title')
 
-  // test('it keeps current time if pausing and restarting the stream multiple times')
+  skip('it keeps current time if pausing and restarting the stream multiple times')
 
 });

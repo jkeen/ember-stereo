@@ -63,14 +63,24 @@
           </button>
         </:button>
         <:default>
-          {{#if this.usingSingleAudioElement}}
-            <p>One audio element shared between many sounds</p>
-          {{/if}}
           <div
-            class='p-2 text-xs border rounded-md border-surface-0 bg-surface-3'
+            class='p-2 text-xs border rounded-md bg-surface-3
+              {{if
+                this.hasControlOfAudioElement
+                'border-accent-1'
+                'border-surface-0'
+              }}'
           >
             {{sound.audioElement.outerHTML}}
           </div>
+          {{#if this.usingSingleAudioElement}}
+            {{#if this.hasControlOfAudioElement}}
+              <p class='text-xs'>This sound has control of the element right now</p>
+            {{else}}
+              <p class='text-xs'>This sound is not in control of the element now</p>
+            {{/if}}
+
+          {{/if}}
         </:default>
       </d.Section>
     {{/let}}

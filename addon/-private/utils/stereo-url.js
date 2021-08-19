@@ -16,7 +16,6 @@ export default class StereoUrl {
 
       this.input = input;
 
-      // assert("StereoUrl can not take a thennable as an input", input.then)
       if (input.url) {
         this.el.href = input.url
       }

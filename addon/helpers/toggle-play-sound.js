@@ -1,5 +1,4 @@
 import StereoBaseActionHelper from 'ember-stereo/-private/helpers/action-helper';
-import prepareOptions from '../-private/utils/prepare-options';
 
 /**
   A helper to toggle play/pause a sound

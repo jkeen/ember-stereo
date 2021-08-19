@@ -4,25 +4,25 @@ import sinon from 'sinon';
 
 let audioElement = document.createElement('audio');
 
-module('Unit | Utility | shared audio element', function(hooks) {
+module('Unit | Utility | shared audio element', function (hooks) {
   let sharedAudioAccess;
-  hooks.beforeEach(function() {
+  hooks.beforeEach(function () {
     sharedAudioAccess = new SharedAudioAccess();
     sinon.stub(SharedAudioAccess, 'createElement').returns(audioElement);
   });
 
-  hooks.afterEach(function() {
+  hooks.afterEach(function () {
     SharedAudioAccess.createElement.restore();
   });
 
-  test('it works', function(assert) {
+  test('it works', function (assert) {
     let result = sharedAudioAccess.unlock();
     assert.ok(result);
   });
 
-  test('restricts access to the audio element', function(assert) {
-    let foo = { debug: function() {} };
-    let bar = { debug: function() {} };
+  test('restricts access to the audio element', function (assert) {
+    let foo = { debug: function () { } };
+    let bar = { debug: function () { } };
     sharedAudioAccess.unlock();
     sharedAudioAccess.requestControl(foo);
 
@@ -34,14 +34,14 @@ module('Unit | Utility | shared audio element', function(hooks) {
     assert.ok(sharedAudioAccess.hasControl(bar), 'bar now can have access');
   });
 
-  test('only plays blank element when asked to', function(assert) {
+  test('only plays blank element when asked to', function (assert) {
     let playSpy = sinon.spy(audioElement, 'play');
     sharedAudioAccess.unlock();
     assert.equal(playSpy.callCount, 0, "play spy hasn't been called");
     audioElement.play.restore();
   });
 
-  test('only plays blank element when asked to', function(assert) {
+  test('only plays blank element when asked to while unlocking', function (assert) {
     let playSpy = sinon.spy(audioElement, 'play');
     sharedAudioAccess.unlock(true);
 

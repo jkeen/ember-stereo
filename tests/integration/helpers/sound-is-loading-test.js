@@ -3,13 +3,14 @@ import { setupRenderingTest } from 'ember-qunit';
 import { render, waitUntil } from '@ember/test-helpers';
 import { hbs } from 'ember-cli-htmlbars';
 
-module('Integration | Helper | sound-is-loading', function(hooks) {
+module('Integration | Helper | sound-is-loading', function (hooks) {
   setupRenderingTest(hooks);
 
-  test('it renders loading status', async function(assert) {
+  test('it renders loading status', async function (assert) {
+    assert.expect(3)
     let done = assert.async();
     let service = this.owner.lookup('service:stereo')
-    service.loadConnections([{name: 'DummyConnection'}]);
+    service.loadConnections([{ name: 'DummyConnection' }]);
     this.set('url', '/good/3/silence.mp3')
 
     await render(hbs`{{#if (sound-is-loading this.url)}}sound-is-loading{{else}}is-not-loading{{/if}}`);
@@ -28,10 +29,12 @@ module('Integration | Helper | sound-is-loading', function(hooks) {
     assert.equal(this.element.textContent.trim(), 'sound-is-loading', 'helper reports not loading when finished');
   });
 
-  test('it renders loading status when url is a function', async function(assert) {
+  test('it renders loading status when url is a function', async function (assert) {
+    assert.expect(3)
+
     let done = assert.async();
     let service = this.owner.lookup('service:stereo')
-    service.loadConnections([{name: 'DummyConnection'}]);
+    service.loadConnections([{ name: 'DummyConnection' }]);
 
     this.set('url', '/good/3/silence.mp3')
     this.set('urlPromise', new Promise((resolve) => setTimeout(() => resolve([this.url]), 300)))
@@ -54,10 +57,12 @@ module('Integration | Helper | sound-is-loading', function(hooks) {
     assert.equal(this.element.textContent.trim(), 'sound-is-loading', 'helper reports not loading when finished');
   });
 
-  test('it renders loading status when url is a promise', async function(assert) {
+  test('it renders loading status when url is a promise', async function (assert) {
+    assert.expect(3)
+
     let done = assert.async();
     let service = this.owner.lookup('service:stereo')
-    service.loadConnections([{name: 'DummyConnection'}]);
+    service.loadConnections([{ name: 'DummyConnection' }]);
 
     this.set('url', '/good/3/silence.mp3')
     this.set('urlPromise', new Promise((resolve) => setTimeout(() => resolve(this.url), 100)))
@@ -80,6 +85,8 @@ module('Integration | Helper | sound-is-loading', function(hooks) {
   });
 
   test('it renders system loading status', async function (assert) {
+    assert.expect(3)
+
     let done = assert.async();
     let service = this.owner.lookup('service:stereo')
     service.loadConnections([{ name: 'DummyConnection' }]);
@@ -102,6 +109,8 @@ module('Integration | Helper | sound-is-loading', function(hooks) {
   });
 
   test('it renders loading status when url is an array', async function (assert) {
+    assert.expect(3)
+
     let done = assert.async();
     let service = this.owner.lookup('service:stereo')
     service.loadConnections([{ name: 'DummyConnection' }]);

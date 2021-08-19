@@ -1,5 +1,4 @@
 import Component from "@glimmer/component";
-import { htmlSafe } from "@ember/string";
 import { throttle, next } from "@ember/runloop";
 import { inject as service } from "@ember/service";
 import { action } from "@ember/object";

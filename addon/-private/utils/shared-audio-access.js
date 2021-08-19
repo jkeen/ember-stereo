@@ -1,5 +1,6 @@
 import debug from 'debug';
 const log = debug('ember-stereo:shared-audio-access');
+import { tracked } from '@glimmer/tracking';
 
 /***
 * @class SharedAudioAccess
@@ -19,8 +20,8 @@ const log = debug('ember-stereo:shared-audio-access');
 
 export default class SharedAudioAccess {
 
-  audioElement;
-  owner;
+  @tracked audioElement;
+  @tracked owner;
 
   debug(message) {
     log(message);

@@ -121,6 +121,6 @@ export default class SoundPositionSliderModifier extends Modifier {
         this.element.removeEventListener('tap', this.handleTap, true);
         this.element.removeEventListener('mousedown', this.handleTap, true);
       }
-    } catch (e) { }
+    } catch (e) { /* geez, relax */ }
   }
 }

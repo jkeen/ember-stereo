@@ -30,6 +30,14 @@ export default class SoundDisplay extends Component {
     }
   }
 
+  get usingSingleAudioElement() {
+    return this.stereo.useSharedAudioAccess
+  }
+
+  get hasControlOfAudioElement() {
+    return this.usingSingleAudioElement && this.loadedSound && this.loadedSound.sharedAudioAccess.hasControl(this.loadedSound)
+  }
+
   get allConnections() {
     return this.stereo.connectionLoader.connections
   }

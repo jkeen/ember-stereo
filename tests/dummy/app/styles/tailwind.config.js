@@ -1,13 +1,12 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable no-undef */
+
 const colors = require('tailwindcss/colors');
 const path = require('path');
 
 module.exports = {
   // mode: 'jit',
-  // purge: [
-  //   '../../app/**/*.{hbs}',
-  // ],
   purge: ["./../app/**/*.{hbs}"],
-
   theme: {
     extend: {
       cursor: {
@@ -49,31 +48,12 @@ module.exports = {
             'background-position': 'right center'
           }
         }
-      },
-      // colors: {
-      //   transparent: 'transparent',
-      //   current: 'currentColor',
-      //   gray: colors.blueGray,
-      //   red: {
-      //     DEFAULT: 'rgb(230, 59, 59)'
-      //   },
-      //   blue: colors.sky,
-      //   yellow: colors.amber,
-      //   primary: {
-      //     lighter: '#00DCB8',
-      //     DEFAULT: '#02bd9e',
-      //     darker: '#029179'
-      //   }
-      // }
+      }
     },
     fill: {
       transparent: 'transparent'
     }
   },
-  // variants: {
-  //   textColor: ["hover", "dark", "light"],
-  //   backgroundColor: ["hover", "dark", "light"]
-  // },
 
   variants: {
     extend: {
@@ -84,7 +64,6 @@ module.exports = {
     require('@tailwindcss/forms')(),
     require('tailwindcss-theming')({
       themes: path.join('tests', 'dummy', 'app', 'styles', 'theme.config.js'),
-      // preset: 'nord',
     })
   ],
 };

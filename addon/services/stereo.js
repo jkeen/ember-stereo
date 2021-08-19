@@ -356,6 +356,7 @@ export default class Stereo extends Service.extend(EmberEvented) {
     }
     else {
       try {
+
         var strategizer = new Strategizer(urlsToTry, options)
 
         if (strategizer.strategies.filter(s => s.canPlay).length == 0) {
@@ -370,7 +371,9 @@ export default class Stereo extends Service.extend(EmberEvented) {
 
       for (let strategy of strategizer.strategies) {
         if (strategy.canPlay) { // worth trying
-          let result = yield this.tryLoadingSound.perform(strategy);
+          let result = yield this.tryLoadingSound.perform(strategy).catch(e => {
+            strategy.error = e
+          });
           if (result.error) {
             strategy.error = result.error
             failures.push(strategy);
@@ -385,6 +388,7 @@ export default class Stereo extends Service.extend(EmberEvented) {
       }
 
       if (success && sound) {
+        // eslint-disable-next-line ember-concurrency/no-perform-without-catch
         this.handleCurrentSoundTransition.perform(sound)
 
         sound.metadata = options.metadata // set current sound metadata
@@ -459,6 +463,7 @@ export default class Stereo extends Service.extend(EmberEvented) {
   @task({ maxConcurrency: 3, restartable: true })
   *playTask(urlsOrPromise, options = {}) {
     options = assign({ metadata: {} }, options);
+
     let loadPromise = this.loadTask.perform(urlsOrPromise, options);
     this.trigger('new-load-request', { loadPromise, urlsOrPromise, options }); //urls: Promise.resolve(resolveUrls(urlsOrPromise))
     let { sound, failures } = yield loadPromise;

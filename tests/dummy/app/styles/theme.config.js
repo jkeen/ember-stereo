@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable no-undef */
 
 const { ThemeManager, Theme } = require('tailwindcss-theming/api');
 const { TinyColor } = require('@ctrl/tinycolor')

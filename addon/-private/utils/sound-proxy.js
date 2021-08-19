@@ -17,7 +17,9 @@ export default class SoundProxy {
   constructor(identifier, stereo) {
     this.stereo = stereo;
 
-    this.resolveUrl.perform(identifier);
+    this.resolveUrl.perform(identifier).catch(e => {
+      throw e; // this feels real
+    });
     this.stereo.on('loadTask:started', this.onStart.bind(this))
     this.stereo.on('loadTask:errored', this.onFinish.bind(this))
     this.stereo.on('loadTask:succeeded', this.onFinish.bind(this))
@@ -34,7 +36,7 @@ export default class SoundProxy {
         callback(this.value)
       }).catch()
     } catch (e) {
-
+      // no-op
     }
   }
 

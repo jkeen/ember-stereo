@@ -17,6 +17,7 @@ module.exports = {
   ],
   env: {
     browser: true,
+    node: true,
   },
   rules: {
     "ember/no-new-mixins": "warn",

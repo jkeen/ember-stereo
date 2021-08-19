@@ -20,13 +20,13 @@ export default class DummyConnection extends BaseSound {
     let { result, error } = this.getInfoFromUrl();
     if (result === 'bad') {
       next(() => {
-        this.trigger('audio-load-error', {sound: this, error: (error || 'failed to load')});
+        this.trigger('audio-load-error', { sound: this, error: (error || 'failed to load') });
       });
     }
     else {
       next(() => {
-        this.trigger('audio-loaded', {sound: this});
-        this.trigger('audio-ready', {sound: this});
+        this.trigger('audio-loaded', { sound: this });
+        this.trigger('audio-ready', { sound: this });
       });
     }
   }
@@ -36,19 +36,19 @@ export default class DummyConnection extends BaseSound {
   }
 
   startTicking() {
-    if (!Ember.Test.checkWaiters || Ember.Test.checkWaiters()) {
-      this.tick = window.setTimeout(
-        bind(() => {
-          this._setPosition(
-            (this._currentPosition() || 0) + this._tickInterval
-          );
-          this.startTicking();
-        }),
-        this._tickInterval
-      );
-    } else {
-      this.stopTicking();
-    }
+    // if (!Ember.Test.checkWaiters || Ember.Test.checkWaiters()) {
+    this.tick = window.setTimeout(
+      bind(() => {
+        this._setPosition(
+          (this._currentPosition() || 0) + this._tickInterval
+        );
+        this.startTicking();
+      }),
+      this._tickInterval
+    );
+    // } else {
+    // this.stopTicking();
+    // }
   }
 
   getInfoFromUrl() {
@@ -105,7 +105,7 @@ export default class DummyConnection extends BaseSound {
         this._position = position;
       }
       next(() => {
-        this.trigger('audio-played', {sound: this})
+        this.trigger('audio-played', { sound: this })
         resolve();
       });
       this.startTicking();
@@ -114,12 +114,12 @@ export default class DummyConnection extends BaseSound {
   }
 
   pause() {
-    next(() => this.trigger('audio-paused', {sound: this}));
+    next(() => this.trigger('audio-paused', { sound: this }));
     this.stopTicking();
   }
 
   stop() {
-    next(() => this.trigger('audio-paused', {sound: this}));
+    next(() => this.trigger('audio-paused', { sound: this }));
     this.stopTicking();
   }
 
@@ -130,7 +130,7 @@ export default class DummyConnection extends BaseSound {
 
     if (pos >= this._audioDuration()) {
       next(() => {
-        this.trigger('audio-ended', {sound: this});
+        this.trigger('audio-ended', { sound: this });
         this.stopTicking();
       });
     }
