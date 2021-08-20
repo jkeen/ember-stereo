@@ -3,7 +3,11 @@
 }
 
 .stereo-player {
-  @apply container flex flex-col content-center gap-4 p-2 mx-auto border rounded sm:flex-row place-items-center bg-background border-on-surface-0;
+  @apply container flex flex-col content-center mx-auto border rounded place-items-center bg-background border-on-surface-0;
+}
+
+.stereo-player-main {
+  @apply container flex flex-col content-center gap-4 p-2 mx-auto rounded sm:flex-row place-items-center bg-background;
 }
 
 .stereo-player-position {
@@ -16,6 +20,10 @@
 
 .stereo-player-controls {
   @apply grid grid-cols-3 gap-2 place-items-center min-w-max;
+}
+
+.stereo-player-errors {
+  @apply px-2 text-left text-danger;
 }
 
 .stereo-player-volume {

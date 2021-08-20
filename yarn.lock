@@ -6736,7 +6736,7 @@ ember-cli-addon-docs@ember-learn/ember-cli-addon-docs:
     ember-cli-version-checker "^5.1.0"
     ember-code-snippet "^3.0.0"
     ember-composable-helpers "^4.4.1"
-    ember-concurrency "^2.1.2"
+    ember-concurrency "^2.0.0"
     ember-decorators "^6.1.1"
     ember-fetch "^8.0.2"
     ember-get-config "^0.3.0"
@@ -7015,7 +7015,7 @@ ember-cli-htmlbars@^3.0.0, ember-cli-htmlbars@^3.0.1:
     json-stable-stringify "^1.0.1"
     strip-bom "^3.0.0"
 
-ember-cli-htmlbars@^4.2.3:
+ember-cli-htmlbars@^4.2.0, ember-cli-htmlbars@^4.2.3:
   version "4.5.0"
   resolved "https://registry.yarnpkg.com/ember-cli-htmlbars/-/ember-cli-htmlbars-4.5.0.tgz#d299e4f7eba6f30dc723ee086906cc550beb252e"
   integrity sha512-bYJpK1pqFu9AadDAGTw05g2LMNzY8xTCIqQm7dMJmKEoUpLRFbPf4SfHXrktzDh7Q5iggl6Skzf1M0bPlIxARw==
@@ -7396,7 +7396,7 @@ ember-composable-helpers@^4.4.1:
     ember-cli-babel "^7.26.3"
     resolve "^1.10.0"
 
-ember-concurrency@^2.0.0, ember-concurrency@^2.1.2:
+ember-concurrency@^2.1.2:
   version "2.1.2"
   resolved "https://registry.yarnpkg.com/ember-concurrency/-/ember-concurrency-2.1.2.tgz#a27178fb24951933fa72dd7cf1dca852693cc5c1"
   integrity sha512-xC6L/SKuM08e9TK5igkSEwbAtkX2sqrj9Xap9G3zYSYdAIO7fcS6ZNEaD5e+dVXwPqH3tOIq41ZT7fqQ7mQ0KQ==
@@ -7861,6 +7861,16 @@ ember-unique-id-helper-polyfill@^0.1.0:
   dependencies:
     ember-cli-babel "^7.23.0"
     ember-cli-htmlbars "^5.3.1"
+
+ember-useragent@^0.10.0:
+  version "0.10.0"
+  resolved "https://registry.yarnpkg.com/ember-useragent/-/ember-useragent-0.10.0.tgz#63a5094b19a7710153895d1813bc817524200825"
+  integrity sha512-7iQSvhyhyOQkGS1qClKM0hMNOHSv3BO8bUc7rWLfEtLOo9u7fQB8smaWee34nn+S3/ur44qiIAXR5v4HrlBF9A==
+  dependencies:
+    ember-auto-import "^1.5.3"
+    ember-cli-babel "^7.13.0"
+    ember-cli-htmlbars "^4.2.0"
+    ua-parser-js "^0.7.18"
 
 ember-wormhole@^0.6.0:
   version "0.6.0"
@@ -15555,6 +15565,11 @@ typescript-memoize@^1.0.0-alpha.3:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/typescript-memoize/-/typescript-memoize-1.0.1.tgz#0a8199aa28f6fe18517f6e9308ef7bfbe9a98d59"
   integrity sha512-oJNge1qUrOK37d5Y6Ly2txKeuelYVsFtNF6U9kXIN7juudcQaHJQg2MxLOy0CqtkW65rVDYuTCOjnSIVPd8z3w==
+
+ua-parser-js@^0.7.18:
+  version "0.7.28"
+  resolved "https://registry.yarnpkg.com/ua-parser-js/-/ua-parser-js-0.7.28.tgz#8ba04e653f35ce210239c64661685bf9121dec31"
+  integrity sha512-6Gurc1n//gjp9eQNXjD9O3M/sMwVtN5S8Lv9bvOYBfKfDNiIIhqiyi01vMBO45u4zkDE420w/e0se7Vs+sIg+g==
 
 uc.micro@^1.0.0, uc.micro@^1.0.1, uc.micro@^1.0.5:
   version "1.0.6"

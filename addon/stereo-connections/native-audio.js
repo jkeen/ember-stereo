@@ -84,7 +84,8 @@ export default class NativeAudio extends BaseSound {
         this._onAudioError(e.target.error);
         break;
       case 'onloadedmetadata':
-
+        this._onAudioDurationChanged();
+        this.duration = this._audioDuration()
         break;
       case 'playing':
         this._onAudioPlayed();
@@ -97,7 +98,7 @@ export default class NativeAudio extends BaseSound {
         this._onAudioPaused();
         break;
       case 'durationchange':
-        this._onAudioDurationChanged();
+
         break;
       case 'ended':
         this._onAudioEnded();
@@ -129,7 +130,7 @@ export default class NativeAudio extends BaseSound {
   get internalElement() {
     if (!this._internalElement) {
       this._internalElement = document.createElement('audio');
-      this._internalElement.setAttribute('preload', 'auto');
+      this._internalElement.setAttribute('preload', 'metadata');
     }
 
     return this._internalElement;

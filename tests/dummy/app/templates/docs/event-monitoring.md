@@ -24,9 +24,10 @@ this.stereo.on('current-sound-interrupted', ({ sound }) => {
 ### Example
 
 Here's a long audio file, play around with it and see the events that are triggered below. Clicking on the event will put it in your javascript console.
-{{docs/stereo-player identifier="https://archive.org/download/KmartOctober1989/Kmart%20October%201989.ogg"}}
 
-{{docs/event-display url="https://archive.org/download/KmartOctober1989/Kmart%20October%201989.ogg"}}
+{{docs/stereo-player identifier="https://archive.org/download/KmartOctober1989/Kmart%20October%201989.mp3"}}
+
+{{docs/event-display url="https://archive.org/download/KmartOctober1989/Kmart%20October%201989.mp3"}}
 
 ### Triggered on both the sound and relayed through the stereo service
 

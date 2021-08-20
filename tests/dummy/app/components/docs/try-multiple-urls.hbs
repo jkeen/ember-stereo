@@ -1,4 +1,62 @@
 <DocsDemo as |demo|>
+  <demo.example @name='try-multiple-urls.hbs'>
+    <div>
+      {{#let
+        (array
+          'https://archive.org/download/KmartOctober1989/Kmart%20October%201989.ogg'
+          'https://archive.org/download/KmartOctober1989/Kmart%20October%201989.mp3'
+        )
+        as |urls|
+      }}
+        <button
+          {{on 'click' (toggle-play-sound urls)}}
+          type='button'
+          class='ui-button'
+        >
+          {{#if (sound-is-playing urls)}}
+            Pause
+          {{else if (sound-is-loading urls)}}
+            Loading…
+          {{else}}
+            Play Sound
+          {{/if}}
+        </button>
+
+        {{#if (sound-is-errored urls)}}
+          <div class='px-1 py-2 text-sm text-danger'>{{sound-error-details
+              urls
+            }}</div>
+        {{/if}}
+
+        <div class='mt-2 text-sm'>
+          {{#let (find-loaded-sound urls) as |sound|}}
+            {{#if sound}}
+              This was successfully loaded using the
+              <em>{{sound.connectionName}}</em>
+              connection. The
+              <em>{{sound.mimeType}}</em>
+              format was the one that ended up working in
+              {{docs/current-browser}}. Try this in
+              {{docs/other-browser}}
+              to compare.
+            {{/if}}
+          {{/let}}
+        </div>
+
+      {{/let}}
+    </div>
+  </demo.example>
+  <demo.snippet
+    @name='try-multiple-urls.hbs'
+    @label='using just template helpers'
+  />
+  <demo.snippet
+    @name='try-multiple-urls-via-service.js'
+    @label="if you're a service type guy"
+  />
+</DocsDemo>
+{{!--
+<DocsDemo as |demo|>
   <demo.example @name='try-multiple-urls-via-service.hbs'>
     <p>Trying multiple urls with the service</p>
     <div>
@@ -23,40 +81,4 @@
   </demo.example>
   {{demo.snippet 'try-multiple-urls-via-service.js'}}
   {{demo.snippet 'try-multiple-urls-via-service.hbs'}}
-</DocsDemo>
-
-<DocsDemo as |demo|>
-  <demo.example @name='try-multiple-urls.hbs'>
-    <p>Using template helpers to try multiple urls</p>
-    <div>
-      {{#let
-        (array
-          'https://failing.example.url/try.mp3'
-          'https://streaming.koop.org/stream.mp3'
-        )
-        as |urls|
-      }}
-        <button
-          {{on 'click' (toggle-play-sound urls)}}
-          type='button'
-          class='ui-button'
-        >
-          {{#if (sound-is-playing urls)}}
-            Pause
-          {{else if (sound-is-loading urls)}}
-            Loading…
-          {{else}}
-            Play Sound
-          {{/if}}
-        </button>
-
-        {{#if (sound-is-errored urls)}}
-          <div class='px-1 py-2 text-sm text-danger'>{{sound-error-details
-              urls
-            }}</div>
-        {{/if}}
-      {{/let}}
-    </div>
-  </demo.example>
-  {{demo.snippet 'try-multiple-urls.hbs'}}
-</DocsDemo>
+</DocsDemo> --}}

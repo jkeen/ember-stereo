@@ -1,0 +1,14 @@
+<StrategyBreakdown class='grid' @url={{@identifier}} as |data|>
+  <li
+    class='inline
+      {{if (eq data.info.status 'failure') 'text-danger'}}
+      {{if (eq data.info.status 'success') 'text-success'}}'
+  >
+    <span class='text-sm'>
+      {{svg-jar (concat 'connection-' data.info.status) class='inline w-4 h-4'}}
+      {{data.item.name}}
+      Connection
+    </span>
+    <span class='text-sm opacity-70'>{{data.info.message}}</span>
+  </li>
+</StrategyBreakdown>

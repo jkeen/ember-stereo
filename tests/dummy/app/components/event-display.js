@@ -2,19 +2,39 @@ import Component from "@glimmer/component";
 import { EVENT_MAP, SERVICE_EVENT_MAP } from "ember-stereo/services/stereo";
 import { tracked } from "@glimmer/tracking";
 import { action } from "@ember/object";
+import { inject as service } from '@ember/service';
 import { A as emberArray } from "@ember/array";
 import { set } from "@ember/object";
+import { task, waitForProperty, didCancel } from 'ember-concurrency';
 
 export default class EventDisplay extends Component {
   @tracked eventsList = emberArray([]);
+  @tracked sound;
+  @tracked soundProxy;
+  @tracked service;
+  @service stereo;
 
   constructor() {
     super(...arguments);
+    try {
+      this.loadSoundFromUrl.perform();
+    } catch (e) {
+      if (!didCancel(error)) {
+        throw (e);
+      }
+    }
+  }
 
-    if (this.args.service) {
-      this.addServiceEvents(this.args.service);
-    } else if (this.args.sound) {
-      this.addSoundEvents(this.args.sound);
+  @task({ debug: true })
+  *loadSoundFromUrl() {
+    if (this.args.url) {
+      this.soundProxy = this.stereo.soundProxy(this.args.url)
+      yield this.soundProxy.waitForLoad.perform();
+      this.sound = this.soundProxy.value
+      this.addSoundEvents(this.sound);
+    } else {
+      this.service = this.stereo;
+      this.addServiceEvents(this.stereo);
     }
   }
 
@@ -63,13 +83,13 @@ export default class EventDisplay extends Component {
     });
   }
 
-  addServiceEvents(item) {
-    if (!item) { return }
+  addServiceEvents(service) {
+    if (!service) { return }
 
-    this.addSoundEvents(item);
+    this.addSoundEvents(service);
 
     SERVICE_EVENT_MAP.forEach((e) => {
-      item.on(e.event, (data) => {
+      service.on(e.event, (data) => {
         this.eventsList.pushObject({
           name: e.event,
           data: data,

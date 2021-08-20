@@ -18,11 +18,11 @@ export default class DocsTryMultipleUrlsComponent extends Component {
     else {
       try {
         let { sound, /* error, failures */ } = yield this.stereo.playTask.perform([
-          "https://failing.example.url/1.mp3",
-          "https://streaming.koop.org/stream.mp3"
+          'https://archive.org/download/KmartOctober1989/Kmart%20October%201989.ogg',
+          'https://archive.org/download/KmartOctober1989/Kmart%20October%201989.mp3'
         ])
         this.sound = sound;
-      } catch(e) {
+      } catch (e) {
         this.error = e.message
       }
     }
