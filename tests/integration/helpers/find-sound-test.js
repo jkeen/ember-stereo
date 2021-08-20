@@ -4,7 +4,7 @@ import { render } from '@ember/test-helpers';
 import { hbs } from 'ember-cli-htmlbars';
 import setupCustomAssertions from 'ember-cli-custom-assertions/test-support';
 
-module('Integration | Helper | find-loaded-sound', function (hooks) {
+module('Integration | Helper | find-sound', function (hooks) {
   setupRenderingTest(hooks);
   setupCustomAssertions(hooks)
 
@@ -15,7 +15,7 @@ module('Integration | Helper | find-loaded-sound', function (hooks) {
     await service.play(this.url);
     service.pause();
 
-    await render(hbs`{{get (find-loaded-sound this.url) 'url'}}`);
+    await render(hbs`{{get (find-sound this.url) 'url'}}`);
     assert.equalUrls(this.element.textContent.trim(), this.url, 'returns loaded sound');
   });
 

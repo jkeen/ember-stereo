@@ -580,7 +580,6 @@ module('Unit | Service | stereo', function (hooks) {
     service.useSharedAudioAccess = true;
     service.isMobileDevice = true
 
-    debugger
     let { sound: silence1 } = await service.load(s1url);
     let sharedAccess = silence1.sharedAudioAccess;
 

@@ -24,8 +24,8 @@
 
       <div class='service-display-volume'>
         <SoundDisplay::Volume />
+        {{! template-lint-disable require-input-label }}
         <Input class='bg-surface-1' @type='range' {{stereo-volume}} />
-        {{!template-lint-disable require-input-label}}
       </div>
 
     </div>

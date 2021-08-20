@@ -3,7 +3,6 @@ import { run } from '@ember/runloop';
 import BaseSound from 'ember-stereo/stereo-connections/base';
 import Ember from 'ember';
 import { task, didCancel } from 'ember-concurrency';
-import SharedAudioAccess from 'ember-stereo/-private/utils/shared-audio-access';
 // These are the events we're watching for
 const AUDIO_EVENTS = ['loadstart', 'durationchange', 'loadedmetadata', 'loadeddata', 'progress', 'canplay', 'canplaythrough', 'error', 'playing', 'pause', 'ended', 'emptied', 'timeupdate'];
 
@@ -348,7 +347,7 @@ export default class NativeAudio extends BaseSound {
     } catch (e) {
       if (retryCount < 2) {
         try {
-          this.playTask.perform({ position, retryCount: retryCount + 1 })
+          yield this.playTask.perform({ position, retryCount: retryCount + 1 })
         }
         catch (e) {
           if (!didCancel(e)) {

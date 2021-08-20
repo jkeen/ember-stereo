@@ -239,10 +239,10 @@ Read the [upgrade guide](https://jkeen.github.com/ember-stereo)
 {{current-sound}} #=> currently playing/paused sound
 ```
 
-- `find-loaded-sound`
+- `find-sound`
 
 ```hbs
-{{find-loaded-sound @identifier}} #=> currently playing/paused sound
+{{find-sound @identifier}} #=> currently playing/paused sound
 ```
 
 #### Service API

@@ -378,6 +378,7 @@ export default class Stereo extends Service.extend(EmberEvented) {
             failures.push(strategy);
           }
           if (result.sound) {
+            this.trigger('sound-ready', { sound: result.sound })
             sound = result.sound
             sound._debug = strategizer.strategies;
             success = true;
@@ -735,18 +736,52 @@ export default class Stereo extends Service.extend(EmberEvented) {
   /**
    * Given a sound, a url, or an object with a URL property, return a sound ready for playing
    *
-   * @method findLoaded
+   * @method findLoadedSound
    * @param {Array} identifiers [..{Promise|String}]
    * @private
    * @return {Sound} A sound that's ready to be played, or an error
   */
 
-  findLoaded(identifiers) {
+  findLoadedSound(identifiers) {
     return this.soundCache.find(identifiers);
   }
 
+
   findSound(identifier) {
-    return this.soundProxy(identifier)
+    let loadedSound = this.soundCache.find(identifier);
+
+    if (loadedSound) {
+      return loadedSound
+    } else {
+      // this will later resolve into a sound when it loads
+      return this.soundProxy(identifier).value
+    }
+
+    //TODO: use a Proxy? it'd be neat to be able to 'find' a sound
+    // that isn't loaded and attach events to it.
+
+    // let soundProxy = this.soundProxy(identifier).value
+
+    // return new Proxy(soundProxy, {
+    //   get: function (target, prop, receiver) {
+    //     if (target.value) {
+    //       return Reflect.get(...[target.value, prop, receiver]);
+    //     } else {
+    //       return Reflect.get(...arguments);
+    //     }
+    //   }
+    // });
+  }
+
+  soundProxy(identifier) {
+    if (this.proxyCache.has(identifier)) {
+      return this.proxyCache.find(identifier);
+    }
+    else if (identifier) {
+      let soundProxy = new SoundProxy(identifier, this);
+      this.proxyCache.store(identifier, soundProxy);
+      return soundProxy;
+    }
   }
 
   /**
@@ -768,17 +803,6 @@ export default class Stereo extends Service.extend(EmberEvented) {
     if (this.currentSound?.url === url) {
       this._unregisterEvents(this.currentSound);
       this.currentSound = null;
-    }
-  }
-
-  soundProxy(identifier) {
-    if (this.proxyCache.has(identifier)) {
-      return this.proxyCache.find(identifier);
-    }
-    else if (identifier) {
-      let soundProxy = new SoundProxy(identifier, this);
-      this.proxyCache.store(identifier, soundProxy);
-      return soundProxy;
     }
   }
 

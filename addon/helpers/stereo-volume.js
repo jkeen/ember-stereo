@@ -12,7 +12,7 @@ import Helper from '@ember/component/helper';
     {{!-- use it as a modifier like this --}}
     <label>
       I control the stereo volume
-      <Input type="range" {{stereo-volume}}/>
+      <Input @type="range" {{stereo-volume}}/>
     </label>
 
     ```

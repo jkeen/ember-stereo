@@ -38,7 +38,8 @@
   </button>
 
   {{#if (sound-is-blocked url)}}
-    <div class='autoplay-blocked-overlay' {{on 'mousedown' (play-sound url)}}>
+    {{! template-lint-disable no-invalid-interactive }}
+    <div class='autoplay-blocked-overlay' {{on 'click' (play-sound url)}}>
       Oy! The audio was blocked by the browser and someone's gotta give this
       overlay a click in order for audio to resume
     </div>

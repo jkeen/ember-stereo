@@ -1,5 +1,4 @@
 import { next, bind } from '@ember/runloop';
-import Ember from 'ember';
 import BaseSound from 'ember-stereo/stereo-connections/base';
 import StereoUrl from 'ember-stereo/-private/utils/stereo-url';
 export default class DummyConnection extends BaseSound {

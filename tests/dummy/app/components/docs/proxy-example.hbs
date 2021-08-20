@@ -1,0 +1,14 @@
+<DocsDemo as |demo|>
+  <demo.example @name='proxy-example.hbs'>
+    <button type='button' {{on 'click' (toggle-play-sound this.url)}}>
+      Play/Sound
+    </button>
+
+    {{#if this.sound.isLoaded}}
+      <p>the sound is loaded</p>
+    {{/if}}
+
+  </demo.example>
+  {{demo.snippet 'proxy-example.hbs'}}
+  {{demo.snippet 'proxy-example.js'}}
+</DocsDemo>

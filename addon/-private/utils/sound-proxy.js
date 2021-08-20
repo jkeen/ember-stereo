@@ -1,7 +1,9 @@
 import hasEqualUrls from 'ember-stereo/-private/utils/has-equal-urls';
 import { tracked } from '@glimmer/tracking';
-import { task, waitForProperty, race, waitForEvent } from 'ember-concurrency';
+import { task, waitForProperty, waitForEvent, didCancel } from 'ember-concurrency';
 import { isEmpty } from '@ember/utils';
+import Evented from 'ember-stereo/-private/utils/evented';
+
 import debug from 'debug';
 /**
 * This class lazy loads sounds based on identifiers
@@ -10,21 +12,29 @@ import debug from 'debug';
 * @type {Util}
 */
 
-export default class SoundProxy {
+export default class SoundProxy extends Evented {
   @tracked isLoading = false;
   @tracked url;
   @tracked value;
 
   constructor(identifier, stereo) {
+    super(...arguments);
+
     this.stereo = stereo;
     this.stereo.on('loadTask:started', this.onStart.bind(this))
     this.stereo.on('loadTask:errored', this.onFinish.bind(this))
     this.stereo.on('loadTask:succeeded', this.onFinish.bind(this))
 
     this.resolveUrl.perform(identifier).catch(e => {
-      throw e; // this feels real
+      if (!didCancel(e)) {
+        throw e;
+      }
     });
-    this.waitForLoad.perform();
+    this.waitForLoad.perform().catch(e => {
+      if (!didCancel(e)) {
+        throw e;
+      }
+    });
   }
 
   @task({ debug: true })
@@ -32,12 +42,10 @@ export default class SoundProxy {
     yield waitForProperty(this, 'url', (v) => !!v)
     debug('ember-stereo:sound-proxy')(`waiting for ${this.url} to load`)
     while (true) {
-      yield race([
-        waitForEvent(this.stereo, 'audio-loaded'),
-        waitForEvent(this.stereo, 'audio-loading')
-      ]);
-
-      this.value = this.stereo.loadedSounds.find(sound => hasEqualUrls(sound.url, this.url))
+      let { sound } = yield waitForEvent(this.stereo, 'sound-ready');
+      if (hasEqualUrls(sound.url, this.url)) {
+        this.value = sound;
+      }
       if (this.value) {
         break;
       }

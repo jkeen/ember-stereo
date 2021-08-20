@@ -29,15 +29,15 @@
         {{/if}}
 
         <div class='mt-2 text-sm'>
-          {{#let (find-loaded-sound urls) as |sound|}}
+          {{#let (find-sound urls) as |sound|}}
             {{#if sound}}
               This was successfully loaded using the
               <em>{{sound.connectionName}}</em>
               connection. The
               <em>{{sound.mimeType}}</em>
               format was the one that ended up working in
-              {{docs/current-browser}}. Try this in
-              {{docs/other-browser}}
+              <Docs::CurrentBrowser />. Try this in
+              <Docs::OtherBrowser />
               to compare.
             {{/if}}
           {{/let}}

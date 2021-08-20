@@ -1,20 +1,27 @@
 <DocsDemo as |demo|>
   <demo.example @name='stereo-volume.hbs'>
     <div class='flex items-center w-full'>
-      <Input {{stereo-volume}} class='bg-on-surface-2' type='range' />
-      <button
-        type='button'
-        class='flex items-center'
-        {{on 'click' (toggle-stereo-mute)}}
-      >
-        {{#if (gt (stereo-volume) 0)}}
-          {{svg-jar 'volume-low-outline' height=20 width=30}}
-          <span>{{stereo-volume}}</span>
-        {{else}}
-          {{svg-jar 'volume-mute-outline' height=20 width=30}}
-          <span>{{stereo-volume}}</span>
-        {{/if}}
-      </button>
+      <Input
+        {{stereo-volume}}
+        id='stereo-volume'
+        class='bg-on-surface-2'
+        @type='range'
+      />
+      <label for='stereo-volume'>
+        <button
+          type='button'
+          class='flex items-center'
+          {{on 'click' (toggle-stereo-mute)}}
+        >
+          {{#if (gt (stereo-volume) 0)}}
+            {{svg-jar 'volume-low-outline' height=20 width=30}}
+            <span>{{stereo-volume}}</span>
+          {{else}}
+            {{svg-jar 'volume-mute-outline' height=20 width=30}}
+            <span>{{stereo-volume}}</span>
+          {{/if}}
+        </button>
+      </label>
     </div>
   </demo.example>
   {{demo.snippet 'stereo-volume-control.hbs'}}

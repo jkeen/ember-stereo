@@ -3,7 +3,7 @@ import { setupRenderingTest } from 'ember-qunit';
 import { render } from '@ember/test-helpers';
 import { hbs } from 'ember-cli-htmlbars';
 
-module('Integration | Helper | sound-is-blocked', function(hooks) {
+module('Integration | Helper | sound-is-blocked', function (hooks) {
   setupRenderingTest(hooks);
 
   test('it renders', async function (assert) {
@@ -15,7 +15,7 @@ module('Integration | Helper | sound-is-blocked', function(hooks) {
     assert.equal(this.element.textContent.trim(), '', 'does not need user input');
     await service.play(this.url);
 
-    let sound = await service.findLoaded(this.url)
+    let sound = await service.findLoadedSound(this.url)
     sound.isBlocked = true
     await render(hbs`{{#if (sound-is-blocked this.url)}}needs input{{/if}}`);
     assert.equal(this.element.textContent.trim(), 'needs input', 'needs user input');

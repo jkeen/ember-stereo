@@ -20,6 +20,7 @@ Router.map(function () {
     this.route('metadata');
     this.route('error-handling');
     this.route('event-monitoring');
+    this.route('waiting-for-sounds');
     this.route('volume');
   });
 

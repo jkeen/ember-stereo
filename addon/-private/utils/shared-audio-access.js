@@ -80,7 +80,8 @@ export default class SharedAudioAccess {
 
   static createElement() {
     let audio = document.createElement('audio');
-    audio.setAttribute('preload', 'auto');
+    audio.setAttribute('autobuffer', true);
+    audio.setAttribute('preload', 'metadata');
     audio.setAttribute('id', new Date().getTime());
 
     return audio;

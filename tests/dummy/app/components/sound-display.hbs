@@ -45,7 +45,7 @@
   <SoundDisplay::Controls @url={{this.url}} />
 
   <DebugDetails @show={{this.showDebugInfo}} as |d|>
-    {{#let (find-loaded-sound this.url) as |sound|}}
+    {{#let (find-sound this.url) as |sound|}}
       <d.Section
         @title={{if
           this.usingSingleAudioElement
@@ -57,7 +57,7 @@
           <button
             type='button'
             class='text-xs underline uppercase'
-            {{on 'click' (fn this.inspectSound (find-loaded-sound this.url))}}
+            {{on 'click' (fn this.inspectSound (find-sound this.url))}}
           >
             Inspect
           </button>

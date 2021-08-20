@@ -5,7 +5,7 @@ import { action } from "@ember/object";
 import { inject as service } from '@ember/service';
 import { A as emberArray } from "@ember/array";
 import { set } from "@ember/object";
-import { task, waitForProperty, didCancel } from 'ember-concurrency';
+import { task, didCancel } from 'ember-concurrency';
 
 export default class EventDisplay extends Component {
   @tracked eventsList = emberArray([]);
@@ -16,17 +16,15 @@ export default class EventDisplay extends Component {
 
   constructor() {
     super(...arguments);
-    try {
-      this.loadSoundFromUrl.perform();
-    } catch (e) {
-      if (!didCancel(error)) {
+    this.loadSoundFromUrl.perform().catch(e => {
+      if (!didCancel(e)) {
         throw (e);
       }
-    }
+    })
   }
 
   @task({ debug: true })
-  *loadSoundFromUrl() {
+  * loadSoundFromUrl() {
     if (this.args.url) {
       this.soundProxy = this.stereo.soundProxy(this.args.url)
       yield this.soundProxy.waitForLoad.perform();

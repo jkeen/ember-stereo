@@ -1,6 +1,5 @@
 import { module, test } from 'qunit';
-
-
+import Strategizer from 'ember-stereo/-private/utils/strategizer';
 module('Unit | Utility | strategizer', function () {
   test('should have correct order for attempts', async function (assert) {
     const service = this.owner.lookup('service:stereo').loadConnections(['LocalDummyConnection', 'NativeAudio']);

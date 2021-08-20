@@ -10,7 +10,7 @@ export default class Position extends Component {
 
 
   get loadedSound() {
-    return this.stereo.findSound(this.args.url)
+    return this.stereo.soundProxy(this.args.url)
   }
 
   @action

@@ -15,14 +15,14 @@
   <div>
     <div class='my-2'>
       <label
-        for='url'
+        for='url-property'
         class='block text-base font-medium text-on-background'
       >URL</label>
 
       <div class='flex mt-1 rounded-md shadow-sm'>
         <div class='relative flex items-stretch flex-grow focus-within:z-10'>
           <Input
-            id='url'
+            id='url-property'
             class='block w-full rounded-none rounded-l-md sm:text-sm | border-on-surface-0 focus:ring-accent-0 focus:border-accent-0'
             @type='text'
             @value={{this.url}}
@@ -37,6 +37,7 @@
         >
           <option>Preset</option>
           {{#each this.items as |item|}}
+            {{! template-lint-disable no-invalid-interactive }}
             <option {{on 'click' (fn this.onPresetChange item)}}>
               {{item.title}}
             </option>
@@ -48,7 +49,7 @@
 
     <div class='my-2'>
       <label
-        for='url'
+        for='metadata'
         class='block text-base font-medium text-on-surface'
       >Metadata</label>
       <Textarea
@@ -62,6 +63,7 @@
     <div class='my-2'>
       <label
         class='block my-2 text-base font-medium text-on-surface'
+        for='strategy'
       >Connections</label>
 
       {{#let (sound-is-loaded this.url) as |loaded|}}
