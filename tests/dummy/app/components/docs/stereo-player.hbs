@@ -86,7 +86,7 @@
         @type='range'
         class='flex-auto flex-shrink w-16 lg:w-1/6'
       />
-      <label for='stereo-volume'>
+      <label for='stereo-volume' class='stereo-volume'>
         <button type='button' {{on 'click' (toggle-stereo-mute)}}>
           {{#if (gt (stereo-volume) 0)}}
             {{svg-jar 'volume-low-outline' height=20 width=30}}

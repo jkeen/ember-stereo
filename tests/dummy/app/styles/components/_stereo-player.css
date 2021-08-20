@@ -27,7 +27,7 @@
 }
 
 .stereo-player-volume {
-  @apply flex items-stretch content-center gap-2;
+  @apply flex items-stretch items-center content-center gap-2;
 }
 
 .stereo-button {

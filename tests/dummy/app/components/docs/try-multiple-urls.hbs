@@ -1,15 +1,16 @@
 <DocsDemo as |demo|>
   <demo.example @name='try-multiple-urls.hbs'>
-    <div>
-      {{#let
-        (array
-          'https://archive.org/download/KmartOctober1989/Kmart%20October%201989.ogg'
-          'https://archive.org/download/KmartOctober1989/Kmart%20October%201989.mp3'
-        )
-        as |urls|
-      }}
+    {{#let
+      (array
+        'https://archive.org/download/KmartOctober1989/Kmart%20October%201989.ogg'
+        'https://archive.org/download/KmartOctober1989/Kmart%20October%201989.mp3'
+      )
+      as |urls|
+    }}
+      <div>
         <button
-          {{on 'click' (toggle-play-sound urls)}}
+          {{on 'click' (toggle-play-sound urls position=8000)}}
+          {{! i'm starting this at 8 seconds in because that's where the music starts }}
           type='button'
           class='ui-button'
         >
@@ -43,8 +44,8 @@
           {{/let}}
         </div>
 
-      {{/let}}
-    </div>
+      </div>
+    {{/let}}
   </demo.example>
   <demo.snippet
     @name='try-multiple-urls.hbs'

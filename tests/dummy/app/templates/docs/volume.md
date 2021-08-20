@@ -6,6 +6,6 @@ That along with [stereo-volume](/docs/api/helpers/stereo-volume) and [toggle-ste
 
 To adjust the stereo volume through the service, `stereo.volume` is a getter/setter
 
-{{docs/stereo-player identifier="https://file-examples-com.github.io/uploads/2017/11/file_example_OOG_1MG.ogg"}}
+{{docs/stereo-player identifier="/sounds/lalalala.m4a"}}
 
 {{docs/stereo-volume-example}}
