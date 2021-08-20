@@ -1,16 +1,14 @@
-
 ## Writing Your Own Stereo Connection
 
 Do you need to support a funky audio format that requires a special library, or do you really want to buck this whole HTML5-only strategy and play sounds using Flash? You can make your own stereo connection.
 
 ```sh
-$ ember generate stereo-connection flash-connection
+$ ember generate stereo-connection dash-connection
 ```
 
 This creates `app/stereo-connections/dash-connection.js` and a unit test at `tests/unit/stereo-connections/dash-connection.js`, which you should now customize.
 
 The files created by the blueprint should walk you through what you need to implement, but to be thorough:
-
 
 ```javascript
 let Sound = class Sounds extends BaseSound {
@@ -86,9 +84,10 @@ let Sound = class Sounds extends BaseSound {
 ##### Implement methods to bridge communication between stereo and your third party library.
 
 - `setup()`
-Wire up your library to trigger the following methods when things happen on your sound:
+  Wire up your library to trigger the following methods when things happen on your sound:
 
 Required events to be implemented:
+
 - `sound.trigger('audio-ready')` - sound is ready to play
 - `sound.trigger('audio-load-error', error)` - loading sound failed
 - `sound.trigger('audio-played')`
@@ -96,6 +95,7 @@ Required events to be implemented:
 - `sound.trigger('audio-ended')` - we finished playing the sound
 
 Optional (but nice to have) events:
+
 - `sound.trigger('audio-position-changed')` - when the playhead position changes
 - `sound.trigger('audio-loading', {percentLoaded: percent})` - when sound is downloading, update the percentLoaded
 
@@ -162,7 +162,7 @@ _audioDuration() { // in ms
     return Infinity
   }
   else {
-    return this.dashSound.duration    
+    return this.dashSound.duration
   }
 },
 

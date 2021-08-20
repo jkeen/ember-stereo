@@ -3,10 +3,7 @@
     <p>Using a try/catch block with async/await</p>
     <div>
       <button
-        {{on
-          'click'
-          (perform this.playSound 'https://invalid.example.url/1.mp3')
-        }}
+        {{on 'click' (perform this.playSound '/sounds/unplayable-scooby.au')}}
         type='button'
         class='ui-button'
       >

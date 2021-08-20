@@ -44,10 +44,10 @@ function message(item, loadWasAttempted) {
   if (loadWasAttempted) {
     if (item.success) {
       return "succeeded"
-    } else if (item.canPlay && !item.tried) {
-      return "was not attempted"
     } else if (item.canPlay && item.tried) {
       return (item.error || "attempted and failed")
+    } else if (item.canPlay && !item.tried) {
+      return "was not attempted"
     } else if (!item.canPlay) {
       return "ineligible, not attempted"
     }

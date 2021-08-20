@@ -13,7 +13,7 @@ import hasEqualUrls from 'ember-stereo/-private/utils/has-equal-urls';
 * @constructor
 */
 
-export default class ErrorCache  {
+export default class ErrorCache {
   @tracked cachedCount = 0;
   @tracked cachedErrors = [];
   @tracked cachedList = []
@@ -38,9 +38,9 @@ export default class ErrorCache  {
    * @return {Sound}
    */
   find(urls) {
-    let identifiers  = makeArray(urls).map(i => new StereoUrl(i));
-    let errors       = emberArray(identifiers).map(identity => this.cachedErrors.find(err => hasEqualUrls(err.url, identity)));
-    let foundErrors  = emberArray(errors).compact();
+    let identifiers = makeArray(urls).map(i => new StereoUrl(i));
+    let errors = emberArray(identifiers).map(identity => this.cachedErrors.find(err => hasEqualUrls(err.url, identity)));
+    let foundErrors = emberArray(errors).compact();
 
     if (foundErrors.length > 0) {
       debug(this.name)(`cache hit for ${foundErrors[0].url}`);
@@ -60,7 +60,7 @@ export default class ErrorCache  {
     })
   }
 
-  cache({url, error, connectionKey, debugInfo}) {
+  cache({ url, error, connectionKey, debugInfo }) {
     let identifier = new StereoUrl(url).key
 
     if (!this._cache[identifier]) {
@@ -80,7 +80,10 @@ export default class ErrorCache  {
     else {
       errorObject.errors[connectionKey] = error;
     }
-    errorObject._debug = debugInfo;
+
+    if (debugInfo) {
+      errorObject._debug = debugInfo;
+    }
     this._cache[identifier] = errorObject;
 
     this.cachedCount = Object.keys(this._cache).length;

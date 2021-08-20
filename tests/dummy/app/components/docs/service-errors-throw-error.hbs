@@ -5,10 +5,7 @@
     <p>This is what happens when you don't catch the error (open your console)</p>
     <div>
       <button
-        {{on
-          'click'
-          (fn this.togglePlaySound 'https://invalid.example.url/4.mp3')
-        }}
+        {{on 'click' (fn this.togglePlaySound '/sounds/unplayable-scooby.au')}}
         type='button'
         class='ui-button'
       >
@@ -21,7 +18,7 @@
     </div>
 
     {{#if this.error}}
-      <div class='text-danger text-sm px-1 py-2'>{{this.error}}</div>
+      <div class='px-1 py-2 text-sm text-danger'>{{this.error}}</div>
     {{/if}}
   </demo.example>
   {{demo.snippet 'service-errors-wild-west.js'}}
