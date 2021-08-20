@@ -35,7 +35,7 @@ export default class SoundIsErrored extends Helper {
     return this.stereo.cachedErrors.find(e => hasEqualUrls(e.url, this.url))
   }
 
-  compute([identifier], {connectionName = 'NativeAudio'}) {
+  compute([identifier], { connectionName }) {
     if (identifier !== this.identifier) {
       this.identifier = identifier;
       this.stereo.resolveIdentifier.perform(this.identifier).then(url => this.url = url).catch()
@@ -43,13 +43,20 @@ export default class SoundIsErrored extends Helper {
 
     if (!this.result) { return }
 
-    var error = this.result;
-    if (connectionName && error.errors[connectionName]) {
-      debugMessage(this, `render = ${error.errors[connectionName]}`);
-      return error.errors[connectionName];
+    var errObject = this.result;
+    if (connectionName) {
+      debugMessage(this, `render = ${errObject.errors[connectionName]}`);
+      return errObject.errors[connectionName];
     }
     else {
-      return error.errors.generic || error.errors[Object.keys(error.errors)[0]];
+      let errors = []
+      this.stereo.connectionNames.forEach(name => {
+        if (errObject.errors[name]) {
+          errors.push(errObject.errors[name])
+        }
+      })
+
+      return errors[0] || errObject.errors.generic
     }
   }
 }
