@@ -5,12 +5,14 @@
       <button
         {{on
           'click'
-          (fn this.togglePlaySound 'https://invalid.example.url/1.mp3')
+          (perform this.playSound 'https://invalid.example.url/1.mp3')
         }}
         type='button'
         class='ui-button'
       >
-        {{#if this.sound.isPlaying}}
+        {{#if this.playSound.isRunning}}
+          Loading…
+        {{else if this.sound.isPlaying}}
           Pause
         {{else}}
           Play Sound
@@ -19,7 +21,7 @@
     </div>
 
     {{#if this.error}}
-      <div class='text-danger text-sm px-1 py-2'>{{this.error}}</div>
+      <div class='px-1 py-2 text-sm text-danger'>{{this.error}}</div>
     {{/if}}
   </demo.example>
   {{demo.snippet 'service-errors-try-catch.js'}}

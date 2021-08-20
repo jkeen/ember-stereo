@@ -28,7 +28,7 @@ All these helpers take an identifier as an argument which can be a `url` string,
 
 ### Modifiers
 
-There are a couple of modifiers to help in creating a volume and a position control. [`{{stereo-volume}}`](/docs/api/helpers/stereo-volume) can transform a range control into a volume control. [`{{sound-position-slider}}`](/docs/api/helpers/sound-position-slider) can turn an element into a position control.
+There are a couple of modifiers to help in creating a volume and a position control. [`{{stereo-volume}}`](/docs/api/helpers/stereo-volume) can transform a range control into a volume control, and [`{{sound-position-slider}}`](/docs/api/helpers/sound-position-slider) can turn an element into a position control.
 
 ## Stereo Connections
 

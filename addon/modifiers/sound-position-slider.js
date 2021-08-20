@@ -19,7 +19,7 @@ export default class SoundPositionSliderModifier extends Modifier {
   }
 
   get loadedSound() {
-    return this.stereo.soundProxy(this.url)?.value
+    return this.stereo.findSound(this.url)
   }
 
   get isRangeControl() {

@@ -16,18 +16,18 @@ Just provide `stereo` with an array of urls in preferential order and move on wi
 
 {{docs/try-multiple-urls}}
 
-Looks like you're running {{docs/current-browser}}.
+Looks like you're running {{docs/current-browser}} on {{docs/current-os}}.
 
 ### Ogg
 
-Here's what your browser told `ember-stereo` about the chances of this `ogg` file succeeding.
+Here's what {{docs/current-browser}} for {{docs/current-os}} told `ember-stereo` about the chances of this `ogg` file succeeding.
 
 {{docs/strategy-breakdown identifier="https://archive.org/download/KmartOctober1989/Kmart%20October%201989.ogg"}}
 {{docs/stereo-player identifier="https://archive.org/download/KmartOctober1989/Kmart%20October%201989.ogg"}}
 
 ### Mp3
 
-This for sure works in your browser. Nothing to get excited about, but here's the details anyway:
+This for sure works on {{docs/current-browser}} for {{docs/current-os}}. Nothing to get excited about, but here's the details anyway:
 
 {{docs/strategy-breakdown identifier="https://archive.org/download/KmartOctober1989/Kmart%20October%201989.mp3"}}
 {{docs/stereo-player identifier="https://archive.org/download/KmartOctober1989/Kmart%20October%201989.mp3"}}

@@ -2,6 +2,7 @@ import Component from "@glimmer/component";
 import { action } from '@ember/object';
 import { tracked } from '@glimmer/tracking';
 import { inject as service } from '@ember/service';
+import { task } from 'ember-concurrency';
 
 export default class ServiceExample extends Component {
   @tracked sound
@@ -9,8 +10,8 @@ export default class ServiceExample extends Component {
   @service stereo;
 
   // BEGIN-SNIPPET service-errors-try-catch.js
-  @action
-  async togglePlaySound(url) {
+  @task
+  *playSound(url) {
     this.error = false
 
     if (this.sound) {
@@ -18,7 +19,7 @@ export default class ServiceExample extends Component {
     }
     else {
       try {
-        let { sound, /* error, failures */ } = await this.stereo.play(url);
+        let { sound, /* error, failures */ } = yield this.stereo.play(url);
         this.sound = sound;
       }
       catch (e) {

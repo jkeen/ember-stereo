@@ -6,6 +6,7 @@
       {{on 'click' (toggle-play-sound @identifier)}}
       type='button'
       class='ui-button'
+      disabled={{sound-is-loading @identifier}}
     >
       {{#if (sound-is-loading @identifier)}}
         Loading…

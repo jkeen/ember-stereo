@@ -42,6 +42,16 @@ export default class SoundProxy extends Evented {
     yield waitForProperty(this, 'url', (v) => !!v)
     debug('ember-stereo:sound-proxy')(`waiting for ${this.url} to load`)
     while (true) {
+      let alreadyLoaded = this.stereo.findLoadedSound(this.url);
+      if (alreadyLoaded) {
+        this.value = alreadyLoaded;
+      } else {
+        let { sound } = yield waitForEvent(this.stereo, 'sound-ready');
+        if (hasEqualUrls(sound.url, this.url)) {
+          this.value = sound;
+        }
+      }
+
       let { sound } = yield waitForEvent(this.stereo, 'sound-ready');
       if (hasEqualUrls(sound.url, this.url)) {
         this.value = sound;

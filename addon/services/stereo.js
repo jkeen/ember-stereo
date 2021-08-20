@@ -748,14 +748,7 @@ export default class Stereo extends Service.extend(EmberEvented) {
 
 
   findSound(identifier) {
-    let loadedSound = this.soundCache.find(identifier);
-
-    if (loadedSound) {
-      return loadedSound
-    } else {
-      // this will later resolve into a sound when it loads
-      return this.soundProxy(identifier).value
-    }
+    return this.soundProxy(identifier).value
 
     //TODO: use a Proxy? it'd be neat to be able to 'find' a sound
     // that isn't loaded and attach events to it.
