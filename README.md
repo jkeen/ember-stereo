@@ -3,8 +3,6 @@
 ## The best way to play audio in your modern ember app
 
 ![Download count all time](https://img.shields.io/npm/dt/ember-stereo.svg) [![npm version](https://img.shields.io/npm/v/ember-stereo.svg?style=flat-square)](https://www.npmjs.com/package/ember-stereo) [![Ember Observer Score](http://emberobserver.com/badges/ember-stereo.svg)](http://emberobserver.com/addons/ember-stereo)
-[![Maintainability](https://api.codeclimate.com/v1/badges/24a53d2c7a91e15d7200/maintainability)](https://codeclimate.com/github/jkeen/ember-stereo/maintainability)
-[![Test Coverage](https://api.codeclimate.com/v1/badges/24a53d2c7a91e15d7200/test_coverage)](https://codeclimate.com/github/jkeen/ember-stereo/test_coverage)
 
 This addon exposes a `stereo` service which produces `Sound` objects which represent a playable piece of audio.
 
@@ -15,6 +13,8 @@ This addon exposes a `stereo` service which produces `Sound` objects which repre
 ```shell
 ember install ember-stereo
 ```
+
+### Interactive docs at [ember-stereo.com](https://ember-stereo.com)!
 
 ### Upgrading from `ember-hifi`
 
@@ -38,16 +38,6 @@ Read the [upgrade guide](https://jkeen.github.com/ember-stereo)
 >Play</button>
 ```
 
-- `load-sound`
-
-```hbs
-<button
-  type='button'
-  class='button is-link'
-  {{on 'click' (load-sound @identifier)}}
->Play</button>
-```
-
 - `pause-sound`
 
 ```hbs
@@ -56,6 +46,26 @@ Read the [upgrade guide](https://jkeen.github.com/ember-stereo)
   class='button is-link'
   {{on 'click' (pause-sound @identifier)}}
 >Pause</button>
+```
+
+- `toggle-play-sound`
+
+```hbs
+<button
+  type='button'
+  class='button is-link'
+  {{on 'click' (toggle-play-sound @identifier)}}
+>Play/Pause</button>
+```
+
+- `load-sound`
+
+```hbs
+<button
+  type='button'
+  class='button is-link'
+  {{on 'click' (load-sound @identifier)}}
+>Play</button>
 ```
 
 - `stop-sound`
@@ -96,16 +106,6 @@ Read the [upgrade guide](https://jkeen.github.com/ember-stereo)
   class='button is-link'
   {{on 'click' (seek-sound @identifier position=5000)}}
 >Seek</button>
-```
-
-- `toggle-play-sound`
-
-```hbs
-<button
-  type='button'
-  class='button is-link'
-  {{on 'click' (toggle-play-sound @identifier)}}
->Play/Pause</button>
 ```
 
 ##### Conditionals
