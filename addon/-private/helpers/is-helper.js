@@ -1,7 +1,6 @@
 import { inject as service } from '@ember/service';
 import Helper from '@ember/component/helper';
 import { dedupeTracked } from 'tracked-toolbox';
-import BaseSound from 'ember-stereo/stereo-connections/base';
 
 const UNINITIALIZED = null;
 export default class StereoBaseIsHelper extends Helper {
@@ -45,7 +44,7 @@ export default class StereoBaseIsHelper extends Helper {
     if (identifier !== this.identifier) {
       this.identifier = identifier
 
-      if (identifier instanceof BaseSound) {
+      if (identifier && identifier.url && identifier.play) {
         this._sound = identifier;
       }
       if (identifier) {

@@ -1,5 +1,6 @@
 import { tracked } from '@glimmer/tracking';
 import Strategy from './strategy';
+import StereoUrl from 'ember-stereo/-private/utils/stereo-url'
 import { makeArray, A as emberArray } from '@ember/array';
 import { isEmpty } from '@ember/utils';
 import { cached } from 'tracked-toolbox';
@@ -14,7 +15,7 @@ export default class Strategizer {
 
     this.urls = urls
     this.connections = options.connections;
-    this.metadata    = options.metadata
+    this.metadata = options.metadata
     this.options = options;
   }
 
@@ -24,7 +25,7 @@ export default class Strategizer {
       sharedAudioAccess: this.useSharedAudioAccess ? this.sharedAudioAccess : undefined,
     }
 
-    return new Strategy(connection, url, strategyOptions)
+    return new Strategy(connection, new StereoUrl(url), strategyOptions)
   }
 
   get sharedAudioAccess() {
@@ -32,11 +33,11 @@ export default class Strategizer {
   }
 
   get useSharedAudioAccess() {
-    return this.options.useSharedAudioAccess
+    return !!this.options.useSharedAudioAccess
   }
 
   get useMobileStrategy() {
-    return this.options.isMobileDevice
+    return !!this.options.isMobileDevice
   }
 
   get useStandardStrategy() {
@@ -67,16 +68,16 @@ export default class Strategizer {
     return connections;
   }
 
- /* Given a list of urls, prepare the strategy that we think will succeed best
-  *
-  * Breadth first: we try each url on each compatible connection in order
-  * [{connection: NativeAudio, url: url1},
-  *  {connection: HLS, url: url1},
-  *  {connection: Other, url: url1},
-  *  {connection: NativeAudio, url: url2},
-  *  {connection: HLS, url: url2},
-  *  {connection: Other, url: url2}]
- */
+  /* Given a list of urls, prepare the strategy that we think will succeed best
+   *
+   * Breadth first: we try each url on each compatible connection in order
+   * [{connection: NativeAudio, url: url1},
+   *  {connection: HLS, url: url1},
+   *  {connection: Other, url: url1},
+   *  {connection: NativeAudio, url: url2},
+   *  {connection: HLS, url: url2},
+   *  {connection: Other, url: url2}]
+  */
 
   @cached
   get strategies() {
@@ -87,20 +88,20 @@ export default class Strategizer {
       });
     });
     if (this.useMobileStrategy) {
-     /*
-      * Take our standard strategy and reorder it to prioritize native audio
-      * first since it's most likely to succeed and play immediately with our
-      * audio unlock logic
+      /*
+       * Take our standard strategy and reorder it to prioritize native audio
+       * first since it's most likely to succeed and play immediately with our
+       * audio unlock logic
 
-      * we try each url on each compatible connection in order
-      * [{connection: NativeAudio, url: url1},
-      *  {connection: NativeAudio, url: url2},
-      *  {connection: HLS, url: url1},
-      *  {connection: Other, url: url1},
-      *  {connection: HLS, url: url2},
-      *  {connection: Other, url: url2}]
-      *
-      * */
+       * we try each url on each compatible connection in order
+       * [{connection: NativeAudio, url: url1},
+       *  {connection: NativeAudio, url: url2},
+       *  {connection: HLS, url: url1},
+       *  {connection: Other, url: url1},
+       *  {connection: HLS, url: url2},
+       *  {connection: Other, url: url2}]
+       *
+       * */
 
       let nativeStrategies = strategies.filter(f => f.connectionKey == 'NativeAudio');
       let otherStrategies = strategies.filter(f => f.connectionKey != 'NativeAudio');

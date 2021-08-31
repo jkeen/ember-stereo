@@ -1,10 +1,12 @@
 import { module, test } from 'qunit';
 import { setupRenderingTest } from 'ember-qunit';
+import { setupStereoTest } from 'ember-stereo/test-support/stereo-setup'
 import { render, click } from '@ember/test-helpers';
 import { hbs } from 'ember-cli-htmlbars';
 
-module('Integration | Helper | toggle-mute', function(hooks) {
+module('Integration | Helper | toggle-mute', function (hooks) {
   setupRenderingTest(hooks);
+  setupStereoTest(hooks);
 
   test('it toggles mute', async function (assert) {
     let service = this.owner.lookup('service:stereo');

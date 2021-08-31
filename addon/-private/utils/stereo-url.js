@@ -2,9 +2,9 @@ import { getMimeType } from "./mime-types";
 import { tracked } from '@glimmer/tracking';
 import { isArray } from '@ember/array';
 export default class StereoUrl {
-  el = document.createElement('a')
   @tracked options = {}
   constructor(input, options = {}) {
+    this.el = document.createElement('a')
     if (!input) {
       throw new Error("can't create URL without any input")
     }

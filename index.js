@@ -74,7 +74,7 @@ module.exports = {
     return mergeTrees(trees);
   },
 
-  getStereoConnections: function() {
+  getStereoConnections: function () {
     if (this.stereoConnections) {
       return;
     }
@@ -91,7 +91,7 @@ module.exports = {
     }
   },
 
-  isDevelopingAddon: function() {
+  isDevelopingAddon: function () {
     return true;
   }
 };

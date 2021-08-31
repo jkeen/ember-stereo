@@ -1,16 +1,17 @@
 import { module, test } from 'qunit';
 import { setupRenderingTest } from 'ember-qunit';
+import { setupStereoTest } from 'ember-stereo/test-support/stereo-setup'
 import { render, click } from '@ember/test-helpers';
 import { hbs } from 'ember-cli-htmlbars';
 
-module('Integration | Helper | rewind-sound', function(hooks) {
+module('Integration | Helper | rewind-sound', function (hooks) {
   setupRenderingTest(hooks);
+  setupStereoTest(hooks);
 
-  test('it rewinds', async function(assert) {
+  test('it rewinds', async function (assert) {
     let service = this.owner.lookup('service:stereo');
-    service.loadConnections([{name: 'DummyConnection'}]);
     this.url = '/good/10000/silence.mp3';
-    let {sound} = await service.load(this.url);
+    let { sound } = await service.load(this.url);
     sound.position = 6000;
     assert.equal(sound.position, 6000, 'position is 6000');
     await render(
@@ -22,9 +23,8 @@ module('Integration | Helper | rewind-sound', function(hooks) {
 
   test('it rewinds custom increment', async function (assert) {
     let service = this.owner.lookup('service:stereo');
-    service.loadConnections([{name: 'DummyConnection'}]);
     this.url = '/good/10000/silence.mp3';
-    let {sound} = await service.load(this.url);
+    let { sound } = await service.load(this.url);
     sound.position = 6000;
     assert.equal(sound.position, 6000, 'position is 6000');
     await render(

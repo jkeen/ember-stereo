@@ -16,9 +16,6 @@ module('Unit | Connection | Native Audio', function (hooks) {
   var sharedAudioAccess;
 
   hooks.beforeEach(function () {
-    // The use of this singleton here really messes with testing, so we need to reset it
-    // SharedAudioAccess._reset();
-
     sharedAudioAccess = new SharedAudioAccess()
     sharedAudioAccess.unlock();
 
@@ -254,35 +251,20 @@ module('Unit | Connection | Native Audio', function (hooks) {
     assert.notEqual(sound1.audioElement, sharedAudioAccess.audioElement, "sound should have control while another sound is playing");
   });
 
-  test("when using a shared audio element we set preload=none on the shadow element", function (assert) {
-    let sound = new NativeAudio({
-      url: '/assets/silence2.mp3', timeout: false, duration: Infinity, sharedAudioAccess
-    });
-
-    sound.play();
-    sound.stop();
-
-    assert.equal(sound._audioElement.preload, 'none', "audio preload attribute is none");
-  });
-
-  test('switching sounds with a shared audio element sends pause event on first sound', function (assert) {
-    // let done = assert.async();
-    let url1 = '/assets/silence.mp3';
-    let url2 = '/assets/silence2.mp3';
+  test('switching sounds with a shared audio element sends pause event on first sound', async function (assert) {
+    assert.expect(1);
+    let url1 = '/good/1000/silence.mp3';
+    let url2 = '/good/1000/silence2.mp3';
 
     let sound1 = new NativeAudio({ url: url1, timeout: false, sharedAudioAccess });
     let sound2 = new NativeAudio({ url: url2, timeout: false, sharedAudioAccess });
 
-    let pauseStub = sinon.stub(sound1, '_onAudioPaused');
+    sound1.one('audio-paused', () => {
+      assert.ok("audio 1 pause event should have been fired");
+    })
 
-    sinon.stub(sound1, 'debug');
-    sinon.stub(sound2, 'debug');
-
-    sound1.play(); // sound 1 has control
-    sound1.isPlaying = true;
-    sound2.play(); // sound 2 has control
-
-    assert.equal(pauseStub.callCount, 1, "audio 1 pause event should have been fired");
+    await sound1.play(); // sound 1 has control
+    await sound2.play(); // sound 2 has control
   });
 
   test("sounds update their soundIsLoading property when they've loaded", function (assert) {

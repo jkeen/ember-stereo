@@ -18,7 +18,8 @@ const stereoHelpers = [
   'toggle-play-sound',
   'toggle-stereo-mute',
   'find-sound',
-  'autoplay-allowed']
+  'autoplay-allowed',
+  'json-stringify']
 
 module.exports = {
   extends: 'recommended',

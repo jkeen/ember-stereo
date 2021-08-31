@@ -6,6 +6,8 @@ export function initialize(application) {
   const options = { emberStereo, environment };
   application.register('config:stereo', options, { instantiate: false });
   application.register('stereo:sharedAudioAccess', sharedAudioAccess, { instantiate: true })
+
+
   application.inject('service:stereo', 'options', 'config:stereo');
 }
 

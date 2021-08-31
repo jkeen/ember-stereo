@@ -49,7 +49,7 @@ export default class Sound extends Evented {
     if (mimeTypeWhiteList) {
       return A(mimeTypeWhiteList).includes(mimeType);
     }
-    else if (mimeTypeBlackList){
+    else if (mimeTypeBlackList) {
       return !A(mimeTypeBlackList).includes(mimeType);
     }
     else {
@@ -64,10 +64,10 @@ export default class Sound extends Evented {
 
   @tracked hasPlayed = false
   @tracked isLoading = false
-  @tracked isLoaded  = false
+  @tracked isLoaded = false
   @tracked isPlaying = false
   @tracked isErrored = false;
-  @tracked isReady   = false
+  @tracked isReady = false
   @tracked isBlocked = false
   @tracked _position = 0;
   @tracked error = null;
@@ -115,7 +115,7 @@ export default class Sound extends Evented {
 
   // _position is updated by the service on the currently playing sound
   get position() {
-    return this._position;
+    return this._currentPosition()
   }
   set position(v) {
     this.trigger('audio-position-will-change', {
@@ -229,9 +229,9 @@ export default class Sound extends Evented {
       this._detectTimeouts();
       this.setup();
     }
-    catch(e) {
+    catch (e) {
       next(() => {
-        this.trigger('audio-load-error', {sound: this, error: `Error in setup ${e.message}`});
+        this.trigger('audio-load-error', { sound: this, error: `Error in setup ${e.message}` });
         if (audioLoadError) { audioLoadError(this); }
       });
     }
@@ -240,27 +240,27 @@ export default class Sound extends Evented {
   _detectTimeouts() {
     if (this.timeout) {
       let timeout = later(() => {
-          this.trigger('audio-load-error', {sound: this, error: "request timed out"});
+        this.trigger('audio-load-error', { sound: this, error: "request timed out" });
       }, this.timeout);
 
-      this.on('audio-ready',      () => cancel(timeout));
+      this.on('audio-ready', () => cancel(timeout));
       this.on('audio-load-error', () => cancel(timeout));
     }
   }
 
   fastForward(duration) {
-    let audioLength     = this._audioDuration();
+    let audioLength = this._audioDuration();
     let currentPosition = this._currentPosition();
-    let newPosition     = Math.min((currentPosition + duration), audioLength);
+    let newPosition = Math.min((currentPosition + duration), audioLength);
 
-    this.trigger('audio-will-fast-forward', { sound: this, currentPosition, newPosition});
+    this.trigger('audio-will-fast-forward', { sound: this, currentPosition, newPosition });
     this._setPosition(newPosition);
   }
 
   rewind(duration) {
     let currentPosition = this._currentPosition();
-    let newPosition     = Math.max((currentPosition - duration), 0);
-    this.trigger('audio-will-rewind', { sound: this, currentPosition, newPosition});
+    let newPosition = Math.max((currentPosition - duration), 0);
+    this.trigger('audio-will-rewind', { sound: this, currentPosition, newPosition });
     this._setPosition(newPosition);
   }
 

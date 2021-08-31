@@ -30,7 +30,7 @@ export default class HLSSound extends BaseSound {
   setup() {
     let video = document.createElement('video');
     this.video = video;
-    let hls = new HLS({debug: true, startFragPrefetch: true});
+    let hls = new HLS({ debug: true, startFragPrefetch: true });
 
     this.hls = hls;
     hls.attachMedia(video);
@@ -132,22 +132,22 @@ export default class HLSSound extends BaseSound {
   }
 
   _setupPlayerEvents(video) {
-    video.addEventListener('playing',         () => {
+    video.addEventListener('playing', () => {
       if (this.loaded) {
         this._updateCurrentTime();
-        this.trigger('audio-played', {sound: this});
+        this.trigger('audio-played', { sound: this });
       }
       else {
         this._signalAudioIsReady();
       }
     });
 
-    video.addEventListener('pause',           ()  => this.trigger('audio-paused', { sound: this }));
-    video.addEventListener('durationchange',  ()  => this.trigger('audio-duration-changed', { sound: this }));
-    video.addEventListener('seeked',          ()  => this.trigger('audio-position-changed', { sound: this, currentTime: this.currentTime }));
-    video.addEventListener('timeupdate',      ()  => this.trigger('audio-position-changed', { sound: this, currentTime: this.currentTime }));
-    video.addEventListener('progress',        ()  => this.trigger('audio-loading', { sound: this }));
-    video.addEventListener('error',           (e) => this._onVideoError(e));
+    video.addEventListener('pause', () => this.trigger('audio-paused', { sound: this }));
+    video.addEventListener('durationchange', () => this.trigger('audio-duration-changed', { sound: this }));
+    video.addEventListener('seeked', () => this.trigger('audio-position-changed', { sound: this, currentTime: this.currentTime }));
+    video.addEventListener('timeupdate', () => this.trigger('audio-position-changed', { sound: this, currentTime: this.currentTime }));
+    video.addEventListener('progress', () => this.trigger('audio-loading', { sound: this }));
+    video.addEventListener('error', (e) => this._onVideoError(e));
   }
 
   _checkIfAudioIsReady() {
@@ -166,8 +166,8 @@ export default class HLSSound extends BaseSound {
     this.debug('Test succeeded, signaling audio-ready');
     this.loaded = true;
     this.video.pause();
-    this.trigger('audio-loaded', {sound: this});
-    this.trigger('audio-ready', {sound: this});
+    this.trigger('audio-loaded', { sound: this });
+    this.trigger('audio-ready', { sound: this });
   }
 
   _onVideoError(e) {
@@ -198,7 +198,7 @@ export default class HLSSound extends BaseSound {
     if (data.fatal) {
       this.debug(data);
       console.log(data)
-      switch(data.type) {
+      switch (data.type) {
         case HLS.ErrorTypes.NETWORK_ERROR:
           this._giveUpAndDie(`${data.details}`);
           break;
@@ -216,7 +216,7 @@ export default class HLSSound extends BaseSound {
     let mediaRecoveryAttempts = this.mediaRecoveryAttempts;
     let hls = this.hls;
 
-    switch(mediaRecoveryAttempts) {
+    switch (mediaRecoveryAttempts) {
       case 0:
         this.debug(`First attempt at media error recovery for error: ${error}`);
         hls.recoverMediaError();
@@ -237,7 +237,7 @@ export default class HLSSound extends BaseSound {
 
   _giveUpAndDie(error) {
     this.hls.destroy();
-    this.trigger('audio-load-error', {sound: this, error});
+    this.trigger('audio-load-error', { sound: this, error });
   }
 
   get audioElement() {
@@ -269,7 +269,7 @@ export default class HLSSound extends BaseSound {
   }
 
   _setVolume(volume) {
-    this.video.volume = (volume/100);
+    this.video.volume = (volume / 100);
   }
 
   play() {

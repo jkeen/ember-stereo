@@ -58,18 +58,20 @@ export default class DummyConnection extends BaseSound {
     this.url = new StereoUrl(this.url);
 
     if (this.url.pathname && this.url.pathname.startsWith('/') && this.url.pathname.length > 1) {
-      let [, result, lengthOrError, name] = this.url.pathname.split('/');
+      let [, result, lengthOrError, name] = this.url.pathname.replace(/^\/?tests\//, '').split('/');
+
       /*eslint no-console: 0 */
       if (!(result && lengthOrError && name)) {
         console.error(
           '[dummy-connection] url format should be "/good/:length/:name"',
-          '[dummy-connection] url format should be "/bad/:error/:name"'
+          '[dummy-connection] url format should be "/bad/:error/:name"',
+          `you provided: ${this.url.pathname}`
         );
       }
       else {
         if (result === 'good' && !(lengthOrError === 'stream' || parseInt(lengthOrError) > 0)) {
           console.error(
-            '[dummy-connection] url format should be "/:result/:length/:name"'
+            `[dummy-connection] url format should be "/:result/:length/:name"  Was given ${this.url}`,
           );
           console.error(
             `[dummy-connection] length should be an integer or "stream". Was given ${this.url}`

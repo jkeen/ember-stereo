@@ -1,5 +1,4 @@
-import { Promise as EmberPromise } from 'rsvp';
-import { next, later } from '@ember/runloop';
+import { next } from '@ember/runloop';
 import { A } from '@ember/array';
 import { module, test, skip } from 'qunit';
 import { setupTest } from 'ember-qunit';
@@ -7,82 +6,67 @@ import { waitUntil, settled } from '@ember/test-helpers'
 import sinon from 'sinon';
 import hasEqualIdentifiers from 'ember-stereo/-private/utils/has-equal-identifiers';
 import SoundCache from 'ember-stereo/-private/utils/sound-cache';
-import Strategizer from 'ember-stereo/-private/utils/strategizer';
-import StereoUrl from 'ember-stereo/-private/utils/stereo-url';
 import setupCustomAssertions from 'ember-cli-custom-assertions/test-support';
-
-import {
-  stubConnectionCreateWithSuccess,
-  stubConnectionCreateWithFailure,
-} from '../../helpers/ember-stereo-test-helpers';
+import { setupStereoTest, stubConnectionCreateWithSuccess, stubConnectionCreateWithFailure } from 'ember-stereo/test-support/stereo-setup'
 
 let sandbox;
 
 module('Unit | Service | stereo', function (hooks) {
   setupTest(hooks);
   setupCustomAssertions(hooks)
+  setupStereoTest(hooks)
   hooks.beforeEach(function () {
     sandbox = sinon.createSandbox();
   });
 
   hooks.afterEach(function () {
-    let service = this.owner.lookup('service:stereo');
-    service.destroy();
     sandbox.restore();
   })
 
   test('it activates local connections', function (assert) {
-    const service = this.owner.lookup('service:stereo').loadConnections([{ name: 'DummyConnection', config: { 'testOption': 'dummy' } }])
+    const service = this.owner.lookup('service:stereo').loadConnections([{ name: 'NativeAudio', config: { 'testOption': 'dummy' } }])
 
-    assert.ok(service.connectionLoader.get('DummyConnection'), 'it activated the DummyConnection');
-    assert.equal(service.connectionLoader.get('DummyConnection').config.testOption, 'dummy', 'it passes config options to the DummyConnection');
+    assert.ok(service.connectionLoader.get('NativeAudio'), 'it activated the NativeAudio');
+    assert.equal(service.connectionLoader.get('NativeAudio').config.testOption, 'dummy', 'it passes config options to the NativeAudio');
   });
 
   test('it returns a list of the available connections', function (assert) {
-    const service = this.owner.lookup('service:stereo').loadConnections(['Howler', 'NativeAudio', 'DummyConnection'])
-    assert.deepEqual(service.connectionLoader.names, ["Howler", "NativeAudio", "DummyConnection"]);
+    const service = this.owner.lookup('service:stereo').loadConnections(['Howler', 'NativeAudio'])
+    assert.deepEqual(service.connectionLoader.names, ["Howler", "NativeAudio"]);
   });
 
   test('#load tries the first connection that says it can handle the url', async function (assert) {
     let service = this.owner.lookup('service:stereo')
-    service.loadConnections([{ name: 'Howler' }, { name: 'NativeAudio' }, { name: 'DummyConnection' }]);
+    service.loadConnections([{ name: 'Howler' }, { name: 'NativeAudio' }]);
 
     let testUrl = "/good/1000/sound.mp3";
 
     let Howler = service.connectionLoader.get(`Howler`);
     let NativeAudio = service.connectionLoader.get(`NativeAudio`);
-    let DummyConnection = service.connectionLoader.get(`DummyConnection`);
 
     let howlerSpy = sandbox.stub(Howler, 'canPlay').returns(false);
-    let nativeSpy = sandbox.stub(NativeAudio, 'canPlay').returns(false);
-    let localSpy = sandbox.stub(DummyConnection, 'canPlay').returns(true);
+    let nativeSpy = sandbox.stub(NativeAudio, 'canPlay').returns(true);
 
-    let nativeCreateSpy = sandbox.stub(NativeAudio, 'constructor').returns(sandbox.createStubInstance(NativeAudio));
-    let howlerCreateSpy = sandbox.stub(Howler, 'constructor').returns(sandbox.createStubInstance(Howler));
-    let dummyCreateSpy = sandbox.spy(DummyConnection.prototype, 'setup')
+    let { sound } = await service.load(testUrl);
 
-    await service.load(testUrl);
 
     assert.ok(howlerSpy.callCount > 0, "howler canPlay should have been called");
     assert.ok(nativeSpy.callCount > 0, "nativeSpy canPlay should have been called");
-    assert.ok(localSpy.callCount > 0, "local canPlay should have been called");
 
-    assert.equal(howlerCreateSpy.callCount, 0, "Howler connection should not have been used");
-    assert.equal(nativeCreateSpy.callCount, 0, "Native connection should not have been used");
-    assert.equal(dummyCreateSpy.callCount, 1, "Dummy connection should have been used");
+    assert.equal(sound.connectionName, 'Native Audio', "Native Audio connection should have been used");
   });
 
   test('#load stops trying urls after a sound loads and reports accurately', async function (assert) {
     let goodUrl = "/good/10000/test-3.mp3";
     let unusedUrl = "/test/test-4.mp3";
-    let error1 = 'unknown error';
-    let error2 = 'codec not supported';
+    let error1 = 'unknown-error';
+    let error2 = 'codec-not-supported';
     let badUrl1 = `/bad/${error1}/test-1.mp3`;
     let badUrl2 = `/bad/${error2}/test-2.mp3`;
     let expectedUrl;
     let expectedFailures;
 
-    let service = this.owner.lookup('service:stereo').loadConnections([{ name: 'DummyConnection' }]);
+    let service = this.owner.lookup('service:stereo').loadConnections([{ name: 'NativeAudio' }]);
 
     let { sound, failures } = await service.load([badUrl1, badUrl2, goodUrl, unusedUrl]);
     if (sound) {
@@ -99,10 +83,10 @@ module('Unit | Service | stereo', function (hooks) {
   });
 
   test('#load can take a promise that resolves urls', async function (assert) {
-    let service = this.owner.lookup('service:stereo').loadConnections([{ name: 'DummyConnection' }]);
-    let goodUrl = "good/10000/good.mp3";
-    let urlPromise = new EmberPromise(resolve => {
-      later(() => resolve([goodUrl]), 800);
+    let service = this.owner.lookup('service:stereo').loadConnections([{ name: 'NativeAudio' }]);
+    let goodUrl = "/good/1000/good.mp3";
+    let urlPromise = new Promise(resolve => {
+      resolve([goodUrl]);
     });
     let expectedUrl;
 
@@ -114,7 +98,7 @@ module('Unit | Service | stereo', function (hooks) {
   });
 
   test('When a sound gets created it gets registered with OneAtATime', async function (assert) {
-    let service = this.owner.lookup('service:stereo').loadConnections([{ name: 'DummyConnection' }]);
+    let service = this.owner.lookup('service:stereo').loadConnections([{ name: 'NativeAudio' }]);
 
     let url = "/good/1000/test.mp3";
 
@@ -123,7 +107,7 @@ module('Unit | Service | stereo', function (hooks) {
   });
 
   test('When a sound plays it gets set as the currentSound', async function (assert) {
-    let service = this.owner.lookup('service:stereo').loadConnections([{ name: 'DummyConnection' }]);
+    let service = this.owner.lookup('service:stereo').loadConnections([{ name: 'NativeAudio' }]);
     let { sound: sound1 } = await service.load("/good/1000/yes.mp3");
     let { sound: sound2 } = await service.load("/good/2000/another-yes.mp3");
 
@@ -138,7 +122,7 @@ module('Unit | Service | stereo', function (hooks) {
 
   test('Calling _setCurrentSound multiple times will not register duplicate events on the sound', async function (assert) {
     assert.expect(2);
-    let service = this.owner.lookup('service:stereo').loadConnections([{ name: 'DummyConnection' }]);
+    let service = this.owner.lookup('service:stereo').loadConnections([{ name: 'NativeAudio' }]);
 
     let { sound } = await service.load("/good/10000/yes.mp3");
     var callCount = 0;
@@ -167,7 +151,7 @@ module('Unit | Service | stereo', function (hooks) {
 
   test('The second time a url is requested it will be pulled from the cache', async function (assert) {
     assert.expect(4);
-    let service = this.owner.lookup('service:stereo').loadConnections([{ name: 'DummyConnection' }]);
+    let service = this.owner.lookup('service:stereo').loadConnections([{ name: 'NativeAudio' }]);
 
     let url = "/good/10000/test.mp3";
     let soundCache = service.soundCache;
@@ -189,9 +173,9 @@ module('Unit | Service | stereo', function (hooks) {
 
   test('The second time a url (with a mime type specified) is requested it will be pulled from the cache', async function (assert) {
     assert.expect(4);
-    let service = this.owner.lookup('service:stereo').loadConnections([{ name: 'DummyConnection' }]);
+    let service = this.owner.lookup('service:stereo').loadConnections([{ name: 'NativeAudio' }]);
 
-    let url = { url: "/test/test.mp3", mimeType: "audio/mp3" };
+    let url = { url: "/good/1000/test.mp3", mimeType: "audio/mp3" };
 
     let soundCache = service.soundCache;
     let findSpy = sandbox.stub(soundCache, 'find');
@@ -213,12 +197,12 @@ module('Unit | Service | stereo', function (hooks) {
   test('position gets polled regularly on the currentSound but not on the others', function (assert) {
     this.clock = sandbox.useFakeTimers();
 
-    const service = this.owner.lookup('service:stereo').loadConnections(['DummyConnection'])
+    const service = this.owner.lookup('service:stereo').loadConnections(['NativeAudio'])
 
     const INTERVAL = 500;
 
-    let sound1 = new (service.connectionLoader.get('DummyConnection'))
-    let sound2 = new (service.connectionLoader.get('DummyConnection'))
+    let sound1 = new (service.connectionLoader.get('NativeAudio'))({ url: '/good/1000/silence.mp3' })
+    let sound2 = new (service.connectionLoader.get('NativeAudio'))({ url: '/good/1000/silence2.mp3' })
 
     let spy1 = sandbox.spy(sound1, '_currentPosition');
     let spy2 = sandbox.spy(sound2, '_currentPosition');
@@ -243,11 +227,11 @@ module('Unit | Service | stereo', function (hooks) {
   });
 
   test('volume changes are set on the current sound', function (assert) {
-    const service = this.owner.lookup('service:stereo').loadConnections(['DummyConnection'])
+    assert.expect(7)
+    const service = this.owner.lookup('service:stereo').loadConnections(['NativeAudio'])
 
-
-    let sound1 = new (service.connectionLoader.get('DummyConnection'));
-    let sound2 = new (service.connectionLoader.get('DummyConnection'));
+    let sound1 = new (service.connectionLoader.get('NativeAudio'))({ url: '/good/1000/test.mp3' });
+    let sound2 = new (service.connectionLoader.get('NativeAudio'))({ url: '/good/1000/test2.mp3' });
 
     let spy1 = sandbox.spy(sound1, '_setVolume');
     let spy2 = sandbox.spy(sound2, '_setVolume');
@@ -279,7 +263,7 @@ module('Unit | Service | stereo', function (hooks) {
   });
 
   test('toggleMute returns sound to previous level', function (assert) {
-    const service = this.owner.lookup('service:stereo').loadConnections(['DummyConnection'])
+    const service = this.owner.lookup('service:stereo').loadConnections(['NativeAudio'])
 
     assert.equal(service.get('volume'), service.defaultVolume, "service should have default volume");
     service.set('volume', 75);
@@ -294,8 +278,7 @@ module('Unit | Service | stereo', function (hooks) {
   test("consumer can specify the connection to use with a particular url", async function (assert) {
     const service = this.owner.lookup('service:stereo').loadConnections(['LocalDummyConnection', 'NativeAudio']);
     let nativeAudioSpy = stubConnectionCreateWithSuccess(service, "NativeAudio", sandbox);
-
-    await service.load("/here/is/a/test/url/test.mp3", { useConnections: ['NativeAudio'] });
+    await service.load("/good/10000/test.mp3", { useConnections: ['NativeAudio'] });
     assert.equal(nativeAudioSpy.callCount, 1, "Native connection should have been called");
   });
 
@@ -343,166 +326,41 @@ module('Unit | Service | stereo', function (hooks) {
     assert.ok(createSpy.calledOnce, "A sound should have been created");
   });
 
-  test("for desktop devices, try each url on each connection", async function (assert) {
-    let strategizerSpy = sandbox.spy(Strategizer);
-
-    let urls = ["first-test-url.mp3", "second-test-url.mp3", "third-test-url.mp3"]
-    const connections = ['LocalDummyConnection', 'Howler', 'NativeAudio'];
-    const service = this.owner.lookup('service:stereo');
-    service.loadConnections([{ name: connections[0] }, { name: connections[1] }, { name: connections[2] }])
-    service.set('isMobileDevice', false);
-
-    stubConnectionCreateWithSuccess(service, "NativeAudio", sandbox);
-    stubConnectionCreateWithSuccess(service, "LocalDummyConnection", sandbox);
-    stubConnectionCreateWithSuccess(service, "Howler", sandbox);
-
-
-    // let strategizerSpy = sandbox.spy(Strategizer.prototype, 'strategies')
-
-    await service.load(urls)
-
-    // assert.equal(strategyMethodSpy.callCount, 1, "Standard strategy should have been used");
-    // assert.equal(strategyOrderSpy.callCount, 1, "Should have called internal find method with strategies");
-
-    let correctOrder = [
-      `${connections[0]}:${new StereoUrl(urls[0])}`,
-      `${connections[1]}:${new StereoUrl(urls[0])}`,
-      `${connections[2]}:${new StereoUrl(urls[0])}`,
-      `${connections[0]}:${new StereoUrl(urls[1])}`,
-      `${connections[1]}:${new StereoUrl(urls[1])}`,
-      `${connections[2]}:${new StereoUrl(urls[1])}`,
-      `${connections[0]}:${new StereoUrl(urls[2])}`,
-      `${connections[1]}:${new StereoUrl(urls[2])}`,
-      `${connections[2]}:${new StereoUrl(urls[2])}`,
-    ];
-
-    let strategies = strategyOrderSpy.getCall(0).returnValue;
-    let actualOrder = [];
-    strategies.forEach(strategy => {
-      actualOrder.push(`${strategy.connectionKey}:${strategy.url}`);
-    });
-
-    assert.deepEqual(actualOrder, correctOrder, "Breadth-first strategy should have been used");
-  });
-
-  test("for mobile devices, try all the urls on the native audio connection first, and pass along an audio element", async function (assert) {
-    let urls = ["first-test-url.mp3", "second-test-url.mp3", "third-test-url.mp3"];
-    const connections = ['LocalDummyConnection', 'Howler', 'NativeAudio'];
-    const service = this.owner.lookup('service:stereo');
-    service.loadConnections([{ name: connections[0] }, { name: connections[1] }, { name: connections[2] }])
-
-    let strategyMethodSpy = sandbox.spy(service, '_prepareMobileStrategies');
-    let strategyOrderSpy = sandbox.spy(service, '_prepareAllStrategies');
-
-    stubConnectionCreateWithSuccess(service, "NativeAudio", sandbox);
-    stubConnectionCreateWithSuccess(service, "LocalDummyConnection", sandbox);
-    stubConnectionCreateWithSuccess(service, "Howler", sandbox);
-
-    service.isMobileDevice = true
-
-    await service.load(urls);
-    assert.equal(strategyMethodSpy.callCount, 1, "Mobile strategy should have been used");
-    assert.equal(strategyOrderSpy.callCount, 1, "Should have called internal find method with strategies");
-
-    let correctOrder = [
-      `${connections[2]}:${new StereoUrl(urls[0])}`,
-      `${connections[2]}:${new StereoUrl(urls[1])}`,
-      `${connections[2]}:${new StereoUrl(urls[2])}`,
-      `${connections[0]}:${new StereoUrl(urls[0])}`,
-      `${connections[1]}:${new StereoUrl(urls[0])}`,
-      `${connections[0]}:${new StereoUrl(urls[1])}`,
-      `${connections[1]}:${new StereoUrl(urls[1])}`,
-      `${connections[0]}:${new StereoUrl(urls[2])}`,
-      `${connections[1]}:${new StereoUrl(urls[2])}`,
-    ];
-
-    let actualOrder = [];
-    let strategies = strategyOrderSpy.getCall(0).returnValue;
-    strategies.forEach(strategy => {
-      actualOrder.push(`${strategy.connectionKey}:${strategy.url}`);
-    });
-
-    assert.deepEqual(actualOrder, correctOrder, "Native audio should have been prioritized first");
-    let sharedAudioAccesss = A(A(strategies).map(s => s.sharedAudioAccess)).compact();
-    assert.equal(sharedAudioAccesss.length, strategies.length, "audio element should have been included with the strategies");
-  });
-
-  test("for mobile devices, audio element should still be passed if a custom strategy is used", async function (assert) {
-    let urls = ["first-test-url.mp3", "second-test-url.mp3", "third-test-url.mp3"];
-    let connections = ['DummyConnection', 'Howler', 'NativeAudio'];
-    const service = this.owner.lookup('service:stereo').loadConnections(connections)
-
-    stubConnectionCreateWithSuccess(service, "NativeAudio", sandbox);
-    stubConnectionCreateWithSuccess(service, "DummyConnection", sandbox);
-    stubConnectionCreateWithSuccess(service, "Howler", sandbox);
-
-    let strategySpy = sandbox.spy(service, '_prepareMobileStrategies');
-    let customStrategySpy = sandbox.spy(service, '_prepareStrategies');
-    let strategyOrderSpy = sandbox.spy(service, '_prepareAllStrategies');
-
-    service.set('isMobileDevice', true);
-
-    await service.load(urls, { useConnections: ['DummyConnection'] })
-    assert.equal(strategySpy.callCount, 0, "Mobile strategy should not been used");
-    assert.equal(customStrategySpy.callCount, 1, "custom strategy should have been used");
-    assert.equal(strategyOrderSpy.callCount, 1, "Should have called internal find method with strategies");
-
-    let correctOrder = [
-      `${connections[0]}:${new StereoUrl(urls[0])}`,
-      `${connections[0]}:${new StereoUrl(urls[1])}`,
-      `${connections[0]}:${new StereoUrl(urls[2])}`,
-    ];
-
-    let actualOrder = [];
-    let strategies = strategyOrderSpy.firstCall.returnValue;
-
-    strategies.forEach(strategy => {
-      actualOrder.push(`${strategy.connectionKey}:${strategy.url}`);
-    });
-
-    assert.deepEqual(actualOrder, correctOrder, "Custom strategy should have been used");
-    let sharedAudioAccesses = A(A(strategies).map(s => s.sharedAudioAccess)).compact();
-    assert.equal(sharedAudioAccesses.length, strategies.length, "audio element should have been included with the strategies");
-
-
-  });
-
   test('you can specify alwaysUseSingleAudioElement in config to always use a single audio element', function (assert) {
     const service = this.owner.lookup('service:stereo')
+    service.loadConnections([{ name: 'NativeAudio' }])
 
     sinon.stub(service, 'systemStereoOptions').get(() => {
       return {
         alwaysUseSingleAudioElement: true,
         connections: [
-          { name: 'DummyConnection' },
+          { name: 'NativeAudio' },
         ]
       }
     })
 
-    service.loadConnections(['DummyConnection'])
     assert.true(service.useSharedAudioAccess);
   });
 
   test("shared audio element should be passed if alwaysUseSingleAudioElement config option is specified", async function (assert) {
     let urls = ["/good/1000/1.mp3", "/good/1000/2.mp3", "/good/1000/3.mp3"];
-    const service = this.owner.lookup('service:stereo')
+    const service = this.owner.lookup('service:stereo').loadConnections(['NativeAudio'])
     sinon.stub(service, 'systemStereoOptions').get(() => {
       return {
         alwaysUseSingleAudioElement: true,
         connections: [
-          { name: 'DummyConnection' },
+          { name: 'NativeAudio' },
         ]
       }
     })
 
-    service.loadConnections(['DummyConnection'])
 
-    let strategyOrderSpy = sandbox.spy(service, '_prepareAllStrategies');
+    let strategyOrderSpy = sandbox.spy(service, '_buildStrategies');
 
     service.set('isMobileDevice', false);
     service.set('useSharedAudioAccess', true);
 
-    await service.load(urls, { useConnections: ['DummyConnection'] });
+    await service.load(urls, { useConnections: ['NativeAudio'] });
     let strategies = strategyOrderSpy.getCall(0).returnValue;
 
     let sharedAudioAccesss = A(A(strategies).map(s => s.sharedAudioAccess)).compact();
@@ -514,8 +372,8 @@ module('Unit | Service | stereo', function (hooks) {
     const service = this.owner.lookup('service:stereo');
     service.loadConnections([{ name: connections[0] }])
 
-    let s1url = "/assets/silence.mp3";
-    let s2url = "/assets/silence2.mp3";
+    let s1url = "/good/20000/silence.mp3";
+    let s2url = "/good/15000/silence2.mp3";
 
     let { sound: sound1 } = await service.load(s1url);
     let { sound: sound2 } = await service.load(s2url);
@@ -536,80 +394,43 @@ module('Unit | Service | stereo', function (hooks) {
   });
 
   test("sound can play on native audio using shared element one after the other", async function (assert) {
-    assert.expect(3)
+    assert.expect(4)
     const service = this.owner.lookup('service:stereo').loadConnections(['NativeAudio'])
-    stubConnectionCreateWithSuccess(service, "NativeAudio", sandbox);
-
-    let getSharedCount = 0;
-    class FakeAudio {
-      control(sound) {
-        this.sound = sound;
-        return this;
-      }
-
-      play() {
-        this.sound.trigger('audio-playing', { sound: this.sound })
-        this.sound.isPlaying = true;
-        return Promise.resolve();
-      }
-
-      setAttribute(prop, value) {
-        if (prop === 'src' && value !== this.src) {
-          this.sound.trigger('audio-ended')
-        }
-
-        this[prop] = value;
-      }
-    }
-
-    // let fakeAudioElement = new FakeAudio;
-
-    // sandbox.mock(fakeAudioElement);
-    // sandbox.stub(service.connectionLoader.get('NativeAudio').prototype, 'requestControl').callsFake(function () {
-    //   if (this.sharedAudioAccess) {
-    //     getSharedCount = getSharedCount + 1;
-    //     return fakeAudioElement.control(this)
-    //   } else {
-    //     return fakeAudioElement.control(this)
-    //   }
-    // })
-
-    let s1url = "/assets/silence.mp3";
-    let s2url = "/assets/silence2.mp3";
+    let s1url = "/good/10/silence.mp3";
+    let s2url = "/good/10/silence2.mp3";
 
     service.useSharedAudioAccess = true;
     service.isMobileDevice = true
 
-    let { sound: silence1 } = await service.load(s1url);
+    let { sound: silence1 } = await service.play(s1url);
     let sharedAccess = silence1.sharedAudioAccess;
+    assert.equal(sharedAccess.audioElement.id, silence1.audioElement.id, "sound should be using its shared element");
+
+    await silence1.play();
 
     silence1.one('audio-ended', async function () {
       assert.ok("audio ended event was fired");
 
       let { sound: silence2 } = await service.play(s2url)
-      assert.deepEqual(sharedAccess.audioElement, silence2.audioElement, "second sound should be using shared element");
-
-      silence2.stop();
+      assert.equal(sharedAccess.audioElement.id, silence2.audioElement.id, "second sound should be using shared element");
+      assert.notEqual(sharedAccess.audioElement.id, silence1.audioElement.id, "second sound should be using shared element");
     });
-
-    assert.deepEqual(sharedAccess.audioElement, silence1.audioElement, "sound should be using shared element");
-
-    await silence1.play();
     silence1.position = 10 * 60 * 1000;
 
     await settled();
+
   });
 
   test("service has access to the current sound inside the play callback", async function (assert) {
-    const service = this.owner.lookup('service:stereo').loadConnections(['DummyConnection'])
-    let s1url = "/assets/silence.mp3";
+    const service = this.owner.lookup('service:stereo')
+    let s1url = "/good/10000/silence.mp3";
 
     let { sound } = await service.play(s1url);
     assert.equal(sound.position, service.get('position'));
   });
 
   test("sound events get relayed at the service level", async function (assert) {
-    const service = this.owner.lookup('service:stereo').loadConnections(['DummyConnection'])
+    const service = this.owner.lookup('service:stereo')
     let s1url = "/good/1000/silence.mp3";
     let s2url = "/good/1000/silence2.mp3";
 
@@ -644,7 +465,7 @@ module('Unit | Service | stereo', function (hooks) {
   test("service triggers `current-sound-changed` event when sounds change", async function (assert) {
     assert.expect(4)
 
-    const service = this.owner.lookup('service:stereo').loadConnections(['DummyConnection'])
+    const service = this.owner.lookup('service:stereo').loadConnections(['NativeAudio'])
     let s1url = "/good/1000/silence.mp3";
     let s2url = "/good/1000/silence2.mp3";
 
@@ -664,7 +485,7 @@ module('Unit | Service | stereo', function (hooks) {
   });
 
   test("metadata can be sent with a play and load request and it will stay with the sound", async function (assert) {
-    const service = this.owner.lookup('service:stereo').loadConnections(['DummyConnection'])
+    const service = this.owner.lookup('service:stereo').loadConnections(['NativeAudio'])
     let s1url = "/good/1000/silence.mp3";
     let s2url = "/good/1000/silence2.mp3";
 
@@ -680,24 +501,48 @@ module('Unit | Service | stereo', function (hooks) {
     assert.equal(sound1.metadata.storyId, storyId, "storyId should be in saved sound");
   });
 
-  test("current-sound-interrupted event gets fired when a new `play` request happens while a sound is playing", async function (assert) {
-    const service = this.owner.lookup('service:stereo').loadConnections(['DummyConnection'])
-    let s1url = "/good/1000/silence.mp3";
+  test("current-sound-interrupted event gets fired when a new `play` request happens while a sound is playing (independent elements)", async function (assert) {
+    assert.expect(2)
+    const service = this.owner.lookup('service:stereo').loadConnections(['NativeAudio'])
+    service.useSharedAudioAccess = false
+    let s1url = "/good/3000/silence.mp3";
     let s2url = "/good/1000/silence2.mp3";
 
-    assert.expect(1);
+    service.one('current-sound-changed', ({ sound }) => {
+      assert.equalUrls(sound.url, s1url, "current sound should be reported as changed");
+    })
 
-    let handler = ({ sound }) => {
+    service.one('current-sound-interrupted', ({ sound }) => {
       assert.equalUrls(sound.url, s1url, "current sound should be reported as interrupted");
-    }
+    })
 
-    service.one('current-sound-interrupted', handler);
     await service.play(s1url);
+
+    await service.play(s2url);
+  });
+
+  test("current-sound-interrupted event gets fired when a new `play` request happens while a sound is playing (shared elements)", async function (assert) {
+    assert.expect(2)
+    const service = this.owner.lookup('service:stereo').loadConnections(['NativeAudio'])
+    service.useSharedAudioAccess = true
+    let s1url = "/good/3000/silence.mp3";
+    let s2url = "/good/1000/silence2.mp3";
+
+    service.one('current-sound-changed', ({ sound }) => {
+      assert.equalUrls(sound.url, s1url, "current sound should be reported as changed");
+    })
+
+    service.one('current-sound-interrupted', ({ sound }) => {
+      assert.equalUrls(sound.url, s1url, "current sound should be reported as interrupted");
+    })
+
+    await service.play(s1url);
+
     await service.play(s2url);
   });
 
   test("current-sound-interrupted event gets fired when another sound starts playing while one is already playing", async function (assert) {
-    const service = this.owner.lookup('service:stereo').loadConnections(['DummyConnection'])
+    const service = this.owner.lookup('service:stereo').loadConnections(['NativeAudio'])
     let s1url = "/good/1000/silence.mp3";
     let s2url = "/good/1000/silence2.mp3";
 
@@ -713,7 +558,7 @@ module('Unit | Service | stereo', function (hooks) {
   });
 
   test("current-sound-interrupted event does not fire when position gets changed", async function (assert) {
-    const service = this.owner.lookup('service:stereo').loadConnections(['DummyConnection'])
+    const service = this.owner.lookup('service:stereo').loadConnections(['NativeAudio'])
 
     let s1url = "/good/10000/silence.mp3";
 
@@ -730,10 +575,10 @@ module('Unit | Service | stereo', function (hooks) {
 
   test("new-load-request gets fired on new load and play requests", async function (assert) {
     assert.expect(4)
-    const service = this.owner.lookup('service:stereo').loadConnections(['DummyConnection'])
+    const service = this.owner.lookup('service:stereo').loadConnections(['NativeAudio'])
 
-    let s1url = "/assets/silence.mp3";
-    let s2url = "/assets/silence2.mp3";
+    let s1url = "/good/1000/silence.mp3";
+    let s2url = "/good/1000/silence2.mp3";
 
     let count = 0;
     let handler = (opts) => {
@@ -764,7 +609,7 @@ module('Unit | Service | stereo', function (hooks) {
 
   test("new-load-request gets fired on new load requests that are cached", async function (assert) {
     const service = this.owner.lookup('service:stereo').loadConnections(['DummyConnection'])
-    let s1url = "/assets/silence.mp3";
+    let s1url = "/good/1000/silence.mp3";
 
     assert.expect(4);
 
@@ -795,7 +640,7 @@ module('Unit | Service | stereo', function (hooks) {
 
     assert.expect(2);
 
-    service.on('audio-position-will-change', ({ currentPosition, newPosition }) => {
+    service.one('audio-position-will-change', ({ currentPosition, newPosition }) => {
       assert.equal(currentPosition, 0, "current position should be zero");
       assert.equal(newPosition, 5000, "new position should be 5000");
     });
@@ -873,11 +718,7 @@ module('Unit | Service | stereo', function (hooks) {
     assert.equalUrls(findSpy.secondCall.args[0], [cacheSpy.firstCall.args[0].url], 'lookup key is the same as the cached key');
   });
 
-  skip("currenly playing sound does not pause until load has succeeded", function (assert) {
-
-  })
-
-  skip("after sound completes, its position is reset to zero", function () {
+  skip("currenly playing sound does not pause until load has succeeded", function () {
 
   })
 });

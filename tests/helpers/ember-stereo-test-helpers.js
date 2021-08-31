@@ -2,9 +2,9 @@ import { next } from '@ember/runloop';
 import sinon from 'sinon';
 
 const dummyOps = {
-  setup() {},
-  _audioDuration() {},
-  _setVolume() {}
+  setup() { },
+  _audioDuration() { },
+  _setVolume() { }
 };
 
 function stubConnectionCreateWithSuccess(service, connectionName, sandbox = sinon) {
@@ -12,7 +12,7 @@ function stubConnectionCreateWithSuccess(service, connectionName, sandbox = sino
   sandbox.stub(Connection, 'canPlay').returns(true);
 
   let stub = sandbox.stub(Connection.prototype, 'setup')
-  return stub.callsFake(function() {
+  return stub.callsFake(function () {
     next(() => this.trigger('audio-ready', { sound: this }));
   });
 }
@@ -21,7 +21,7 @@ function stubConnectionCreateWithFailure(service, connectionName, sandbox = sino
   let Connection = service.connectionLoader.get(connectionName)
   sandbox.stub(Connection, 'canPlay').returns(true);
   let stub = sandbox.stub(Connection.prototype, 'setup')
-  return stub.callsFake(function() {
+  return stub.callsFake(function () {
     next(() => this.trigger('audio-load-error', { sound: this, error: 'failed' }));
   });
 }
@@ -32,7 +32,6 @@ function absoluteUrl(fragment) {
 
   return parser.href
 }
-
 
 export {
   stubConnectionCreateWithSuccess,

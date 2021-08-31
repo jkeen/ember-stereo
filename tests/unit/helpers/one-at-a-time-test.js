@@ -3,7 +3,7 @@ import EmberObject from '@ember/object';
 import OneAtATime from 'ember-stereo/-private/utils/one-at-a-time';
 import { module, test } from 'qunit';
 
-module('Unit | Helper | one at a time', function() {
+module('Unit | Helper | one at a time', function () {
   /* eslint-disable */
   const Sound = EmberObject.extend(Evented, {
     play() {
@@ -17,13 +17,13 @@ module('Unit | Helper | one at a time', function() {
   });
   /* eslint-enable */
 
-  test("only one sound should play at a time", function(assert) {
+  test("only one sound should play at a time", function (assert) {
     assert.expect(3);
     let oneAtATime = new OneAtATime;
 
-    let sound1 = Sound.create();
-    let sound2 = Sound.create();
-    let sound3 = Sound.create();
+    let sound1 = Sound.create({ url: '/good/10000/1.mp3' });
+    let sound2 = Sound.create({ url: '/good/10000/2.mp3' });
+    let sound3 = Sound.create({ url: '/good/10000/3.mp3' });
     oneAtATime.register(sound1);
     oneAtATime.register(sound2);
     oneAtATime.register(sound3);

@@ -9,11 +9,11 @@ export default class Strategy {
   success = false
   tried = false
 
-  constructor(connection, url, config = {}) {
+  constructor(connection, stereoUrl, config = {}) {
     this.connection = connection
     // assert('[ember-stereo] strategy constructor requires a StereoUrl', (stereoUrl.url && stereoUrl.mimeType))
 
-    this.stereoUrl = url
+    this.stereoUrl = stereoUrl
     this.config = config || {}
     this.sharedAudioAccess = config.sharedAudioAccess
   }

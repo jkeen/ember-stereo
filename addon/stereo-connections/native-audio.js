@@ -56,7 +56,7 @@ export default class NativeAudio extends BaseSound {
   }
 
   _handleAudioEvent(eventName, e) {
-    if (!this.urlsAreEqual(e.target.src, this.url) && e.target.src !== '') {
+    if (!this.urlsAreEqual(e.target?.src, this.url) && e.target?.src !== '') {
       // This event is not for us if our srcs aren't equal
 
       // but if the target src is empty it means we've been stopped and in
@@ -140,10 +140,10 @@ export default class NativeAudio extends BaseSound {
       return;
     }
 
-    if (this.isPlaying) {
-      // send a pause event so anyone subscribed to stereo's relayed events gets the message
-      this._onAudioPaused(this);
-    }
+    // if (this.isPlaying) {
+    //   // send a pause event so anyone subscribed to stereo's relayed events gets the message
+    //   this._onAudioPaused(this);
+    // }
 
     this.sharedAudioAccess.releaseControl(this);
     // save current state of audio element to the internal element that won't be played
@@ -325,10 +325,10 @@ export default class NativeAudio extends BaseSound {
     }
   }
 
-  @task({ maxConcurrency: 1, drop: true })
-  *playTask({ position, retryCount }) {
+  @task({ restartable: true })
+  *playTask({ position /*, retryCount */ }) {
     this.isLoading = true
-    retryCount = retryCount || 0
+    // retryCount = retryCount || 0
     let audio = this.requestControl();
 
     // since we clear the `src` attr on pause, restore it here
@@ -345,16 +345,16 @@ export default class NativeAudio extends BaseSound {
         throw e;
       })
     } catch (e) {
-      if (retryCount < 2) {
-        try {
-          yield this.playTask.perform({ position, retryCount: retryCount + 1 })
-        }
-        catch (e) {
-          if (!didCancel(e)) {
-            throw e;
-          }
-        }
-      }
+      // if (retryCount < 2) {
+      //   try {
+      //     yield this.playTask.perform({ position, retryCount: retryCount + 1 })
+      //   }
+      //   catch (e) {
+      //     if (!didCancel(e)) {
+      //       throw e;
+      //     }
+      //   }
+      // }
       this._onAudioError(e)
     } finally {
       this.isLoading = false

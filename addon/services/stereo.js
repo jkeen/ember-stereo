@@ -339,11 +339,10 @@ export default class Stereo extends Service.extend(EmberEvented) {
     }, options);
   }
 
-  @task({ debug: true, maxConcurrency: 5, restartable: true, evented: true })
+  @task({ debug: true, maxConcurrency: 5, evented: true })
   *loadTask(urlsOrPromise, _options) {
     let options = this.prepareLoadOptions(_options)
     let urlsToTry = yield this.urlCache.resolve(urlsOrPromise)
-
     debug('ember-stereo')(`given urls: ${urlsToTry.join(', ')}`);
     this.trigger('pre-load', urlsToTry);
     this.errorCache.remove(urlsToTry)
@@ -356,19 +355,19 @@ export default class Stereo extends Service.extend(EmberEvented) {
     }
     else {
       try {
-        var strategizer = new Strategizer(urlsToTry, options)
+        var strategies = this._buildStrategies(urlsToTry, options)
 
-        if (strategizer.strategies.filter(s => s.canPlay).length == 0) {
-          return this._handlePreloadError({ urlsToTry, options, strategies: strategizer.strategies })
+        if (strategies.filter(s => s.canPlay).length == 0) {
+          return this._handlePreloadError({ urlsToTry, options, strategies })
         }
       } catch (e) {
-        return this._handlePreloadError({ urlsToTry, options, strategies: (strategizer?.strategies || []) })
+        return this._handlePreloadError({ urlsToTry, options, strategies: (strategies || []) })
       }
 
       var success = false
       let failures = []
 
-      for (let strategy of strategizer.strategies) {
+      for (let strategy of strategies) {
         if (strategy.canPlay) { // worth trying
           let result = yield this.tryLoadingSound.perform(strategy).catch(e => {
             strategy.error = e
@@ -380,7 +379,7 @@ export default class Stereo extends Service.extend(EmberEvented) {
           if (result.sound) {
             this.trigger('sound-ready', { sound: result.sound })
             sound = result.sound
-            sound._debug = strategizer.strategies;
+            sound._debug = strategies;
             success = true;
             break;
           }
@@ -399,7 +398,7 @@ export default class Stereo extends Service.extend(EmberEvented) {
         return { sound, failures };
       }
       else {
-        return this._handleLoadError({ urlsToTry, failures, options, strategies: strategizer.strategies })
+        return this._handleLoadError({ urlsToTry, failures, options, strategies: strategies })
       }
     }
   }
@@ -408,6 +407,7 @@ export default class Stereo extends Service.extend(EmberEvented) {
   *handleCurrentSoundTransition(sound) {
     while (true) {
       yield waitForEvent(sound, 'audio-played');
+      debug('ember-stereo')('handling sound transition')
 
       let previousSound = this.currentSound;
       let currentSound = sound;
@@ -443,6 +443,7 @@ export default class Stereo extends Service.extend(EmberEvented) {
       return promise;
     }
     catch (e) {
+
       if (!didCancel(e)) {
         // re-throw the non-cancelation error
         throw e;
@@ -614,6 +615,11 @@ export default class Stereo extends Service.extend(EmberEvented) {
     return config?.emberStereo
   }
 
+
+  _buildStrategies(urlsToTry, options) {
+    return new Strategizer(urlsToTry, options).strategies
+  }
+
   _handlePlaybackError({ sound, options }) {
     let strategy = { url: sound.url, error: sound.error, connectionKey: sound.connectionKey };
     this.errorCache.cache({ url: sound.url, error: sound.error, connectionKey: sound.connectionKey })
@@ -745,7 +751,6 @@ export default class Stereo extends Service.extend(EmberEvented) {
   findLoadedSound(identifiers) {
     return this.soundCache.find(identifiers);
   }
-
 
   findSound(identifier) {
     return this.soundProxy(identifier).value

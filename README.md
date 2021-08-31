@@ -434,21 +434,7 @@ For mobile browsers, we'll first try all the URLs on the NativeAudio using a tec
 Import this helper into acceptance tests to stub out stereo.
 
 ```javascript
-import '[your-app-name]/tests/helpers/stereo-acceptance-helper';
-```
-
-#### Unit Tests + Integration Tests
-
-If you have a unit test that interacts with ember-stereo, you might get some errors if stereo's needs aren't met. Hifi uses some internal services that we'd hate for you to have to know about or type out, so just use our helper instead.
-
-```javascript
-import { stereoNeeds, dummyStereo } from 'overhaul/tests/helpers/stereo-integration-helpers';
-
-moduleFor('[your module]', 'Unit | [type] | [your module]', {
-  needs: [...stereoNeeds]
-
-...
-});
+import { setupStereoTest } from 'ember-stereo/test-support/stereo-setup';
 ```
 
 If you need to fake out the stereoService to test how your app handles stereo events, you can use the dummyStereo service
@@ -456,18 +442,18 @@ If you need to fake out the stereoService to test how your app handles stereo ev
 ```javascript
 import { stereoNeeds, dummyStereo } from 'overhaul/tests/helpers/stereo-integration-helpers';
 
-moduleFor('[your module]', 'Integration | [type] | [your module]', {
-  needs: [...stereoNeeds],
+moduleFor('[your module]', 'Integration | [type] | [your module]', function(hooks) {
+  setupStereoTest(hooks)
 
-  beforeEach() {
-    this.register('service:stereo', dummyStereo);
-    this.inject.service('stereo');
-  }
+  test('something with stereo', function(assert) {
+    // provide stereo with url in '/good/length-in-ms/name.format, i.e. /good/10000/foo.mp3
+    // or '/bad/error/name.format, i.e. /bad/codec-error/foo.mp3
+  })
 ...
 });
 ```
 
-After stubbing out the service with the dummyStereo service you can pass it some special urls in the format `/:status/:length/:name` to mimic responses, where `status` can be `good` or `bad`, and `length` can be an integer representing the duration in ms, or `stream`.
+After stubbing out the service with the setupStereoTest you can pass it some special urls in the format `/:status/:length/:name` to mimic responses, where `status` can be `good` or `bad`, and `length` can be an integer representing the duration in ms, or `stream`.
 
 A 10 second audio clip: `/good/10000/test`
 
