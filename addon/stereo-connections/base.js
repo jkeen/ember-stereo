@@ -12,7 +12,7 @@ import hasEqualUrls from 'ember-stereo/-private/utils/has-equal-urls';
  *
  * @class Sound
  * @constructor
-*/
+ */
 export default class Sound extends Evented {
   static setup(config) {
     this.config = config;
@@ -24,15 +24,16 @@ export default class Sound extends Evented {
       return false;
     }
 
-    mimeType = mimeType || url.mimeType || getMimeType(url)
+    mimeType = mimeType || url.mimeType || getMimeType(url);
 
     if (mimeType) {
       return this.canPlayMimeType(mimeType);
-    }
-    else {
+    } else {
       /* eslint-disable no-console */
       console.warn(`Could not determine mime type for ${url}`);
-      console.warn('Attempting to play urls with an unknown mime type can be bad for performance. See documentation for more info.');
+      console.warn(
+        'Attempting to play urls with an unknown mime type can be bad for performance. See documentation for more info.'
+      );
       /* eslint-enable no-console */
       return true;
     }
@@ -48,46 +49,46 @@ export default class Sound extends Evented {
 
     if (mimeTypeWhiteList) {
       return A(mimeTypeWhiteList).includes(mimeType);
-    }
-    else if (mimeTypeBlackList) {
+    } else if (mimeTypeBlackList) {
       return !A(mimeTypeBlackList).includes(mimeType);
-    }
-    else {
+    } else {
       return true; // assume true
     }
   }
 
-  @tracked url
-  @tracked pollInterval = 1000
-  @tracked timeout = 30000
-  @tracked connectionName
+  @tracked url;
+  @tracked timeout = 30000;
+  @tracked connectionName;
 
-  @tracked hasPlayed = false
-  @tracked isLoading = false
-  @tracked isLoaded = false
-  @tracked isPlaying = false
+  @tracked hasPlayed = false;
+  @tracked isLoading = false;
+  @tracked isLoaded = false;
+  @tracked isPlaying = false;
   @tracked isErrored = false;
-  @tracked isReady = false
-  @tracked isBlocked = false
-  @tracked _position = 0;
+  @tracked isReady = false;
+  @tracked isBlocked = false;
   @tracked error = null;
-  @tracked duration = 0
-  @tracked percentLoaded = 0
+  @tracked _position = 0;
+  @tracked duration = 0;
+  @tracked percentLoaded = 0;
   @tracked metadata = {};
-  @tracked id3Tags = {}
-  @tracked _debug = {} // for internal debugging
+  @tracked id3Tags = {};
+  @tracked _debug = {}; // for internal debugging
+  @tracked sharedAudioAccess;
 
   get debugName() {
     var parser = document.createElement('a');
     parser.href = this.url;
 
     let parts = parser.pathname.split('/');
-    return `ember-stereo:${this.connectionName || this.constructor.toString()} (${parts[parts.length - 1]})`;
+    return `ember-stereo:${
+      this.connectionName || this.constructor.toString()
+    } (${parts[parts.length - 1]})`;
   }
 
   trigger(eventName, info = {}) {
     if (!info) {
-      info = {}
+      info = {};
     }
 
     if (!info.sound) {
@@ -115,13 +116,13 @@ export default class Sound extends Evented {
 
   // _position is updated by the service on the currently playing sound
   get position() {
-    return this._currentPosition()
+    return this._position;
   }
   set position(v) {
     this.trigger('audio-position-will-change', {
       sound: this,
       currentPosition: this._currentPosition(),
-      newPosition: v
+      newPosition: v,
     });
 
     this._position = this._setPosition(v);
@@ -152,18 +153,20 @@ export default class Sound extends Evented {
       audioPlayed,
       audioPaused,
       audioEnded,
-      audioLoadError
+      audioLoadError,
     } = this;
     this.isLoading = true;
 
     this.on('audio-played', () => {
-      this.hasPlayed = true
-      this.isLoading = false
-      this.isPlaying = true
-      this.isBlocked = false
-      this.error = null
+      this.hasPlayed = true;
+      this.isLoading = false;
+      this.isPlaying = true;
+      this.isBlocked = false;
+      this.error = null;
 
-      if (audioPlayed) { audioLoading(this); }
+      if (audioPlayed) {
+        audioLoading(this);
+      }
 
       // recover lost isLoading update
       this.debug(`audio-played ${this.isPlaying}`);
@@ -171,21 +174,27 @@ export default class Sound extends Evented {
 
     this.on('audio-paused', () => {
       this.isPlaying = false;
-      if (audioPaused) { audioPaused(this); }
+      if (audioPaused) {
+        audioPaused(this);
+      }
       this.debug('audio-paused');
     });
 
     this.on('audio-ended', () => {
       this.isPlaying = false;
       this.position = 0;
-      if (audioEnded) { audioEnded(this); }
+      if (audioEnded) {
+        audioEnded(this);
+      }
       this.debug('audio-ended');
     });
 
     this.on('audio-ready', () => {
       this.isReady = true;
       this.duration = this._audioDuration();
-      if (audioReady) { audioReady(this); }
+      if (audioReady) {
+        audioReady(this);
+      }
       this.debug('audio-ready');
     });
 
@@ -198,14 +207,18 @@ export default class Sound extends Evented {
       }
       this.isErrored = true;
       this.error = error;
-      if (audioLoadError) { audioLoadError(this); }
+      if (audioLoadError) {
+        audioLoadError(this);
+      }
       this.debug('audio-load-error');
     });
 
     this.on('audio-loaded', () => {
       this.isLoading = false;
       this.isLoaded = true;
-      if (audioLoaded) { audioLoaded(this); }
+      if (audioLoaded) {
+        audioLoaded(this);
+      }
       this.debug('audio-loaded');
     });
 
@@ -213,26 +226,32 @@ export default class Sound extends Evented {
       if (info && info.percentLoaded) {
         this.percentLoaded = info.percentLoaded;
       }
-      if (audioLoading) { audioLoading(this, info && info.percentLoaded); }
+      if (audioLoading) {
+        audioLoading(this, info && info.percentLoaded);
+      }
       this.debug('audio-loading');
     });
 
     this.on('audio-duration-changed', () => {
       this.duration = this._audioDuration();
-    })
+    });
 
     this.on('audio-blocked', () => {
       this.isBlocked = true;
-    })
+    });
 
     try {
       this._detectTimeouts();
       this.setup();
-    }
-    catch (e) {
+    } catch (e) {
       next(() => {
-        this.trigger('audio-load-error', { sound: this, error: `Error in setup ${e.message}` });
-        if (audioLoadError) { audioLoadError(this); }
+        this.trigger('audio-load-error', {
+          sound: this,
+          error: `Error in setup ${e.message}`,
+        });
+        if (audioLoadError) {
+          audioLoadError(this);
+        }
       });
     }
   }
@@ -240,7 +259,10 @@ export default class Sound extends Evented {
   _detectTimeouts() {
     if (this.timeout) {
       let timeout = later(() => {
-        this.trigger('audio-load-error', { sound: this, error: "request timed out" });
+        this.trigger('audio-load-error', {
+          sound: this,
+          error: 'request timed out',
+        });
       }, this.timeout);
 
       this.on('audio-ready', () => cancel(timeout));
@@ -251,60 +273,68 @@ export default class Sound extends Evented {
   fastForward(duration) {
     let audioLength = this._audioDuration();
     let currentPosition = this._currentPosition();
-    let newPosition = Math.min((currentPosition + duration), audioLength);
+    let newPosition = Math.min(currentPosition + duration, audioLength);
 
-    this.trigger('audio-will-fast-forward', { sound: this, currentPosition, newPosition });
+    this.trigger('audio-will-fast-forward', {
+      sound: this,
+      currentPosition,
+      newPosition,
+    });
     this._setPosition(newPosition);
+    this._position = this._currentPosition();
   }
 
   rewind(duration) {
     let currentPosition = this._currentPosition();
-    let newPosition = Math.max((currentPosition - duration), 0);
-    this.trigger('audio-will-rewind', { sound: this, currentPosition, newPosition });
+    let newPosition = Math.max(currentPosition - duration, 0);
+    this.trigger('audio-will-rewind', {
+      sound: this,
+      currentPosition,
+      newPosition,
+    });
     this._setPosition(newPosition);
+    this._position = this._currentPosition();
   }
-
 
   togglePause() {
     if (this.isPlaying) {
       return this.pause();
-    }
-    else {
+    } else {
       return this.play();
     }
   }
 
   /* To be defined on the subclass */
   setup() {
-    assert("[ember-stereo] #setup interface not implemented", false);
+    assert('[ember-stereo] #setup interface not implemented', false);
   }
 
   _setVolume() {
-    assert("[ember-stereo] #_setVolume interface not implemented", false);
+    assert('[ember-stereo] #_setVolume interface not implemented', false);
   }
 
   _audioDuration() {
-    assert("[ember-stereo] #_audioDuration interface not implemented", false);
+    assert('[ember-stereo] #_audioDuration interface not implemented', false);
   }
 
   _currentPosition() {
-    assert("[ember-stereo] #_currentPosition interface not implemented", false);
+    assert('[ember-stereo] #_currentPosition interface not implemented', false);
   }
 
   _setPosition() {
-    assert("[ember-stereo] #_setPosition interface not implemented", false);
+    assert('[ember-stereo] #_setPosition interface not implemented', false);
   }
 
   play() {
-    assert("[ember-stereo] #play interface not implemented", false);
+    assert('[ember-stereo] #play interface not implemented', false);
   }
 
   pause() {
-    assert("[ember-stereo] #pause interface not implemented", false);
+    assert('[ember-stereo] #pause interface not implemented', false);
   }
 
   stop() {
-    assert("[ember-stereo] #stop interface not implemented", false);
+    assert('[ember-stereo] #stop interface not implemented', false);
   }
 
   teardown() {

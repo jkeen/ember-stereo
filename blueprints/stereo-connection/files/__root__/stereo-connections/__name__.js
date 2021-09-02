@@ -16,7 +16,7 @@ let Sound = class Sounds extends BaseSound {
   }
 
   setup() {
-    let url   = this.get('url');
+    let url = this.get('url');
     let sound = this;
 
     // Using the URL, try loading up your sound.

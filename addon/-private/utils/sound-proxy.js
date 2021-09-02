@@ -37,7 +37,7 @@ export default class SoundProxy extends Evented {
     });
   }
 
-  @task({ restartable: true, debug: true })
+  @task({ debug: true })
   *waitForLoad() {
     yield waitForProperty(this, 'url', (v) => !!v)
     debug('ember-stereo:sound-proxy')(`waiting for ${this.url} to load`)
@@ -52,10 +52,6 @@ export default class SoundProxy extends Evented {
         }
       }
 
-      let { sound } = yield waitForEvent(this.stereo, 'sound-ready');
-      if (hasEqualUrls(sound.url, this.url)) {
-        this.value = sound;
-      }
       if (this.value) {
         break;
       }

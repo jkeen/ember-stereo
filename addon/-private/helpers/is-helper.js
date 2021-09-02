@@ -6,7 +6,7 @@ const UNINITIALIZED = null;
 export default class StereoBaseIsHelper extends Helper {
   @service stereo;
 
-  identifier = UNINITIALIZED;
+  @dedupeTracked identifier = UNINITIALIZED;
   @dedupeTracked task = UNINITIALIZED
   @dedupeTracked soundProxy = UNINITIALIZED
   @dedupeTracked _sound = UNINITIALIZED

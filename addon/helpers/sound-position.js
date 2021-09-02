@@ -1,5 +1,5 @@
 import StereoBaseIsHelper from 'ember-stereo/-private/helpers/is-helper';
-import {numericDuration} from 'ember-stereo/helpers/numeric-duration';
+import { numericDuration } from 'ember-stereo/helpers/numeric-duration';
 import debugMessage from 'ember-stereo/-private/utils/debug-message';
 
 /**
@@ -27,7 +27,6 @@ export default class SoundPosition extends StereoBaseIsHelper {
   get result() {
     let { format, defaultValue } = this.options;
     let result;
-
     if (format == 'percent' || format == 'percentage') {
       if (this.sound) {
         result = ((this.sound.position / this.sound.duration) * 100);

@@ -3,8 +3,6 @@ import { action } from '@ember/object';
 
 export default class PlayButtonComponent extends Component {
   @action
-
-
   draw(data, canvas /*, options, frame */) {
     let h = canvas.height;
     let w = canvas.width;
@@ -23,83 +21,74 @@ export default class PlayButtonComponent extends Component {
       ctx.lineTo(x, stop);
       ctx.stroke();
       ctx.beginPath();
-    }
+    };
 
     let drawLine = (ctx, x, start, stop, height) => {
-
-      var limit = height * 0.9
+      var limit = height * 0.9;
       if (stop >= limit) {
-        drawLineSegment(ctx, x, start, limit, 'red')
-        start = limit
+        drawLineSegment(ctx, x, start, limit, 'red');
+        start = limit;
       }
 
-      limit = height * 0.1
+      limit = height * 0.1;
       if (stop >= limit) {
-        drawLineSegment(ctx, x, start, limit, 'aqua')
-        start = limit
+        drawLineSegment(ctx, x, start, limit, 'aqua');
+        start = limit;
       }
 
-      limit = 0
+      limit = 0;
       if (stop >= limit) {
-        drawLineSegment(ctx, x, start, limit, 'red')
-        start = limit
+        drawLineSegment(ctx, x, start, limit, 'red');
+        start = limit;
       }
-    }
-
+    };
 
     for (let point = 1; point <= point_count; point++) {
-        let p = data[point]; //get value
-        p += min;
-        p *= percent;
+      let p = data[point]; //get value
+      p += min;
+      p *= percent;
 
-        let x = increase * point;
+      let x = increase * point;
 
-        let top = (h / 2) + (p / 2);
-        let bottom = top - p;
+      let top = h / 2 + p / 2;
+      let bottom = top - p;
 
-        drawLine(ctx, x, top, bottom, h);
+      drawLine(ctx, x, top, bottom, h);
 
+      // ctx.moveTo(x, top);
+      // ctx.strokeStyle ='red';
+      // ctx.lineTo(x, top - (p / 2));
+      // ctx.stroke();
+      // ctx.beginPath();
+      // ctx.moveTo(x, top - (p / 2));
+      // ctx.strokeStyle='aqua';
+      // ctx.lineTo(x, top - p);
+      // ctx.stroke();
+      // ctx.beginPath();
 
+      // if ((mid - p) >  20) {
+      // ctx.strokeStyle='aqua';
+      // ctx.lineTo(x, top - p);
+      // ctx.stroke();
+      // }
+      // else {
+      //   ctx.strokeStyle='aqua';
+      //   ctx.lineTo(x, mid - p - 20);
+      //   ctx.stroke();
+      //   ctx.strokeStyle='red';
+      //   ctx.lineTo(mid - p - 20, mid - p);
+      //   ctx.stroke();
+      // }
 
-        // ctx.moveTo(x, top);
-        // ctx.strokeStyle ='red';
-        // ctx.lineTo(x, top - (p / 2));
-        // ctx.stroke();
-        // ctx.beginPath();
-        // ctx.moveTo(x, top - (p / 2));
-        // ctx.strokeStyle='aqua';
-        // ctx.lineTo(x, top - p);
-        // ctx.stroke();
-        // ctx.beginPath();
-
-
-
-
-
-
-        // if ((mid - p) >  20) {
-          // ctx.strokeStyle='aqua';
-          // ctx.lineTo(x, top - p);
-          // ctx.stroke();
-        // }
-        // else {
-        //   ctx.strokeStyle='aqua';
-        //   ctx.lineTo(x, mid - p - 20);
-        //   ctx.stroke();
-        //   ctx.strokeStyle='red';
-        //   ctx.lineTo(mid - p - 20, mid - p);
-        //   ctx.stroke();
-        // }
-
-        // ctx.beginPath();
+      // ctx.beginPath();
     }
-
   }
-
 
   @action
   resizeCanvas(canvas, scale) {
-    if (!scale) { scale = 1.75 }
+    if (!scale) {
+      scale = 1.75;
+    }
     let parentElement = canvas.parentElement;
     let dims = parentElement.getBoundingClientRect();
 

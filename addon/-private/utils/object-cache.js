@@ -29,6 +29,15 @@ export default class ObjectCache {
     }
   }
 
+  remove(identifier) {
+    if (this.objectCache.has(identifier)) {
+      this.objectCache.remove(identifier)
+    }
+    if (this.keyCache[identifier]) {
+      delete this.keyCache[identifier]
+    }
+  }
+
   store(identifier, value) {
     if (identifier) {
       if (identifier.then || (typeof identifier === 'object')) {

@@ -3,6 +3,7 @@ import { run } from '@ember/runloop';
 import BaseSound from 'ember-stereo/stereo-connections/base';
 import Ember from 'ember';
 import { task, didCancel } from 'ember-concurrency';
+import { tracked } from '@glimmer/tracking';
 // These are the events we're watching for
 const AUDIO_EVENTS = ['loadstart', 'durationchange', 'loadedmetadata', 'loadeddata', 'progress', 'canplay', 'canplaythrough', 'error', 'playing', 'pause', 'ended', 'emptied', 'timeupdate'];
 
@@ -21,6 +22,8 @@ const HAVE_CURRENT_DATA = 2;
 * @constructor
 */
 export default class NativeAudio extends BaseSound {
+  @tracked _internalElement;
+
   static canPlayMimeType(mimeType) {
     let audio = new Audio();
     // it returns "probably" and "maybe". Both are worth trying. Empty is bad.
@@ -307,13 +310,11 @@ export default class NativeAudio extends BaseSound {
   }
 
   _currentPosition() {
-    let audio = this.audioElement;
-    return audio?.currentTime * 1000;
+    return this.audioElement.currentTime * 1000;
   }
 
   _setPosition(position) {
-    let audio = this.audioElement;
-    audio.currentTime = (position / 1000);
+    this.audioElement.currentTime = (position / 1000);
     return this._currentPosition();
   }
 

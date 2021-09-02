@@ -1,6 +1,6 @@
 import { module, test } from 'qunit';
 import { setupRenderingTest } from 'ember-qunit';
-import { setupStereoTest } from 'ember-stereo/test-support/stereo-setup'
+import { setupStereoTest } from 'ember-stereo/test-support/stereo-setup';
 import { render } from '@ember/test-helpers';
 import { hbs } from 'ember-cli-htmlbars';
 import { set } from '@ember/object';
@@ -40,19 +40,19 @@ module('Integration | Helper | sound-position', function (hooks) {
   test('if changing input it updates underlying sound', async function (assert) {
     let service = this.owner.lookup('service:stereo');
 
-    this.url = '/good/10000/silence.mp3'
-    this.url2 = '/good/20000/silence.mp3'
+    this.url = '/good/10000/silence.mp3';
+    this.url2 = '/good/6000/silence.mp3';
 
-    await service.load(this.url)
-    let { sound } = await service.load(this.url2)
-    sound.position = 5000
+    await service.load(this.url);
+    let { sound } = await service.load(this.url2);
+    sound.position = 5000;
 
     assert.equal(sound.position, 5000);
 
     await render(hbs`{{sound-position this.url format='time'}}`);
     assert.equal(this.element.textContent.trim(), '00:00');
 
-    set(this, 'url', this.url2)
+    set(this, 'url', this.url2);
     await render(hbs`{{sound-position this.url format='time'}}`);
     assert.equal(this.element.textContent.trim(), '00:05');
   });

@@ -196,6 +196,8 @@ module('Unit | Connection | Native Audio', function (hooks) {
   });
 
   test('switching sounds with internal elements keep current state', function (assert) {
+    this.owner.lookup('service:stereo').useSharedAudioAccess = false
+
     let url1 = '/assets/silence.mp3';
     let url2 = '/assets/silence2.mp3';
 

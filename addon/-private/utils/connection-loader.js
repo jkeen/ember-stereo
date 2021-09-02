@@ -60,7 +60,7 @@ export default class ConnectionLoader {
   /**
    * Activates the a single connection
    *
-   * @method _activateConnection
+   * @method activate
    * @private
    * @param {Object} {name, config}
    * @return {Connection} instantiated Connection
@@ -89,7 +89,6 @@ export default class ConnectionLoader {
       '[ember-stereo] Could not find a stereo connection without a name.',
       connectionName
     );
-
     const dasherizedConnectionName = dasherize(connectionName);
     const availableConnection = getOwner(this.service).lookup(
       `ember-stereo@stereo-connection:${dasherizedConnectionName}`

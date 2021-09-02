@@ -1,5 +1,5 @@
-import Component from "@glimmer/component";
-import { inject as service } from "@ember/service";
+import Component from '@glimmer/component';
+import { inject as service } from '@ember/service';
 export default class CachedSound extends Component {
   @service stereo;
 
@@ -12,7 +12,7 @@ export default class CachedSound extends Component {
   get loadedSoundCountSentence() {
     let count = this.stereo.soundCache.cachedCount;
     if (count === 1) {
-      return "1 Loaded Sound";
+      return '1 Loaded Sound';
     } else if (count > 1) {
       return `${count} Loaded Sounds`;
     } else {

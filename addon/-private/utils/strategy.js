@@ -1,5 +1,6 @@
 import { tracked } from '@glimmer/tracking';
 import { cached } from 'tracked-toolbox';
+import { setOwner } from '@ember/application';
 export default class Strategy {
   @tracked stereoUrl;
   @tracked config
@@ -71,12 +72,15 @@ export default class Strategy {
   }
 
   createSound() {
-    return new (this.connection)({
+    let sound = new (this.connection)({
       url: this.url,
       connectionName: this.connectionName,
       connectionKey: this.connectionKey,
       sharedAudioAccess: this.sharedAudioAccess,
       options: this.options
     })
+
+    setOwner(sound, this.connection)
+    return sound;
   }
 }
