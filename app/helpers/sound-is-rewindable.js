@@ -1,1 +1,1 @@
-export { default, isRewindable } from 'ember-stereo/helpers/sound-is-rewindable';
+export { default, soundIsRewindable } from 'ember-stereo/helpers/sound-is-rewindable';

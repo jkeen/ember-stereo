@@ -2,17 +2,6 @@
   {{#header.link 'diagnostic'}}
     Diagnostic
   {{/header.link}}
-
-  {{#if (sound-is-playing (current-sound))}}
-    <button
-      {{on 'click' (toggle-play-sound (current-sound))}}
-      type='button'
-      class='ui-button'
-    >
-      Pause
-    </button>
-  {{/if}}
-
 </DocsHeader>
 <DocsViewer as |viewer|>
   <viewer.nav @media={{this.media}} as |nav|>
