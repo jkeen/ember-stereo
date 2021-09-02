@@ -1,161 +1,161 @@
-name: CI/CD
+---
+name: CI
 
 on:
   push:
     branches:
       - main
+      # npm version tags
+      - /^v\d+.\d+.\d+(?:-(?:alpha|beta|rc)\.\d+)?/
   pull_request:
 
-env:
-  NODE_VERSION: 12
-
 jobs:
-  lint:
-    name: Lint files
-    runs-on: ubuntu-latest
-    timeout-minutes: 7
+  test:
+    name: Tests
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        browser: [chrome, firefox]
+
     steps:
-      - name: Check out a copy of the repo
-        uses: actions/checkout@v2
+    - uses: actions/checkout@v2
+      with:
+        fetch-depth: 1
 
-      - name: Use Node.js ${{ env.NODE_VERSION }}
-        uses: actions/setup-node@v2-beta
-        with:
-          node-version: ${{ env.NODE_VERSION }}
+    - name: Set up Volta
+      uses: volta-cli/action@v1
 
-      - name: Get Yarn cache path
-        id: yarn-cache-dir-path
-        run: echo "::set-output name=dir::$(yarn cache dir)"
+    - name: Get package manager's global cache path
+      id: global-cache-dir-path
+      run: echo "::set-output name=dir::$(yarn cache dir)"
 
-      - name: Cache Yarn cache and node_modules
-        id: cache-dependencies
-        uses: actions/cache@v2
-        with:
-          path: |
-            ${{ steps.yarn-cache-dir-path.outputs.dir }}
-            node_modules
-            test-apps/new-addon/node_modules
-          key: ${{ runner.os }}-${{ env.NODE_VERSION }}-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: ${{ runner.os }}-${{ env.NODE_VERSION }}-
+    - name: Cache package manager's global cache and node_modules
+      id: cache-dependencies
+      uses: actions/cache@v2
+      with:
+        path: |
+          ${{ steps.global-cache-dir-path.outputs.dir }}
+          node_modules
+        key: ${{ runner.os }}-${{ matrix.node-version }}-${{
+          hashFiles('**/yarn.lock'
+          ) }}
+        restore-keys: |
+          ${{ runner.os }}-${{ matrix.node-version }}-
 
-      - name: Install dependencies
-        run: yarn install --frozen-lockfile
-        if: steps.cache-dependencies.outputs.cache-hit != 'true'
+    - name: Install Dependencies
+      run: yarn install --frozen-lockfile
+      if: |
+        steps.cache-dependencies.outputs.cache-hit != 'true'
 
-      - name: Lint
-        run: yarn lint
+    - name: Test
+      run: yarn test:ember --launch ${{ matrix.browser }}
 
-  test-addon-floating:
-    name: Test addon (floating dependencies)
+
+  floating-dependencies:
+    name: Floating Dependencies
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        browser: [chrome, firefox]
+
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        fetch-depth: 1
+
+    - name: Set up Volta
+      uses: volta-cli/action@v1
+
+    - name: Get package manager's global cache path
+      id: global-cache-dir-path
+      run: echo "::set-output name=dir::$(yarn cache dir)"
+
+    - name: Cache package manager's global cache and node_modules
+      id: cache-dependencies
+      uses: actions/cache@v2
+      with:
+        path: |
+          ${{ steps.global-cache-dir-path.outputs.dir }}
+          node_modules
+        key: ${{ runner.os }}-${{ matrix.node-version }}-${{
+          hashFiles('**/yarn.lock'
+          ) }}
+        restore-keys: |
+          ${{ runner.os }}-${{ matrix.node-version }}-
+
+    - name: Install Dependencies
+      run: yarn install --frozen-lockfile
+      if: |
+        steps.cache-dependencies.outputs.cache-hit != 'true'
+
+    - name: Test
+      run: yarn test:ember --launch ${{ matrix.browser }}
+
+
+  try-scenarios:
+    name: Tests - ${{ matrix.ember-try-scenario }}
     runs-on: ubuntu-latest
+    continue-on-error: ${{ matrix.allow-failure }}
+    needs: test
+
     strategy:
       fail-fast: true
       matrix:
-        script-name:
-          - 'ember'
-          - 'node'
-          - 'test-apps'
-    timeout-minutes: 7
+        ember-try-scenario:
+        - ember-lts-3.8
+        - ember-lts-3.12
+        - ember-lts-3.16
+        - ember-lts-3.20
+        - ember-release
+        - typescript-3.7
+        - typescript-3.9
+        - ember-default
+        allow-failure: [false]
+        include:
+          - ember-try-scenario: ember-beta
+            allow-failure: true
+          - ember-try-scenario: ember-canary
+            allow-failure: true
+
     steps:
-      - name: Check out a copy of the repo
-        uses: actions/checkout@v2
+    - uses: actions/checkout@v2
+      with:
+        fetch-depth: 1
 
-      - name: Use Node.js ${{ env.NODE_VERSION }}
-        uses: actions/setup-node@v2-beta
-        with:
-          node-version: ${{ env.NODE_VERSION }}
+    - name: Set up Volta
+      uses: volta-cli/action@v1
 
-      - name: Install dependencies
-        run: yarn install --no-lockfile --non-interactive
+    - name: Get package manager's global cache path
+      id: global-cache-dir-path
+      run: echo "::set-output name=dir::$(yarn cache dir)"
 
-      - name: Test
-        run: yarn test:${{ matrix.script-name }}
+    - name: Cache package manager's global cache and node_modules
+      id: cache-dependencies
+      uses: actions/cache@v2
+      with:
+        path: |
+          ${{ steps.global-cache-dir-path.outputs.dir }}
+          node_modules
+        key: ${{ runner.os }}-${{ matrix.node-version }}-${{
+          hashFiles('**/yarn.lock'
+          ) }}
+        restore-keys: |
+          ${{ runner.os }}-${{ matrix.node-version }}-
 
-  test-addon-locked:
-    name: Test addon (locked dependencies)
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: true
-      matrix:
-        script-name:
-          - 'ember'
-          - 'node'
-          - 'test-apps'
-    timeout-minutes: 7
-    steps:
-      - name: Check out a copy of the repo
-        uses: actions/checkout@v2
+    - name: Install Dependencies
+      run: yarn install --frozen-lockfile
+      if: |
+        steps.cache-dependencies.outputs.cache-hit != 'true'
 
-      - name: Use Node.js ${{ env.NODE_VERSION }}
-        uses: actions/setup-node@v2-beta
-        with:
-          node-version: ${{ env.NODE_VERSION }}
+    - name: Strip ts-expect-error from tests (for TypeScript 3.7)
+      run: find tests/types -type f -name '*.ts' | xargs sed -i 's/@ts-expect-error/@ts-ignore/g'
+      if: matrix.ember-try-scenario == 'typescript-3.7'
 
-      - name: Get Yarn cache path
-        id: yarn-cache-dir-path
-        run: echo "::set-output name=dir::$(yarn cache dir)"
-
-      - name: Cache Yarn cache and node_modules
-        id: cache-dependencies
-        uses: actions/cache@v2
-        with:
-          path: |
-            ${{ steps.yarn-cache-dir-path.outputs.dir }}
-            node_modules
-            test-apps/new-addon/node_modules
-          key: ${{ runner.os }}-${{ env.NODE_VERSION }}-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: ${{ runner.os }}-${{ env.NODE_VERSION }}-
-
-      - name: Install dependencies
-        run: yarn install --frozen-lockfile
-        if: steps.cache-dependencies.outputs.cache-hit != 'true'
-
-      - name: Test
-        run: yarn test:${{ matrix.script-name }}
-
-  test-compatibility:
-    name: Test compatibility
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: true
-      matrix:
-        scenario:
-          - 'ember-lts-3.16'
-          - 'ember-lts-3.20'
-          - 'ember-release'
-          - 'ember-beta'
-          - 'ember-canary'
-          - 'ember-default-with-jquery'
-          - 'ember-classic'
-          - 'ember-concurrency-2.x'
-    timeout-minutes: 7
-    steps:
-      - name: Check out a copy of the repo
-        uses: actions/checkout@v2
-
-      - name: Use Node.js ${{ env.NODE_VERSION }}
-        uses: actions/setup-node@v2-beta
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-
-      - name: Get Yarn cache path
-        id: yarn-cache-dir-path
-        run: echo "::set-output name=dir::$(yarn cache dir)"
-
-      - name: Cache Yarn cache and node_modules
-        id: cache-dependencies
-        uses: actions/cache@v2
-        with:
-          path: |
-            ${{ steps.yarn-cache-dir-path.outputs.dir }}
-            node_modules
-            test-apps/new-addon/node_modules
-          key: ${{ runner.os }}-${{ env.NODE_VERSION }}-${{ matrix.scenario }}-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: ${{ runner.os }}-${{ env.NODE_VERSION }}-${{ matrix.scenario }}-
-
-      - name: Install dependencies
-        run: yarn install --frozen-lockfile
-        if: steps.cache-dependencies.outputs.cache-hit != 'true'
-
-      - name: Test
-        run: yarn test:ember-compatibility ${{ matrix.scenario }}
+    - name: Test
+      env:
+        EMBER_TRY_SCENARIO: ${{ matrix.ember-try-scenario }}
+      run: node_modules/.bin/ember try:one $EMBER_TRY_SCENARIO
