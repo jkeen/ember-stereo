@@ -10,7 +10,7 @@ module('Integration | Helper | rewind-sound', function (hooks) {
 
   test('it rewinds', async function (assert) {
     let service = this.owner.lookup('service:stereo');
-    this.url = '/good/10000/silence.mp3';
+    this.url = '/good/10000/rewind.mp3';
     let { sound } = await service.load(this.url);
     sound.position = 6000;
     assert.equal(sound.position, 6000, 'position is 6000');
@@ -23,7 +23,7 @@ module('Integration | Helper | rewind-sound', function (hooks) {
 
   test('it rewinds custom increment', async function (assert) {
     let service = this.owner.lookup('service:stereo');
-    this.url = '/good/10000/silence.mp3';
+    this.url = '/good/10000/rewind-custom.mp3';
     let { sound } = await service.load(this.url);
     sound.position = 6000;
     assert.equal(sound.position, 6000, 'position is 6000');

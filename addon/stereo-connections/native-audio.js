@@ -58,6 +58,7 @@ export default class NativeAudio extends BaseSound {
   }
 
   _handleAudioEvent(eventName, e) {
+
     if (!this.urlsAreEqual(e.target?.src, this.url) && e.target?.src !== '') {
       // This event is not for us if our srcs aren't equal
 
@@ -265,6 +266,7 @@ export default class NativeAudio extends BaseSound {
   }
 
   _onAudioReady() {
+    this.debug('triggering audio ready')
     this.trigger('audio-ready', { sound: this });
     this.trigger('audio-loaded', { sound: this });
   }
@@ -296,7 +298,6 @@ export default class NativeAudio extends BaseSound {
 
   _audioDuration() {
     let audio = this.audioElement;
-
     if (audio.duration > 172800000) {
       // if audio is longer than 3 days in milliseconds,
       // assume it's a stream, and set duration to infinity as it should be
@@ -304,7 +305,6 @@ export default class NativeAudio extends BaseSound {
 
       return Infinity;
     }
-
     return audio.duration * 1000;
   }
 

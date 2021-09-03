@@ -11,7 +11,7 @@ module('Integration | Helper | sound-is-blocked', function (hooks) {
   test('it renders', async function (assert) {
     let service = this.owner.lookup('service:stereo')
 
-    this.set('url', '/good/10/silence.mp3')
+    this.set('url', '/good/10/blocked.mp3')
     await render(hbs`{{#if (sound-is-blocked this.url)}}needs input{{/if}}`);
     assert.equal(this.element.textContent.trim(), '', 'does not need user input');
     await service.play(this.url);

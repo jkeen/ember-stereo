@@ -9,7 +9,8 @@ module.exports = {
   report_file: circle ? `${circle}/test.xml` : null,
   xunit_intermediate_output: true,
   launch_in_ci: [
-    'Firefox'
+    'Chrome',
+    // 'Firefox', sad to say but Firefox headless struggles with some of these tests
   ],
   launch_in_dev: [
   ],

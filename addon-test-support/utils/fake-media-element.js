@@ -1,7 +1,7 @@
-import StereoUrl from 'ember-stereo/-private/utils/stereo-url';
 import Evented from 'ember-stereo/-private/utils/evented';
 import { tracked } from '@glimmer/tracking';
-import { next } from '@ember/runloop';
+import { later } from '@ember/runloop';
+import TestAudioUrl from './test-audio-url';
 import debug from 'debug';
 // Ready state values
 // const HAVE_NOTHING = 0;
@@ -10,66 +10,7 @@ const HAVE_CURRENT_DATA = 2;
 // const HAVE_FUTURE_DATA = 3;
 // const HAVE_ENOUGH_DATA = 4;
 
-class TestAudioUrl {
-  @tracked status;
 
-  constructor(testUrl) {
-    this.url = new StereoUrl(testUrl);
-
-    if (
-      this.url.pathname &&
-      this.url.pathname.startsWith('/') &&
-      this.url.pathname.length > 1
-    ) {
-      var [, result, lengthOrError, name] = this.url.pathname
-        .replace(/^\/?tests\//, '')
-        .split('/');
-      this.status = result;
-      this.lengthOrError = lengthOrError;
-      this.name = name;
-    }
-  }
-
-  get isTestUrl() {
-    return (
-      (this.status === 'good' || this.status === 'bad') &&
-      this.lengthOrError &&
-      this.name
-    );
-  }
-
-  get isSuccess() {
-    return this.status === 'good';
-  }
-
-  get isError() {
-    return this.status === 'bad';
-  }
-
-  get isStream() {
-    return this.isSuccess && this.lengthOrError === 'stream';
-  }
-
-  get duration() {
-    if (this.isSuccess) {
-      if (this.isStream) {
-        return Infinity;
-      } else {
-        return parseInt(this.lengthOrError, 10) / 1000;
-      }
-    }
-
-    return NaN;
-  }
-
-  get error() {
-    if (this.isError) {
-      return this.lengthOrError;
-    }
-
-    return NaN;
-  }
-}
 
 export default class FakeMediaElement extends Evented {
   @tracked volume = 0;
@@ -81,18 +22,13 @@ export default class FakeMediaElement extends Evented {
   @tracked autoplay = false;
   @tracked played = false;
   @tracked loaded = false;
+  @tracked readyState;
 
-  constructor(url) {
+  constructor() {
     super(...arguments);
-    debug('ember-stereo:fake-element')(`initializing fake ${url}`);
 
-    this.src = url || '';
+    debug('ember-stereo:fake-element')(`initializing fake ${arguments[0]} element`);
     this.setInitialState();
-
-    if (this.src) {
-      debug('ember-stereo:fake-element')(`loading ${this.src}`);
-      this.load();
-    }
   }
 
   setInitialState() {
@@ -110,47 +46,70 @@ export default class FakeMediaElement extends Evented {
     this.loaded = false;
   }
 
-  load() {
-    next(() => {
-      if (this.loaded) {
-        debug('ember-stereo:fake-element')(`already loaded ${this.src}`);
+  async load() {
+    debug('ember-stereo:fake-element')(`${this.src} #load`);
+    if (this.loaded) {
+      debug('ember-stereo:fake-element')(`already loaded ${this.src}`);
+      return;
+    }
 
-        this.trigger('emptied', { target: this });
-        return;
-      }
+    if (!this.src || !this.src.length) {
+      return;
+    }
 
-      if (!this.src || !this.src.length) {
-        return;
-      }
+    let info = new TestAudioUrl(this.src);
 
-      let info = new TestAudioUrl(this.src);
+    debug('ember-stereo:fake-element')(`${this.src} loading`);
+    console.log(info)
+    if (info.isSuccess) {
+      debug('ember-stereo:fake-element')(`${this.src} will succeed`);
 
-      if (info.isSuccess) {
-        this.readyState = HAVE_CURRENT_DATA;
+      this.readyState = HAVE_CURRENT_DATA;
 
-        this.duration = info.duration;
+      this.duration = info.duration;
+
+      later(() => {
         this.trigger('onloadedmetadata', { target: this });
-
         this.trigger('canplaythrough', { target: this });
+        this.trigger('loadeddata', { target: this });
+
         this.loaded = true;
-
         debug('ember-stereo:fake-element')(`loaded ${this.src}`);
-
-        return;
-      } else if (info.isError) {
+      }, 20);
+    } else if (info.isError) {
+      debug('ember-stereo:fake-element')(`${this.src} will error`);
+      later(() => {
         this.loaded = false;
         this.error = {
           code: 100, // custom
           message: info.error,
         };
-        return this.trigger('error', { target: this });
-      } else {
-        this.duration = 1;
 
-        // maybe this is a real element?
-        // throw 'must provide a test url'
-      }
-    });
+        this.trigger('error', { target: this });
+      }, 200);
+      return
+    } else if (this.src.startsWith('blob://')) {
+      this.readyState = HAVE_CURRENT_DATA;
+      this.duration = 1;
+      this.trigger('loadeddata', { target: this });
+      this.trigger('onloadedmetadata', { target: this });
+      this.trigger('canplaythrough', { target: this });
+      this.loaded = true;
+    } else {
+      this.duration = 1;
+      this.loaded = false;
+      // this.error = {
+      //   code: 500,
+      //   // custom
+      //   message: 'unrecognized fake media element url, defaulting to fail'
+      // };
+      // this.trigger('error', { target: this })
+
+      console.warn(`unrecognized fake media element url. Format should be /:status/:length_or_error/:name, received ${this.src}`)
+
+      // maybe this is a real element?
+      // throw 'must provide a test url'
+    }
   }
 
   async play() {
@@ -158,10 +117,14 @@ export default class FakeMediaElement extends Evented {
       await this.load();
     }
 
+    if (!this.src) {
+      return
+    }
+
     debug('ember-stereo:fake-element')(`${this.src} play`);
     this.paused = false;
-    this.trigger('playing', { target: this });
     this.startTimer();
+    this.trigger('playing', { target: this });
     return Promise.resolve(this);
   }
 
@@ -170,6 +133,11 @@ export default class FakeMediaElement extends Evented {
     this.trigger('pause', { target: this });
     this.stopTimer();
     this.paused = true;
+  }
+
+  stop() {
+    this.pause()
+    this.stopTimer();
   }
 
   get seekable() {
@@ -206,8 +174,15 @@ export default class FakeMediaElement extends Evented {
   set src(value) {
     if (this._src != value) {
       debug('ember-stereo:fake-element')(`setting src ${value}`);
+      if (this._src) {
+        this.trigger('emptied', { target: this });
+      }
+
       this._src = value;
       this.setInitialState();
+      this.load()
+
+      this.paused = true
     }
   }
 
@@ -232,7 +207,7 @@ export default class FakeMediaElement extends Evented {
   }
 
   startTimer() {
-    this.poller = setInterval(this.advance.bind(this), 100);
+    this._stereoFakeMediaElementPoller = setInterval(this.advance.bind(this), 100);
   }
 
   stopTimer() {
@@ -244,7 +219,7 @@ export default class FakeMediaElement extends Evented {
   }
 
   advance() {
-    if (!this.paused) {
+    if (!this.paused && this.src) {
       var diff = this._previous ? Date.now() - this._previous : 0;
       this._previous = Date.now();
       this.currentTime = this.currentTime + diff / 1000;
@@ -257,6 +232,6 @@ export default class FakeMediaElement extends Evented {
   }
 
   willDestroy() {
-    clearInterval(this.poller);
+    clearInterval(window._stereoFakeMediaElementPoller);
   }
 }

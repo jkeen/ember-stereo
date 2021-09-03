@@ -1,13 +1,23 @@
 import sinon from 'sinon';
 import { next } from '@ember/runloop';
-import FakeMediaElement from 'ember-stereo/-private/utils/fake-media-element';
+import FakeMediaElement from './utils/fake-media-element';
 import { run } from '@ember/runloop';
 
 export function stubAudio() {
   let stereoSandbox = sinon.createSandbox({});
+
+  let originalCreateElement = document.createElement
   let createElementStub = stereoSandbox.stub(document, 'createElement');
-  createElementStub.withArgs('audio').callsFake(() => new FakeMediaElement());
-  createElementStub.withArgs('video').callsFake(() => new FakeMediaElement());
+  createElementStub.withArgs('audio').callsFake(() => {
+    let fake = new FakeMediaElement(...arguments);
+    fake.originalCreate = originalCreateElement;
+    return fake;
+  });
+  createElementStub.withArgs('video').callsFake(() => {
+    let fake = new FakeMediaElement(...arguments)
+    fake.originalCreate = originalCreateElement;
+    return fake;
+  });
   createElementStub.callThrough();
 
   return stereoSandbox;
@@ -17,14 +27,21 @@ export function setupStereoTest(hooks) {
   let stereoSandbox;
   hooks.beforeEach(function () {
     stereoSandbox = stubAudio();
-    run.later(() => {
+    this._stereoTimeout = setTimeout(() => {
       run.cancelTimers();
     }, 500);
   });
 
   hooks.afterEach(function () {
+    clearTimeout(this._stereoTimeout)
+
+    // Cancel any fake elements that are hanging around
+    clearTimeout(window._stereoFakeMediaElementPoller)
     stereoSandbox.restore();
     let stereo = this.owner.lookup('service:stereo');
+    if (stereo.isPlaying) {
+      stereo.pause();
+    }
     stereo.destroy();
   });
 }

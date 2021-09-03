@@ -11,7 +11,7 @@ module('Integration | Helper | sound-is-loaded', function (hooks) {
   test('it renders', async function (assert) {
     let service = this.owner.lookup('service:stereo')
 
-    this.set('url', '/good/10/silence.mp3')
+    this.set('url', '/good/10/loaded.mp3')
     await render(hbs`{{#if (sound-is-loaded this.url)}}sound-is-loaded{{else}}is-not-loaded{{/if}}`);
     assert.equal(this.element.textContent.trim(), 'is-not-loaded');
     await service.load(this.url);
@@ -22,7 +22,7 @@ module('Integration | Helper | sound-is-loaded', function (hooks) {
   test('it renders with array', async function (assert) {
     let service = this.owner.lookup('service:stereo')
 
-    this.set('url', ['/good/10/silence.mp3', '/good/10000/silent.mp3'])
+    this.set('url', ['/good/10/loaded-array-1.mp3', '/good/10000/loaded-array-2.mp3'])
     await render(hbs`{{#if (sound-is-loaded this.url)}}sound-is-loaded{{else}}is-not-loaded{{/if}}`);
     assert.equal(this.element.textContent.trim(), 'is-not-loaded');
     await service.load(this.url);

@@ -11,7 +11,7 @@ module('Integration | Helper | sound-is-playing', function (hooks) {
   test('it renders', async function (assert) {
     let service = this.owner.lookup('service:stereo')
 
-    this.set('url', '/good/2500/silence.mp3')
+    this.set('url', '/good/2500/playing.mp3')
     await render(hbs`{{#if (sound-is-playing this.url)}}sound-is-playing{{else}}is-not-playing{{/if}}`);
     assert.equal(this.element.textContent.trim(), 'is-not-playing', 'helper reports not playing');
     await service.play(this.url)
@@ -23,7 +23,7 @@ module('Integration | Helper | sound-is-playing', function (hooks) {
   test('it renders with url array', async function (assert) {
     let service = this.owner.lookup('service:stereo')
 
-    this.set('url', ['/good/2500/silence.mp3', '/good/2523/silence.mp3'])
+    this.set('url', ['/good/2500/playing-array.mp3', '/good/2523/playing-array-w.mp3'])
     await render(hbs`{{#if (sound-is-playing this.url)}}sound-is-playing{{else}}is-not-playing{{/if}}`);
     assert.equal(this.element.textContent.trim(), 'is-not-playing', 'helper reports not playing');
     await service.play(this.url)
@@ -35,14 +35,14 @@ module('Integration | Helper | sound-is-playing', function (hooks) {
     let service = this.owner.lookup('service:stereo')
     await render(hbs`{{#if (sound-is-playing this.url)}}sound-is-playing{{else}}is-not-playing{{/if}}`);
 
-    this.set('url', '/good/10/silence.mp3')
+    this.set('url', '/good/10/playing.mp3')
     await service.load(this.url)
     assert.equal(this.element.textContent.trim(), 'is-not-playing');
 
     await service.play(this.url)
 
     assert.equal(this.element.textContent.trim(), 'sound-is-playing');
-    this.set('url2', '/good/5/second-silence.mp3')
+    this.set('url2', '/good/5/second-playing.mp3')
     await service.play(this.url2);
     assert.true(service.isPlaying);
     assert.equal(this.element.textContent.trim(), 'is-not-playing');

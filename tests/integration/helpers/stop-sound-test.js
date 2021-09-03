@@ -10,7 +10,7 @@ module('Integration | Helper | stop-sound', function (hooks) {
 
   test('it can stop as an action', async function (assert) {
     let service = this.owner.lookup('service:stereo');
-    this.url = '/good/1000/silence.mp3';
+    this.url = '/good/1000/stop.mp3';
     await service.play(this.url);
     assert.true(service.isPlaying, 'playing');
     await render(hbs`<button type="button" {{on 'click' (stop-sound this.url)}}>stop</button>`);

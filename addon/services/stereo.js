@@ -358,7 +358,7 @@ export default class Stereo extends Service.extend(EmberEvented) {
     );
   }
 
-  @task({ debug: true, maxConcurrency: 5, evented: true })
+  @task({ restartable: true, evented: true })
   *loadTask(urlsOrPromise, _options) {
     let options = this.prepareLoadOptions(_options);
     let urlsToTry = yield this.urlCache.resolve(urlsOrPromise);
@@ -501,18 +501,15 @@ export default class Stereo extends Service.extend(EmberEvented) {
    * @return {Sound, failures} A sound that's playing, or an error
    */
 
-  @task({ maxConcurrency: 3, restartable: true })
+  @task({ restartable: true })
   *playTask(urlsOrPromise, options = {}) {
     options = assign({ metadata: {} }, options);
+
+    let previouslyPlayingSound = this.isPlaying ? this.currentSound : false
 
     let loadPromise = this.loadTask.perform(urlsOrPromise, options);
     this.trigger('new-load-request', { loadPromise, urlsOrPromise, options }); //urls: Promise.resolve(resolveUrls(urlsOrPromise))
     let { sound, failures } = yield loadPromise;
-
-    if (this.isPlaying) {
-      this.trigger('current-sound-interrupted', { sound: this.currentSound });
-      this.pause();
-    }
 
     if (sound) {
       this._registerEvents(sound);
@@ -522,6 +519,10 @@ export default class Stereo extends Service.extend(EmberEvented) {
         waitForProperty(sound, 'isPlaying'),
         waitForProperty(sound, 'isErrored'),
       ]);
+
+      if (previouslyPlayingSound) {
+        this.trigger('current-sound-interrupted', { sound: previouslyPlayingSound });
+      }
 
       if (sound && 'position' in options) {
         sound.position = options.position;
@@ -928,9 +929,10 @@ export default class Stereo extends Service.extend(EmberEvented) {
       `FAILED: [${strategy.connectionName}] -> ${sound.error} (${strategy.url})`
     );
     this._unregisterEvents(sound);
-
     strategy.error = sound.error;
-    return { error: sound.error };
+    let result = { error: sound.error }
+
+    return result;
   }
 
   /**

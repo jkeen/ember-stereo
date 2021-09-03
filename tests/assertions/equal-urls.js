@@ -1,6 +1,6 @@
 import StereoUrl from 'ember-stereo/-private/utils/stereo-url';
 
-export default function equalUrls(context, arg1, arg2) {
+export default function equalUrls(context, arg1, arg2, message) {
   // use this.pushResult to add the assertion.
   // see: https://api.qunitjs.com/assert/pushResult for more information
 
@@ -9,5 +9,5 @@ export default function equalUrls(context, arg1, arg2) {
 
   let result = expected === actual && expected && actual
 
-  this.pushResult({ result, actual, expected });
+  this.pushResult({ result, actual, expected, message });
 }

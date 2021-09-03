@@ -12,7 +12,7 @@ module('Integration | Helper | find-sound', function (hooks) {
 
   test('it loads', async function (assert) {
     let service = this.owner.lookup('service:stereo');
-    this.url = '/good/100/silence.mp3';
+    this.url = '/good/100/find.mp3';
     await service.load(this.url);
 
     await render(hbs`{{get (find-sound this.url) 'url'}}`);

@@ -10,7 +10,7 @@ module('Integration | Helper | toggle-play-sound', function (hooks) {
 
   test('it can toggle play as an action', async function (assert) {
     let service = this.owner.lookup('service:stereo');
-    this.url = '/good/1000/silence.mp3';
+    this.url = '/good/1000/toggle.mp3';
     assert.false(service.isPlaying, 'not playing');
     await render(hbs`<button type="button" {{on 'click' (toggle-play-sound this.url)}}>toggle</button>`);
     await click('button');

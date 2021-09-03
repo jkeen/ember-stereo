@@ -50,15 +50,15 @@ module('Unit | Service | stereo integration test.js', function (hooks) {
   test('it sets fixed duration correctly', async function (assert) {
     let stereo = this.owner.lookup('service:stereo');
 
-    let { sound } = await stereo.load('/good/2500/test');
-    assert.equal(sound.duration, 2500);
+    let { sound } = await stereo.load('/good/500/fixed-duration.mp3');
+    assert.equal(sound.duration, 500);
   });
 
   test('it sets stream duration correctly', async function (assert) {
     let stereo = this.owner.lookup('service:stereo');
     stereo.loadConnections([{ name: 'NativeAudio' }]);
 
-    let { sound } = await stereo.load('/good/stream/test');
+    let { sound } = await stereo.load('/good/stream/stream-duration.aac');
     assert.equal(sound.duration, Infinity, 'duration should be infinity');
     assert.true(sound.isStream, 'should be stream');
   });
@@ -73,7 +73,7 @@ module('Unit | Service | stereo integration test.js', function (hooks) {
       done();
     });
 
-    await stereo.play('/good/10000/test');
+    await stereo.play('/good/1000/before-zero-rewind.aac');
     stereo.rewind(5000);
   });
 
@@ -83,7 +83,7 @@ module('Unit | Service | stereo integration test.js', function (hooks) {
     let service = this.owner.lookup('service:audio');
     let stereo = service.get('stereo');
 
-    await stereo.play('/good/1000/test');
+    await stereo.play('/good/1000/no-ff-past-duration.mp3');
     stereo.fastForward(800);
     assert.equal(stereo.position, 800, 'sound should be at 800');
     stereo.fastForward(300);
@@ -91,15 +91,15 @@ module('Unit | Service | stereo integration test.js', function (hooks) {
   });
 
   test('it sends an audio-ended event when the sound ends', async function (assert) {
+    let done = assert.async()
     assert.expect(1);
-    let done = assert.async();
 
     let stereo = this.owner.lookup('service:stereo');
-
     stereo.one('audio-ended', ({ sound }) => {
       assert.equal(sound.position, 0, 'sound should return to start');
       done();
     });
-    await stereo.play('/good/2000/test');
+    let { sound } = await stereo.load('/good/100/audio-ended-event.mp3');
+    await sound.play();
   });
 });

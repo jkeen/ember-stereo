@@ -4,10 +4,11 @@ import Strategy from 'ember-stereo/-private/utils/strategy';
 import StereoUrl from 'ember-stereo/-private/utils/stereo-url';
 import { setupTest } from 'ember-qunit';
 import { setupStereoTest } from 'ember-stereo/test-support/stereo-setup';
-
+import SharedAudioAccess from 'ember-stereo/-private/utils/shared-audio-access';
 module('Unit | Utility | strategizer', function (hooks) {
   setupTest(hooks);
   setupStereoTest(hooks);
+
   var service;
   hooks.beforeEach(function () {
     service = this.owner.lookup('service:stereo').loadConnections(['LocalDummyConnection', 'NativeAudio']);
@@ -19,7 +20,7 @@ module('Unit | Utility | strategizer', function (hooks) {
 
   test('yields strategies', async function (assert) {
     assert.expect(4);
-    let urls = ['/good/10000/sound.mp3']
+    let urls = ['/bad/10000/sound.mp3']
 
     let strategizer = new Strategizer(urls, {
       connections: service.connections
@@ -27,7 +28,7 @@ module('Unit | Utility | strategizer', function (hooks) {
 
     strategizer.strategies.forEach(strategy => {
       assert.true((strategy instanceof Strategy), 'strategy is an instance of Strategy')
-      assert.equal(strategy.url, new StereoUrl('/good/10000/sound.mp3').url, "url is fully qualified")
+      assert.equal(strategy.url, new StereoUrl('/bad/10000/sound.mp3').url, "url is fully qualified")
     });
   });
 
@@ -36,17 +37,20 @@ module('Unit | Utility | strategizer', function (hooks) {
 
     let urls = ['/good/10000/sound.mp3']
 
+    let sharedAccess = (new SharedAudioAccess()).unlock()
+    sharedAccess.key = 'shared-key';
+
     let strategizer = new Strategizer(urls, {
       connections: service.connections,
       useSharedAudioAccess: true,
-      sharedAudioAccess: { audio: 'shared-key' }
+      sharedAudioAccess: sharedAccess
     })
 
     assert.true(strategizer.useSharedAudioAccess, 'use shared audio access')
 
     strategizer.strategies.forEach(strategy => {
       assert.equal(strategy.url, new StereoUrl('/good/10000/sound.mp3').url, "url is fully qualified")
-      assert.equal(strategy.sharedAudioAccess.audio, 'shared-key')
+      assert.equal(strategy.sharedAudioAccess.key, 'shared-key')
     })
   });
 

@@ -10,7 +10,7 @@ module('Integration | Helper | load-sound', function (hooks) {
 
   test('it can load as an action', async function (assert) {
     let service = this.owner.lookup('service:stereo');
-    this.url = '/good/1000/silence.mp3';
+    this.url = '/good/1000/load.mp3';
     assert.equal(service.currentSound, undefined, 'not loaded');
     await render(hbs`<button type="button" {{on 'click' (load-sound this.url)}}>load</button>`);
     await click('button');

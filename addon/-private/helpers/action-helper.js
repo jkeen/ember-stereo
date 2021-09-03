@@ -42,9 +42,7 @@ export default class ActionHelper extends Helper {
       }
     }
 
-    return (e) => {
-      this.performAction(this.sound, e);
-    };
+    return (e) => this.performAction(this.sound, e);
   }
 
   performAction() {

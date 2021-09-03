@@ -83,12 +83,12 @@ module('Unit | Service | stereo', function (hooks) {
   });
 
   test('load stops trying urls after a sound loads and reports accurately', async function (assert) {
-    let goodUrl = '/good/10000/test3.mp3';
-    let unusedUrl = '/test/test4.mp3';
+    let unusedUrl = '/good/1000/fourth-unused.mp3';
+    let goodUrl = '/good/2000/third-url-good.mp3';
     let error1 = 'unknown-error';
     let error2 = 'codec-not-supported';
-    let badUrl1 = `/bad/${error1}/test1.mp3`;
-    let badUrl2 = `/bad/${error2}/test2.mp3`;
+    let badUrl1 = `/bad/${error1}/first-url-bad.mp3`;
+    let badUrl2 = `/bad/${error2}/second-url-bad.mp3`;
     let expectedUrl;
     let expectedFailures;
 
@@ -180,8 +180,8 @@ module('Unit | Service | stereo', function (hooks) {
     let service = this.owner
       .lookup('service:stereo')
       .loadConnections([{ name: 'NativeAudio' }]);
-    let { sound: sound1 } = await service.load('/good/1000/yes.mp3');
-    let { sound: sound2 } = await service.load('/good/2000/another-yes.mp3');
+    let { sound: sound1 } = await service.load('/good/200/yes.mp3');
+    let { sound: sound2 } = await service.load('/good/500/another-yes.mp3');
 
     assert.notOk(
       service.currentSound,
@@ -201,6 +201,8 @@ module('Unit | Service | stereo', function (hooks) {
       sound2.url,
       'sound2 should be set as current sound'
     );
+    sound2.stop()
+    sound1.stop()
   });
 
   test('Setting currentSound multiple times will not register duplicate events on the sound', async function (assert) {
@@ -209,7 +211,7 @@ module('Unit | Service | stereo', function (hooks) {
       .lookup('service:stereo')
       .loadConnections([{ name: 'NativeAudio' }]);
 
-    let { sound } = await service.load('/good/10000/yes.mp3');
+    let { sound } = await service.load('/good/500/current-sound.mp3');
     var callCount = 0;
     await sound.play();
     service.on('audio-ended', () => {
@@ -246,7 +248,7 @@ module('Unit | Service | stereo', function (hooks) {
       .lookup('service:stereo')
       .loadConnections([{ name: 'NativeAudio' }]);
 
-    let url = '/good/10000/test.mp3';
+    let url = '/good/500/cache.mp3';
     let soundCache = service.soundCache;
     let findSpy = sandbox.stub(soundCache, 'find');
     let cacheSpy = sandbox.stub(soundCache, 'cache');
@@ -598,12 +600,12 @@ module('Unit | Service | stereo', function (hooks) {
     const service = this.owner.lookup('service:stereo');
     service.loadConnections([{ name: connections[0] }]);
 
-    let s1url = '/good/20000/silence.mp3';
-    let s2url = '/good/15000/silence2.mp3';
+    let s1url = '/good/250/silence.mp3';
+    let s2url = '/good/500/silence2.mp3';
 
     let { sound: sound1 } = await service.load(s1url);
     let { sound: sound2 } = await service.load(s2url);
-    sound1.position = 2000;
+    sound1.position = 100;
     assert.equal(
       sound2._currentPosition(),
       0,
@@ -611,30 +613,30 @@ module('Unit | Service | stereo', function (hooks) {
     );
 
     await sound2.play();
-    sound2.position = 1000;
+    sound2.position = 125;
 
     assert.equal(
       Math.floor(sound1._currentPosition()),
-      2000,
+      100,
       'first sound should still have its own position'
     );
     assert.equal(
       Math.floor(sound2._currentPosition()),
-      1000,
+      125,
       'second sound should still have its own position'
     );
 
     await sound1.play();
     assert.equal(
       Math.floor(sound1._currentPosition()),
-      2000,
+      100,
       'first sound should still have its own position'
     );
-    sound2.position = 9000;
+    sound2.position = 300;
     await sound2.play();
     assert.equal(
       Math.floor(sound2._currentPosition()),
-      9000,
+      300,
       'second sound should still have its own position'
     );
   });
@@ -806,8 +808,8 @@ module('Unit | Service | stereo', function (hooks) {
       .lookup('service:stereo')
       .loadConnections(['NativeAudio']);
     service.useSharedAudioAccess = false;
-    let s1url = '/good/3000/silence.mp3';
-    let s2url = '/good/1000/silence2.mp3';
+    let s1url = '/good/3000/first-sound.mp3';
+    let s2url = '/good/1000/second-sound.mp3';
 
     service.one('current-sound-changed', ({ sound }) => {
       assert.equalUrls(
@@ -836,8 +838,8 @@ module('Unit | Service | stereo', function (hooks) {
       .lookup('service:stereo')
       .loadConnections(['NativeAudio']);
     service.useSharedAudioAccess = true;
-    let s1url = '/good/3000/silence.mp3';
-    let s2url = '/good/1000/silence2.mp3';
+    let s1url = '/good/3000/first-sound.mp3';
+    let s2url = '/good/1000/second-sound.mp3';
 
     service.one('current-sound-changed', ({ sound }) => {
       assert.equalUrls(
@@ -864,8 +866,8 @@ module('Unit | Service | stereo', function (hooks) {
     const service = this.owner
       .lookup('service:stereo')
       .loadConnections(['NativeAudio']);
-    let s1url = '/good/1000/silence.mp3';
-    let s2url = '/good/1000/silence2.mp3';
+    let s1url = '/good/3000/first-sound.mp3';
+    let s2url = '/good/1000/second-sound.mp3';
 
     let result;
     service.on('current-sound-interrupted', ({ sound }) => {
@@ -1041,12 +1043,13 @@ module('Unit | Service | stereo', function (hooks) {
       }
     );
 
-    await service.play(s1url, { position: 5000 });
+    let { sound } = await service.play(s1url, { position: 5000 });
     service.fastForward(1000);
+    sound.pause()
   });
 
   test("altering a sound's url during the pre-load event will not prevent the cache", async function (assert) {
-    let url = '/good/15000/1.mp3';
+    let url = '/good/1000/1.mp3';
 
     let soundCache = new SoundCache();
     let service = this.owner
@@ -1080,5 +1083,5 @@ module('Unit | Service | stereo', function (hooks) {
     );
   });
 
-  skip('currenly playing sound does not pause until load has succeeded', function () {});
+  skip('currenly playing sound does not pause until load has succeeded', function () { });
 });

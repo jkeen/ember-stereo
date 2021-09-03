@@ -30,7 +30,7 @@ export default class HLSSound extends BaseSound {
   setup() {
     let video = document.createElement('video');
     this.video = video;
-    let hls = new HLS({ debug: true, startFragPrefetch: true });
+    let hls = new HLS({ debug: false, startFragPrefetch: true });
 
     this.hls = hls;
     hls.attachMedia(video);

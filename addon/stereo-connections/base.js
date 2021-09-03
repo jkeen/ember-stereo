@@ -57,7 +57,6 @@ export default class Sound extends Evented {
   }
 
   @tracked url;
-  @tracked timeout = 30000;
   @tracked connectionName;
 
   @tracked hasPlayed = false;
@@ -81,9 +80,8 @@ export default class Sound extends Evented {
     parser.href = this.url;
 
     let parts = parser.pathname.split('/');
-    return `ember-stereo:${
-      this.connectionName || this.constructor.toString()
-    } (${parts[parts.length - 1]})`;
+    return `ember-stereo:${this.connectionName || this.constructor.toString()
+      } (${parts[parts.length - 1]})`;
   }
 
   trigger(eventName, info = {}) {
@@ -145,6 +143,7 @@ export default class Sound extends Evented {
     this.connectionKey = args.connectionKey;
     this.options = args.options;
     this.sharedAudioAccess = args.sharedAudioAccess;
+    this.timeout = ('timeout' in args) ? args.timeout : 30000
 
     let {
       audioLoading,
@@ -168,7 +167,6 @@ export default class Sound extends Evented {
         audioLoading(this);
       }
 
-      // recover lost isLoading update
       this.debug(`audio-played ${this.isPlaying}`);
     });
 

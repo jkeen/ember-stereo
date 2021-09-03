@@ -1,19 +1,24 @@
 import SharedAudioAccess from 'ember-stereo/-private/utils/shared-audio-access';
 import { module, test } from 'qunit';
-import sinon from 'sinon';
+import { setupTest } from 'ember-qunit';
 
-let audioElement = document.createElement('audio');
+import sinon from 'sinon';
+import {
+  setupStereoTest,
+} from 'ember-stereo/test-support/stereo-setup';
 
 module('Unit | Utility | shared audio element', function (hooks) {
-  let sharedAudioAccess;
+  let sharedAudioAccess, sandbox;
+  setupTest(hooks);
+
+  setupStereoTest(hooks);
   hooks.beforeEach(function () {
     sharedAudioAccess = new SharedAudioAccess();
-    sinon.stub(SharedAudioAccess, 'createElement').returns(audioElement);
+    sandbox = sinon.createSandbox()
   });
-
   hooks.afterEach(function () {
-    SharedAudioAccess.createElement.restore();
-  });
+    sandbox.restore()
+  })
 
   test('it works', function (assert) {
     let result = sharedAudioAccess.unlock();
@@ -34,18 +39,28 @@ module('Unit | Utility | shared audio element', function (hooks) {
     assert.ok(sharedAudioAccess.hasControl(bar), 'bar now can have access');
   });
 
-  test('only plays blank element when asked to', function (assert) {
-    let playSpy = sinon.spy(audioElement, 'play');
-    sharedAudioAccess.unlock();
+  test('only plays blank element when asked to', async function (assert) {
+    let playSpy = sinon.spy()
+    sandbox.stub(SharedAudioAccess, 'createElement').callsFake(() => {
+      return {
+        'play': playSpy
+      }
+    })
+
+    await sharedAudioAccess.unlock();
     assert.equal(playSpy.callCount, 0, "play spy hasn't been called");
-    audioElement.play.restore();
   });
 
-  test('only plays blank element when asked to while unlocking', function (assert) {
-    let playSpy = sinon.spy(audioElement, 'play');
-    sharedAudioAccess.unlock(true);
+  test('only plays blank element when asked to while unlocking', async function (assert) {
+    let playSpy = sinon.spy()
+    sandbox.stub(SharedAudioAccess, 'createElement').callsFake(() => {
+      return {
+        'play': playSpy
+      }
+    })
+
+    await sharedAudioAccess.unlock(true);
 
     assert.equal(playSpy.callCount, 1, "play spy was called");
-    audioElement.play.restore();
   });
 });

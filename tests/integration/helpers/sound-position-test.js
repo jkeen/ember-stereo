@@ -10,7 +10,7 @@ module('Integration | Helper | sound-position', function (hooks) {
   setupStereoTest(hooks);
   test('it renders position of sound if loaded', async function (assert) {
     let service = this.owner.lookup('service:stereo');
-    this.url = '/good/10/silence.mp3';
+    this.url = '/good/10/position.mp3';
     await service.load(this.url);
     await render(hbs`{{sound-position this.url}}`);
 
@@ -19,7 +19,7 @@ module('Integration | Helper | sound-position', function (hooks) {
 
   test('it renders formatted position of sound if loaded', async function (assert) {
     let service = this.owner.lookup('service:stereo');
-    this.url = '/good/10/silence.mp3';
+    this.url = '/good/10/position.mp3';
     await service.load(this.url);
     await render(hbs`{{sound-position this.url format='time'}}`);
     assert.equal(this.element.textContent.trim(), '00:00');
@@ -31,7 +31,7 @@ module('Integration | Helper | sound-position', function (hooks) {
     assert.equal(this.element.textContent.trim(), '0');
   });
   test('it renders nothing if not loaded', async function (assert) {
-    this.url = '/good/10/silence.mp3';
+    this.url = '/good/10/position.mp3';
     await render(hbs`{{sound-position this.url}}`);
 
     assert.equal(this.element.textContent.trim(), '');
@@ -40,8 +40,8 @@ module('Integration | Helper | sound-position', function (hooks) {
   test('if changing input it updates underlying sound', async function (assert) {
     let service = this.owner.lookup('service:stereo');
 
-    this.url = '/good/10000/silence.mp3';
-    this.url2 = '/good/6000/silence.mp3';
+    this.url = '/good/10000/position-changing.mp3';
+    this.url2 = '/good/6000/position-changing-2.mp3';
 
     await service.load(this.url);
     let { sound } = await service.load(this.url2);

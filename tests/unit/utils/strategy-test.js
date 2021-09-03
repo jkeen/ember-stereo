@@ -26,25 +26,21 @@ module('Unit | Utility | strategy', function (hooks) {
   });
 
   test('calling canPlay on strategy calls canPlay on the connection', function (assert) {
-    let canPlaySpy = sandbox.spy(NativeAudio, 'canPlay')
-    let canPlayMimeTypeSpy = sandbox.spy(NativeAudio, 'canPlayMimeType')
+    let canPlaySpy = sandbox.stub(NativeAudio, 'canPlay').returns(true)
 
     let strategy = new Strategy(NativeAudio, new StereoUrl('/test/1.mp3'))
     strategy.canPlay
 
     assert.equal(canPlaySpy.callCount, 1);
-    assert.equal(canPlayMimeTypeSpy.callCount, 1);
   })
 
   test('strategy can create sound object from connection', function (assert) {
-    let canPlaySpy = sandbox.spy(NativeAudio, 'canPlay')
-    let canPlayMimeTypeSpy = sandbox.spy(NativeAudio, 'canPlayMimeType')
+    let canPlaySpy = sandbox.stub(NativeAudio, 'canPlay').returns(true)
 
     let strategy = new Strategy(NativeAudio, new StereoUrl('/test/1.mp3'))
     strategy.canPlay
 
     assert.equal(canPlaySpy.callCount, 1);
-    assert.equal(canPlayMimeTypeSpy.callCount, 1);
 
     let sound = strategy.createSound()
 
