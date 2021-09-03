@@ -9,7 +9,7 @@ module.exports = {
   report_file: circle ? `${circle}/test.xml` : null,
   xunit_intermediate_output: true,
   launch_in_ci: [
-    'Chrome'
+    'Firefox'
   ],
   launch_in_dev: [
   ],
@@ -32,7 +32,11 @@ module.exports = {
     },
     Firefox: {
       mode: 'ci',
-      args: ['-headless'],
+      args: ['-headless', // not sure if the flags below even work, but can't find the docs
+        '--ignore-autoplay-restriction',
+        '--autoplay-policy=no-user-gesture-required',
+        '--no-user-gesture-required',
+        '--mute-audio'],
     },
   },
 };

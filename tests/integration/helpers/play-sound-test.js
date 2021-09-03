@@ -10,7 +10,7 @@ module('Integration | Helper | play-sound', function (hooks) {
 
   test('it can play as an action', async function (assert) {
     let service = this.owner.lookup('service:stereo');
-    this.url = '/good/500/silence.mp3';
+    this.url = '/good/2000/silence.mp3';
     assert.false(service.isPlaying, 'not playing');
 
     await render(

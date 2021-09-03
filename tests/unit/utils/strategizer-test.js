@@ -11,6 +11,7 @@ module('Unit | Utility | strategizer', function (hooks) {
   var service;
   hooks.beforeEach(function () {
     service = this.owner.lookup('service:stereo').loadConnections(['LocalDummyConnection', 'NativeAudio']);
+    service.useSharedAudioAccess = false
   });
   hooks.afterEach(function () {
     service.destroy()

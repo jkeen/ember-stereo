@@ -6,9 +6,9 @@
 
 This addon exposes a `stereo` service which produces `Sound` objects which represent a playable piece of audio.
 
-- Ember.js v3.20 or above
-- Ember CLI v3.20 or above
-- Node.js v10 or above
+- Ember.js v3.27 or above
+- Ember CLI v3.27 or above
+- Node.js v12 or above
 
 ```shell
 ember install ember-stereo
