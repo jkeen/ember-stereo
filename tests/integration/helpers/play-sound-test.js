@@ -2,7 +2,7 @@ import { module, test } from 'qunit';
 import { setupRenderingTest } from 'ember-qunit';
 import { setupStereoTest } from 'ember-stereo/test-support/stereo-setup';
 import { render, click } from '@ember/test-helpers';
-import hbs from 'htmlbars-inline-precompile';
+import { hbs } from 'ember-cli-htmlbars';
 
 module('Integration | Helper | play-sound', function (hooks) {
   setupRenderingTest(hooks);
@@ -13,9 +13,7 @@ module('Integration | Helper | play-sound', function (hooks) {
     this.url = '/good/2000/silence.mp3';
     assert.false(service.isPlaying, 'not playing');
 
-    await render(
-      hbs`<button type="button" {{on 'click' (play-sound this.url)}}>play</button>`
-    );
+    await render(hbs`<button type="button" {{on 'click' (play-sound this.url)}}>play</button>`);
     await click('button');
 
     assert.true(service.isPlaying, 'is playing');

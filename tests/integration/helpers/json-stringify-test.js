@@ -2,7 +2,7 @@ import { module, test } from 'qunit';
 import { setupRenderingTest } from 'ember-qunit';
 import { setupStereoTest } from 'ember-stereo/test-support/stereo-setup'
 import { render } from '@ember/test-helpers';
-import hbs from 'htmlbars-inline-precompile';
+import { hbs } from 'ember-cli-htmlbars';
 
 module('Integration | Helper | json-stringify', function (hooks) {
   setupRenderingTest(hooks);
