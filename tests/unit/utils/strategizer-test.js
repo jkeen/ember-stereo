@@ -3,9 +3,11 @@ import Strategizer from 'ember-stereo/-private/utils/strategizer';
 import Strategy from 'ember-stereo/-private/utils/strategy';
 import StereoUrl from 'ember-stereo/-private/utils/stereo-url';
 import { setupTest } from 'ember-qunit';
+import { setupStereoTest } from 'ember-stereo/test-support/stereo-setup';
 
 module('Unit | Utility | strategizer', function (hooks) {
   setupTest(hooks);
+  setupStereoTest(hooks);
   var service;
   hooks.beforeEach(function () {
     service = this.owner.lookup('service:stereo').loadConnections(['LocalDummyConnection', 'NativeAudio']);

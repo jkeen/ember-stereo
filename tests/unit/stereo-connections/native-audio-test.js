@@ -1,6 +1,5 @@
 import { module, test } from 'qunit';
 import { setupTest } from 'ember-qunit';
-import { triggerEvent } from '@ember/test-helpers';
 import sinon from 'sinon';
 import SharedAudioAccess from 'ember-stereo/-private/utils/shared-audio-access';
 import NativeAudio from 'ember-stereo/stereo-connections/native-audio';

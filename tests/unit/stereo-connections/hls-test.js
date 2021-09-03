@@ -4,6 +4,7 @@ import sinon from 'sinon';
 import { module, test, skip } from 'qunit';
 import HLSConnection from 'ember-stereo/stereo-connections/hls';
 import { setupHLSSpies, throwMediaError } from '../../helpers/hls-test-helpers';
+import StereoUrl from 'ember-stereo/-private/utils/stereo-url';
 
 let sandbox;
 const goodUrl = "http://example.org/good.m3u8";
@@ -46,11 +47,11 @@ module('Unit | Connection | HLS', function (hooks) {
     assert.expect(badUrls.length + goodUrls.length);
 
     badUrls.forEach(url => {
-      assert.false(HLSConnection.canPlay(url), `Should not play file with ${url}`);
+      assert.false(HLSConnection.canPlayMimeType(new StereoUrl(url).mimeType), `Should not play file with ${url}`);
     });
 
     goodUrls.forEach(url => {
-      assert.true(HLSConnection.canPlay(url), `Should be able to play file with ${url}`);
+      assert.true(HLSConnection.canPlayMimeType(new StereoUrl(url).mimeType), `Should be able to play file with ${url}`);
     });
   });
 
@@ -68,11 +69,11 @@ module('Unit | Connection | HLS', function (hooks) {
     assert.expect(badFiles.length + goodFiles.length);
 
     badFiles.forEach(url => {
-      assert.false(HLSConnection.canPlay(url), `Should not play file with mime type ${url.mimeType}`);
+      assert.false(HLSConnection.canPlayMimeType(new StereoUrl(url).mimeType), `Should not play file with mime type ${url.mimeType}`);
     });
 
     goodFiles.forEach(url => {
-      assert.true(HLSConnection.canPlay(url), `Should be able to play file with ${url.mimeType}`);
+      assert.true(HLSConnection.canPlayMimeType(new StereoUrl(url).mimeType), `Should be able to play file with ${url.mimeType}`);
     });
   });
 
