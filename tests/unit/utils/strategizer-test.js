@@ -15,15 +15,17 @@ module('Unit | Utility | strategizer', function (hooks) {
   });
 
   test('yields strategies', async function (assert) {
+    assert.expect(4);
     let urls = ['/good/10000/sound.mp3']
 
     let strategizer = new Strategizer(urls, {
       connections: service.connections
     })
 
-    let strategy = strategizer.strategies[0]
-    assert.true((strategy instanceof Strategy), 'strategy is an instance of Strategy')
-    assert.equal(strategy.url, new StereoUrl('/good/10000/sound.mp3').url, "url is fully qualified")
+    strategizer.strategies.forEach(strategy => {
+      assert.true((strategy instanceof Strategy), 'strategy is an instance of Strategy')
+      assert.equal(strategy.url, new StereoUrl('/good/10000/sound.mp3').url, "url is fully qualified")
+    });
   });
 
   test('passes audio element to strategy if specified', async function (assert) {

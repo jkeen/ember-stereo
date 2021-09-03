@@ -224,7 +224,7 @@ export default class FakeMediaElement extends Evented {
   }
 
   removeAttribute(name) {
-    delete this[name];
+    this[name] = null;
   }
 
   getAttribute(name) {
