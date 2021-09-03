@@ -1,7 +1,4 @@
-import { inject as service } from "@ember/service";
-import Helper from "@ember/component/helper";
-import prepareOptions from "ember-stereo/-private/utils/prepare-options";
-import Ember from "ember";
+import StereoBaseActionHelper from 'ember-stereo/-private/helpers/action-helper';
 
 /**
   A helper to load a sound
@@ -24,21 +21,13 @@ import Ember from "ember";
   @param {[String]} useConnections? array of connection names in preference order
   @return {Function}
 */
-export default class PlaySound extends Helper {
-  @service stereo;
-
-  compute([urls], options = {}) {
-    options = prepareOptions(options)
-    return async () => {
-      try {
-        let { sound } = await this.stereo.play(urls, options)
-        return sound;
-      } catch (e) {
-        if (Ember.testing) {
-          console.error(e)
-        }
-        return false;
-      }
-    };
+export default class playSound extends StereoBaseActionHelper {
+  performAction(sound) {
+    if (sound) {
+      sound.play()
+    }
+    else {
+      this.stereo.play(this.identifier, this.options)
+    }
   }
 }

@@ -8,7 +8,7 @@ module('Integration | Helper | sound-is-seekable', function (hooks) {
   setupRenderingTest(hooks);
   setupStereoTest(hooks);
 
-  // Replace this with your real tests.
+
   test('it renders', async function (assert) {
     let service = this.owner.lookup('service:stereo')
 

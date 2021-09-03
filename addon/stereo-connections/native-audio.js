@@ -41,7 +41,6 @@ export default class NativeAudio extends BaseSound {
     this._registerEvents(audio);
 
     if (Ember.testing) {
-      console.warn('setting audio element volume to zero for testing, to get around autoplay restrictions'); // eslint-disable-line
       audio.muted = true;
     }
 

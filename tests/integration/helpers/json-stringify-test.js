@@ -11,7 +11,7 @@ module('Integration | Helper | json-stringify', function (hooks) {
   test('it renders', async function (assert) {
     this.set('inputValue', { title: 'Morning Edition' });
 
-    await render(hbs`{{json-stringify inputValue}}`);
+    await render(hbs`{{json-stringify this.inputValue}}`);
 
     assert.equal(this.element.textContent.trim(), '{"title":"Morning Edition"}');
   });
@@ -19,7 +19,7 @@ module('Integration | Helper | json-stringify', function (hooks) {
   test('a null input returns an empty string', async function (assert) {
     this.set('inputValue', null);
 
-    await render(hbs`{{json-stringify inputValue}}`);
+    await render(hbs`{{json-stringify this.inputValue}}`);
 
     assert.equal(this.element.textContent.trim(), '');
   });
@@ -27,13 +27,13 @@ module('Integration | Helper | json-stringify', function (hooks) {
   test('an undefined/null input returns an empty string', async function (assert) {
     this.set('inputValue', undefined);
 
-    await render(hbs`{{json-stringify inputValue}}`);
+    await render(hbs`{{json-stringify this.inputValue}}`);
 
     assert.equal(this.element.textContent.trim(), '');
 
     this.set('inputValue', null);
 
-    await render(hbs`{{json-stringify inputValue}}`);
+    await render(hbs`{{json-stringify this.inputValue}}`);
 
     assert.equal(this.element.textContent.trim(), '');
   });
