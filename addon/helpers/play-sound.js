@@ -1,6 +1,7 @@
 import { inject as service } from "@ember/service";
 import Helper from "@ember/component/helper";
 import prepareOptions from "ember-stereo/-private/utils/prepare-options";
+import Ember from "ember";
 
 /**
   A helper to load a sound
@@ -33,6 +34,9 @@ export default class PlaySound extends Helper {
         let { sound } = await this.stereo.play(urls, options)
         return sound;
       } catch (e) {
+        if (Ember.testing) {
+          console.error(e)
+        }
         return false;
       }
     };
