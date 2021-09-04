@@ -180,7 +180,7 @@ export default class Sound extends Evented {
 
     this.on('audio-ended', () => {
       this.isPlaying = false;
-      this.position = 0;
+      this._position = this._setPosition(0);
       if (audioEnded) {
         audioEnded(this);
       }
@@ -337,10 +337,6 @@ export default class Sound extends Evented {
 
   teardown() {
     // optionally implemented in subclasses
-  }
-
-  willDestroy() {
-    this.teardown();
   }
 
   hasUrl(url) {

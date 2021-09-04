@@ -1,6 +1,7 @@
 # ember-stereo
 
 ## The best way to play audio in your modern ember app
+
 [![CI](https://github.com/jkeen/ember-stereo/actions/workflows/ci.yml/badge.svg)](https://github.com/jkeen/ember-stereo/actions/workflows/ci.yml)
 ![Download count all time](https://img.shields.io/npm/dt/ember-stereo.svg) [![npm version](https://img.shields.io/npm/v/ember-stereo.svg?style=flat-square)](https://www.npmjs.com/package/ember-stereo) [![Ember Observer Score](http://emberobserver.com/badges/ember-stereo.svg)](http://emberobserver.com/addons/ember-stereo)
 
@@ -28,6 +29,16 @@ Read the [upgrade guide](https://jkeen.github.com/ember-stereo)
 
 ##### Actions
 
+- `toggle-play-sound`
+
+```hbs
+<button
+  type='button'
+  class='button is-link'
+  {{on 'click' (toggle-play-sound @identifier)}}
+>Play/Pause</button>
+```
+
 - `play-sound`
 
 ```hbs
@@ -48,16 +59,6 @@ Read the [upgrade guide](https://jkeen.github.com/ember-stereo)
 >Pause</button>
 ```
 
-- `toggle-play-sound`
-
-```hbs
-<button
-  type='button'
-  class='button is-link'
-  {{on 'click' (toggle-play-sound @identifier)}}
->Play/Pause</button>
-```
-
 - `load-sound`
 
 ```hbs
@@ -65,7 +66,7 @@ Read the [upgrade guide](https://jkeen.github.com/ember-stereo)
   type='button'
   class='button is-link'
   {{on 'click' (load-sound @identifier)}}
->Play</button>
+>Load</button>
 ```
 
 - `stop-sound`
@@ -110,6 +111,34 @@ Read the [upgrade guide](https://jkeen.github.com/ember-stereo)
 
 ##### Conditionals
 
+- `sound-is-loaded`
+
+```hbs
+{{#if (sound-is-loaded @identifier)}}
+  sound is loaded and ready to play
+{{/if}}
+```
+
+- `sound-is-loading`
+
+```hbs
+{{#if (sound-is-loading @identifier)}}
+  [show loading spinner]
+{{/if}}
+```
+
+- `sound-is-playing`
+
+```hbs
+{{#if (sound-is-playing @identifier)}}
+  <button
+    type='button'
+    class='button is-link'
+    {{on 'click' (pause-sound @identifier)}}
+  >Pause</button>
+{{/if}}
+```
+
 - `sound-is-errored`
 
 ```hbs
@@ -139,50 +168,6 @@ Read the [upgrade guide](https://jkeen.github.com/ember-stereo)
     class='button is-link'
     {{on 'click' (rewind-sound @identifier increment=5000)}}
   >Fast Forward</button>
-{{/if}}
-```
-
-- `sound-is-loaded`
-
-```hbs
-{{#if (sound-is-loaded @identifier)}}
-  sound is loaded and ready to play
-{{/if}}
-```
-
-- `sound-is-loading`
-
-```hbs
-{{#if (sound-is-loading @identifier)}}
-  [show loading spinner]
-{{/if}}
-```
-
-- `sound-is-playing`
-
-```hbs
-{{#if (sound-is-playing @identifier)}}
-  <button
-    type='button'
-    class='button is-link'
-    {{on 'click' (pause-sound @identifier)}}
-  >Pause</button>
-{{/if}}
-```
-
-- `sound-is-rewindable`
-
-```hbs
-{{#if (sound-is-rewindable @identifier)}}
-  Sound is rewindable
-{{/if}}
-```
-
-- `sound-is-fastforwardable`
-
-```hbs
-{{#if (sound-is-rewindable @identifier)}}
-  Sound is fastforwardable
 {{/if}}
 ```
 
@@ -313,6 +298,20 @@ export default class StereoComponent extends Component {
   Tries each stereo connection with each url and returns the ready `sound` from the first combination that works. The sound is cached internally so on subsequent load requests with the same url the already prepared sound will be returned. Calling `play` on the returned sound will start playback immediately.
 
 - `loadTask(urlsOrPromise, options)` the ember concurrency task that `load` calls.
+
+- `findSound(identifier)`
+  Returns a sound once it loads. This works reactively, so you can do something like:
+
+```javascript
+export default class StereoComponent extends Component {
+  @service stereo
+  ...
+
+  get sound() {
+    return this.stereo.findSound(this.args.identifier)
+  }
+}
+```
 
 ###### Gettable/Settable Properties
 

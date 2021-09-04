@@ -16,11 +16,11 @@ const MIME_TYPES = {
   "audio/basic": {
     "source": "iana",
     "compressible": false,
-    "extensions": ["au","snd"]
+    "extensions": ["au", "snd"]
   },
   "audio/midi": {
     "source": "apache",
-    "extensions": ["mid","midi","kar","rmi"]
+    "extensions": ["mid", "midi", "kar", "rmi"]
   },
   "audio/mp3": {
     "compressible": false,
@@ -29,17 +29,17 @@ const MIME_TYPES = {
   "audio/mp4": {
     "source": "iana",
     "compressible": false,
-    "extensions": ["m4a","mp4a"]
+    "extensions": ["m4a", "mp4a"]
   },
   "audio/mpeg": {
     "source": "iana",
     "compressible": false,
-    "extensions": ["mpga","mp2","mp2a","mp3","m2a","m3a"]
+    "extensions": ["mpga", "mp2", "mp2a", "mp3", "m2a", "m3a"]
   },
   "audio/ogg": {
     "source": "iana",
     "compressible": false,
-    "extensions": ["oga","ogg","spx", "opus"]
+    "extensions": ["oga", "ogg", "spx", "opus"]
   },
   "audio/opus": {},
   "audio/flac": {
@@ -56,7 +56,7 @@ const MIME_TYPES = {
   },
   "audio/vnd.dece.audio": {
     "source": "iana",
-    "extensions": ["uva","uvva"]
+    "extensions": ["uva", "uvva"]
   },
   "audio/vnd.digital-winds": {
     "source": "iana",
@@ -113,7 +113,7 @@ const MIME_TYPES = {
   },
   "audio/x-aiff": {
     "source": "apache",
-    "extensions": ["aif","aiff","aifc"]
+    "extensions": ["aif", "aiff", "aifc"]
   },
   "audio/x-caf": {
     "source": "apache",
@@ -146,7 +146,7 @@ const MIME_TYPES = {
   },
   "audio/x-pn-realaudio": {
     "source": "apache",
-    "extensions": ["ram","ra"]
+    "extensions": ["ram", "ra"]
   },
   "audio/x-pn-realaudio-plugin": {
     "source": "apache",
@@ -174,14 +174,14 @@ const MIME_TYPES = {
   }
 };
 
-const TYPES       = Object.create(null);
-const EXTENSIONS  = Object.create(null);
+const TYPES = Object.create(null);
+const EXTENSIONS = Object.create(null);
 
 function populateMaps(extensions, types) {
   // source preference (least -> most)
   let preference = ['nginx', 'apache', undefined, 'iana'];
 
-  Object.keys(MIME_TYPES).forEach(function(type) {
+  Object.keys(MIME_TYPES).forEach(function (type) {
     let mime = MIME_TYPES[type];
     let exts = mime.extensions;
 
