@@ -1,3 +1,23 @@
+ember-stereo changelog
+
+## [2.0.3](https://github.com/jkeen/ember-stereo/compare/v2.0.2...v2.0.3) (2021-09-04)
+
+
+### Chores
+
+* update semantic release settings some more [skip ci] ([c234bc5](https://github.com/jkeen/ember-stereo/commit/c234bc5f8e246e385e05775b700b71b6ff026dcf))
+* **release:** 2.0.2 [skip ci] ([a95d670](https://github.com/jkeen/ember-stereo/commit/a95d670042f8664bed78a78ec32e395334c9de8e))
+
+
+### Documentation
+
+* update demo audio url ([085e2c0](https://github.com/jkeen/ember-stereo/commit/085e2c0e21fd48dd6881406a6278d55c3c2d7e4a))
+
+
+### Miscellaneous
+
+* Fix changelog location for semantic-release [skip ci] ([2b86c9f](https://github.com/jkeen/ember-stereo/commit/2b86c9ff7dcb3182f324d6847773d8c4d81f14d8))
+
 # ember-stereo changelog
 
 ## [2.0.2](https://github.com/jkeen/ember-stereo/compare/v2.0.1...v2.0.2) (2021-09-04)
