@@ -1,0 +1,25 @@
+{
+  "plugins": [
+    "@semantic-release/commit-analyzer",
+    "@semantic-release/release-notes-generator",
+    [
+      "@semantic-release/changelog",
+      {
+        "changelogTitle": "ember-stereo changelog",
+        "changelogFile": "docs/CHANGELOG.md"
+      }
+    ],
+    [
+      "@semantic-release/git",
+      {
+        "assets": ["docs/CHANGELOG.md"]
+      }
+    ],
+    "@semantic-release/npm"
+  ],
+  "branches": ["main"],
+  "debug": false,
+  "dryRun": false,
+  "ci": false,
+  "extends": "semantic-release-npm-github-publish"
+}

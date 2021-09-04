@@ -1,4 +1,10 @@
-# ember-stereo Changelog
+# ember-stereo changelog
+
+## 2.0.1 (2021-09-04)
+
+### Documentation
+
+    * Correct some confusing bits, add some clarity to plain ol' readme, update license and CI docs release settings
 
 ### 2.0 (September 4, 2021)
 

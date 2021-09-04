@@ -4,6 +4,7 @@
 
 [![CI](https://github.com/jkeen/ember-stereo/actions/workflows/ci.yml/badge.svg)](https://github.com/jkeen/ember-stereo/actions/workflows/ci.yml)
 ![Download count all time](https://img.shields.io/npm/dt/ember-stereo.svg) [![npm version](https://img.shields.io/npm/v/ember-stereo.svg?style=flat-square)](https://www.npmjs.com/package/ember-stereo) [![Ember Observer Score](http://emberobserver.com/badges/ember-stereo.svg)](http://emberobserver.com/addons/ember-stereo)
+[![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://github.com/semantic-release/semantic-release)
 
 - Ember.js v3.27 or above
 - Ember CLI v3.27 or above
