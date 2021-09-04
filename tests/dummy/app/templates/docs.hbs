@@ -3,8 +3,8 @@
     Diagnostic
   {{/header.link}}
 </DocsHeader>
-<DocsViewer @media={{this.media}} as |viewer|>
-  <viewer.nav @media={{this.media}} @isShowingMenu={{@isShowingMenu}} as |nav|>
+<DocsViewer as |viewer|>
+  <viewer.nav as |nav|>
     {{nav.section 'Overview'}}
     {{nav.item 'Intro' 'docs.index'}}
     {{nav.item "What's In The Box?" 'docs.overview'}}
@@ -17,9 +17,10 @@
     {{nav.item 'Monitoring Events' 'docs.event-monitoring'}}
     {{nav.item 'Dealing with Autoplay' 'docs.autoplay'}}
     {{nav.item 'Volume Control' 'docs.volume'}}
+    {{nav.item 'Testing' 'docs.testing'}}
   </viewer.nav>
 
-  <viewer.main @media={{this.media}}>
+  <viewer.main>
     <div class='docs-container'>
       <div class='docs-section'>
         {{outlet}}

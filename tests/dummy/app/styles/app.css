@@ -16,6 +16,10 @@ html {
 .docs-border-r {
   border-right: 0;
 }
+.docs-md__h4 {
+  font-weight: bold;
+  margin: 0.5rem 0;
+}
 
 /* .docs-bg-white,
 body > .ember-view {

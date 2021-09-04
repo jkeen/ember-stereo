@@ -423,39 +423,48 @@ The `stereo` service and the `sound` objects are extended with [Ember.Evented](h
 
 For mobile browsers, we'll first try all the URLs on the NativeAudio using a technique to (hopefully) get around any autoplaying restrictions that sometimes require mobile users to click a play button twice.
 
-## Test Helpers
+# Testing
 
-#### Acceptance Tests
+If you need to test audio handling that involves `ember-stereo` in your app, you're gonna need this helper. It sets up and cleans up a few stereo-related items, but most importantly it stubs out the native browser audio and video elements replacing it with a FakeMediaElement that behaves sanely in the test environment.
 
-Import this helper into acceptance tests to stub out stereo.
+You can control how the sound behaves by providing a url in one of these formats:
+
+## URL Formats
+
+#### URLs that will successfully load:
+
+- `good/10000/test-url.mp3`: an mp3 that is 10 seconds long
+- `good/stream/the-current.aac`: an aac audio stream, duration = Infinity, will behave like a stream does
+
+#### URLs that will fail
+
+- `bad/codec-error/the-current.aac`: an aac sound that will fail with 'codec-error'
+- `bad/some%20custom%20string/the-current.aac`: an aac sound that will fail with error message 'some custom string'
+
+Here's an example test, testing an example player, making sure that fast forward and rewind buttons are disabled.
 
 ```javascript
 import { setupStereoTest } from 'ember-stereo/test-support/stereo-setup';
-```
 
-If you need to fake out the stereoService to test how your app handles stereo events, you can use the dummyStereo service
+module('Integration | Component | player', function (hooks) {
+  setupStereoTest(hooks);
 
-```javascript
-import { stereoNeeds, dummyStereo } from 'overhaul/tests/helpers/stereo-integration-helpers';
+  test('it does not display rewind and ff buttons when stream', async function (assert) {
+    let stereo = this.owner.lookup('service:stereo');
+    await stereo.play('/good/stream/test.mp3', {
+      metadata: {
+        show,
+        track,
+      },
+    });
+    await render(hbs`<Player/>`);
 
-moduleFor('[your module]', 'Integration | [type] | [your module]', function(hooks) {
-  setupStereoTest(hooks)
-
-  test('something with stereo', function(assert) {
-    // provide stereo with url in '/good/length-in-ms/name.format, i.e. /good/10000/foo.mp3
-    // or '/bad/error/name.format, i.e. /bad/codec-error/foo.mp3
-  })
-...
+    assert.dom('[data-test-element="fastforward-button"]').isDisabled();
+    assert.dom('[data-test-element="rewind-button"]').isDisabled();
+    assert.dom('[data-test-element="play-pause-button"]').exists();
+  });
 });
 ```
-
-After stubbing out the service with the setupStereoTest you can pass it some special urls in the format `/:status/:length/:name` to mimic responses, where `status` can be `good` or `bad`, and `length` can be an integer representing the duration in ms, or `stream`.
-
-A 10 second audio clip: `/good/10000/test`
-
-A web stream: `/good/stream/test`
-
-A url that will fail: `/bad/stream/test`
 
 ## [Writing Your Own Stereo Connection](CUSTOM_CONNECTIONS.md)
 

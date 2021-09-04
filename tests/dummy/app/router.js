@@ -22,6 +22,7 @@ Router.map(function () {
     this.route('event-monitoring');
     this.route('waiting-for-sounds');
     this.route('volume');
+    this.route('testing');
   });
 
   this.route('diagnostic', function () {
@@ -31,4 +32,5 @@ Router.map(function () {
 
   this.route('autoplay-test');
   this.route('not-found', { path: '/*path' });
+
 });
