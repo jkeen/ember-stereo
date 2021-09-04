@@ -2,7 +2,7 @@
 
 <DocsDemo as |demo|>
   <demo.example @name='attention-getter.hbs'>
-    {{#let 'sounds/attention.mp3' as |url|}}
+    {{#let '/sounds/attention.mp3' as |url|}}
       <button
         type='button'
         {{on 'click' (toggle-play-sound url)}}
