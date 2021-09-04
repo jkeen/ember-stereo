@@ -15,6 +15,7 @@
         "assets": ["CHANGELOG.md"]
       }
     ],
+    "@semantic-release/github",
     "@semantic-release/npm"
   ],
   "branches": ["main"],
