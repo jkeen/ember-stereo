@@ -1,8 +1,12 @@
 /**
+ * This is the modifier used to transform an element into a position control, where clicking it will change a sound's position
+ * ```hbs
+  <div {{stereo-position-track @identifier}}>
+  </div>
+  ```
+ *
   @class {{stereo-position-track}}
   @type Modifier
-
-  @method {{stereo-position-track}}
 */
 
 import { action } from '@ember/object';

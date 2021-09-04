@@ -10,7 +10,7 @@ import hasEqualUrls from 'ember-stereo/-private/utils/has-equal-urls';
 /**
  * This is the base sound object from which other sound objects are derived.
  *
- * @class Sound
+ * @class BaseSound
  * @constructor
  */
 export default class Sound extends Evented {
@@ -56,20 +56,108 @@ export default class Sound extends Evented {
     }
   }
 
+  /**
+   * The raw url of the sound that will be handed to the audio element.
+   * @property url
+   * @type {String}
+   * @public
+  */
   @tracked url;
+
+  /**
+   * name of the connection that produced the sound
+   * @property connectionName
+   * @type {String}
+   * @public
+  */
   @tracked connectionName;
 
+  /**
+   * has the sound played?
+   * @property hasPlayed
+   * @type {Boolean}
+   * @public
+  */
   @tracked hasPlayed = false;
+
+  /**
+   * is the sound currently loading?
+   * @property isLoading
+   * @type {Boolean}
+   * @public
+  */
   @tracked isLoading = false;
+
+  /**
+   * is the sound loaded?
+   * @property isLoaded
+   * @type {Boolean}
+   * @public
+  */
   @tracked isLoaded = false;
+
+  /**
+   * is the sound currently playing?
+   * @property isPlaying
+   * @type {Boolean}
+   * @public
+  */
   @tracked isPlaying = false;
+
+  /**
+   * is the sound errored?
+   * @property isErrored
+   * @type {Boolean}
+   * @public
+  */
   @tracked isErrored = false;
+
+  /**
+   * is the sound ready?
+   * @property isReady
+   * @type {Boolean}
+   * @public
+  */
   @tracked isReady = false;
+
+  /**
+   * has the sound been blocked by autoplay protections?
+   * @property isBlocked
+   * @type {Boolean}
+   * @public
+  */
   @tracked isBlocked = false;
+
+  /**
+   * the sound's error, if errored
+   * @property error
+   * @type {String}
+   * @public
+  */
   @tracked error = null;
   @tracked _position = 0;
+
+  /**
+   * what's the duration of the sound?
+   * @property duration
+   * @type {Integer} (ms)
+   * @public
+  */
   @tracked duration = 0;
+
+  /**
+   * @property percentLoaded
+   * @type {Integer} (0-100)
+   * @public
+  */
   @tracked percentLoaded = 0;
+
+  /**
+   * Metadata hash. Put whatever you want in here
+   * @property metadata
+   * @type {Hash} (0-100)
+   * @public
+  */
   @tracked metadata = {};
   @tracked id3Tags = {};
   @tracked _debug = {}; // for internal debugging
@@ -96,24 +184,58 @@ export default class Sound extends Evented {
     this.eventManager.trigger(eventName, info);
   }
 
+  /**
+   * is the sound a stream?
+   * @property isStream
+   * @type {Boolean}
+   * @readOnly
+   * @public
+   */
   get isStream() {
     return this.duration == Infinity;
   }
 
+  /**
+   * is the sound fast forwardable?
+   * @property isFastForwardable
+   * @type {Boolean}
+   * @readOnly
+   * @public
+   */
   get isFastForwardable() {
     return !this.isStream;
   }
 
+  /**
+   * is the sound rewindable?
+   * @property isRewindable
+   * @type {Boolean}
+   * @readOnly
+   * @public
+   */
   get isRewindable() {
     return !this.isStream;
   }
 
+  /**
+   * is the sound seekable?
+   * @property isSeekable
+   * @type {Boolean}
+   * @readOnly
+   * @public
+ */
   get isSeekable() {
     return !this.isStream;
   }
 
-  // _position is updated by the service on the currently playing sound
+  /**
+   * get/set the sound's position (in ms)
+   * @property position
+   * @type {Integer}
+   * @public
+  */
   get position() {
+    // _position is updated by the service on the currently playing sound
     return this._position;
   }
   set position(v) {
@@ -126,10 +248,22 @@ export default class Sound extends Evented {
     this._position = this._setPosition(v);
   }
 
+  /**
+   * get the sound's current real time position (probably only available on certain HLS sounds)
+   * @property currentTime
+   * @type {Integer}
+   * @public
+  */
   get currentTime() {
     return null;
   }
 
+  /**
+   * get the sound's reported mimeType
+   * @property mimeType
+   * @type {Integer}
+   * @public
+  */
   get mimeType() {
     return getMimeType(this.url);
   }
@@ -272,6 +406,12 @@ export default class Sound extends Evented {
     }
   }
 
+  /**
+   * fast forward the sound
+   * @method fastForward
+   * @param {Integer} duration
+   * @public
+  */
   fastForward(duration) {
     let audioLength = this._audioDuration();
     let currentPosition = this._currentPosition();
@@ -286,6 +426,12 @@ export default class Sound extends Evented {
     this._position = this._currentPosition();
   }
 
+  /**
+   * rewind the sound
+   * @method rewind
+   * @param {Integer} duration
+   * @public
+  */
   rewind(duration) {
     let currentPosition = this._currentPosition();
     let newPosition = Math.max(currentPosition - duration, 0);
@@ -298,6 +444,11 @@ export default class Sound extends Evented {
     this._position = this._currentPosition();
   }
 
+  /**
+   * toggle the play/pause state
+   * @method togglePause
+   * @public
+  */
   togglePause() {
     if (this.isPlaying) {
       return this.pause();
@@ -327,14 +478,30 @@ export default class Sound extends Evented {
     assert('[ember-stereo] #_setPosition interface not implemented', false);
   }
 
+
+  /**
+   * play the sound
+   * @method play
+   * @public
+  */
   play() {
     assert('[ember-stereo] #play interface not implemented', false);
   }
 
+  /**
+   * pause the sound
+   * @method pause
+   * @public
+  */
   pause() {
     assert('[ember-stereo] #pause interface not implemented', false);
   }
 
+  /**
+   * stop the sound
+   * @method stop
+   * @public
+  */
   stop() {
     assert('[ember-stereo] #stop interface not implemented', false);
   }

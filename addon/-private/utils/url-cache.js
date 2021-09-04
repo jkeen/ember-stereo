@@ -2,11 +2,8 @@ import resolveUrls from 'ember-stereo/-private/utils/resolve-urls';
 import ObjectCache from 'ember-stereo/-private/utils/object-cache';
 
 /**
-* This class caches url resolutions. You shouldn't have to interact with this class.
-*
-* @class UrlCache
-* @private
-* @constructor
+* This class caches url resolutions.
+  @private
 */
 
 export default class UrlCache extends ObjectCache {

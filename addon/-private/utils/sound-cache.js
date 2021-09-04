@@ -6,12 +6,8 @@ import BaseSound from 'ember-stereo/stereo-connections/base';
 import hasEqualUrls from './has-equal-urls';
 
 /**
-* This class caches sound objects based on urls. You shouldn't have to interact with this class.
-*
-* @class SoundCache
-* @type {Util}
+* This class caches sound objects based on urls.
 * @private
-* @constructor
 */
 
 export default class SoundCache {

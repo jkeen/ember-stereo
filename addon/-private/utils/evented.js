@@ -4,10 +4,7 @@ import EmberEvented from '@ember/object/evented';
 /**
  * Partial wrapper for Ember's Evented Mixin, enabling
  * a pure class-based derivation
- * @class Evented
- * @type {Util}
  * @private
- *
  */
 export default class Evented {
   eventManager = EmberObject.extend(EmberEvented).create();

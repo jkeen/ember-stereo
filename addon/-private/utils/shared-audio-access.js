@@ -2,11 +2,6 @@ import debug from 'debug';
 const log = debug('ember-stereo:shared-audio-access');
 import { tracked } from '@glimmer/tracking';
 
-/***
-* @class SharedAudioAccess
-* @constructor
-*/
-
 /**
  * This class handles sharing a single audio element between multiple sounds.
  * A desktop browser can generally handle multiple `audio` elements, but mobile
@@ -14,7 +9,6 @@ import { tracked } from '@glimmer/tracking';
  * out the src allows us to play a piece of audio seamlessly without requiring
  * an extra click by the user to get around strict autoplay restrictions
  *
- * @class SharedAudioAccess
  * @private
  */
 

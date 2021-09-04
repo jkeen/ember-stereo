@@ -15,7 +15,7 @@ const HAVE_CURRENT_DATA = 2;
 // const HAVE_ENOUGH_DATA = 4;
 
 /**
-* This class connects with the native audio element to create sounds.
+* This is the connection class that uses a plain ol audio element to play sounds.
 *
 * @class NativeAudio
 * @extends BaseSound

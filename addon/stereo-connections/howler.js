@@ -3,7 +3,7 @@ import BaseSound from 'ember-stereo/stereo-connections/base';
 import { Howl } from 'howler';
 
 /**
-* This class connects with Howler to create sounds.
+* This is the connection class that uses Howler to play sounds.
 *
 * @class Howler
 * @constructor

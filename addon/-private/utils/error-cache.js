@@ -5,12 +5,8 @@ import StereoUrl from 'ember-stereo/-private/utils/stereo-url';
 import hasEqualUrls from 'ember-stereo/-private/utils/has-equal-urls';
 
 /**
-* This class caches errors based on urls. You shouldn't have to interact with this class.
-*
-* @class ErrorCache
-* @type {Util}
+* This class caches errors based on urls.
 * @private
-* @constructor
 */
 
 export default class ErrorCache {

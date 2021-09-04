@@ -3,7 +3,7 @@ import HLS from 'hls.js';
 import { tracked } from '@glimmer/tracking';
 
 /**
-* This class connects with HLS.js to create sounds.
+* This is the connection class that uses HLS.js to play sounds.
 *
 * @class HLS
 * @extends HLSSound

@@ -7,9 +7,7 @@ import Ember from 'ember';
 import debug from 'debug';
 /**
 * This class lazy loads sounds based on identifiers
-*
-* @class SoundProxy
-* @type {Util}
+  @private
 */
 
 export default class SoundProxy extends Evented {

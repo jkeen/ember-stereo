@@ -1,8 +1,12 @@
 /**
+ * This is the modifier used to transform an range control into a volume control
+ * ```hbs
+  <input type="range" {{stereo-volume}}>
+  </input>
+  ```
+ *
   @class {{stereo-volume}}
   @type Modifier
-
-  @method {{stereo-volume}}
 */
 
 import { action } from '@ember/object';

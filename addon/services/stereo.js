@@ -178,7 +178,7 @@ export default class Stereo extends Service.extend(EmberEvented) {
   }
 
   /**
-   * is the current sound fastforwardable?
+   * is the current sound seekable?
    * @property isSeekable
    * @type {Boolean}
    * @readOnly
