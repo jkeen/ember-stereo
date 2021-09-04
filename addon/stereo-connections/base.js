@@ -126,6 +126,10 @@ export default class Sound extends Evented {
     this._position = this._setPosition(v);
   }
 
+  get currentTime() {
+    return null;
+  }
+
   get mimeType() {
     return getMimeType(this.url);
   }

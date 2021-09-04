@@ -26,6 +26,7 @@ export default class HLSSound extends BaseSound {
   @tracked loaded = false
   @tracked mediaRecoveryAttempts = 0
   @tracked id3TagMetadata = null
+  @tracked _currentTime = null
 
   setup() {
     let video = document.createElement('video');
@@ -104,10 +105,9 @@ export default class HLSSound extends BaseSound {
     }
   }
 
-  @tracked currentTime;
   _updateCurrentTime() {
     if (this.realTimeOffset) {
-      this.currentTime = new Date(((this.video.currentTime - this.positionNow) * 1000) + this.realTimeOffset);
+      this._currentTime = new Date(((this.video.currentTime - this.positionNow) * 1000) + this.realTimeOffset);
       // this.debug(`time = ${this.currentTime}`);
     }
   }
@@ -244,8 +244,11 @@ export default class HLSSound extends BaseSound {
     return this.video;
   }
 
-
   /* Public interface to sound */
+
+  get currentTime() {
+    return this._currentTime;
+  }
 
   _audioDuration() {
     if (this.live) {

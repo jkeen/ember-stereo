@@ -249,6 +249,17 @@ export default class Stereo extends Service.extend(EmberEvented) {
   }
 
   /**
+ * Gets the current sound currentTime (only available on some sounds, like HLS streams with annotated time values)
+ * @property currentTime
+ * @type {Object}
+ * @readOnly
+ * @public
+ */
+  get currentTime() {
+    return this.currentSound?.currentTime;
+  }
+
+  /**
    * Get/set the system volume, 0-100
    *
    * @property volume
