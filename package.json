@@ -17,7 +17,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://ember-stereo.com"
+    "url": "https://github.com/jkeen/ember-stereo.git"
   },
   "license": "MIT",
   "author": "Jeff Keen",
@@ -36,7 +36,8 @@
     "start": "ember serve",
     "test": "npm-run-all --parallel test:*",
     "test:ember": "ember test",
-    "test:ember-compatibility": "ember try:each"
+    "test:ember-compatibility": "ember try:each",
+    "semantic-release": "semantic-release"
   },
   "dependencies": {
     "@ember/render-modifiers": "^1.0.2",
@@ -115,6 +116,8 @@
     "prettier": "^2.3.0",
     "qunit": "^2.15.0",
     "qunit-dom": "^1.6.0",
+    "semantic-release": "^17.4.7",
+    "semantic-release-npm-github-publish": "^1.4.0",
     "tailwindcss": "^2.2.7",
     "tailwindcss-theming": "^3.0.0-beta.3"
   },
