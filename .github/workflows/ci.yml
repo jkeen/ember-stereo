@@ -179,7 +179,7 @@ jobs:
       - run: echo "ADDON_DOCS_VERSION_PATH=${GITHUB_REF##*/}" >> $GITHUB_ENV
 
       - run: echo "ADDON_DOCS_UPDATE_LATEST=true" >> $GITHUB_ENV
-        if: contains(github.ref , 'main') != true
+        if: contains(github.ref , 'main') == true
 
       - run: yarn install
 

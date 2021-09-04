@@ -1,11 +1,9 @@
 # ember-stereo
 
-## The best way to play audio in your modern ember app
+## The best way to reactively handle audio in your modern ember app
 
 [![CI](https://github.com/jkeen/ember-stereo/actions/workflows/ci.yml/badge.svg)](https://github.com/jkeen/ember-stereo/actions/workflows/ci.yml)
 ![Download count all time](https://img.shields.io/npm/dt/ember-stereo.svg) [![npm version](https://img.shields.io/npm/v/ember-stereo.svg?style=flat-square)](https://www.npmjs.com/package/ember-stereo) [![Ember Observer Score](http://emberobserver.com/badges/ember-stereo.svg)](http://emberobserver.com/addons/ember-stereo)
-
-This addon exposes a `stereo` service which produces `Sound` objects which represent a playable piece of audio.
 
 - Ember.js v3.27 or above
 - Ember CLI v3.27 or above
@@ -15,17 +13,15 @@ This addon exposes a `stereo` service which produces `Sound` objects which repre
 ember install ember-stereo
 ```
 
-### Interactive docs at [ember-stereo.com](https://ember-stereo.com)!
+### Interactive docs at [ember-stereo.com](https://ember-stereo.com/docs)!
 
-### Upgrading from `ember-hifi`
-
-Read the [upgrade guide](https://jkeen.github.com/ember-stereo)
+##### Upgrading from `ember-hifi`? Read the [upgrade guide](https://jkeen.github.com/ember-stereo)
 
 ### API
 
-#### Template Helpers
+`ember-stereo` operates on sounds by providing its helpers an identifier. Usually this is just a URL string, but an identifier could also be an object with a url property (and maybe a mimeType property), an already loaded stereo `Sound` object, an array of any of the previous items, or even a promise that resolves to any of the previous. Whatever the case, you're covered.
 
-`ember-stereo` includes many template helpers for interacting with audio files
+#### Template Helpers
 
 ##### Actions
 
