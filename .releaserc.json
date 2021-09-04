@@ -6,13 +6,13 @@
       "@semantic-release/changelog",
       {
         "changelogTitle": "ember-stereo changelog",
-        "changelogFile": "docs/CHANGELOG.md"
+        "changelogFile": "CHANGELOG.md"
       }
     ],
     [
       "@semantic-release/git",
       {
-        "assets": ["docs/CHANGELOG.md"]
+        "assets": ["CHANGELOG.md"]
       }
     ],
     "@semantic-release/npm"
