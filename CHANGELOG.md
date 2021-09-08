@@ -4,21 +4,18 @@ ember-stereo changelog
 
 ## [2.0.3](https://github.com/jkeen/ember-stereo/compare/v2.0.2...v2.0.3) (2021-09-04)
 
-
 ### Chores
 
-* update semantic release settings some more [skip ci] ([c234bc5](https://github.com/jkeen/ember-stereo/commit/c234bc5f8e246e385e05775b700b71b6ff026dcf))
-* **release:** 2.0.2 [skip ci] ([a95d670](https://github.com/jkeen/ember-stereo/commit/a95d670042f8664bed78a78ec32e395334c9de8e))
-
+- update semantic release settings some more [skip ci] ([c234bc5](https://github.com/jkeen/ember-stereo/commit/c234bc5f8e246e385e05775b700b71b6ff026dcf))
+- **release:** 2.0.2 [skip ci] ([a95d670](https://github.com/jkeen/ember-stereo/commit/a95d670042f8664bed78a78ec32e395334c9de8e))
 
 ### Documentation
 
-* update demo audio url ([085e2c0](https://github.com/jkeen/ember-stereo/commit/085e2c0e21fd48dd6881406a6278d55c3c2d7e4a))
-
+- update demo audio url ([085e2c0](https://github.com/jkeen/ember-stereo/commit/085e2c0e21fd48dd6881406a6278d55c3c2d7e4a))
 
 ### Miscellaneous
 
-* Fix changelog location for semantic-release [skip ci] ([2b86c9f](https://github.com/jkeen/ember-stereo/commit/2b86c9ff7dcb3182f324d6847773d8c4d81f14d8))
+- Fix changelog location for semantic-release [skip ci] ([2b86c9f](https://github.com/jkeen/ember-stereo/commit/2b86c9ff7dcb3182f324d6847773d8c4d81f14d8))
 
 # ember-stereo changelog
 
@@ -41,14 +38,14 @@ ember-stereo changelog
 ### 2.0 (September 4, 2021)
 
 - [IMPROVEMENT] Added helpers and modifiers to operate hifi only from templates, removing a huge hurdle for newcomers having to deal with audio ids
-- [CHANGE] audio events now fire an object as the first argument, with the `sound`, matching the `play` and `load` functions. All event listeners should change from `this.stereo.on('event-name', (sound) => { // handler })` to `this.stereo.on('event-name', ({sound}) => { // handler })`
+- [BREAKING CHANGE] audio events now fire an object as the first argument, with the `sound`, matching the `play` and `load` functions. All event listeners should change from `this.stereo.on('event-name', (sound) => { // handler })` to `this.stereo.on('event-name', ({sound}) => { // handler })`
 - [CHANGE] Default volume is now 100
 - [CHANGE] Audio errors are handled way better, can be surfaced in a template through `{{sound-is-errored}}` and `{{sound-error-details}}`, and thrown errors can be silenced with a `silenceErrors` given to `play()` or `load()`
 - [CHANGE] Sounds now know where they've been blocked by autoplay, and the stereo service does too. `audio-blocked` is the event to tie into. See [here](https://ember-stereo.com/docs/autoplay)
 - [CHANGE] Sounds are cached ignoring query strings
 - [IMPROVEMENT] HLS now provides `currentTime` property for HLS streams that include EXT-PROGRAM-DATE-TIME in their manifests
-- [CHORE] Renamed anything that was `hifi` to `stereo`
-- [CHORE] Upgrade to Ember 3.27. This addon is octane-only now
+- [BREAKING CHANGE] Renamed anything that was `hifi` to `stereo`
+- [BREAKING CHANGE] Upgrade to Ember 3.27. This addon is octane-only now
 - [CHORE] Complex promise/event waiting loops that were prone to error and hard to test have been replaced with ember concurrency tasks
 - [IMPROVEMENT] Interactive documentation at https://ember-stereo.com/
 

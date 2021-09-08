@@ -1,6 +1,6 @@
 {
   "name": "ember-stereo",
-  "version": "2.0.1",
+  "version": "2.0.0-semantically-released",
   "description": "The best way to play audio in your modern ember app",
   "keywords": [
     "ember-addon",
@@ -133,7 +133,8 @@
   },
   "homepage": "https://ember-stereo.com",
   "volta": {
-    "node": "14.17.4",
-    "yarn": "1.22.11"
+    "node": "14.17.6",
+    "yarn": "1.22.11",
+    "npm": "7.22.0"
   }
 }
