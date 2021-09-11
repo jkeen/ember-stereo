@@ -143,6 +143,7 @@ export default class HLSSound extends BaseSound {
     });
 
     video.addEventListener('pause', () => this.trigger('audio-paused', { sound: this }));
+    video.addEventListener('ended', () => this.trigger('audio-ended', { sound: this }));
     video.addEventListener('durationchange', () => this.trigger('audio-duration-changed', { sound: this }));
     video.addEventListener('seeked', () => this.trigger('audio-position-changed', { sound: this, currentTime: this.currentTime }));
     video.addEventListener('timeupdate', () => this.trigger('audio-position-changed', { sound: this, currentTime: this.currentTime }));
