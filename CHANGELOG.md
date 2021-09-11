@@ -1,5 +1,12 @@
 ember-stereo changelog
 
+## [2.0.6](https://github.com/jkeen/ember-stereo/compare/v2.0.5...v2.0.6) (2021-09-11)
+
+
+### Bug Fixes
+
+* Fire audio-ended event when fixed length audio ends using HLS connection ([f3d66b0](https://github.com/jkeen/ember-stereo/commit/f3d66b0599856944c4255f6c7749e022210e2942))
+
 ## [2.0.5](https://github.com/jkeen/ember-stereo/compare/v2.0.4...v2.0.5) (2021-09-08)
 
 ## [2.0.4](https://github.com/jkeen/ember-stereo/compare/v2.0.3...v2.0.4) (2021-09-04)
