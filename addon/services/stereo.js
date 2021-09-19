@@ -307,7 +307,7 @@ export default class Stereo extends Service.extend(EmberEvented) {
     return (
       this._useSharedAudioElement ||
       this.isMobileDevice ||
-      this.systemStereoOptions.alwaysUseSingleAudioElement
+      this.systemStereoOptions?.alwaysUseSingleAudioElement
     );
   }
   set useSharedAudioAccess(value) {
@@ -555,7 +555,7 @@ export default class Stereo extends Service.extend(EmberEvented) {
     } else if (
       Object.keys(this.systemStereoOptions || {}).includes('silenceErrors')
     ) {
-      return this.systemStereoOptions.silenceErrors;
+      return this.systemStereoOptions?.silenceErrors;
     } else {
       return false;
     }
