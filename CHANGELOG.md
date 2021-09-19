@@ -1,5 +1,12 @@
 ember-stereo changelog
 
+## [2.0.7](https://github.com/jkeen/ember-stereo/compare/v2.0.6...v2.0.7) (2021-09-19)
+
+
+### Bug Fixes
+
+* safely check systemStereoOptions incase it's not set and we're going full defaults ([cf21113](https://github.com/jkeen/ember-stereo/commit/cf2111375375c8943e6653fcf007294f5b9beed2))
+
 ## [2.0.6](https://github.com/jkeen/ember-stereo/compare/v2.0.5...v2.0.6) (2021-09-11)
 
 
