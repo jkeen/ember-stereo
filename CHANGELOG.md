@@ -1,5 +1,12 @@
 ember-stereo changelog
 
+## [2.0.8](https://github.com/jkeen/ember-stereo/compare/v2.0.7...v2.0.8) (2021-09-22)
+
+
+### Bug Fixes
+
+* allow id3 metadata to be accessed on any type of sound ([5eec65d](https://github.com/jkeen/ember-stereo/commit/5eec65d8b48328432a03c7173558cd6cdc7557e2))
+
 ## [2.0.7](https://github.com/jkeen/ember-stereo/compare/v2.0.6...v2.0.7) (2021-09-19)
 
 
