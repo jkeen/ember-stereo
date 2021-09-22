@@ -25,7 +25,6 @@ export default class HLSSound extends BaseSound {
   @tracked live = false
   @tracked loaded = false
   @tracked mediaRecoveryAttempts = 0
-  @tracked id3TagMetadata = null
   @tracked _currentTime = null
 
   setup() {

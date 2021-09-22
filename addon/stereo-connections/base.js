@@ -160,6 +160,7 @@ export default class Sound extends Evented {
   */
   @tracked metadata = {};
   @tracked id3Tags = {};
+  @tracked id3TagMetadata = {}
   @tracked _debug = {}; // for internal debugging
   @tracked sharedAudioAccess;
 

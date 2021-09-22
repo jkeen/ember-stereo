@@ -60,7 +60,6 @@ export default class FakeMediaElement extends Evented {
     let info = new TestAudioUrl(this.src);
 
     debug('ember-stereo:fake-element')(`${this.src} loading`);
-    console.log(info)
     if (info.isSuccess) {
       debug('ember-stereo:fake-element')(`${this.src} will succeed`);
 
