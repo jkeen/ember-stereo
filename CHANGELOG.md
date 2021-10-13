@@ -1,5 +1,12 @@
 ember-stereo changelog
 
+## [2.0.9](https://github.com/jkeen/ember-stereo/compare/v2.0.8...v2.0.9) (2021-10-13)
+
+
+### Bug Fixes
+
+* load HLS fragment on position change if changed to surface correct PROGRAM-DATE-TIME if available ([5d40d57](https://github.com/jkeen/ember-stereo/commit/5d40d57e524920300f4289f57884949c1b53b471))
+
 ## [2.0.8](https://github.com/jkeen/ember-stereo/compare/v2.0.7...v2.0.8) (2021-09-22)
 
 
