@@ -266,6 +266,9 @@ export default class HLSSound extends BaseSound {
 
   _setPosition(position) {
     this.video.currentTime = (position / 1000);
+    if (!this.isPlaying) {
+      this.hls.startLoad();
+    }
     this._updateCurrentTime();
 
     return position;
