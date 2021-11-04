@@ -14,6 +14,17 @@
   @apply flex items-center flex-grow w-full gap-2 whitespace-nowrap;
 }
 
+.stereo-player-position-slider {
+  @apply relative  w-full flex items-center justify-start bg-on-surface-3 rounded h-2;
+}
+.stereo-player-position-thumb {
+  @apply bg-on-surface-3 absolute h-4 w-4 flex rounded-lg shadow-sm;
+  top: 15px;
+}
+.stereo-player-position-progress {
+  @apply bg-accent-0 h-2 flex rounded;
+}
+
 .stereo-player input[type='range'] {
   @apply bg-on-surface-2;
 }

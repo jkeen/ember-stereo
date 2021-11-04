@@ -14,7 +14,6 @@ export default class SoundDisplay extends Component {
     this.soundProxy = this.stereo.soundProxy(this.args.url)
   }
 
-
   get loadedSound() {
     return this.stereo.findSound(this.args.url);
   }
