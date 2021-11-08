@@ -1,5 +1,13 @@
 ember-stereo changelog
 
+## [2.0.10](https://github.com/jkeen/ember-stereo/compare/v2.0.9...v2.0.10) (2021-11-08)
+
+
+### Bug Fixes
+
+* fix {{sound-position-slider}} modifier gestures ([9c48a18](https://github.com/jkeen/ember-stereo/commit/9c48a18980a55b72671b372848f0f143adf35ed6))
+* update {{sound-position-progress}} bar on audio-position-will-change event as well as audio-position-changed event ([4dcea0d](https://github.com/jkeen/ember-stereo/commit/4dcea0dc86ae9ef284f204034c0b7e74e4cd5a2a))
+
 ## [2.0.9](https://github.com/jkeen/ember-stereo/compare/v2.0.8...v2.0.9) (2021-10-13)
 
 
