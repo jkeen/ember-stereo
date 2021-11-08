@@ -13,9 +13,7 @@
     </div>
     <div
       data-position-percent={{sound-position @url format='percentage'}}
-      style={{html-safe
-        (concat 'width: ' (sound-position @url format='percentage') '%')
-      }}
+      {{sound-position-progress @url}}
       class='h-full transition-all pointer-events-none rounded-xl bg-accent-0'
     ></div>
   </div>

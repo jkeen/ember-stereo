@@ -24,8 +24,8 @@ export default class SoundPositionProgressModifier extends Modifier {
     return this.stereo.findSound(this.url);
   }
 
-  @action onPositionChange() {
-    this.element.style.width = `${(this.loadedSound.position / this.loadedSound.duration) * 100}%`;
+  @action onPositionChange({ newPosition }) {
+    this.element.style.width = `${((newPosition || this.loadedSound.position) / this.loadedSound.duration) * 100}%`;
     this.element.style.pointerEvents = 'none';
   }
 
@@ -36,6 +36,7 @@ export default class SoundPositionProgressModifier extends Modifier {
   didReceiveArguments() {
     if (this.url) {
       this.stereo.soundProxy(this.url).afterLoad(sound => {
+        sound.on('audio-position-will-change', this.onPositionChange);
         sound.on('audio-position-changed', this.onPositionChange);
       })
     }
