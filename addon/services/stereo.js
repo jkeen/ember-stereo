@@ -851,7 +851,8 @@ export default class Stereo extends Service.extend(EmberEvented) {
     return this.soundCache.find(identifiers);
   }
 
-  findSound(identifier) {
+  findSound(_identifier) {
+    let identifier = new StereoUrl(_identifier).key
     return this.soundProxy(identifier)?.value;
 
     //TODO: use a Proxy? it'd be neat to be able to 'find' a sound

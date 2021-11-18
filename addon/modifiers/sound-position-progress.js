@@ -12,7 +12,7 @@
 import { action } from '@ember/object';
 import { inject as service } from '@ember/service';
 import Modifier from 'ember-modifier';
-
+import { once } from '@ember/runloop';
 export default class SoundPositionProgressModifier extends Modifier {
   @service stereo;
 
@@ -21,10 +21,14 @@ export default class SoundPositionProgressModifier extends Modifier {
   }
 
   get loadedSound() {
-    return this.stereo.findSound(this.url);
+    return this.stereo.findLoadedSound(this.url);
   }
 
-  @action onPositionChange({ newPosition }) {
+  @action onPositionChange() {
+    once(this, this.modifyPosition, ...arguments, 500);
+  }
+
+  modifyPosition({ newPosition }) {
     this.element.style.width = `${((newPosition || this.loadedSound.position) / this.loadedSound.duration) * 100}%`;
     this.element.style.pointerEvents = 'none';
   }
@@ -36,8 +40,8 @@ export default class SoundPositionProgressModifier extends Modifier {
   didReceiveArguments() {
     if (this.url) {
       this.stereo.soundProxy(this.url).afterLoad(sound => {
-        sound.on('audio-position-will-change', this.onPositionChange);
-        sound.on('audio-position-changed', this.onPositionChange);
+        sound.on('audio-position-will-change', this.onPositionChange.bind(this));
+        sound.on('audio-position-changed', this.onPositionChange.bind(this));
       })
     }
   }
@@ -45,7 +49,8 @@ export default class SoundPositionProgressModifier extends Modifier {
   willRemove() {
     try {
       if (this.loadedSound) {
-        this.loadedSound.off('audio-position-changed', this.onPositionChange);
+        this.loadedSound.off('audio-position-changed', this.onPositionChange.bind(this));
+        this.loadedSound.off('audio-position-will-change', this.onPositionChange.bind(this));
       }
     } catch (e) { /* geez, relax */ }
   }
