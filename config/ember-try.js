@@ -28,6 +28,10 @@ module.exports = async function () {
       {
         name: 'ember-release',
         npm: {
+          dependencies: {
+            'webpack': '^5.6',
+            'ember-auto-import': '^2.0.0',
+          },
           devDependencies: {
             'ember-source': await getChannelURL('release'),
           },
@@ -36,6 +40,10 @@ module.exports = async function () {
       {
         name: 'ember-beta',
         npm: {
+          dependencies: {
+            'webpack': '^5.6',
+            'ember-auto-import': '^2.0.0',
+          },
           devDependencies: {
             'ember-source': await getChannelURL('beta'),
           },
@@ -44,6 +52,10 @@ module.exports = async function () {
       {
         name: 'ember-canary',
         npm: {
+          dependencies: {
+            'webpack': '^5.6',
+            'ember-auto-import': '^2.0.0',
+          },
           devDependencies: {
             'ember-source': await getChannelURL('canary'),
           },
