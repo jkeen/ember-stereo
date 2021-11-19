@@ -57,6 +57,7 @@
         class='block w-full h-10 pr-12 rounded-md border-on-surface-0 focus:ring-accent-0 focus:border-accent-0 sm:text-sm'
         placeholder=''
         @value={{this.metadata}}
+        {{on 'change' this.updateMetadata}}
       />
     </div>
 

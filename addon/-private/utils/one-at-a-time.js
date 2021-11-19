@@ -1,9 +1,11 @@
 import { A as emberArray } from '@ember/array';
 import debug from 'debug';
 import hasEqualUrls from './has-equal-urls';
+import { inject as service } from '@ember/service';
 export default class OneAtATime {
-  constructor(service) {
-    this.stereo = service;
+  @service stereo;
+
+  constructor() {
     this.sounds = emberArray();
   }
 

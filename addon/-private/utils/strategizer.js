@@ -5,7 +5,7 @@ import { makeArray, A as emberArray } from '@ember/array';
 import { isEmpty } from '@ember/utils';
 import { cached } from 'tracked-toolbox';
 import { assert } from '@ember/debug';
-
+import { getOwner, setOwner } from '@ember/application';
 export default class Strategizer {
   @tracked urls
   @tracked options
@@ -25,7 +25,10 @@ export default class Strategizer {
       sharedAudioAccess: this.useSharedAudioAccess ? this.sharedAudioAccess : undefined,
     }
 
-    return new Strategy(connection, new StereoUrl(url), strategyOptions)
+    let strategy = new Strategy(connection, new StereoUrl(url), strategyOptions)
+    setOwner(strategy, getOwner(this));
+    return strategy;
+
   }
 
   get sharedAudioAccess() {

@@ -7,6 +7,7 @@ import sinon from 'sinon';
 import hasEqualIdentifiers from 'ember-stereo/-private/utils/has-equal-identifiers';
 import SoundCache from 'ember-stereo/-private/utils/sound-cache';
 import setupCustomAssertions from 'ember-cli-custom-assertions/test-support';
+import { setOwner, getOwner } from '@ember/application';
 import {
   setupStereoTest,
   stubConnectionCreateWithSuccess,
@@ -322,6 +323,9 @@ module('Unit | Service | stereo', function (hooks) {
     let sound2 = new (service.connectionLoader.get('NativeAudio'))({
       url: '/good/1000/silence2.mp3',
     });
+
+    // setOwner(sound1, getOwner(service));
+    // setOwner(sound2, getOwner(service));
 
     let spy1 = sandbox.spy(sound1, '_currentPosition');
     let spy2 = sandbox.spy(sound2, '_currentPosition');

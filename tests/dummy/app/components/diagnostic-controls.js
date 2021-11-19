@@ -42,6 +42,10 @@ export default class DiagnosticControls extends Component {
     }
   }
 
+  @action updateMetadata() {
+    this.stereo.metadataCache.store(this.url, this.formattedMetadata);
+  }
+
   get formattedMetadata() {
     try {
       return JSON.parse(this.metadata);

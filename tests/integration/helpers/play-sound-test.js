@@ -13,7 +13,6 @@ module('Integration | Helper | play-sound', function (hooks) {
     assert.false(service.isPlaying, 'not playing');
     await render(hbs`<button type="button" {{on 'click' (play-sound this.url)}}>toggle</button>`);
     await click('button');
-    console.log('IS IT PLAYING NOW???')
     assert.true(service.isPlaying, 'is playing');
   });
 

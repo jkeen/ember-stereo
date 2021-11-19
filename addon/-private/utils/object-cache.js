@@ -1,23 +1,27 @@
 import { tracked } from '@glimmer/tracking';
+import normalizeIdentifier from './normalize-identifier';
+import { inject as service } from '@ember/service';
+import EmberObject from '@ember/object';
 
 /**
 * This class caches things based on a strings or objects. You shouldn't have to interact with this class.
 */
 
-export default class ObjectCache {
+export default class ObjectCache extends EmberObject {
+  @service stereo;
+
   @tracked objectCache = new WeakMap();
   @tracked keyCache = {}
   name = 'ember-stereo:object-cache'
 
-  constructor(stereo) {
-    this.stereo = stereo;
-  }
-
-  has(identifier) {
+  has(_identifier) {
+    let identifier = normalizeIdentifier(_identifier);
     return this.objectCache.has(identifier) || (identifier in this.keyCache)
   }
 
-  find(identifier) {
+  find(_identifier) {
+    let identifier = normalizeIdentifier(_identifier);
+
     if (this.objectCache.has(identifier)) {
       return this.objectCache.get(identifier)
     } else if (this.keyCache[identifier]) {
@@ -25,7 +29,9 @@ export default class ObjectCache {
     }
   }
 
-  remove(identifier) {
+  remove(_identifier) {
+    let identifier = normalizeIdentifier(_identifier);
+
     if (this.objectCache.has(identifier)) {
       this.objectCache.remove(identifier)
     }
@@ -34,7 +40,9 @@ export default class ObjectCache {
     }
   }
 
-  store(identifier, value) {
+  store(_identifier, value) {
+    let identifier = normalizeIdentifier(_identifier);
+
     if (identifier) {
       if (identifier.then || (typeof identifier === 'object')) {
         this.objectCache.set(identifier, value)

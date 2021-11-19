@@ -6,6 +6,7 @@ import debug from 'debug';
 import { tracked } from '@glimmer/tracking';
 import Evented from 'ember-stereo/-private/utils/evented';
 import hasEqualUrls from 'ember-stereo/-private/utils/has-equal-urls';
+import { getOwner } from '@ember/application';
 
 /**
  * This is the base sound object from which other sound objects are derived.
@@ -158,7 +159,36 @@ export default class Sound extends Evented {
    * @type {Hash} (0-100)
    * @public
   */
-  @tracked metadata = {};
+
+  get metadata() {
+    let owner = getOwner(this);
+    if (owner) {
+      let stereo = owner.lookup('service:stereo')
+      return stereo?.metadataCache?.find(this.url);
+    }
+
+    return {};
+  }
+
+  set metadata(value) {
+    let owner = getOwner(this);
+
+    if (owner) {
+      let stereo = owner.lookup('service:stereo')
+      let oldMetadata = stereo?.metadataCache?.find(this.url);
+      stereo?.metadataCache?.store(this.url, value);
+
+      // TODO: It would be nice if we didn't have to set
+      // the entire metadata to trigger this event
+
+      this.trigger('audio-metadata-changed', {
+        old: oldMetadata,
+        new: value,
+        sound: this,
+      });
+    }
+  }
+
   @tracked id3Tags = {};
   @tracked id3TagMetadata = {}
   @tracked _debug = {}; // for internal debugging

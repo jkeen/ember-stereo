@@ -1,8 +1,9 @@
 import { A as emberArray, makeArray } from '@ember/array';
 import debug from 'debug';
 import { tracked } from '@glimmer/tracking';
-import StereoUrl from 'ember-stereo/-private/utils/stereo-url';
 import hasEqualUrls from 'ember-stereo/-private/utils/has-equal-urls';
+import normalizeIdentifier from './normalize-identifier';
+import { inject as service } from '@ember/service';
 
 /**
 * This class caches errors based on urls.
@@ -10,15 +11,13 @@ import hasEqualUrls from 'ember-stereo/-private/utils/has-equal-urls';
 */
 
 export default class ErrorCache {
+  @service stereo;
+
   @tracked cachedCount = 0;
   @tracked cachedErrors = [];
   @tracked cachedList = []
   @tracked _cache = {};
   name = 'ember-stereo:error-cache'
-
-  constructor(stereo) {
-    this.stereo = stereo;
-  }
 
   reset() {
     this._cache = {};
@@ -34,7 +33,7 @@ export default class ErrorCache {
    * @return {Sound}
    */
   find(urls) {
-    let identifiers = makeArray(urls).map(i => new StereoUrl(i));
+    let identifiers = makeArray(urls).map(i => normalizeIdentifier(i));
     let errors = emberArray(identifiers).map(identity => this.cachedErrors.find(err => hasEqualUrls(err.url, identity)));
     let foundErrors = emberArray(errors).compact();
 
@@ -48,7 +47,7 @@ export default class ErrorCache {
   }
 
   remove(urls) {
-    let identifiers = makeArray(urls).map(i => new StereoUrl(i));
+    let identifiers = makeArray(urls).map(i => normalizeIdentifier(i));
     this.cachedErrors = this.cachedErrors.filter(err => !hasEqualUrls(err.url, identifiers));
 
     identifiers.forEach(identity => {
@@ -57,7 +56,7 @@ export default class ErrorCache {
   }
 
   cache({ url, error, connectionKey, debugInfo }) {
-    let identifier = new StereoUrl(url).key
+    let identifier = normalizeIdentifier(url);
 
     if (!this._cache[identifier]) {
       this._cache[identifier] = {}

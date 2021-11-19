@@ -1,25 +1,23 @@
 import { A as emberArray, makeArray } from '@ember/array';
 import debug from 'debug';
 import { tracked } from '@glimmer/tracking';
-import StereoUrl from 'ember-stereo/-private/utils/stereo-url';
 import BaseSound from 'ember-stereo/stereo-connections/base';
 import hasEqualUrls from './has-equal-urls';
-
+import normalizeIdentifier from './normalize-identifier';
+import { inject as service } from '@ember/service';
 /**
 * This class caches sound objects based on urls.
 * @private
 */
 
 export default class SoundCache {
+  @service stereo;
+
   @tracked cachedCount = 0;
   @tracked cachedList = [];
   @tracked cachedSounds = [];
   @tracked _cache = {};
   name = 'ember-stereo:sound-cache'
-
-  constructor(stereo) {
-    this.stereo = stereo;
-  }
 
   reset() {
     this._cache = {};
@@ -34,19 +32,18 @@ export default class SoundCache {
    * @param {String} identifiers
    * @return {Sound}
    */
-  find(identifiers) {
+  find(_identifiers) {
     let cache = this._cache;
-
-    let stereoUrls   = makeArray(identifiers).map(identity => new StereoUrl(identity))
-
-    let sounds       = emberArray(stereoUrls).map(url => cache[url.key]);
+    _identifiers = makeArray(_identifiers);
+    let identifiers = _identifiers.map(identity => normalizeIdentifier(identity))
+    let sounds = emberArray(identifiers).map(url => cache[url]);
     let foundSounds  = emberArray(sounds).compact();
 
     if (foundSounds.length > 0) {
-      debug(this.name)(`cache hit for ${foundSounds[0].url}`);
+      debug(this.name)(`cache hit for `, foundSounds[0].url);
     }
     else {
-      debug(this.name)(`cache miss for ${stereoUrls.map(u => u.url).join(',')}`);
+      debug(this.name)(`cache miss for`, identifiers);
     }
 
     return foundSounds[0];
@@ -58,10 +55,14 @@ export default class SoundCache {
    * @method remove
    * @param {Sound} sound
    */
-  remove(identifier) {
+  remove(_identifier) {
+    let identifier;
+
     if (this.isDestroyed) return;
-    if (identifier instanceof BaseSound) {
-      identifier = identifier.url
+    if (_identifier instanceof BaseSound) {
+      identifier = _identifier.url
+    } else {
+      identifier = normalizeIdentifier(_identifier);
     }
 
     let url = Object.keys(this._cache).find(key => hasEqualUrls(key, identifier))
@@ -82,7 +83,7 @@ export default class SoundCache {
    */
   cache(sound) {
     if (this.isDestroyed) return;
-    let identifier = new StereoUrl(sound.url).key
+    let identifier = normalizeIdentifier(sound.url);
 
     debug(this.name)(`caching sound with url: ${identifier}`);
 

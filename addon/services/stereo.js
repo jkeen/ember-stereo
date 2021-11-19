@@ -21,6 +21,7 @@ import EmberEvented from '@ember/object/evented';
 import ErrorCache from 'ember-stereo/-private/utils/error-cache';
 import OneAtATime from 'ember-stereo/-private/utils/one-at-a-time';
 import UrlCache from 'ember-stereo/-private/utils/url-cache';
+import MetadataCache from 'ember-stereo/-private/utils/metadata-cache';
 import SharedAudioAccess from 'ember-stereo/-private/utils/shared-audio-access';
 import SoundCache from 'ember-stereo/-private/utils/sound-cache';
 import ObjectCache from 'ember-stereo/-private/utils/object-cache';
@@ -85,10 +86,19 @@ export default class Stereo extends Service.extend(EmberEvented) {
 
     this.sharedAudioAccess = new SharedAudioAccess();
     this.oneAtATime = new OneAtATime();
-    this.soundCache = new SoundCache(this);
-    this.errorCache = new ErrorCache(this);
-    this.urlCache = new UrlCache(this);
-    this.proxyCache = new ObjectCache(this);
+
+    this.soundCache = new SoundCache();
+    this.errorCache = new ErrorCache();
+    this.metadataCache = new MetadataCache();
+    this.urlCache = new UrlCache();
+    this.proxyCache = new ObjectCache();
+
+    setOwner(this.oneAtATime, owner);
+    setOwner(this.soundCache, owner);
+    setOwner(this.errorCache, owner);
+    setOwner(this.metadataCache, owner);
+    setOwner(this.urlCache, owner);
+    setOwner(this.proxyCache, owner);
 
     this.poll = setInterval(
       this._setCurrentPosition.bind(this),
@@ -163,7 +173,7 @@ export default class Stereo extends Service.extend(EmberEvented) {
    * @public
    */
   get currentMetadata() {
-    return this.currentSound?.metadata;
+    return this.metadataCache.find(this.currentSound?.url);
   }
 
   /**
@@ -668,7 +678,9 @@ export default class Stereo extends Service.extend(EmberEvented) {
   }
 
   _buildStrategies(urlsToTry, options) {
-    return new Strategizer(urlsToTry, options).strategies;
+    let strategizer = new Strategizer(urlsToTry, options)
+    setOwner(strategizer, getOwner(this));
+    return strategizer.strategies;
   }
 
   _handlePlaybackError({ sound, options }) {
@@ -783,6 +795,7 @@ export default class Stereo extends Service.extend(EmberEvented) {
     }
     this._unregisterEvents(this._currentSound);
     this._registerEvents(sound);
+    this._updateNowPlaying(sound);
     sound._setVolume(this.volume);
     this._currentSound = sound;
     debug('ember-stereo')(`setting current sound -> ${sound.url}`);
@@ -892,6 +905,7 @@ export default class Stereo extends Service.extend(EmberEvented) {
     this.soundCache.remove(url);
     this.errorCache.remove(url);
     this.proxyCache.remove(url);
+    this.metadataCache.remove(url);
 
     if (this.currentSound?.url === url) {
       this._unregisterEvents(this.currentSound);
@@ -1050,6 +1064,7 @@ export default class Stereo extends Service.extend(EmberEvented) {
   // Named functions so Ember Evented can successfully register/unregister them
 
   _relayPlayedEvent(info) {
+    this._updateNowPlaying(this.currentSound);
     this._relayEvent('audio-played', info);
   }
   _relayPausedEvent(info) {
@@ -1083,7 +1098,27 @@ export default class Stereo extends Service.extend(EmberEvented) {
     this._relayEvent('audio-will-fast-forward', info);
   }
   _relayMetadataChangedEvent(info) {
+    this._updateNowPlaying(this.currentSound);
     this._relayEvent('audio-metadata-changed', info);
+  }
+
+  /**
+   * Updates now playing info from metadata if appropriate keys exist
+   */
+
+  _updateNowPlaying(sound) {
+    if (!sound) return;
+
+    let { title, artist, album, artwork } = sound.metadata;
+
+    if ('mediaSession' in navigator && 'MediaMetadata' in window) {
+      navigator.mediaSession.metadata = new window.MediaMetadata({
+        title,
+        artist,
+        album,
+        artwork
+      });
+    }
   }
 
   /**
