@@ -23,7 +23,7 @@ module.exports = {
     "ember/no-new-mixins": "warn",
     'ember/no-jquery': 'error',
     'ember-concurrency/no-perform-without-catch': 'error',
-    'ember-concurrency/require-task-name-suffix': 'error',
+    'ember-concurrency/require-task-name-suffix': 'warn',
   },
   overrides: [
     // node files
