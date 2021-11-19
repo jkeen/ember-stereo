@@ -125,9 +125,10 @@ jobs:
       matrix:
         ember-try-scenario:
           - ember-3.27.5
-          - ember-release
         allow-failure: [false]
         include:
+          - ember-try-scenario: ember-release
+            allow-failure: true
           - ember-try-scenario: ember-beta
             allow-failure: true
           - ember-try-scenario: ember-canary
