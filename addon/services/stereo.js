@@ -287,12 +287,8 @@ export default class Stereo extends Service.extend(EmberEvented) {
    * @type {Boolean}
 
   */
-  get isMobileDevice() {
-    return this._isMobileDevice || 'ontouchstart' in window;
-  }
-  set isMobileDevice(v) {
-    this._isMobileDevice = v;
-  }
+
+  @tracked isMobileDevice = 'ontouchstart' in window;
 
   /**
    * get if hifi should use a shared audio element
