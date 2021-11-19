@@ -1,5 +1,17 @@
 ember-stereo changelog
 
+# [2.1.0](https://github.com/jkeen/ember-stereo/compare/v2.0.10...v2.1.0) (2021-11-19)
+
+
+### Bug Fixes
+
+* resolved infinite invalidation loop caused by faulty soundproxy task. Updated dependencies ([f830a88](https://github.com/jkeen/ember-stereo/commit/f830a887a95ff2676a8a102691cb8decb376f696))
+
+
+### Features
+
+* add {{stereo-volume-is-adjustable}} helper, which returns whether or not the device supports adjusting volume at the sound level ([a41e759](https://github.com/jkeen/ember-stereo/commit/a41e759b0ff4580f6700ba02f96a65482b61110c))
+
 ## [2.0.10](https://github.com/jkeen/ember-stereo/compare/v2.0.9...v2.0.10) (2021-11-08)
 
 
