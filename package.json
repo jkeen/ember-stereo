@@ -128,7 +128,7 @@
     "ember-keyboard": "adopted-ember-addons/ember-keyboard"
   },
   "engines": {
-    "node": "12.* || 14.* || >= 16"
+    "node": "14.* || >= 16"
   },
   "ember": {
     "edition": "octane"
