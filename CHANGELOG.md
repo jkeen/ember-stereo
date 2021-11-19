@@ -1,5 +1,12 @@
 ember-stereo changelog
 
+## [2.1.1](https://github.com/jkeen/ember-stereo/compare/v2.1.0...v2.1.1) (2021-11-19)
+
+
+### Bug Fixes
+
+* fail gracefully if findSound is passed an empty string ([69754d7](https://github.com/jkeen/ember-stereo/commit/69754d72e0b24590ae3be0e0bfcefcb3283fb8ff))
+
 # [2.1.0](https://github.com/jkeen/ember-stereo/compare/v2.0.10...v2.1.0) (2021-11-19)
 
 
