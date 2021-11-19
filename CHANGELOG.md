@@ -1,5 +1,12 @@
 ember-stereo changelog
 
+## [2.1.2](https://github.com/jkeen/ember-stereo/compare/v2.1.1...v2.1.2) (2021-11-19)
+
+
+### Bug Fixes
+
+* make isMobileDevice a tracked variable so volume-related logic works reliably ([e94dc6c](https://github.com/jkeen/ember-stereo/commit/e94dc6c23af469f9c50080477c4138eb2434baf0))
+
 ## [2.1.1](https://github.com/jkeen/ember-stereo/compare/v2.1.0...v2.1.1) (2021-11-19)
 
 
