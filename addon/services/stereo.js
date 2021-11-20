@@ -384,7 +384,7 @@ export default class Stereo extends Service.extend(EmberEvented) {
     this.trigger('pre-load', urlsToTry);
     this.errorCache.remove(urlsToTry);
 
-    var sound = this.soundCache.find(urlsToTry);
+    var sound = this.findLoadedSound(urlsToTry);
     if (sound) {
       debug('ember-stereo')('retreived sound from cache');
       return yield { sound };

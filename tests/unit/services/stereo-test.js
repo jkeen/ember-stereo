@@ -243,27 +243,25 @@ module('Unit | Service | stereo', function (hooks) {
   });
 
   test('The second time a url is requested it will be pulled from the cache', async function (assert) {
-    assert.expect(4);
+    assert.expect(5);
     let service = this.owner
       .lookup('service:stereo')
       .loadConnections([{ name: 'NativeAudio' }]);
 
     let url = '/good/500/cache.mp3';
     let soundCache = service.soundCache;
-    let findSpy = sandbox.stub(soundCache, 'find');
-    let cacheSpy = sandbox.stub(soundCache, 'cache');
-
-    findSpy.onFirstCall().returns(false);
+    let findSpy = sandbox.spy(soundCache, 'find');
+    let cacheSpy = sandbox.spy(soundCache, 'cache');
+    assert.equal(findSpy.callCount, 0, 'cache should not have been checked');
 
     let { sound: sound1 } = await service.load(url);
-    assert.equal(findSpy.callCount, 1, 'cache should have been checked');
+    assert.equal(findSpy.callCount, 2, 'cache should have been checked');
     assert.equal(
       cacheSpy.callCount,
       1,
       'sound should be registered with sound cache'
     );
     sound1.identification = 'yo';
-    findSpy.onSecondCall().returns(sound1);
 
     let { sound: sound2 } = await service.load(url);
     assert.equal(
@@ -271,7 +269,7 @@ module('Unit | Service | stereo', function (hooks) {
       'yo',
       'should be the same sound in sound cache'
     );
-    assert.equal(findSpy.callCount, 2, 'cache should have been checked');
+    assert.equal(findSpy.callCount, 3, 'cache should have been checked');
   });
 
   test('The second time a url (with a mime type specified) is requested it will be pulled from the cache', async function (assert) {
@@ -283,20 +281,18 @@ module('Unit | Service | stereo', function (hooks) {
     let url = { url: '/good/1000/test.mp3', mimeType: 'audio/mp3' };
 
     let soundCache = service.soundCache;
-    let findSpy = sandbox.stub(soundCache, 'find');
-    let cacheSpy = sandbox.stub(soundCache, 'cache');
+    let findSpy = sandbox.spy(soundCache, 'find');
+    let cacheSpy = sandbox.spy(soundCache, 'cache');
 
-    findSpy.onFirstCall().returns(false);
 
     let { sound } = await service.load(url);
-    assert.equal(findSpy.callCount, 1, 'cache should have been checked');
+    assert.equal(findSpy.callCount, 2, 'cache should have been checked');
     assert.equal(
       cacheSpy.callCount,
       1,
       'sound should be registered with sound cache'
     );
     sound.identification = 'yo';
-    findSpy.onSecondCall().returns(sound);
 
     let { sound: sound2 } = await service.load(url);
     assert.equal(
@@ -304,7 +300,7 @@ module('Unit | Service | stereo', function (hooks) {
       'yo',
       'should be the same sound in sound cache'
     );
-    assert.equal(findSpy.callCount, 2, 'cache should have been checked');
+    assert.equal(findSpy.callCount, 3, 'cache should have been checked');
   });
 
   test('position gets polled regularly on the currentSound but not on the others', function (assert) {
