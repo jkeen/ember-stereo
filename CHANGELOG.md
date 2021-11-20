@@ -1,5 +1,17 @@
 ember-stereo changelog
 
+# [2.2.0](https://github.com/jkeen/ember-stereo/compare/v2.1.2...v2.2.0) (2021-11-20)
+
+
+### Bug Fixes
+
+* Merge existing cached metadata when playing fresh sound ([2d88074](https://github.com/jkeen/ember-stereo/commit/2d880743bec24da5d488b9e19dc174dfc34bf9fd))
+
+
+### Features
+
+* Sound metadata is stored centrally now and will automatically update navigator.mediasession when changed, providing accurate now-playing info to iOS lock screens, etc ([848588b](https://github.com/jkeen/ember-stereo/commit/848588b6f92b03041ed457a76461544a13132fa6))
+
 ## [2.1.2](https://github.com/jkeen/ember-stereo/compare/v2.1.1...v2.1.2) (2021-11-19)
 
 
