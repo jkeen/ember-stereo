@@ -7,7 +7,6 @@ import normalizeIdentifier from './normalize-identifier';
 import { inject as service } from '@ember/service';
 import {
   TrackedObject,
-  TrackedWeakMap,
   TrackedArray,
 } from 'tracked-built-ins';
 

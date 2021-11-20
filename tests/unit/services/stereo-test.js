@@ -7,7 +7,6 @@ import sinon from 'sinon';
 import hasEqualIdentifiers from 'ember-stereo/-private/utils/has-equal-identifiers';
 import SoundCache from 'ember-stereo/-private/utils/sound-cache';
 import setupCustomAssertions from 'ember-cli-custom-assertions/test-support';
-import { setOwner, getOwner } from '@ember/application';
 import {
   setupStereoTest,
   stubConnectionCreateWithSuccess,
