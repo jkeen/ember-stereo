@@ -1,17 +1,20 @@
 import { tracked } from '@glimmer/tracking';
 import normalizeIdentifier from './normalize-identifier';
 import { inject as service } from '@ember/service';
-import EmberObject from '@ember/object';
+import {
+  TrackedObject,
+  TrackedWeakMap,
+} from 'tracked-built-ins';
 
 /**
 * This class caches things based on a strings or objects. You shouldn't have to interact with this class.
 */
 
-export default class ObjectCache extends EmberObject {
+export default class ObjectCache {
   @service stereo;
 
-  @tracked objectCache = new WeakMap();
-  @tracked keyCache = {}
+  @tracked objectCache = new TrackedWeakMap();
+  @tracked keyCache = new TrackedObject()
   name = 'ember-stereo:object-cache'
 
   has(_identifier) {

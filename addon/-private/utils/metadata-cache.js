@@ -5,10 +5,6 @@ import ObjectCache from 'ember-stereo/-private/utils/object-cache';
   @private
 */
 
-
 export default class MetadataCache extends ObjectCache {
   name = 'ember-stereo:metadata-cache'
-
-
-  
 }

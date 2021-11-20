@@ -69,6 +69,13 @@ export const SERVICE_EVENT_MAP = [
  */
 export default class Stereo extends Service.extend(EmberEvented) {
   @tracked autoPlayAllowed = false;
+
+  @tracked soundCache = new SoundCache();
+  @tracked errorCache = new ErrorCache();
+  @tracked metadataCache = new MetadataCache();
+  @tracked urlCache = new UrlCache();
+  @tracked proxyCache = new ObjectCache();
+
   pollInterval = 500;
 
   constructor() {
@@ -86,12 +93,6 @@ export default class Stereo extends Service.extend(EmberEvented) {
 
     this.sharedAudioAccess = new SharedAudioAccess();
     this.oneAtATime = new OneAtATime();
-
-    this.soundCache = new SoundCache();
-    this.errorCache = new ErrorCache();
-    this.metadataCache = new MetadataCache();
-    this.urlCache = new UrlCache();
-    this.proxyCache = new ObjectCache();
 
     setOwner(this.oneAtATime, owner);
     setOwner(this.soundCache, owner);

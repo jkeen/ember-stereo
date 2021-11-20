@@ -5,6 +5,14 @@ import BaseSound from 'ember-stereo/stereo-connections/base';
 import hasEqualUrls from './has-equal-urls';
 import normalizeIdentifier from './normalize-identifier';
 import { inject as service } from '@ember/service';
+import {
+  TrackedObject,
+  TrackedWeakMap,
+  TrackedArray,
+} from 'tracked-built-ins';
+
+/**
+ *
 /**
 * This class caches sound objects based on urls.
 * @private
@@ -14,9 +22,9 @@ export default class SoundCache {
   @service stereo;
 
   @tracked cachedCount = 0;
-  @tracked cachedList = [];
-  @tracked cachedSounds = [];
-  @tracked _cache = {};
+  @tracked cachedList = new TrackedArray();
+  @tracked cachedSounds = new TrackedArray();
+  @tracked _cache = new TrackedObject();
   name = 'ember-stereo:sound-cache'
 
   reset() {
