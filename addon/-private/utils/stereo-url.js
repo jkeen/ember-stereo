@@ -11,7 +11,7 @@ export default class StereoUrl {
 
     if (input) {
       if (isArray(input)) {
-        input = input[0]
+        input = input[0];
       }
 
       this.input = input;

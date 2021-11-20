@@ -175,17 +175,7 @@ export default class Sound extends Evented {
 
     if (owner) {
       let stereo = owner.lookup('service:stereo')
-      let oldMetadata = stereo?.metadataCache?.find(this.url);
       stereo?.metadataCache?.store(this.url, value);
-
-      // TODO: It would be nice if we didn't have to set
-      // the entire metadata to trigger this event
-
-      this.trigger('audio-metadata-changed', {
-        old: oldMetadata,
-        new: value,
-        sound: this,
-      });
     }
   }
 

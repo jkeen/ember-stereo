@@ -7642,14 +7642,6 @@ ember-tether@^2.0.0:
     ember-cli-babel "^7.1.2"
     tether "^1.4.0"
 
-ember-tracked-storage-polyfill@1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/ember-tracked-storage-polyfill/-/ember-tracked-storage-polyfill-1.0.0.tgz#84d307a1e4badc5f84dca681db2cfea9bdee8a77"
-  integrity sha512-eL7lZat68E6P/D7b9UoTB5bB5Oh/0aju0Z7PCMi3aTwhaydRaxloE7TGrTRYU+NdJuyNVZXeGyxFxn2frvd3TA==
-  dependencies:
-    ember-cli-babel "^7.26.3"
-    ember-cli-htmlbars "^5.7.1"
-
 ember-truth-helpers@^3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/ember-truth-helpers/-/ember-truth-helpers-3.0.0.tgz#86766bdca4ac9b86bce3d262dff2aabc4a0ea384"
@@ -15709,16 +15701,6 @@ tracked-maps-and-sets@^2.0.0:
   dependencies:
     "@glimmer/tracking" "^1.0.0"
     ember-cli-babel "^7.17.2"
-
-tracked-maps-and-sets@^3.0.2:
-  version "3.0.2"
-  resolved "https://registry.yarnpkg.com/tracked-maps-and-sets/-/tracked-maps-and-sets-3.0.2.tgz#6ea1b9f2a367d24f2e9905b74b24437fbce76ea6"
-  integrity sha512-UIRcWsX1kDOcC/Q2R58weYWlw01EnmWWBwUv3okWS+zMBvsgIfYoO6veHhuNE3hgzWCEImNp46QS5CyKnw5QUA==
-  dependencies:
-    "@glimmer/tracking" "^1.0.0"
-    ember-cli-babel "^7.26.6"
-    ember-cli-typescript "^4.2.1"
-    ember-tracked-storage-polyfill "1.0.0"
 
 tracked-toolbox@^1.2.1:
   version "1.2.3"
