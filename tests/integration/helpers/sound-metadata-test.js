@@ -17,16 +17,6 @@ module("Integration | Helper | sound-metadata", function (hooks) {
     assert.equal(this.element.textContent.trim(), "beatles");
   });
 
-  test("it renders when no key is specified", async function (assert) {
-    let service = this.owner.lookup("service:stereo");
-
-    this.url = "/good/1000/metadata.mp3";
-    await service.load(this.url, { metadata: "whatever you want" });
-    await render(hbs`{{sound-metadata this.url}}`);
-
-    assert.equal(this.element.textContent.trim(), "whatever you want");
-  });
-
   test("it renders metadata about current system sound", async function (assert) {
     let service = this.owner.lookup("service:stereo");
 
@@ -36,5 +26,27 @@ module("Integration | Helper | sound-metadata", function (hooks) {
 
     assert.equal(this.element.textContent.trim(), "whatever you want");
   });
+
+  test("it doesn't wipe out pre-cached metadata when new sound is loading", async function (assert) {
+    let service = this.owner.lookup("service:stereo");
+
+    this.url = "/good/1000/metadata.mp3";
+    service.metadataCache.store(this.url, { title: "my title" })
+    await render(hbs`{{sound-metadata (current-sound) key='title'}}`);
+    await service.play(this.url);
+
+    assert.equal(this.element.textContent.trim(), "my title");
+  })
+
+  test("it merges metadata upon play", async function (assert) {
+    let service = this.owner.lookup("service:stereo");
+
+    this.url = "/good/1000/metadata.mp3";
+    service.metadataCache.store(this.url, { title: "my title" })
+    await render(hbs`{{sound-metadata (current-sound) key='title'}} {{sound-metadata (current-sound) key='artist'}}`);
+    await service.play(this.url, { metadata: { artist: "prince" } });
+
+    assert.equal(this.element.textContent.trim(), "my title prince");
+  })
 
 });

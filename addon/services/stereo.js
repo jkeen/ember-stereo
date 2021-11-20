@@ -442,7 +442,13 @@ export default class Stereo extends Service.extend(EmberEvented) {
         // eslint-disable-next-line ember-concurrency/no-perform-without-catch
         this.handleCurrentSoundTransition.perform(sound);
 
-        sound.metadata = options.metadata; // set current sound metadata
+        if (options.metadata) {
+          sound.metadata = {
+            ...sound.metadata,
+            ...options.metadata
+          } // set current sound metadata
+        }
+
         this.soundCache.cache(sound);
         this.oneAtATime.register(sound); // On audio-played this pauses all the other sounds. One at a time!
         return { sound, failures };
@@ -1109,16 +1115,20 @@ export default class Stereo extends Service.extend(EmberEvented) {
 
   _updateNowPlaying(sound) {
     if (!sound) return;
-
-    let { title, artist, album, artwork } = sound.metadata;
-
     if ('mediaSession' in navigator && 'MediaMetadata' in window) {
-      navigator.mediaSession.metadata = new window.MediaMetadata({
+      let { title, artist, album, artwork } = sound.metadata;
+
+      let mediaAttributes = {
         title,
         artist,
-        album,
-        artwork
-      });
+        album
+      }
+
+      if (makeArray(artwork).length > 0 && artwork[0]?.src) {
+        mediaAttributes.artwork = makeArray(artwork)
+      }
+
+      navigator.mediaSession.metadata = new window.MediaMetadata(mediaAttributes);
     }
   }
 
