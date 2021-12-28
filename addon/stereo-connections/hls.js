@@ -33,21 +33,21 @@ export default class HLSSound extends BaseSound {
     let hls = new HLS({ debug: false, startFragPrefetch: true });
 
     this.hls = hls;
-    hls.attachMedia(video);
     this._setupHLSEvents(hls);
     this._setupPlayerEvents(video);
+    hls.attachMedia(video);
   }
 
   _setupHLSEvents(hls) {
     hls.on(HLS.Events.MEDIA_ATTACHING, () => {
       this.debug('media attaching');
     });
-    // hls.on(HLS.Events.MEDIA_DETACHING, () => {
-    //   this.debug('media detaching');
-    // });
-    // hls.on(HLS.Events.MEDIA_DETACHED, () => {
-    //   this.debug('media detached');
-    // });
+    hls.on(HLS.Events.MEDIA_DETACHING, () => {
+      this.debug('media detaching');
+    });
+    hls.on(HLS.Events.MEDIA_DETACHED, () => {
+      this.debug('media detached');
+    });
 
     // hls.on(HLS.Events.BUFFER_RESET, () => {
     //   this.debug('buffer reset');
@@ -68,13 +68,13 @@ export default class HLSSound extends BaseSound {
       hls.on(HLS.Events.LEVEL_LOADED, (e, data) => {
         this.debug(`level ${data.level} loaded`);
         this.live = data.details.live;
-        this._checkIfAudioIsReady();
         this._initializeCurrentTime()
+        this._signalAudioIsReady();
       });
 
       hls.on(HLS.Events.AUDIO_TRACK_LOADED, () => {
         this.debug('audio track loaded');
-        this._checkIfAudioIsReady();
+        this._signalAudioIsReady();
       });
 
       hls.on(HLS.Events.ERROR, (e, data) => this._onHLSError(e, data));
@@ -150,7 +150,7 @@ export default class HLSSound extends BaseSound {
     video.addEventListener('error', (e) => this._onVideoError(e));
   }
 
-  _checkIfAudioIsReady() {
+  async _checkIfAudioIsReady() {
     if (!this.loaded) {
       // The only reliable way to check if this thing is actually ready
       // is to play it. If we get a play signal we're golden, but if we
@@ -158,14 +158,13 @@ export default class HLSSound extends BaseSound {
 
       this.debug('Testing if audio is ready');
       this.video.volume = 0;
-      this.video.play();
+      this.tryPlaying();
     }
   }
 
   _signalAudioIsReady() {
     this.debug('Test succeeded, signaling audio-ready');
     this.loaded = true;
-    this.video.pause();
     this.trigger('audio-loaded', { sound: this });
     this.trigger('audio-ready', { sound: this });
   }
@@ -278,14 +277,26 @@ export default class HLSSound extends BaseSound {
     this.video.volume = (volume / 100);
   }
 
-  play() {
+  async tryPlaying() {
+    try {
+      await this.video.play()
+    } catch (error) {
+      if (error.name == 'NotAllowedError') {
+        this.trigger('audio-blocked', { sound: this, error: error.message, event: error });
+        this.pause();
+      }
+    }
+  }
+
+  async play() {
     this.isLoading = true
 
     if (!this.video.src) {
       this.trigger('audio-loading', this)
       this.setup(); // the stream was stopped before
     }
-    this.video.play();
+
+    await this.tryPlaying();
 
     this.debug('#play');
     if (this.loadStopped) {
