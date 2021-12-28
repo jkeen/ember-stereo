@@ -1,5 +1,12 @@
 ember-stereo changelog
 
+## [2.2.1](https://github.com/jkeen/ember-stereo/compare/v2.2.0...v2.2.1) (2021-12-28)
+
+
+### Bug Fixes
+
+* Update HLS loading negotiation and correctly trigger audio-blocked event if play is blocked ([4add770](https://github.com/jkeen/ember-stereo/commit/4add770ce285696370f1d40299b4487269e54190))
+
 # [2.2.0](https://github.com/jkeen/ember-stereo/compare/v2.1.2...v2.2.0) (2021-11-20)
 
 
