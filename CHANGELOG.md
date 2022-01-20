@@ -1,5 +1,12 @@
 ember-stereo changelog
 
+## [2.2.2](https://github.com/jkeen/ember-stereo/compare/v2.2.1...v2.2.2) (2022-01-20)
+
+
+### Bug Fixes
+
+* load audio after ensuring URL is not cached by the browser ([3ea70f9](https://github.com/jkeen/ember-stereo/commit/3ea70f94ace72da72f1286abf8939367987f5497))
+
 ## [2.2.1](https://github.com/jkeen/ember-stereo/compare/v2.2.0...v2.2.1) (2021-12-28)
 
 
