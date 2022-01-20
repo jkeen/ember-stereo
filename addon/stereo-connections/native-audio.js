@@ -401,6 +401,8 @@ export default class NativeAudio extends BaseSound {
     if (!this.urlsAreEqual(audio.src, this.url)) {
       audio.setAttribute('src', this.url);
     }
+
+    audio.load();
   }
 
   defeatBrowserCaching() {
