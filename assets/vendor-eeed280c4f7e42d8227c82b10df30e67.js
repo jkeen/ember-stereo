@@ -10109,7 +10109,7 @@ try{return this.playTask.perform({position:e})}catch(t){if(!(0,a.didCancel)(t))t
 let e=this.audioElement
 this.isStream?this.stop():e.pause()}stop(){this.debug("#stop")
 let e=this.audioElement
-e.pause(),e.removeAttribute("src"),e.load()}loadAudio(e){this.defeatBrowserCaching(),this.urlsAreEqual(e.src,this.url)||e.setAttribute("src",this.url)}defeatBrowserCaching(){if(this.isStream){let e=document.createElement("a")
+e.pause(),e.removeAttribute("src"),e.load()}loadAudio(e){this.defeatBrowserCaching(),this.urlsAreEqual(e.src,this.url)||e.setAttribute("src",this.url),e.load()}defeatBrowserCaching(){if(this.isStream){let e=document.createElement("a")
 e.href=this.url,e.hash=(new Date).getTime(),this.url=e.href}}urlsAreEqual(e,t){let r=document.createElement("a"),n=document.createElement("a")
 return r.href=e,n.href=t,r.href===n.href}teardown(){let e=this.requestControl()
 this.trigger("_will_destroy",{sound:this}),this._unregisterEvents(e)}},v="NativeAudio",(g="key")in(m=c)?Object.defineProperty(m,g,{value:v,enumerable:!0,configurable:!0,writable:!0}):m[g]=v,u=h((l=d).prototype,"_internalElement",[s.tracked],{configurable:!0,enumerable:!0,writable:!0,initializer:null}),h(l.prototype,"playTask",[o],Object.getOwnPropertyDescriptor(l.prototype,"playTask"),l.prototype),l)
