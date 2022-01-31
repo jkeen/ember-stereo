@@ -1,11 +1,16 @@
 import Component from "@glimmer/component";
 import { inject as service } from "@ember/service";
-import { trackedReset } from 'tracked-toolbox';
+import { tracked } from '@glimmer/tracking';
 import StereoUrl from 'ember-stereo/-private/utils/stereo-url';
 import Strategy from 'ember-stereo/-private/utils/strategy';
 export default class StrategyBreakdown extends Component {
   @service stereo;
-  @trackedReset('args.url') soundProxy = this.stereo.soundProxy(this.args.url);
+  @tracked soundProxy;
+
+  constructor() {
+    super(...arguments);
+    this.soundProxy = this.stereo.soundProxy(this.args.url);
+  }
 
   get loadWasAttempted() {
     return this.soundProxy && (this.soundProxy.isResolved || this.soundProxy.isErrored)

@@ -1,1 +1,1 @@
-export { default } from 'ember-stereo/utils/normalize-identifier';
+export { default } from 'ember-stereo/-private/utils/normalize-identifier';
