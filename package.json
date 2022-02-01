@@ -55,8 +55,8 @@
     "tracked-toolbox": "^1.2.1"
   },
   "devDependencies": {
-    "@ember/render-modifiers": "^1.0.2",
     "@ember/optional-features": "^2.0.0",
+    "@ember/render-modifiers": "^1.0.2",
     "@ember/test-helpers": "^2.6.0",
     "@ember/test-waiters": "^3.0.1",
     "@embroider/test-setup": "^1.0.0",
