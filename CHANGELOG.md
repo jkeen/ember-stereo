@@ -1,5 +1,25 @@
 ember-stereo changelog
 
+## [2.2.3](https://github.com/jkeen/ember-stereo/compare/v2.2.2...v2.2.3) (2022-02-02)
+
+
+### Bug Fixes
+
+* address double compute error in docs uncovered in 3.28 update ([90bd0a9](https://github.com/jkeen/ember-stereo/commit/90bd0a9ac48421926767d8a144557c7665575947))
+* Use ember keyboard beta to resolve build issue on CI with ember-cli-addon-docs ([08bc61d](https://github.com/jkeen/ember-stereo/commit/08bc61dcee64d7962f7c2281acbbd505be193c16))
+
+
+### chore
+
+* Update node requirements, dropping old support ([0e247be](https://github.com/jkeen/ember-stereo/commit/0e247bebef085910ba97f1fe0bf17d7b2086681c))
+* Update to ember-auto-import 2. The path to the future is a bumpy one. ([f014052](https://github.com/jkeen/ember-stereo/commit/f014052434b44222ccbd86e9fc8f9ca32aec8870))
+
+
+### BREAKING CHANGES
+
+* node 14.x + required
+* ember-auto-import > 2 required now!
+
 ## [2.2.2](https://github.com/jkeen/ember-stereo/compare/v2.2.1...v2.2.2) (2022-01-20)
 
 
