@@ -1,45 +1,46 @@
-/*! For license information please see chunk.17.329b97063253d6e02c4f.js.LICENSE.txt */
+/*! For license information please see chunk.17.7e75b879a1c4a5b7e2c1.js.LICENSE.txt */
 (globalThis.webpackChunk_ember_auto_import_=globalThis.webpackChunk_ember_auto_import_||[]).push([[17],{756:(e,t,r)=>{"use strict"
 r.r(t),r.d(t,{default:()=>o})
 var n=new Blob([new Uint8Array([255,227,24,196,0,0,0,3,72,1,64,0,0,4,132,16,31,227,192,225,76,255,67,12,255,221,27,255,228,97,73,63,255,195,131,69,192,232,223,255,255,207,102,239,255,255,255,101,158,206,70,20,59,255,254,95,70,149,66,4,16,128,0,2,2,32,240,138,255,36,106,183,255,227,24,196,59,11,34,62,80,49,135,40,0,253,29,191,209,200,141,71,7,255,252,152,74,15,130,33,185,6,63,255,252,195,70,203,86,53,15,255,255,247,103,76,121,64,32,47,255,34,227,194,209,138,76,65,77,69,51,46,57,55,170,170,170,170,170,170,170,170,170,170,255,227,24,196,73,13,153,210,100,81,135,56,0,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170,170])],{type:"audio/mpeg"}),i=new Blob([new Uint8Array([0,0,0,28,102,116,121,112,105,115,111,109,0,0,2,0,105,115,111,109,105,115,111,50,109,112,52,49,0,0,0,8,102,114,101,101,0,0,2,239,109,100,97,116,33,16,5,32,164,27,255,192,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,55,167,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,112,33,16,5,32,164,27,255,192,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,55,167,128,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,112,0,0,2,194,109,111,111,118,0,0,0,108,109,118,104,100,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,232,0,0,0,47,0,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,64,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,0,0,1,236,116,114,97,107,0,0,0,92,116,107,104,100,0,0,0,3,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,47,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,64,0,0,0,0,0,0,0,0,0,0,0,0,0,0,36,101,100,116,115,0,0,0,28,101,108,115,116,0,0,0,0,0,0,0,1,0,0,0,47,0,0,0,0,0,1,0,0,0,0,1,100,109,100,105,97,0,0,0,32,109,100,104,100,0,0,0,0,0,0,0,0,0,0,0,0,0,0,172,68,0,0,8,0,85,196,0,0,0,0,0,45,104,100,108,114,0,0,0,0,0,0,0,0,115,111,117,110,0,0,0,0,0,0,0,0,0,0,0,0,83,111,117,110,100,72,97,110,100,108,101,114,0,0,0,1,15,109,105,110,102,0,0,0,16,115,109,104,100,0,0,0,0,0,0,0,0,0,0,0,36,100,105,110,102,0,0,0,28,100,114,101,102,0,0,0,0,0,0,0,1,0,0,0,12,117,114,108,32,0,0,0,1,0,0,0,211,115,116,98,108,0,0,0,103,115,116,115,100,0,0,0,0,0,0,0,1,0,0,0,87,109,112,52,97,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,2,0,16,0,0,0,0,172,68,0,0,0,0,0,51,101,115,100,115,0,0,0,0,3,128,128,128,34,0,2,0,4,128,128,128,20,64,21,0,0,0,0,1,244,0,0,1,243,249,5,128,128,128,2,18,16,6,128,128,128,1,2,0,0,0,24,115,116,116,115,0,0,0,0,0,0,0,1,0,0,0,2,0,0,4,0,0,0,0,28,115,116,115,99,0,0,0,0,0,0,0,1,0,0,0,1,0,0,0,2,0,0,0,1,0,0,0,28,115,116,115,122,0,0,0,0,0,0,0,0,0,0,0,2,0,0,1,115,0,0,1,116,0,0,0,20,115,116,99,111,0,0,0,0,0,0,0,1,0,0,0,44,0,0,0,98,117,100,116,97,0,0,0,90,109,101,116,97,0,0,0,0,0,0,0,33,104,100,108,114,0,0,0,0,0,0,0,0,109,100,105,114,97,112,112,108,0,0,0,0,0,0,0,0,0,0,0,0,45,105,108,115,116,0,0,0,37,169,116,111,111,0,0,0,29,100,97,116,97,0,0,0,1,0,0,0,0,76,97,118,102,53,54,46,52,48,46,49,48,49])],{type:"video/mp4"})
 function a(e){return Object.assign({muted:!1,timeout:250,inline:!1},e)}function s(e,t){var r=e.muted,n=e.timeout,i=e.inline,a=t(),s=a.element,o=a.source,l=void 0,u=void 0,c=void 0
 return s.muted=r,!0===r&&s.setAttribute("muted","muted"),!0===i&&s.setAttribute("playsinline","playsinline"),s.src=o,new Promise((function(e){l=s.play(),u=setTimeout((function(){c(!1,new Error("Timeout "+n+" ms has been reached"))}),n),c=function(t){var r=arguments.length>1&&void 0!==arguments[1]?arguments[1]:null
 s.remove(),s.srcObject=null,clearTimeout(u),e({result:t,error:r})},void 0!==l?l.then((function(){return c(!0)})).catch((function(e){return c(!1,e)})):c(!0)}))}const o={audio:function(e){return s(e=a(e),(function(){return{element:document.createElement("audio"),source:URL.createObjectURL(n)}}))},video:function(e){return s(e=a(e),(function(){return{element:document.createElement("video"),source:URL.createObjectURL(i)}}))}}},993:function(e){var t
-t=function(){return function(){var e={134:function(e,t,r){"use strict"
-r.d(t,{default:function(){return b}})
+t=function(){return function(){var e={686:function(e,t,r){"use strict"
+r.d(t,{default:function(){return E}})
 var n=r(279),i=r.n(n),a=r(370),s=r.n(a),o=r(817),l=r.n(o)
-function u(e){return u="function"==typeof Symbol&&"symbol"==typeof Symbol.iterator?function(e){return typeof e}:function(e){return e&&"function"==typeof Symbol&&e.constructor===Symbol&&e!==Symbol.prototype?"symbol":typeof e},u(e)}var c=function(){function e(t){!function(e,t){if(!(e instanceof t))throw new TypeError("Cannot call a class as a function")}(this,e),this.resolveOptions(t),this.initSelection()}var r
-return r=[{key:"resolveOptions",value:function(){var e=arguments.length>0&&void 0!==arguments[0]?arguments[0]:{}
-this.action=e.action,this.container=e.container,this.emitter=e.emitter,this.target=e.target,this.text=e.text,this.trigger=e.trigger,this.selectedText=""}},{key:"initSelection",value:function(){this.text?this.selectFake():this.target&&this.selectTarget()}},{key:"createFakeElement",value:function(){var e="rtl"===document.documentElement.getAttribute("dir")
-this.fakeElem=document.createElement("textarea"),this.fakeElem.style.fontSize="12pt",this.fakeElem.style.border="0",this.fakeElem.style.padding="0",this.fakeElem.style.margin="0",this.fakeElem.style.position="absolute",this.fakeElem.style[e?"right":"left"]="-9999px"
-var t=window.pageYOffset||document.documentElement.scrollTop
-return this.fakeElem.style.top="".concat(t,"px"),this.fakeElem.setAttribute("readonly",""),this.fakeElem.value=this.text,this.fakeElem}},{key:"selectFake",value:function(){var e=this,t=this.createFakeElement()
-this.fakeHandlerCallback=function(){return e.removeFake()},this.fakeHandler=this.container.addEventListener("click",this.fakeHandlerCallback)||!0,this.container.appendChild(t),this.selectedText=l()(t),this.copyText(),this.removeFake()}},{key:"removeFake",value:function(){this.fakeHandler&&(this.container.removeEventListener("click",this.fakeHandlerCallback),this.fakeHandler=null,this.fakeHandlerCallback=null),this.fakeElem&&(this.container.removeChild(this.fakeElem),this.fakeElem=null)}},{key:"selectTarget",value:function(){this.selectedText=l()(this.target),this.copyText()}},{key:"copyText",value:function(){var e
-try{e=document.execCommand(this.action)}catch(t){e=!1}this.handleResult(e)}},{key:"handleResult",value:function(e){this.emitter.emit(e?"success":"error",{action:this.action,text:this.selectedText,trigger:this.trigger,clearSelection:this.clearSelection.bind(this)})}},{key:"clearSelection",value:function(){this.trigger&&this.trigger.focus(),document.activeElement.blur(),window.getSelection().removeAllRanges()}},{key:"destroy",value:function(){this.removeFake()}},{key:"action",set:function(){var e=arguments.length>0&&void 0!==arguments[0]?arguments[0]:"copy"
-if(this._action=e,"copy"!==this._action&&"cut"!==this._action)throw new Error('Invalid "action" value, use either "copy" or "cut"')},get:function(){return this._action}},{key:"target",set:function(e){if(void 0!==e){if(!e||"object"!==u(e)||1!==e.nodeType)throw new Error('Invalid "target" value, use a valid Element')
-if("copy"===this.action&&e.hasAttribute("disabled"))throw new Error('Invalid "target" attribute. Please use "readonly" instead of "disabled" attribute')
-if("cut"===this.action&&(e.hasAttribute("readonly")||e.hasAttribute("disabled")))throw new Error('Invalid "target" attribute. You can\'t cut text from elements with "readonly" or "disabled" attributes')
-this._target=e}},get:function(){return this._target}}],r&&function(e,t){for(var r=0;r<t.length;r++){var n=t[r]
-n.enumerable=n.enumerable||!1,n.configurable=!0,"value"in n&&(n.writable=!0),Object.defineProperty(e,n.key,n)}}(e.prototype,r),e}(),d=c
-function f(e){return f="function"==typeof Symbol&&"symbol"==typeof Symbol.iterator?function(e){return typeof e}:function(e){return e&&"function"==typeof Symbol&&e.constructor===Symbol&&e!==Symbol.prototype?"symbol":typeof e},f(e)}function h(e,t){for(var r=0;r<t.length;r++){var n=t[r]
-n.enumerable=n.enumerable||!1,n.configurable=!0,"value"in n&&(n.writable=!0),Object.defineProperty(e,n.key,n)}}function g(e,t){return g=Object.setPrototypeOf||function(e,t){return e.__proto__=t,e},g(e,t)}function p(e,t){return!t||"object"!==f(t)&&"function"!=typeof t?function(e){if(void 0===e)throw new ReferenceError("this hasn't been initialised - super() hasn't been called")
-return e}(e):t}function v(e){return v=Object.setPrototypeOf?Object.getPrototypeOf:function(e){return e.__proto__||Object.getPrototypeOf(e)},v(e)}function m(e,t){var r="data-clipboard-".concat(e)
-if(t.hasAttribute(r))return t.getAttribute(r)}var y=function(e){!function(e,t){if("function"!=typeof t&&null!==t)throw new TypeError("Super expression must either be null or a function")
-e.prototype=Object.create(t&&t.prototype,{constructor:{value:e,writable:!0,configurable:!0}}),t&&g(e,t)}(l,e)
+function u(e){try{return document.execCommand(e)}catch(e){return!1}}var c=function(e){var t=l()(e)
+return u("cut"),t}
+function d(e){var t="rtl"===document.documentElement.getAttribute("dir"),r=document.createElement("textarea")
+r.style.fontSize="12pt",r.style.border="0",r.style.padding="0",r.style.margin="0",r.style.position="absolute",r.style[t?"right":"left"]="-9999px"
+var n=window.pageYOffset||document.documentElement.scrollTop
+return r.style.top="".concat(n,"px"),r.setAttribute("readonly",""),r.value=e,r}var f=function(e){var t=arguments.length>1&&void 0!==arguments[1]?arguments[1]:{container:document.body},r=""
+if("string"==typeof e){var n=d(e)
+t.container.appendChild(n),r=l()(n),u("copy"),n.remove()}else r=l()(e),u("copy")
+return r}
+function h(e){return h="function"==typeof Symbol&&"symbol"==typeof Symbol.iterator?function(e){return typeof e}:function(e){return e&&"function"==typeof Symbol&&e.constructor===Symbol&&e!==Symbol.prototype?"symbol":typeof e},h(e)}function g(e){return g="function"==typeof Symbol&&"symbol"==typeof Symbol.iterator?function(e){return typeof e}:function(e){return e&&"function"==typeof Symbol&&e.constructor===Symbol&&e!==Symbol.prototype?"symbol":typeof e},g(e)}function p(e,t){for(var r=0;r<t.length;r++){var n=t[r]
+n.enumerable=n.enumerable||!1,n.configurable=!0,"value"in n&&(n.writable=!0),Object.defineProperty(e,n.key,n)}}function v(e,t){return v=Object.setPrototypeOf||function(e,t){return e.__proto__=t,e},v(e,t)}function m(e,t){return!t||"object"!==g(t)&&"function"!=typeof t?function(e){if(void 0===e)throw new ReferenceError("this hasn't been initialised - super() hasn't been called")
+return e}(e):t}function y(e){return y=Object.setPrototypeOf?Object.getPrototypeOf:function(e){return e.__proto__||Object.getPrototypeOf(e)},y(e)}function b(e,t){var r="data-clipboard-".concat(e)
+if(t.hasAttribute(r))return t.getAttribute(r)}var _=function(e){!function(e,t){if("function"!=typeof t&&null!==t)throw new TypeError("Super expression must either be null or a function")
+e.prototype=Object.create(t&&t.prototype,{constructor:{value:e,writable:!0,configurable:!0}}),t&&v(e,t)}(l,e)
 var t,r,n,i,a,o=(i=l,a=function(){if("undefined"==typeof Reflect||!Reflect.construct)return!1
 if(Reflect.construct.sham)return!1
 if("function"==typeof Proxy)return!0
-try{return Date.prototype.toString.call(Reflect.construct(Date,[],(function(){}))),!0}catch(e){return!1}}(),function(){var e,t=v(i)
-if(a){var r=v(this).constructor
+try{return Date.prototype.toString.call(Reflect.construct(Date,[],(function(){}))),!0}catch(e){return!1}}(),function(){var e,t=y(i)
+if(a){var r=y(this).constructor
 e=Reflect.construct(t,arguments,r)}else e=t.apply(this,arguments)
-return p(this,e)})
+return m(this,e)})
 function l(e,t){var r
 return function(e,t){if(!(e instanceof t))throw new TypeError("Cannot call a class as a function")}(this,l),(r=o.call(this)).resolveOptions(t),r.listenClick(e),r}return t=l,r=[{key:"resolveOptions",value:function(){var e=arguments.length>0&&void 0!==arguments[0]?arguments[0]:{}
-this.action="function"==typeof e.action?e.action:this.defaultAction,this.target="function"==typeof e.target?e.target:this.defaultTarget,this.text="function"==typeof e.text?e.text:this.defaultText,this.container="object"===f(e.container)?e.container:document.body}},{key:"listenClick",value:function(e){var t=this
-this.listener=s()(e,"click",(function(e){return t.onClick(e)}))}},{key:"onClick",value:function(e){var t=e.delegateTarget||e.currentTarget
-this.clipboardAction&&(this.clipboardAction=null),this.clipboardAction=new d({action:this.action(t),target:this.target(t),text:this.text(t),container:this.container,trigger:t,emitter:this})}},{key:"defaultAction",value:function(e){return m("action",e)}},{key:"defaultTarget",value:function(e){var t=m("target",e)
-if(t)return document.querySelector(t)}},{key:"defaultText",value:function(e){return m("text",e)}},{key:"destroy",value:function(){this.listener.destroy(),this.clipboardAction&&(this.clipboardAction.destroy(),this.clipboardAction=null)}}],n=[{key:"isSupported",value:function(){var e=arguments.length>0&&void 0!==arguments[0]?arguments[0]:["copy","cut"],t="string"==typeof e?[e]:e,r=!!document.queryCommandSupported
-return t.forEach((function(e){r=r&&!!document.queryCommandSupported(e)})),r}}],r&&h(t.prototype,r),n&&h(t,n),l}(i()),b=y},828:function(e){if("undefined"!=typeof Element&&!Element.prototype.matches){var t=Element.prototype
+this.action="function"==typeof e.action?e.action:this.defaultAction,this.target="function"==typeof e.target?e.target:this.defaultTarget,this.text="function"==typeof e.text?e.text:this.defaultText,this.container="object"===g(e.container)?e.container:document.body}},{key:"listenClick",value:function(e){var t=this
+this.listener=s()(e,"click",(function(e){return t.onClick(e)}))}},{key:"onClick",value:function(e){var t=e.delegateTarget||e.currentTarget,r=function(){var e=arguments.length>0&&void 0!==arguments[0]?arguments[0]:{},t=e.action,r=void 0===t?"copy":t,n=e.container,i=e.target,a=e.text
+if("copy"!==r&&"cut"!==r)throw new Error('Invalid "action" value, use either "copy" or "cut"')
+if(void 0!==i){if(!i||"object"!==h(i)||1!==i.nodeType)throw new Error('Invalid "target" value, use a valid Element')
+if("copy"===r&&i.hasAttribute("disabled"))throw new Error('Invalid "target" attribute. Please use "readonly" instead of "disabled" attribute')
+if("cut"===r&&(i.hasAttribute("readonly")||i.hasAttribute("disabled")))throw new Error('Invalid "target" attribute. You can\'t cut text from elements with "readonly" or "disabled" attributes')}return a?f(a,{container:n}):i?"cut"===r?c(i):f(i,{container:n}):void 0}({action:this.action(t),container:this.container,target:this.target(t),text:this.text(t)})
+this.emit(r?"success":"error",{action:this.action,text:r,trigger:t,clearSelection:function(){t&&t.focus(),document.activeElement.blur(),window.getSelection().removeAllRanges()}})}},{key:"defaultAction",value:function(e){return b("action",e)}},{key:"defaultTarget",value:function(e){var t=b("target",e)
+if(t)return document.querySelector(t)}},{key:"defaultText",value:function(e){return b("text",e)}},{key:"destroy",value:function(){this.listener.destroy()}}],n=[{key:"copy",value:function(e){var t=arguments.length>1&&void 0!==arguments[1]?arguments[1]:{container:document.body}
+return f(e,t)}},{key:"cut",value:function(e){return c(e)}},{key:"isSupported",value:function(){var e=arguments.length>0&&void 0!==arguments[0]?arguments[0]:["copy","cut"],t="string"==typeof e?[e]:e,r=!!document.queryCommandSupported
+return t.forEach((function(e){r=r&&!!document.queryCommandSupported(e)})),r}}],r&&p(t.prototype,r),n&&p(t,n),l}(i()),E=_},828:function(e){if("undefined"!=typeof Element&&!Element.prototype.matches){var t=Element.prototype
 t.matches=t.matchesSelector||t.mozMatchesSelector||t.msMatchesSelector||t.oMatchesSelector||t.webkitMatchesSelector}e.exports=function(e,t){for(;e&&9!==e.nodeType;){if("function"==typeof e.matches&&e.matches(t))return e
 e=e.parentNode}}},438:function(e,t,r){var n=r(828)
 function i(e,t,r,n,i){var s=a.apply(this,arguments)
@@ -65,7 +66,7 @@ return i.length?r[e]=i:delete r[e],this}},e.exports=t,e.exports.TinyEmitter=t}},
 function r(n){if(t[n])return t[n].exports
 var i=t[n]={exports:{}}
 return e[n](i,i.exports,r),i.exports}return r.n=function(e){var t=e&&e.__esModule?function(){return e.default}:function(){return e}
-return r.d(t,{a:t}),t},r.d=function(e,t){for(var n in t)r.o(t,n)&&!r.o(e,n)&&Object.defineProperty(e,n,{enumerable:!0,get:t[n]})},r.o=function(e,t){return Object.prototype.hasOwnProperty.call(e,t)},r(134)}().default},e.exports=t()},810:e=>{var t=1e3,r=60*t,n=60*r,i=24*n
+return r.d(t,{a:t}),t},r.d=function(e,t){for(var n in t)r.o(t,n)&&!r.o(e,n)&&Object.defineProperty(e,n,{enumerable:!0,get:t[n]})},r.o=function(e,t){return Object.prototype.hasOwnProperty.call(e,t)},r(686)}().default},e.exports=t()},810:e=>{var t=1e3,r=60*t,n=60*r,i=24*n
 function a(e,t,r,n){var i=t>=1.5*r
 return Math.round(e/r)+" "+n+(i?"s":"")}e.exports=function(e,s){s=s||{}
 var o,l,u=typeof e
@@ -112,7 +113,7 @@ for(r=0,n=t.skips.length;r<n;r++)if(t.skips[r].test(e))return!1
 for(r=0,n=t.names.length;r<n;r++)if(t.names[r].test(e))return!0
 return!1},t.humanize=r(810),t.destroy=function(){console.warn("Instance method `debug.destroy()` is deprecated and no longer does anything. It will be removed in the next major version of `debug`.")},Object.keys(e).forEach((r=>{t[r]=e[r]})),t.names=[],t.skips=[],t.formatters={},t.selectColor=function(e){let r=0
 for(let t=0;t<e.length;t++)r=(r<<5)-r+e.charCodeAt(t),r|=0
-return t.colors[Math.abs(r)%t.colors.length]},t.enable(t.load()),t}},739:(e,t,r)=>{const n=r(345),{defaults:i}=r(891),{inline:a}=r(769),{findClosingBracket:s,escape:o}=r(753)
+return t.colors[Math.abs(r)%t.colors.length]},t.enable(t.load()),t}},739:(e,t,r)=>{const n=r(387),{defaults:i}=r(891),{inline:a}=r(769),{findClosingBracket:s,escape:o}=r(753)
 e.exports=class e{constructor(e,t){if(this.options=t||i,this.links=e,this.rules=a.normal,this.options.renderer=this.options.renderer||new n,this.renderer=this.options.renderer,this.renderer.options=this.options,!this.links)throw new Error("Tokens array requires a `links` property.")
 this.options.pedantic?this.rules=a.pedantic:this.options.gfm&&(this.options.breaks?this.rules=a.breaks:this.rules=a.gfm)}static get rules(){return a}static output(t,r,n){return new e(r,n).output(t)}output(t){let r,n,i,a,l,u,c=""
 for(;t;)if(l=this.rules.escape.exec(t))t=t.substring(l[0].length),c+=o(l[1])
@@ -153,7 +154,7 @@ this.tokens.push(d)}else if(l=this.rules.lheading.exec(e))e=e.substring(l[0].len
 else if(t&&(l=this.rules.paragraph.exec(e)))e=e.substring(l[0].length),this.tokens.push({type:"paragraph",text:"\n"===l[1].charAt(l[1].length-1)?l[1].slice(0,-1):l[1]})
 else if(l=this.rules.text.exec(e))e=e.substring(l[0].length),this.tokens.push({type:"text",text:l[0]})
 else if(e)throw new Error("Infinite loop on byte: "+e.charCodeAt(0))
-return this.tokens}}},811:(e,t,r)=>{const n=r(345),i=r(651),a=r(739),s=r(585),{defaults:o}=r(891),{merge:l,unescape:u}=r(753)
+return this.tokens}}},811:(e,t,r)=>{const n=r(387),i=r(651),a=r(739),s=r(585),{defaults:o}=r(891),{merge:l,unescape:u}=r(753)
 e.exports=class e{constructor(e){this.tokens=[],this.token=null,this.options=e||o,this.options.renderer=this.options.renderer||new n,this.renderer=this.options.renderer,this.renderer.options=this.options,this.slugger=new i}static parse(t,r){return new e(r).parse(t)}parse(e){this.inline=new a(e.links,this.options),this.inlineText=new a(e.links,l({},this.options,{renderer:new s})),this.tokens=e.reverse()
 let t=""
 for(;this.next();)t+=this.tok()
@@ -183,7 +184,7 @@ case"paragraph":return this.renderer.paragraph(this.inline.output(this.token.tex
 case"text":return this.renderer.paragraph(this.parseText())
 default:{const e='Token with "'+this.token.type+'" type was not found.'
 if(!this.options.silent)throw new Error(e)
-console.log(e)}}}}},345:(e,t,r)=>{const{defaults:n}=r(891),{cleanUrl:i,escape:a}=r(753)
+console.log(e)}}}}},387:(e,t,r)=>{const{defaults:n}=r(891),{cleanUrl:i,escape:a}=r(753)
 e.exports=class{constructor(e){this.options=e||n}code(e,t,r){const n=(t||"").match(/\S*/)[0]
 if(this.options.highlight){const t=this.options.highlight(e,n)
 null!=t&&t!==e&&(r=!0,e=t)}return n?'<pre><code class="'+this.options.langPrefix+a(n,!0)+'">'+(r?e:a(e,!0))+"</code></pre>\n":"<pre><code>"+(r?e:a(e,!0))+"</code></pre>"}blockquote(e){return"<blockquote>\n"+e+"</blockquote>\n"}html(e){return e}heading(e,t,r,n){return this.options.headerIds?"<h"+t+' id="'+this.options.headerPrefix+n.slug(r)+'">'+e+"</h"+t+">\n":"<h"+t+">"+e+"</h"+t+">\n"}hr(){return this.options.xhtml?"<hr/>\n":"<hr>\n"}list(e,t,r){const n=t?"ol":"ul"
@@ -223,7 +224,7 @@ let n=0,i=0
 for(;i<r;i++)if("\\"===e[i])i++
 else if(e[i]===t[0])n++
 else if(e[i]===t[1]&&(n--,n<0))return i
-return-1},checkSanitizeDeprecation:function(e){e&&e.sanitize&&!e.silent&&console.warn("marked(): sanitize and sanitizer parameters are deprecated since version 0.7.0, should not be used and will be removed in the future. Read more here: https://marked.js.org/#/USING_ADVANCED.md#options")}}},859:(e,t,r)=>{const n=r(103),i=r(811),a=r(345),s=r(585),o=r(739),l=r(651),{merge:u,checkSanitizeDeprecation:c,escape:d}=r(753),{getDefaults:f,changeDefaults:h,defaults:g}=r(891)
+return-1},checkSanitizeDeprecation:function(e){e&&e.sanitize&&!e.silent&&console.warn("marked(): sanitize and sanitizer parameters are deprecated since version 0.7.0, should not be used and will be removed in the future. Read more here: https://marked.js.org/#/USING_ADVANCED.md#options")}}},859:(e,t,r)=>{const n=r(103),i=r(811),a=r(387),s=r(585),o=r(739),l=r(651),{merge:u,checkSanitizeDeprecation:c,escape:d}=r(753),{getDefaults:f,changeDefaults:h,defaults:g}=r(891)
 function p(e,t,r){if(null==e)throw new Error("marked(): input parameter is undefined or null")
 if("string"!=typeof e)throw new Error("marked(): input parameter is of type "+Object.prototype.toString.call(e)+", string expected")
 if(r||"function"==typeof t){r||(r=t,t=null),t=u({},p.defaults,t||{}),c(t)
@@ -953,7 +954,7 @@ for(var r=0,n=new Array(t);r<t;r++)n[r]=e[r]
 return n}function d(){return d=Object.assign||function(e){for(var t=1;t<arguments.length;t++){var r=arguments[t]
 for(var n in r)Object.prototype.hasOwnProperty.call(r,n)&&(e[n]=r[n])}return e},d.apply(this,arguments)}var f=function(){function e(t){var r=this
 this.hls=void 0,this.config=void 0,this.media=void 0,this.sid=void 0,this.cid=void 0,this.useHeaders=!1,this.initialized=!1,this.starved=!1,this.buffering=!0,this.audioBuffer=void 0,this.videoBuffer=void 0,this.onWaiting=function(){r.initialized&&(r.starved=!0),r.buffering=!0},this.onPlaying=function(){r.initialized||(r.initialized=!0),r.buffering=!1},this.applyPlaylistData=function(e){try{r.apply(e,{ot:i.CMCDObjectType.MANIFEST,su:!r.initialized})}catch(e){s.logger.warn("Could not generate manifest CMCD data.",e)}},this.applyFragmentData=function(e){try{var t=e.frag,n=r.hls.levels[t.level],a=r.getObjectType(t),o={d:1e3*t.duration,ot:a}
-a!==i.CMCDObjectType.VIDEO&&a!==i.CMCDObjectType.AUDIO&&a!=i.CMCDObjectType.MUXED||(o.br=n.bitrate/1e3,o.tb=r.getTopBandwidth(a),o.bl=r.getBufferLength(a)),r.apply(e,o)}catch(e){s.logger.warn("Could not generate segment CMCD data.",e)}},this.hls=t
+a!==i.CMCDObjectType.VIDEO&&a!==i.CMCDObjectType.AUDIO&&a!=i.CMCDObjectType.MUXED||(o.br=n.bitrate/1e3,o.tb=r.getTopBandwidth(a)/1e3,o.bl=r.getBufferLength(a)),r.apply(e,o)}catch(e){s.logger.warn("Could not generate segment CMCD data.",e)}},this.hls=t
 var n=this.config=t.config,a=n.cmcd
 null!=a&&(n.pLoader=this.createPlaylistLoader(),n.fLoader=this.createFragmentLoader(),this.sid=a.sessionId||e.uuid(),this.cid=a.contentId,this.useHeaders=!0===a.useHeaders,this.registerListeners())}var t=e.prototype
 return t.registerListeners=function(){var e=this.hls
@@ -967,8 +968,11 @@ if(!Object.keys(a).length)return
 t.headers||(t.headers={}),d(t.headers,a)}else{var s=e.toQuery(r)
 if(!s)return
 t.url=e.appendQueryToUri(t.url,s)}},t.getObjectType=function(e){var t=e.type
-return"subtitle"===t?i.CMCDObjectType.TIMED_TEXT:"initSegment"===e.sn?i.CMCDObjectType.INIT:"audio"===t?i.CMCDObjectType.AUDIO:"main"===t?this.hls.audioTracks.length?i.CMCDObjectType.VIDEO:i.CMCDObjectType.MUXED:void 0},t.getTopBandwidth=function(e){for(var t,r=0,n=u(e===i.CMCDObjectType.AUDIO?this.hls.audioTracks:this.hls.levels);!(t=n()).done;){var a=t.value
-a.bitrate>r&&(r=a.bitrate)}return r>0?r:NaN},t.getBufferLength=function(e){var t=this.hls.media,r=e===i.CMCDObjectType.AUDIO?this.audioBuffer:this.videoBuffer
+return"subtitle"===t?i.CMCDObjectType.TIMED_TEXT:"initSegment"===e.sn?i.CMCDObjectType.INIT:"audio"===t?i.CMCDObjectType.AUDIO:"main"===t?this.hls.audioTracks.length?i.CMCDObjectType.VIDEO:i.CMCDObjectType.MUXED:void 0},t.getTopBandwidth=function(e){var t,r=0,n=this.hls
+if(e===i.CMCDObjectType.AUDIO)t=n.audioTracks
+else{var a=n.maxAutoLevel,s=a>-1?a+1:n.levels.length
+t=n.levels.slice(0,s)}for(var o,l=u(t);!(o=l()).done;){var c=o.value
+c.bitrate>r&&(r=c.bitrate)}return r>0?r:NaN},t.getBufferLength=function(e){var t=this.hls.media,r=e===i.CMCDObjectType.AUDIO?this.audioBuffer:this.videoBuffer
 return r&&t?1e3*a.BufferHelper.bufferInfo(r,t.currentTime,this.config.maxBufferHole).len:NaN},t.createPlaylistLoader=function(){var e=this.config.pLoader,t=this.applyPlaylistData,r=e||this.config.loader
 return function(){function e(e){this.loader=void 0,this.loader=new r(e)}var n=e.prototype
 return n.destroy=function(){this.loader.destroy()},n.abort=function(){this.loader.abort()},n.load=function(e,r,n){t(e),this.loader.load(e,r,n)},l(e,[{key:"stats",get:function(){return this.loader.stats}},{key:"context",get:function(){return this.loader.context}}]),e}()},t.createFragmentLoader=function(){var e=this.config.fLoader,t=this.applyFragmentData,r=e||this.config.loader
@@ -1247,8 +1251,8 @@ return e.fragmentHint&&l(y[y.length-1],e.fragmentHint),e.PTSKnown=e.alignedSlidi
 if(o){r=o
 break}}e.fragmentHint&&delete e.fragmentHint.endPTS
 var l,c=0
-if(f(e,t,(function(e,i){var a
-e.relurl&&(c=e.cc-i.cc),Object(n.isFiniteNumber)(e.startPTS)&&Object(n.isFiniteNumber)(e.endPTS)&&(i.start=i.startPTS=e.startPTS,i.startDTS=e.startDTS,i.appendedPTS=e.appendedPTS,i.maxStartPTS=e.maxStartPTS,i.endPTS=e.endPTS,i.endDTS=e.endDTS,i.minEndPTS=e.minEndPTS,i.duration=e.endPTS-e.startPTS,i.duration&&(l=i),t.PTSKnown=t.alignedSliding=!0),i.elementaryStreams=e.elementaryStreams,i.loader=e.loader,i.stats=e.stats,i.urlId=e.urlId,e.initSegment?(i.initSegment=e.initSegment,r=e.initSegment):i.initSegment&&i.initSegment.relurl!=(null===(a=r)||void 0===a?void 0:a.relurl)||(i.initSegment=r)})),t.skippedSegments&&(t.deltaUpdateFailed=t.fragments.some((function(e){return!e})),t.deltaUpdateFailed)){i.logger.warn("[level-helper] Previous playlist missing segments skipped in delta playlist")
+if(f(e,t,(function(e,i){e.relurl&&(c=e.cc-i.cc),Object(n.isFiniteNumber)(e.startPTS)&&Object(n.isFiniteNumber)(e.endPTS)&&(i.start=i.startPTS=e.startPTS,i.startDTS=e.startDTS,i.appendedPTS=e.appendedPTS,i.maxStartPTS=e.maxStartPTS,i.endPTS=e.endPTS,i.endDTS=e.endDTS,i.minEndPTS=e.minEndPTS,i.duration=e.endPTS-e.startPTS,i.duration&&(l=i),t.PTSKnown=t.alignedSliding=!0),i.elementaryStreams=e.elementaryStreams,i.loader=e.loader,i.stats=e.stats,i.urlId=e.urlId,e.initSegment&&(i.initSegment=e.initSegment,r=e.initSegment)})),r&&(t.fragmentHint?t.fragments.concat(t.fragmentHint):t.fragments).forEach((function(e){var t
+e.initSegment&&e.initSegment.relurl!==(null===(t=r)||void 0===t?void 0:t.relurl)||(e.initSegment=r)})),t.skippedSegments&&(t.deltaUpdateFailed=t.fragments.some((function(e){return!e})),t.deltaUpdateFailed)){i.logger.warn("[level-helper] Previous playlist missing segments skipped in delta playlist")
 for(var g=t.skippedSegments;g--;)t.fragments.shift()
 t.startSN=t.fragments[0].sn,t.startCC=t.fragments[0].cc}var p=t.fragments
 if(c){i.logger.warn("discontinuity sliding from playlist, take drift into account")
@@ -1404,7 +1408,7 @@ else{if(!(e[t].start<s))break
 e[t].start=s,t++}})),this.fragmentTracker.removeFragmentsInRange(r,s,d.PlaylistLevelType.SUBTITLE)}},v.onError=function(e,t){var r,n=t.frag
 n&&n.type===d.PlaylistLevelType.SUBTITLE&&(null!==(r=this.fragCurrent)&&void 0!==r&&r.loader&&this.fragCurrent.loader.abort(),this.state=c.State.IDLE)},v.onSubtitleTracksUpdated=function(e,t){var r=this,n=t.subtitleTracks
 this.tracksBuffered=[],this.levels=n.map((function(e){return new f.Level(e)})),this.fragmentTracker.removeAllFragments(),this.fragPrevious=null,this.levels.forEach((function(e){r.tracksBuffered[e.id]=[]})),this.mediaBuffer=null},v.onSubtitleTrackSwitch=function(e,t){if(this.currentTrackId=t.id,this.levels.length&&-1!==this.currentTrackId){var r=this.levels[this.currentTrackId]
-null!=r&&r.details?(this.mediaBuffer=this.mediaBufferTimeRanges,this.setInterval(500)):this.mediaBuffer=null}else this.clearInterval()},v.onSubtitleTrackLoaded=function(e,t){var r,n=t.details,i=t.id,a=this.currentTrackId,u=this.levels
+null!=r&&r.details?this.mediaBuffer=this.mediaBufferTimeRanges:this.mediaBuffer=null,r&&this.setInterval(500)}else this.clearInterval()},v.onSubtitleTrackLoaded=function(e,t){var r,n=t.details,i=t.id,a=this.currentTrackId,u=this.levels
 if(u.length){var d=u[a]
 if(!(i>=u.length||i!==a)&&d){if(this.mediaBuffer=this.mediaBufferTimeRanges,n.live||null!==(r=d.details)&&void 0!==r&&r.live){var f=this.mainDetails
 if(n.deltaUpdateFailed||!f)return
@@ -1419,7 +1423,7 @@ if(h.len>this.getMaxBufferLength()+l)return
 console.assert(o,"Subtitle track details are defined on idle subtitle stream controller tick")
 var p,v=o.fragments,m=v.length,y=o.edge,b=this.fragPrevious
 if(g<y){var _=d.maxFragLookUpTolerance
-b&&o.hasProgramDateTime&&(p=Object(s.findFragmentByPDT)(v,b.endProgramDateTime,_)),p||!(p=Object(s.findFragmentByPTS)(b,v,g,_))&&b&&b.start<v[0].start&&(p=v[0])}else p=v[m-1]
+!(p=Object(s.findFragmentByPTS)(b,v,g,_))&&b&&b.start<v[0].start&&(p=v[0])}else p=v[m-1]
 null!==(e=p)&&void 0!==e&&e.encrypted?(i.logger.log("Loading key for "+p.sn),this.state=c.State.KEY_LOADING,this.hls.trigger(n.Events.KEY_LOADING,{frag:p})):p&&this.fragmentTracker.getState(p)===u.FragmentState.NOT_LOADED&&this.loadFragment(p,o,g)}}else this.state=c.State.IDLE},v.loadFragment=function(t,r,n){this.fragCurrent=t,e.prototype.loadFragment.call(this,t,r,n)},(p=[{key:"mediaBufferTimeRanges",get:function(){return this.tracksBuffered[this.currentTrackId]||[]}}])&&function(e,t){for(var r=0;r<t.length;r++){var n=t[r]
 n.enumerable=n.enumerable||!1,n.configurable=!0,"value"in n&&(n.writable=!0),Object.defineProperty(e,n.key,n)}}(g.prototype,p),g}(c.default)},"./src/controller/subtitle-track-controller.ts":function(e,t,r){"use strict"
 r.r(t)
@@ -1462,7 +1466,7 @@ n.enumerable=n.enumerable||!1,n.configurable=!0,"value"in n&&(n.writable=!0),Obj
 function u(e){for(var t=[],r=0;r<e.length;r++){var n=e[r]
 "subtitles"===n.kind&&n.label&&t.push(e[r])}return t}t.default=l},"./src/controller/timeline-controller.ts":function(e,t,r){"use strict"
 r.r(t),r.d(t,"TimelineController",(function(){return f}))
-var n=r("./src/polyfills/number.ts"),i=r("./src/events.ts"),a=r("./src/utils/cea-608-parser.ts"),s=r("./src/utils/output-filter.ts"),o=r("./src/utils/webvtt-parser.ts"),l=r("./src/utils/texttrack-utils.ts"),u=r("./src/utils/imsc1-ttml-parser.ts"),c=r("./src/types/loader.ts"),d=r("./src/utils/logger.ts"),f=function(){function e(e){if(this.hls=void 0,this.media=null,this.config=void 0,this.enabled=!0,this.Cues=void 0,this.textTracks=[],this.tracks=[],this.initPTS=[],this.timescale=[],this.unparsedVttFrags=[],this.captionsTracks={},this.nonNativeCaptionsTracks={},this.cea608Parser1=void 0,this.cea608Parser2=void 0,this.lastSn=-1,this.prevCC=-1,this.vttCCs={ccOffset:0,presentationOffset:0,0:{start:0,prevCC:-1,new:!1}},this.captionsProperties=void 0,this.hls=e,this.config=e.config,this.Cues=e.config.cueHandler,this.captionsProperties={textTrack1:{label:this.config.captionsTextTrack1Label,languageCode:this.config.captionsTextTrack1LanguageCode},textTrack2:{label:this.config.captionsTextTrack2Label,languageCode:this.config.captionsTextTrack2LanguageCode},textTrack3:{label:this.config.captionsTextTrack3Label,languageCode:this.config.captionsTextTrack3LanguageCode},textTrack4:{label:this.config.captionsTextTrack4Label,languageCode:this.config.captionsTextTrack4LanguageCode}},this.config.enableCEA708Captions){var t=new s.default(this,"textTrack1"),r=new s.default(this,"textTrack2"),n=new s.default(this,"textTrack3"),o=new s.default(this,"textTrack4")
+var n=r("./src/polyfills/number.ts"),i=r("./src/events.ts"),a=r("./src/utils/cea-608-parser.ts"),s=r("./src/utils/output-filter.ts"),o=r("./src/utils/webvtt-parser.ts"),l=r("./src/utils/texttrack-utils.ts"),u=r("./src/utils/imsc1-ttml-parser.ts"),c=r("./src/types/loader.ts"),d=r("./src/utils/logger.ts"),f=function(){function e(e){if(this.hls=void 0,this.media=null,this.config=void 0,this.enabled=!0,this.Cues=void 0,this.textTracks=[],this.tracks=[],this.initPTS=[],this.timescale=[],this.unparsedVttFrags=[],this.captionsTracks={},this.nonNativeCaptionsTracks={},this.cea608Parser1=void 0,this.cea608Parser2=void 0,this.lastSn=-1,this.lastPartIndex=-1,this.prevCC=-1,this.vttCCs={ccOffset:0,presentationOffset:0,0:{start:0,prevCC:-1,new:!1}},this.captionsProperties=void 0,this.hls=e,this.config=e.config,this.Cues=e.config.cueHandler,this.captionsProperties={textTrack1:{label:this.config.captionsTextTrack1Label,languageCode:this.config.captionsTextTrack1LanguageCode},textTrack2:{label:this.config.captionsTextTrack2Label,languageCode:this.config.captionsTextTrack2LanguageCode},textTrack3:{label:this.config.captionsTextTrack3Label,languageCode:this.config.captionsTextTrack3LanguageCode},textTrack4:{label:this.config.captionsTextTrack4Label,languageCode:this.config.captionsTextTrack4LanguageCode}},this.config.enableCEA708Captions){var t=new s.default(this,"textTrack1"),r=new s.default(this,"textTrack2"),n=new s.default(this,"textTrack3"),o=new s.default(this,"textTrack4")
 this.cea608Parser1=new a.default(1,t,r),this.cea608Parser2=new a.default(3,n,o)}e.on(i.Events.MEDIA_ATTACHING,this.onMediaAttaching,this),e.on(i.Events.MEDIA_DETACHING,this.onMediaDetaching,this),e.on(i.Events.MANIFEST_LOADING,this.onManifestLoading,this),e.on(i.Events.MANIFEST_LOADED,this.onManifestLoaded,this),e.on(i.Events.SUBTITLE_TRACKS_UPDATED,this.onSubtitleTracksUpdated,this),e.on(i.Events.FRAG_LOADING,this.onFragLoading,this),e.on(i.Events.FRAG_LOADED,this.onFragLoaded,this),e.on(i.Events.FRAG_PARSING_USERDATA,this.onFragParsingUserdata,this),e.on(i.Events.FRAG_DECRYPTED,this.onFragDecrypted,this),e.on(i.Events.INIT_PTS_FOUND,this.onInitPtsFound,this),e.on(i.Events.SUBTITLE_TRACKS_CLEARED,this.onSubtitleTracksCleared,this),e.on(i.Events.BUFFER_FLUSHING,this.onBufferFlushing,this)}var t=e.prototype
 return t.destroy=function(){var e=this.hls
 e.off(i.Events.MEDIA_ATTACHING,this.onMediaAttaching,this),e.off(i.Events.MEDIA_DETACHING,this.onMediaDetaching,this),e.off(i.Events.MANIFEST_LOADING,this.onManifestLoading,this),e.off(i.Events.MANIFEST_LOADED,this.onManifestLoaded,this),e.off(i.Events.SUBTITLE_TRACKS_UPDATED,this.onSubtitleTracksUpdated,this),e.off(i.Events.FRAG_LOADING,this.onFragLoading,this),e.off(i.Events.FRAG_LOADED,this.onFragLoaded,this),e.off(i.Events.FRAG_PARSING_USERDATA,this.onFragParsingUserdata,this),e.off(i.Events.FRAG_DECRYPTED,this.onFragDecrypted,this),e.off(i.Events.INIT_PTS_FOUND,this.onInitPtsFound,this),e.off(i.Events.SUBTITLE_TRACKS_CLEARED,this.onSubtitleTracksCleared,this),e.off(i.Events.BUFFER_FLUSHING,this.onBufferFlushing,this),this.hls=this.config=this.cea608Parser1=this.cea608Parser2=null},t.addCues=function(e,t,r,n,a){for(var s,o,l,u,c=!1,d=a.length;d--;){var f=a[d],h=(s=f[0],o=f[1],l=t,u=r,Math.min(o,u)-Math.max(s,l))
@@ -1478,7 +1482,7 @@ u&&(u[e]=!0,r[e]=u)}}},t.createNonNativeTrack=function(e){if(!this.nonNativeCapt
 if(t){var r={_id:e,label:t.label,kind:"captions",default:!!t.media&&!!t.media.default,closedCaptions:t.media}
 this.nonNativeCaptionsTracks[e]=r,this.hls.trigger(i.Events.NON_NATIVE_TEXT_TRACKS_FOUND,{tracks:[r]})}}},t.createTextTrack=function(e,t,r){var n=this.media
 if(n)return n.addTextTrack(e,t,r)},t.onMediaAttaching=function(e,t){this.media=t.media,this._cleanTracks()},t.onMediaDetaching=function(){var e=this.captionsTracks
-Object.keys(e).forEach((function(t){Object(l.clearCurrentCues)(e[t]),delete e[t]})),this.nonNativeCaptionsTracks={}},t.onManifestLoading=function(){this.lastSn=-1,this.prevCC=-1,this.vttCCs={ccOffset:0,presentationOffset:0,0:{start:0,prevCC:-1,new:!1}},this._cleanTracks(),this.tracks=[],this.captionsTracks={},this.nonNativeCaptionsTracks={},this.textTracks=[],this.unparsedVttFrags=this.unparsedVttFrags||[],this.initPTS=[],this.timescale=[],this.cea608Parser1&&this.cea608Parser2&&(this.cea608Parser1.reset(),this.cea608Parser2.reset())},t._cleanTracks=function(){var e=this.media
+Object.keys(e).forEach((function(t){Object(l.clearCurrentCues)(e[t]),delete e[t]})),this.nonNativeCaptionsTracks={}},t.onManifestLoading=function(){this.lastSn=-1,this.lastPartIndex=-1,this.prevCC=-1,this.vttCCs={ccOffset:0,presentationOffset:0,0:{start:0,prevCC:-1,new:!1}},this._cleanTracks(),this.tracks=[],this.captionsTracks={},this.nonNativeCaptionsTracks={},this.textTracks=[],this.unparsedVttFrags=this.unparsedVttFrags||[],this.initPTS=[],this.timescale=[],this.cea608Parser1&&this.cea608Parser2&&(this.cea608Parser1.reset(),this.cea608Parser2.reset())},t._cleanTracks=function(){var e=this.media
 if(e){var t=e.textTracks
 if(t)for(var r=0;r<t.length;r++)Object(l.clearCurrentCues)(t[r])}},t.onSubtitleTracksUpdated=function(e,t){var r=this
 this.textTracks=[]
@@ -1491,9 +1495,9 @@ break}i&&(n=i)}n?Object(l.clearCurrentCues)(n):(n=r.createTextTrack("subtitles",
 this.hls.trigger(i.Events.NON_NATIVE_TEXT_TRACKS_FOUND,{tracks:c})}}},t.onManifestLoaded=function(e,t){var r=this
 this.config.enableCEA708Captions&&t.captions&&t.captions.forEach((function(e){var t=/(?:CC|SERVICE)([1-4])/.exec(e.instreamId)
 if(t){var n="textTrack"+t[1],i=r.captionsProperties[n]
-i&&(i.label=e.name,e.lang&&(i.languageCode=e.lang),i.media=e)}}))},t.onFragLoading=function(e,t){var r=this.cea608Parser1,n=this.cea608Parser2,i=this.lastSn
-if(this.enabled&&r&&n&&t.frag.type===c.PlaylistLevelType.MAIN){var a=t.frag.sn
-a!==i+1&&(r.reset(),n.reset()),this.lastSn=a}},t.onFragLoaded=function(e,t){var r=t.frag,a=t.payload,s=this.initPTS,o=this.unparsedVttFrags
+i&&(i.label=e.name,e.lang&&(i.languageCode=e.lang),i.media=e)}}))},t.onFragLoading=function(e,t){var r=this.cea608Parser1,n=this.cea608Parser2,i=this.lastSn,a=this.lastPartIndex
+if(this.enabled&&r&&n&&t.frag.type===c.PlaylistLevelType.MAIN){var s,o,l=t.frag.sn,u=null!=(s=null==t||null===(o=t.part)||void 0===o?void 0:o.index)?s:-1
+l===i+1||l===i&&u===a+1||(r.reset(),n.reset()),this.lastSn=l,this.lastPartIndex=u}},t.onFragLoaded=function(e,t){var r=t.frag,a=t.payload,s=this.initPTS,o=this.unparsedVttFrags
 if(r.type===c.PlaylistLevelType.SUBTITLE)if(a.byteLength){if(!Object(n.isFiniteNumber)(s[r.cc]))return o.push(t),void(s.length&&this.hls.trigger(i.Events.SUBTITLE_FRAG_PROCESSED,{success:!1,frag:r,error:new Error("Missing initial subtitle PTS")}))
 var l=r.decryptdata
 if(null==l||null==l.key||"AES-128"!==l.method){var d=this.tracks[r.level],f=this.vttCCs
@@ -1562,7 +1566,7 @@ function o(e,t){return o=Object.setPrototypeOf||function(e,t){return e.__proto__
 function n(t,r){var n
 return(n=e.call(this)||this).observer=void 0,n.config=void 0,n.observer=t,n.config=r,n}r=e,(t=n).prototype=Object.create(r.prototype),t.prototype.constructor=t,o(t,r)
 var l=n.prototype
-return l.resetInitSegment=function(t,r,n){e.prototype.resetInitSegment.call(this,t,r,n),this._audioTrack={container:"audio/adts",type:"audio",id:0,pid:-1,sequenceNumber:0,isAAC:!0,samples:[],manifestCodec:t,duration:n,inputTimeScale:9e4,dropped:0}},n.probe=function(e){if(!e)return!1
+return l.resetInitSegment=function(t,r,n){e.prototype.resetInitSegment.call(this,t,r,n),this._audioTrack={container:"audio/adts",type:"audio",id:2,pid:-1,sequenceNumber:0,isAAC:!0,samples:[],manifestCodec:t,duration:n,inputTimeScale:9e4,dropped:0}},n.probe=function(e){if(!e)return!1
 for(var t=(s.getID3Data(e,0)||[]).length,r=e.length;t<r;t++)if(i.probe(e,t))return a.logger.log("ADTS sync word found !"),!0
 return!1},l.canParse=function(e,t){return i.canParse(e,t)},l.appendFrame=function(e,t,r){i.initTrackConfig(e,this.observer,t,r,e.manifestCodec)
 var n=i.appendFrame(e,t,r,this.initPTS,this.frameIndex)
@@ -1589,7 +1593,7 @@ var f={unit:s,pts:u}
 return d||e.samples.push(f),{sample:f,length:c,missing:d}}}},"./src/demux/base-audio-demuxer.ts":function(e,t,r){"use strict"
 r.r(t),r.d(t,"initPTSFn",(function(){return u}))
 var n=r("./src/polyfills/number.ts"),i=r("./src/demux/id3.ts"),a=r("./src/demux/dummy-demuxed-track.ts"),s=r("./src/utils/mp4-tools.ts"),o=r("./src/utils/typed-array.ts"),l=function(){function e(){this._audioTrack=void 0,this._id3Track=void 0,this.frameIndex=0,this.cachedData=null,this.initPTS=null}var t=e.prototype
-return t.resetInitSegment=function(e,t,r){this._id3Track={type:"id3",id:0,pid:-1,inputTimeScale:9e4,sequenceNumber:0,samples:[],dropped:0}},t.resetTimeStamp=function(){},t.resetContiguity=function(){},t.canParse=function(e,t){return!1},t.appendFrame=function(e,t,r){},t.demux=function(e,t){this.cachedData&&(e=Object(s.appendUint8Array)(this.cachedData,e),this.cachedData=null)
+return t.resetInitSegment=function(e,t,r){this._id3Track={type:"id3",id:3,pid:-1,inputTimeScale:9e4,sequenceNumber:0,samples:[],dropped:0}},t.resetTimeStamp=function(){},t.resetContiguity=function(){},t.canParse=function(e,t){return!1},t.appendFrame=function(e,t,r){},t.demux=function(e,t){this.cachedData&&(e=Object(s.appendUint8Array)(this.cachedData,e),this.cachedData=null)
 var r,n,l=i.getID3Data(e,0),c=l?l.length:0,d=this._audioTrack,f=this._id3Track,h=l?i.getTimeStamp(l):void 0,g=e.length
 for(0!==this.frameIndex&&null!==this.initPTS||(this.initPTS=u(h,t)),l&&l.length>0&&f.samples.push({pts:this.initPTS,dts:this.initPTS,data:l}),n=this.initPTS;c<g;){if(this.canParse(e,c)){var p=this.appendFrame(d,e,c)
 p?(this.frameIndex++,n=p.sample.pts,r=c+=p.length):c=g}else i.canParse(e,c)?(l=i.getID3Data(e,c),f.samples.push({pts:n,dts:n,data:l}),r=c+=l.length):c++
@@ -1692,7 +1696,7 @@ var n=r("./src/demux/base-audio-demuxer.ts"),i=r("./src/demux/id3.ts"),a=r("./sr
 function o(e,t){return o=Object.setPrototypeOf||function(e,t){return e.__proto__=t,e},o(e,t)}var l=function(e){var t,r
 function n(){return e.apply(this,arguments)||this}r=e,(t=n).prototype=Object.create(r.prototype),t.prototype.constructor=t,o(t,r)
 var l=n.prototype
-return l.resetInitSegment=function(t,r,n){e.prototype.resetInitSegment.call(this,t,r,n),this._audioTrack={container:"audio/mpeg",type:"audio",id:0,pid:-1,sequenceNumber:0,isAAC:!1,samples:[],manifestCodec:t,duration:n,inputTimeScale:9e4,dropped:0}},n.probe=function(e){if(!e)return!1
+return l.resetInitSegment=function(t,r,n){e.prototype.resetInitSegment.call(this,t,r,n),this._audioTrack={container:"audio/mpeg",type:"audio",id:2,pid:-1,sequenceNumber:0,isAAC:!1,samples:[],manifestCodec:t,duration:n,inputTimeScale:9e4,dropped:0}},n.probe=function(e){if(!e)return!1
 for(var t=(i.getID3Data(e,0)||[]).length,r=e.length;t<r;t++)if(s.probe(e,t))return a.logger.log("MPEG Audio sync word found !"),!0
 return!1},l.canParse=function(e,t){return s.canParse(e,t)},l.appendFrame=function(e,t,r){if(null!==this.initPTS)return s.appendFrame(e,t,r,this.initPTS,this.frameIndex)},n}(n.default)
 l.minProbeByteLength=4,t.default=l},"./src/demux/mp4demuxer.ts":function(e,t,r){"use strict"
@@ -1722,8 +1726,8 @@ return t.decryptBuffer=function(e,t){this.decrypter.decrypt(e,this.keyData.key.b
 this.decryptBuffer(s,(function(a){var s=new Uint8Array(a)
 i.set(s,16),n||o.decryptAacSamples(e,t+1,r)}))},t.decryptAacSamples=function(e,t,r){for(;;t++){if(t>=e.length)return void r()
 if(!(e[t].unit.length<32)){var n=this.decrypter.isSync()
-if(this.decryptAacSample(e,t,r,n),!n)return}}},t.getAvcEncryptedData=function(e){for(var t=16*Math.floor((e.length-48)/160)+16,r=new Int8Array(t),n=0,i=32;i<=e.length-16;i+=160,n+=16)r.set(e.subarray(i,i+16),n)
-return r},t.getAvcDecryptedUnit=function(e,t){for(var r=new Uint8Array(t),n=0,i=32;i<=e.length-16;i+=160,n+=16)e.set(r.subarray(n,n+16),i)
+if(this.decryptAacSample(e,t,r,n),!n)return}}},t.getAvcEncryptedData=function(e){for(var t=16*Math.floor((e.length-48)/160)+16,r=new Int8Array(t),n=0,i=32;i<e.length-16;i+=160,n+=16)r.set(e.subarray(i,i+16),n)
+return r},t.getAvcDecryptedUnit=function(e,t){for(var r=new Uint8Array(t),n=0,i=32;i<e.length-16;i+=160,n+=16)e.set(r.subarray(n,n+16),i)
 return e},t.decryptAvcSample=function(e,t,r,n,a,s){var o=Object(i.discardEPB)(a.data),l=this.getAvcEncryptedData(o),u=this
 this.decryptBuffer(l.buffer,(function(i){a.data=u.getAvcDecryptedUnit(o,i),s||u.decryptAvcSamples(e,t,r+1,n)}))},t.decryptAvcSamples=function(e,t,r,n){if(e instanceof Uint8Array)throw new Error("Cannot decrypt samples of type Uint8Array")
 for(;;t++,r=0){if(t>=e.length)return void n()
@@ -1744,15 +1748,15 @@ return t.destroy=function(){var e=this.worker
 if(e)e.removeEventListener("message",this.onwmsg),e.terminate(),this.worker=null
 else{var t=this.transmuxer
 t&&(t.destroy(),this.transmuxer=null)}var r=this.observer
-r&&r.removeAllListeners(),this.observer=null},t.push=function(e,t,r,n,i,o,l,u,c,d){var f=this
+r&&r.removeAllListeners(),this.observer=null},t.push=function(e,t,r,n,i,o,l,u,c,d){var f,h,g=this
 c.transmuxing.start=self.performance.now()
-var h=this.transmuxer,g=this.worker,p=o?o.start:i.start,v=i.decryptdata,m=this.frag,y=!(m&&i.cc===m.cc),b=!(m&&c.level===m.level),_=m?c.sn-m.sn:-1,E=this.part?c.part-this.part.index:1,T=!b&&(1===_||0===_&&1===E),w=self.performance.now();(b||_||0===i.stats.parsing.start)&&(i.stats.parsing.start=w),!o||!E&&T||(o.stats.parsing.start=w)
-var S=new a.TransmuxState(y,T,u,b,p)
-if(!T||y){s.logger.log("[transmuxer-interface, "+i.type+"]: Starting new transmux session for sn: "+c.sn+" p: "+c.part+" level: "+c.level+" id: "+c.id+"\n        discontinuity: "+y+"\n        trackSwitch: "+b+"\n        contiguous: "+T+"\n        accurateTimeOffset: "+u+"\n        timeOffset: "+p)
-var A=new a.TransmuxConfig(r,n,t,l,d)
-this.configureTransmuxer(A)}if(this.frag=i,this.part=o,g)g.postMessage({cmd:"demux",data:e,decryptdata:v,chunkMeta:c,state:S},e instanceof ArrayBuffer?[e]:[])
-else if(h){var k=h.push(e,v,c,S)
-Object(a.isPromise)(k)?k.then((function(e){f.handleTransmuxComplete(e)})):this.handleTransmuxComplete(k)}},t.flush=function(e){var t=this
+var p=this.transmuxer,v=this.worker,m=o?o.start:i.start,y=i.decryptdata,b=this.frag,_=!(b&&i.cc===b.cc),E=!(b&&c.level===b.level),T=b?c.sn-b.sn:-1,w=this.part?c.part-this.part.index:1,S=!E&&(1===T||0===T&&1===w),A=self.performance.now();(E||T||0===i.stats.parsing.start)&&(i.stats.parsing.start=A),!o||!w&&S||(o.stats.parsing.start=A)
+var k=!(b&&(null===(f=i.initSegment)||void 0===f?void 0:f.url)===(null===(h=b.initSegment)||void 0===h?void 0:h.url)),x=new a.TransmuxState(_,S,u,E,m,k)
+if(!S||_||k){s.logger.log("[transmuxer-interface, "+i.type+"]: Starting new transmux session for sn: "+c.sn+" p: "+c.part+" level: "+c.level+" id: "+c.id+"\n        discontinuity: "+_+"\n        trackSwitch: "+E+"\n        contiguous: "+S+"\n        accurateTimeOffset: "+u+"\n        timeOffset: "+m+"\n        initSegmentChange: "+k)
+var L=new a.TransmuxConfig(r,n,t,l,d)
+this.configureTransmuxer(L)}if(this.frag=i,this.part=o,v)v.postMessage({cmd:"demux",data:e,decryptdata:y,chunkMeta:c,state:x},e instanceof ArrayBuffer?[e]:[])
+else if(p){var R=p.push(e,y,c,x)
+Object(a.isPromise)(R)?R.then((function(e){g.handleTransmuxComplete(e)})):this.handleTransmuxComplete(R)}},t.flush=function(e){var t=this
 e.transmuxing.start=self.performance.now()
 var r=this.transmuxer,n=this.worker
 if(n)n.postMessage({cmd:"flush",chunkMeta:e})
@@ -1799,10 +1803,10 @@ if(!u.enableSoftwareAES)return this.decryptionPromise=h.webCryptoDecrypt(o,f.key
 return a.decryptionPromise=null,t})),this.decryptionPromise
 var p=h.softwareDecrypt(o,f.key.buffer,f.iv.buffer)
 if(!p)return s.executeEnd=n(),b(r)
-o=new Uint8Array(p)}var v=i||c,m=v.contiguous,y=v.discontinuity,_=v.trackSwitch,E=v.accurateTimeOffset,T=v.timeOffset,w=d.audioCodec,S=d.videoCodec,A=d.defaultInitPts,k=d.duration,x=d.initSegmentData
-if((y||_)&&this.resetInitSegment(x,w,S,k),y&&this.resetInitialTimestamp(A),m||this.resetContiguity(),this.needsProbing(o,y,_)){if(l.dataLength){var L=l.flush()
-o=Object(g.appendUint8Array)(L,o)}this.configureTransmuxer(o,d)}var R=this.transmux(o,f,T,E,r),D=this.currentTransmuxState
-return D.contiguous=!0,D.discontinuity=!1,D.trackSwitch=!1,s.executeEnd=n(),R},t.flush=function(e){var t=this,r=e.transmuxing
+o=new Uint8Array(p)}var v=i||c,m=v.contiguous,y=v.discontinuity,_=v.trackSwitch,E=v.accurateTimeOffset,T=v.timeOffset,w=v.initSegmentChange,S=d.audioCodec,A=d.videoCodec,k=d.defaultInitPts,x=d.duration,L=d.initSegmentData
+if((y||_||w)&&this.resetInitSegment(L,S,A,x),(y||w)&&this.resetInitialTimestamp(k),m||this.resetContiguity(),this.needsProbing(o,y,_)){if(l.dataLength){var R=l.flush()
+o=Object(g.appendUint8Array)(R,o)}this.configureTransmuxer(o,d)}var D=this.transmux(o,f,T,E,r),C=this.currentTransmuxState
+return C.contiguous=!0,C.discontinuity=!1,C.trackSwitch=!1,s.executeEnd=n(),D},t.flush=function(e){var t=this,r=e.transmuxing
 r.executeStart=n()
 var s=this.decrypter,o=this.cache,l=this.currentTransmuxState,u=this.decryptionPromise
 if(u)return u.then((function(){return t.flush(e)}))
@@ -1826,7 +1830,7 @@ break}r||(p.logger.warn("Failed to find demuxer by probing frag, treating as mp4
 var y=this.demuxer,b=this.remuxer,_=r.remux,E=r.demux
 b&&b instanceof _||(this.remuxer=new _(i,n,a,s)),y&&y instanceof E||(this.demuxer=new E(i,n,a),this.probe=E.probe),this.resetInitSegment(d,o,h,c),this.resetInitialTimestamp(u)},t.needsProbing=function(e,t,r){return!this.demuxer||!this.remuxer||t||r},t.getDecrypter=function(){var e=this.decrypter
 return e||(e=this.decrypter=new s.default(this.observer,this.config)),e},e}(),b=function(e){return{remuxResult:{},chunkMeta:e}}
-function _(e){return"then"in e&&e.then instanceof Function}var E=function(e,t,r,n,i){this.audioCodec=void 0,this.videoCodec=void 0,this.initSegmentData=void 0,this.duration=void 0,this.defaultInitPts=void 0,this.audioCodec=e,this.videoCodec=t,this.initSegmentData=r,this.duration=n,this.defaultInitPts=i},T=function(e,t,r,n,i){this.discontinuity=void 0,this.contiguous=void 0,this.accurateTimeOffset=void 0,this.trackSwitch=void 0,this.timeOffset=void 0,this.discontinuity=e,this.contiguous=t,this.accurateTimeOffset=r,this.trackSwitch=n,this.timeOffset=i}},"./src/demux/tsdemuxer.ts":function(e,t,r){"use strict"
+function _(e){return"then"in e&&e.then instanceof Function}var E=function(e,t,r,n,i){this.audioCodec=void 0,this.videoCodec=void 0,this.initSegmentData=void 0,this.duration=void 0,this.defaultInitPts=void 0,this.audioCodec=e,this.videoCodec=t,this.initSegmentData=r,this.duration=n,this.defaultInitPts=i},T=function(e,t,r,n,i,a){this.discontinuity=void 0,this.contiguous=void 0,this.accurateTimeOffset=void 0,this.trackSwitch=void 0,this.timeOffset=void 0,this.initSegmentChange=void 0,this.discontinuity=e,this.contiguous=t,this.accurateTimeOffset=r,this.trackSwitch=n,this.timeOffset=i,this.initSegmentChange=a}},"./src/demux/tsdemuxer.ts":function(e,t,r){"use strict"
 r.r(t),r.d(t,"discardEPB",(function(){return _}))
 var n=r("./src/demux/adts.ts"),i=r("./src/demux/mpegaudio.ts"),a=r("./src/demux/exp-golomb.ts"),s=r("./src/demux/id3.ts"),o=r("./src/demux/sample-aes.ts"),l=r("./src/events.ts"),u=r("./src/utils/mp4-tools.ts"),c=r("./src/utils/logger.ts"),d=r("./src/errors.ts"),f={video:1,audio:2,id3:3,text:4},h=function(){function e(e,t,r){this.observer=void 0,this.config=void 0,this.typeSupported=void 0,this.sampleAes=null,this.pmtParsed=!1,this.audioCodec=void 0,this.videoCodec=void 0,this._duration=0,this.aacLastPTS=null,this._initPTS=null,this._initDTS=null,this._pmtId=-1,this._avcTrack=void 0,this._audioTrack=void 0,this._id3Track=void 0,this._txtTrack=void 0,this.aacOverFlow=null,this.avcSample=null,this.remainderData=null,this.observer=e,this.config=t,this.typeSupported=r}e.probe=function(t){var r=e.syncOffset(t)
 return!(r<0||(r&&c.logger.warn("MPEG2-TS detected but first sync word found @ offset "+r+", junk ahead ?"),0))},e.syncOffset=function(e){for(var t=Math.min(1e3,e.length-564),r=0;r<t;){if(71===e[r]&&71===e[r+188]&&71===e[r+376])return r
@@ -1838,24 +1842,24 @@ void 0===n&&(n=!1),void 0===i&&(i=!1),n||(this.sampleAes=null)
 var s=this._avcTrack,o=this._audioTrack,f=this._id3Track,h=s.pid,g=s.pesData,y=o.pid,b=f.pid,_=o.pesData,E=f.pesData,T=!1,w=this.pmtParsed,S=this._pmtId,A=t.length
 if(this.remainderData&&(A=(t=Object(u.appendUint8Array)(this.remainderData,t)).length,this.remainderData=null),A<188&&!i)return this.remainderData=t,{audioTrack:o,avcTrack:s,id3Track:f,textTrack:this._txtTrack}
 var k=Math.max(0,e.syncOffset(t));(A-=(A+k)%188)<t.byteLength&&!i&&(this.remainderData=new Uint8Array(t.buffer,A,t.buffer.byteLength-A))
-for(var x=k;x<A;x+=188)if(71===t[x]){var L=!!(64&t[x+1]),R=((31&t[x+1])<<8)+t[x+2],D=void 0
-if((48&t[x+3])>>4>1){if((D=x+5+t[x+4])===x+188)continue}else D=x+4
-switch(R){case h:L&&(g&&(a=m(g))&&this.parseAVCPES(a,!1),g={data:[],size:0}),g&&(g.data.push(t.subarray(D,x+188)),g.size+=x+188-D)
+for(var x=0,L=k;L<A;L+=188)if(71===t[L]){var R=!!(64&t[L+1]),D=((31&t[L+1])<<8)+t[L+2],C=void 0
+if((48&t[L+3])>>4>1){if((C=L+5+t[L+4])===L+188)continue}else C=L+4
+switch(D){case h:R&&(g&&(a=m(g))&&this.parseAVCPES(a,!1),g={data:[],size:0}),g&&(g.data.push(t.subarray(C,L+188)),g.size+=L+188-C)
 break
-case y:L&&(_&&(a=m(_))&&(o.isAAC?this.parseAACPES(a):this.parseMPEGPES(a)),_={data:[],size:0}),_&&(_.data.push(t.subarray(D,x+188)),_.size+=x+188-D)
+case y:R&&(_&&(a=m(_))&&(o.isAAC?this.parseAACPES(a):this.parseMPEGPES(a)),_={data:[],size:0}),_&&(_.data.push(t.subarray(C,L+188)),_.size+=L+188-C)
 break
-case b:L&&(E&&(a=m(E))&&this.parseID3PES(a),E={data:[],size:0}),E&&(E.data.push(t.subarray(D,x+188)),E.size+=x+188-D)
+case b:R&&(E&&(a=m(E))&&this.parseID3PES(a),E={data:[],size:0}),E&&(E.data.push(t.subarray(C,L+188)),E.size+=L+188-C)
 break
-case 0:L&&(D+=t[D]+1),S=this._pmtId=p(t,D)
+case 0:R&&(C+=t[C]+1),S=this._pmtId=p(t,C)
 break
-case S:L&&(D+=t[D]+1)
-var C=v(t,D,!0===this.typeSupported.mpeg||!0===this.typeSupported.mp3,n);(h=C.avc)>0&&(s.pid=h),(y=C.audio)>0&&(o.pid=y,o.isAAC=C.isAAC),(b=C.id3)>0&&(f.pid=b),T&&!w&&(c.logger.log("reparse from beginning"),T=!1,x=k-188),w=this.pmtParsed=!0
+case S:R&&(C+=t[C]+1)
+var O=v(t,C,!0===this.typeSupported.mpeg||!0===this.typeSupported.mp3,n);(h=O.avc)>0&&(s.pid=h),(y=O.audio)>0&&(o.pid=y,o.isAAC=O.isAAC),(b=O.id3)>0&&(f.pid=b),T&&!w&&(c.logger.log("reparse from beginning"),T=!1,L=k-188),w=this.pmtParsed=!0
 break
 case 17:case 8191:break
-default:T=!0}}else this.observer.emit(l.Events.ERROR,l.Events.ERROR,{type:d.ErrorTypes.MEDIA_ERROR,details:d.ErrorDetails.FRAG_PARSING_ERROR,fatal:!1,reason:"TS packet did not start with 0x47"})
-s.pesData=g,o.pesData=_,f.pesData=E
-var O={audioTrack:o,avcTrack:s,id3Track:f,textTrack:this._txtTrack}
-return i&&this.extractRemainingSamples(O),O},t.flush=function(){var e,t=this.remainderData
+default:T=!0}}else x++
+x>0&&this.observer.emit(l.Events.ERROR,l.Events.ERROR,{type:d.ErrorTypes.MEDIA_ERROR,details:d.ErrorDetails.FRAG_PARSING_ERROR,fatal:!1,reason:"Found "+x+" TS packet/s that do not start with 0x47"}),s.pesData=g,o.pesData=_,f.pesData=E
+var I={audioTrack:o,avcTrack:s,id3Track:f,textTrack:this._txtTrack}
+return i&&this.extractRemainingSamples(I),I},t.flush=function(){var e,t=this.remainderData
 return this.remainderData=null,e=t?this.demux(t,-1,!1,!0):{audioTrack:this._audioTrack,avcTrack:this._avcTrack,textTrack:this._txtTrack,id3Track:this._id3Track},this.extractRemainingSamples(e),this.sampleAes?this.decrypt(e,this.sampleAes):e},t.extractRemainingSamples=function(e){var t,r=e.audioTrack,n=e.avcTrack,i=e.id3Track,a=n.pesData,s=r.pesData,o=i.pesData
 a&&(t=m(a))?(this.parseAVCPES(t,!0),n.pesData=null):n.pesData=a,s&&(t=m(s))?(r.isAAC?this.parseAACPES(t):this.parseMPEGPES(t),r.pesData=null):(null!=s&&s.size&&c.logger.log("last AAC PES packet truncated,might overlap between fragments"),r.pesData=s),o&&(t=m(o))?(this.parseID3PES(t),i.pesData=null):i.pesData=o},t.demuxSampleAes=function(e,t,r){var n=this.demux(e,r,!0,!this.config.progressive),i=this.sampleAes=new o.default(this.observer,this.config,t)
 return this.decrypt(n,i)},t.decrypt=function(e,t){return new Promise((function(r){var n=e.audioTrack,i=e.avcTrack
@@ -1894,7 +1898,7 @@ t=i[i.length-1]}return t},t.parseAVCNALu=function(e){var t,r,n=e.byteLength,i=th
 for(-1===a&&(u=0,c=31&e[0],a=0,l=1);l<n;)if(t=e[l++],a)if(1!==a)if(t)if(1===t){if(u>=0){var d={data:e.subarray(u,l-a-1),type:c}
 o.push(d)}else{var f=this.getLastNalUnit()
 if(f&&(s&&l<=4-s&&f.state&&(f.data=f.data.subarray(0,f.data.byteLength-s)),(r=l-a-1)>0)){var h=new Uint8Array(f.data.byteLength+r)
-h.set(f.data,0),h.set(e.subarray(0,r),f.data.byteLength),f.data=h}}l<n?(u=l,c=31&e[l],a=0):a=-1}else a=0
+h.set(f.data,0),h.set(e.subarray(0,r),f.data.byteLength),f.data=h,f.state=0}}l<n?(u=l,c=31&e[l],a=0):a=-1}else a=0
 else a=3
 else a=t?0:2
 else a=t?0:1
@@ -1971,7 +1975,7 @@ try{return this.emit(e,e,t)}catch(t){f.logger.error("An internal error happened 
 var t=this.media,r=this.url,i=this.url=n.buildAbsoluteURL(self.location.href,e,{alwaysNormalize:!0})
 f.logger.log("loadSource:"+i),t&&r&&r!==i&&this.bufferController.hasSourceTypes()&&(this.detachMedia(),this.attachMedia(t)),this.trigger(p.Events.MANIFEST_LOADING,{url:e})},b.startLoad=function(e){void 0===e&&(e=-1),f.logger.log("startLoad("+e+")"),this.networkControllers.forEach((function(t){t.startLoad(e)}))},b.stopLoad=function(){f.logger.log("stopLoad"),this.networkControllers.forEach((function(e){e.stopLoad()}))},b.swapAudioCodec=function(){f.logger.log("swapAudioCodec"),this.streamController.swapAudioCodec()},b.recoverMediaError=function(){f.logger.log("recoverMediaError")
 var e=this._media
-this.detachMedia(),e&&this.attachMedia(e)},b.removeLevel=function(e,t){void 0===t&&(t=0),this.levelController.removeLevel(e,t)},t=e,y=[{key:"version",get:function(){return"1.1.1"}},{key:"Events",get:function(){return p.Events}},{key:"ErrorTypes",get:function(){return v.ErrorTypes}},{key:"ErrorDetails",get:function(){return v.ErrorDetails}},{key:"DefaultConfig",get:function(){return e.defaultConfig?e.defaultConfig:h.hlsDefaultConfig},set:function(t){e.defaultConfig=t}}],(r=[{key:"levels",get:function(){return this.levelController.levels||[]}},{key:"currentLevel",get:function(){return this.streamController.currentLevel},set:function(e){f.logger.log("set currentLevel:"+e),this.loadLevel=e,this.abrController.clearTimer(),this.streamController.immediateLevelSwitch()}},{key:"nextLevel",get:function(){return this.streamController.nextLevel},set:function(e){f.logger.log("set nextLevel:"+e),this.levelController.manualLevel=e,this.streamController.nextLevelSwitch()}},{key:"loadLevel",get:function(){return this.levelController.level},set:function(e){f.logger.log("set loadLevel:"+e),this.levelController.manualLevel=e}},{key:"nextLoadLevel",get:function(){return this.levelController.nextLoadLevel},set:function(e){this.levelController.nextLoadLevel=e}},{key:"firstLevel",get:function(){return Math.max(this.levelController.firstLevel,this.minAutoLevel)},set:function(e){f.logger.log("set firstLevel:"+e),this.levelController.firstLevel=e}},{key:"startLevel",get:function(){return this.levelController.startLevel},set:function(e){f.logger.log("set startLevel:"+e),-1!==e&&(e=Math.max(e,this.minAutoLevel)),this.levelController.startLevel=e}},{key:"capLevelToPlayerSize",get:function(){return this.config.capLevelToPlayerSize},set:function(e){var t=!!e
+this.detachMedia(),e&&this.attachMedia(e)},b.removeLevel=function(e,t){void 0===t&&(t=0),this.levelController.removeLevel(e,t)},t=e,y=[{key:"version",get:function(){return"1.1.3"}},{key:"Events",get:function(){return p.Events}},{key:"ErrorTypes",get:function(){return v.ErrorTypes}},{key:"ErrorDetails",get:function(){return v.ErrorDetails}},{key:"DefaultConfig",get:function(){return e.defaultConfig?e.defaultConfig:h.hlsDefaultConfig},set:function(t){e.defaultConfig=t}}],(r=[{key:"levels",get:function(){return this.levelController.levels||[]}},{key:"currentLevel",get:function(){return this.streamController.currentLevel},set:function(e){f.logger.log("set currentLevel:"+e),this.loadLevel=e,this.abrController.clearTimer(),this.streamController.immediateLevelSwitch()}},{key:"nextLevel",get:function(){return this.streamController.nextLevel},set:function(e){f.logger.log("set nextLevel:"+e),this.levelController.manualLevel=e,this.streamController.nextLevelSwitch()}},{key:"loadLevel",get:function(){return this.levelController.level},set:function(e){f.logger.log("set loadLevel:"+e),this.levelController.manualLevel=e}},{key:"nextLoadLevel",get:function(){return this.levelController.nextLoadLevel},set:function(e){this.levelController.nextLoadLevel=e}},{key:"firstLevel",get:function(){return Math.max(this.levelController.firstLevel,this.minAutoLevel)},set:function(e){f.logger.log("set firstLevel:"+e),this.levelController.firstLevel=e}},{key:"startLevel",get:function(){return this.levelController.startLevel},set:function(e){f.logger.log("set startLevel:"+e),-1!==e&&(e=Math.max(e,this.minAutoLevel)),this.levelController.startLevel=e}},{key:"capLevelToPlayerSize",get:function(){return this.config.capLevelToPlayerSize},set:function(e){var t=!!e
 t!==this.config.capLevelToPlayerSize&&(t?this.capLevelController.startCapping():(this.capLevelController.stopCapping(),this.autoLevelCapping=-1,this.streamController.nextLevelSwitch()),this.config.capLevelToPlayerSize=t)}},{key:"autoLevelCapping",get:function(){return this._autoLevelCapping},set:function(e){this._autoLevelCapping!==e&&(f.logger.log("set autoLevelCapping:"+e),this._autoLevelCapping=e)}},{key:"bandwidthEstimate",get:function(){var e=this.abrController.bwEstimator
 return e?e.getEstimate():NaN}},{key:"autoLevelEnabled",get:function(){return-1===this.levelController.manualLevel}},{key:"manualLevel",get:function(){return this.levelController.manualLevel}},{key:"minAutoLevel",get:function(){var e=this.levels,t=this.config.minAutoBitrate
 if(!e)return 0
@@ -2659,7 +2663,7 @@ if(isFinite(l)&&(null===t||l<t))return l}return t}),null)
 return null!==a&&isFinite(a)&&(null===t||a<t)?a:t}),null)||0}function p(e,t){for(var r=0,n=0,a=0,s=d(e,["moof","traf"]),o=0;o<s.length;o++){var l=s[o],c=d(l,["tfhd"])[0],h=t[u(c,4)]
 if(h){var g=h.default,p=u(c,0)|(null==g?void 0:g.flags),m=null==g?void 0:g.duration
 8&p&&(m=u(c,2&p?12:8))
-for(var y=h.timescale||9e4,b=d(l,["trun"]),_=0;_<b.length;_++)r=m?m*u(b[_],4):v(b[_]),h.type===i.ElementaryStreamTypes.VIDEO?n+=r/y:h.type===i.ElementaryStreamTypes.AUDIO&&(a+=r/y)}}if(0===n&&0===a){var E=f(e)
+for(var y=h.timescale||9e4,b=d(l,["trun"]),_=0;_<b.length;_++)!(r=v(b[_]))&&m&&(r=m*u(b[_],4)),h.type===i.ElementaryStreamTypes.VIDEO?n+=r/y:h.type===i.ElementaryStreamTypes.AUDIO&&(a+=r/y)}}if(0===n&&0===a){var E=f(e)
 if(null!=E&&E.references)return E.references.reduce((function(e,t){return e+t.info.duration||0}),0)}return n||a}function v(e){var t=u(e,0),r=8
 1&t&&(r+=4),4&t&&(r+=4)
 for(var n=0,i=u(e,4),a=0;a<i;a++)256&t&&(n+=u(e,r),r+=4),512&t&&(r+=4),1024&t&&(r+=4),2048&t&&(r+=4)
@@ -2677,7 +2681,7 @@ return t.valid=Object(n.sliceUint8)(e,0,i.start-8),t.remainder=Object(n.sliceUin
 return r.set(e),r.set(t,e.length),r}},"./src/utils/output-filter.ts":function(e,t,r){"use strict"
 r.r(t),r.d(t,"default",(function(){return n}))
 var n=function(){function e(e,t){this.timelineController=void 0,this.cueRanges=[],this.trackName=void 0,this.startTime=null,this.endTime=null,this.screen=null,this.timelineController=e,this.trackName=t}var t=e.prototype
-return t.dispatchCue=function(){null!==this.startTime&&(this.timelineController.addCues(this.trackName,this.startTime,this.endTime,this.screen,this.cueRanges),this.startTime=null)},t.newCue=function(e,t,r){(null===this.startTime||this.startTime>e)&&(this.startTime=e),this.endTime=t,this.screen=r,this.timelineController.createCaptionsTrack(this.trackName)},t.reset=function(){this.cueRanges=[]},e}()},"./src/utils/texttrack-utils.ts":function(e,t,r){"use strict"
+return t.dispatchCue=function(){null!==this.startTime&&(this.timelineController.addCues(this.trackName,this.startTime,this.endTime,this.screen,this.cueRanges),this.startTime=null)},t.newCue=function(e,t,r){(null===this.startTime||this.startTime>e)&&(this.startTime=e),this.endTime=t,this.screen=r,this.timelineController.createCaptionsTrack(this.trackName)},t.reset=function(){this.cueRanges=[],this.startTime=null},e}()},"./src/utils/texttrack-utils.ts":function(e,t,r){"use strict"
 r.r(t),r.d(t,"sendAddTrackEvent",(function(){return i})),r.d(t,"addCueToTrack",(function(){return a})),r.d(t,"clearCurrentCues",(function(){return s})),r.d(t,"removeCuesInRange",(function(){return o})),r.d(t,"getCuesInRange",(function(){return l}))
 var n=r("./src/utils/logger.ts")
 function i(e,t){var r
