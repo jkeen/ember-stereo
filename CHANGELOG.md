@@ -1,5 +1,12 @@
 ember-stereo changelog
 
+## [3.0.1](https://github.com/jkeen/ember-stereo/compare/v3.0.0...v3.0.1) (2022-02-03)
+
+
+### Bug Fixes
+
+* preventDefault on {{sound-position-slider}} and {{stereo-volume}} modifier clicks ([6252d95](https://github.com/jkeen/ember-stereo/commit/6252d95263d5706be5dff14af2d1eed5afa77005))
+
 # [3.0.0](https://github.com/jkeen/ember-stereo/compare/v2.2.2...v3.0.0) (2022-02-02)
 
 
