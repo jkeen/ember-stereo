@@ -30,6 +30,8 @@ export default class StereoVolumeModifier extends Modifier {
 
   @action
   handleTap(e) {
+    e.preventDefault();
+
     var rect = e.target.getBoundingClientRect();
     var x = e.clientX - rect.left; //x position within the element.
     let volumeLevel = parseInt((x / rect.width) * 100, 10)

@@ -54,6 +54,8 @@ export default class SoundPositionSliderModifier extends DidPanModifier {
 
   @action
   handleTap(e) {
+    e.preventDefault();
+
     var rect = this.element.getBoundingClientRect();
     var x = e.clientX - rect.left; //x position within the element.
 
