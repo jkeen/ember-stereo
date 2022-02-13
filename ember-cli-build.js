@@ -13,16 +13,31 @@ module.exports = function (defaults) {
           {
             module: require('postcss-import'),
             options: {
-              path: 'node_modules'
-            }
+              path: 'node_modules',
+            },
           },
-          require('tailwindcss')(path.join('tests', 'dummy', 'app', 'styles', 'tailwind.config.js')),
-          require('autoprefixer')
-        ]
+          require('tailwindcss')(
+            path.join('tests', 'dummy', 'app', 'styles', 'tailwind.config.js')
+          ),
+          require('autoprefixer'),
+        ],
       },
     },
     snippetSearchPaths: ['app', 'tests/dummy/app', 'addon'],
-    snippetExtensions: ['js', 'ts', 'coffee', 'html', 'hbs', 'md', 'css', 'sass', 'scss', 'less', 'emblem', 'yaml']
+    snippetExtensions: [
+      'js',
+      'ts',
+      'coffee',
+      'html',
+      'hbs',
+      'md',
+      'css',
+      'sass',
+      'scss',
+      'less',
+      'emblem',
+      'yaml',
+    ],
   });
 
   /*
