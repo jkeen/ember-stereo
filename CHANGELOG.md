@@ -1,5 +1,12 @@
 ember-stereo changelog
 
+## [3.0.2](https://github.com/jkeen/ember-stereo/compare/v3.0.1...v3.0.2) (2022-02-14)
+
+
+### Bug Fixes
+
+* use forked ember-cli-addon docs to work with ember-auto-import 2/embroider so we can deploy the docs correctly. Update to angle bracket syntax of demo.snippet ([520f2f7](https://github.com/jkeen/ember-stereo/commit/520f2f7b2d19a580270d2436a8d7543d83f49458))
+
 ## [3.0.1](https://github.com/jkeen/ember-stereo/compare/v3.0.0...v3.0.1) (2022-02-03)
 
 
