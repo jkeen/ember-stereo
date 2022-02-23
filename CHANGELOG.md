@@ -1,5 +1,12 @@
 ember-stereo changelog
 
+## [3.0.4](https://github.com/jkeen/ember-stereo/compare/v3.0.3...v3.0.4) (2022-02-23)
+
+
+### Bug Fixes
+
+* improve performance of sound-metadata helper ([f2ce636](https://github.com/jkeen/ember-stereo/commit/f2ce63696e71c797d2713bc2f99a5ecd011a12c9))
+
 ## [3.0.3](https://github.com/jkeen/ember-stereo/compare/v3.0.2...v3.0.3) (2022-02-23)
 
 
