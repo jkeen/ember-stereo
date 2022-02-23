@@ -1,7 +1,8 @@
 import StereoBaseIsHelper from 'ember-stereo/-private/helpers/is-helper';
 import debugMessage from 'ember-stereo/-private/utils/debug-message';
-import { dedupeTracked } from 'tracked-toolbox';
 import { get } from '@ember/object';
+import { inject as service } from '@ember/service';
+
 /**
   A helper to detect if a sound is playing.
   ```hbs
@@ -16,8 +17,8 @@ import { get } from '@ember/object';
 */
 
 export default class SoundMetadata extends StereoBaseIsHelper {
-  name = 'sound-metadata'
-  @dedupeTracked metadata = {};
+  name = 'sound-metadata';
+  @service stereo;
 
   /**
     @method compute
@@ -26,17 +27,22 @@ export default class SoundMetadata extends StereoBaseIsHelper {
     @return {Any}
   */
 
-  get result() {
-    debugMessage(this, `metadata = ${JSON.stringify(this.sound?.metadata)}`)
-    this.metadata = this.sound?.metadata || {};
+  get metadata() {
+    return this.stereo.metadataCache.find(this.identifier);
+  }
 
-    if (this.options?.key && this.metadata && get(this.metadata, this.options.key)) {
+  get result() {
+    debugMessage(this, `metadata = ${JSON.stringify(this.metadata)}`);
+    if (
+      this.options?.key &&
+      this.metadata &&
+      get(this.metadata, this.options.key)
+    ) {
       return get(this.metadata, this.options.key);
-    }
-    else if (!this.options?.key && this.metadata) {
+    } else if (!this.options?.key && this.metadata) {
       return this.metadata;
     }
 
-    return null
+    return null;
   }
 }

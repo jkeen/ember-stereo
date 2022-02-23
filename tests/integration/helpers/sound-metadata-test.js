@@ -49,4 +49,15 @@ module("Integration | Helper | sound-metadata", function (hooks) {
     assert.equal(this.element.textContent.trim(), "my title prince");
   })
 
+  test('the sound does not have to be loaded for it to read', async function (assert) {
+    let service = this.owner.lookup('service:stereo');
+
+    this.url = '/good/1000/metadata.mp3';
+    service.metadataCache.store(this.url, { title: 'my title' });
+    await render(hbs`{{sound-metadata this.url key='title'}}`);
+
+    assert.equal(this.element.textContent.trim(), 'my title');
+  });
+
+
 });
