@@ -1,5 +1,12 @@
 ember-stereo changelog
 
+## [3.0.3](https://github.com/jkeen/ember-stereo/compare/v3.0.2...v3.0.3) (2022-02-23)
+
+
+### Bug Fixes
+
+* lookup sound metadata through the service and not through the sound (which may not be loaded yet) ([424f119](https://github.com/jkeen/ember-stereo/commit/424f1190f2cc090f720a1803ad81d96bd98839c4))
+
 ## [3.0.2](https://github.com/jkeen/ember-stereo/compare/v3.0.1...v3.0.2) (2022-02-14)
 
 
