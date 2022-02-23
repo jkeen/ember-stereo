@@ -1,5 +1,4 @@
-import StereoBaseIsHelper from 'ember-stereo/-private/helpers/is-helper';
-import debugMessage from 'ember-stereo/-private/utils/debug-message';
+import Helper from '@ember/component/helper';
 import { get } from '@ember/object';
 import { inject as service } from '@ember/service';
 
@@ -16,7 +15,7 @@ import { inject as service } from '@ember/service';
   @return {Object}
 */
 
-export default class SoundMetadata extends StereoBaseIsHelper {
+export default class SoundMetadata extends Helper {
   name = 'sound-metadata';
   @service stereo;
 
@@ -27,22 +26,13 @@ export default class SoundMetadata extends StereoBaseIsHelper {
     @return {Any}
   */
 
-  get metadata() {
-    return this.stereo.metadataCache.find(this.identifier);
-  }
+  compute([identifier], { key }) {
+    let metadata = this.stereo.metadataCache.find(identifier);
 
-  get result() {
-    debugMessage(this, `metadata = ${JSON.stringify(this.metadata)}`);
-    if (
-      this.options?.key &&
-      this.metadata &&
-      get(this.metadata, this.options.key)
-    ) {
-      return get(this.metadata, this.options.key);
-    } else if (!this.options?.key && this.metadata) {
-      return this.metadata;
+    if (key && metadata && get(metadata, key)) {
+      return get(metadata, key);
+    } else if (!key && metadata) {
+      return metadata;
     }
-
-    return null;
   }
 }
