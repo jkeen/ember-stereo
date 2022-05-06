@@ -1,0 +1,129 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css?family=Montserrat:400,600');
+
+html {
+  --brand-primary: #00bcb8;
+}
+
+:root {
+  --brand-primary: #00bcb8;
+}
+.docs-border-r {
+  border-right: 0;
+}
+.docs-md__h4 {
+  font-weight: bold;
+  margin: 0.5rem 0;
+}
+
+/* .docs-bg-white,
+body > .ember-view {
+  background-color: rgba(var(--color-background), 1);
+}
+.docs-bg-grey-lightest {
+  background-color: rgba(var(--color-surface), 1);
+}
+.docs-text-grey-darker {
+  color: rgba(var(--color-on-surface), 1);
+} */
+
+input[type='range'] {
+  @apply w-full h-2 rounded-lg outline-none appearance-none border-surface-2;
+  margin: auto;
+
+  /* --range-color: red; */
+}
+
+input[type='range']::-webkit-slider-thumb,
+input[type='range']::-moz-slider-thumb,
+input[type='range']::slider-thumb {
+  @apply w-6 h-5 appearance-none rounded-xl cursor-move-x;
+}
+
+input[type='range']::-webkit-range-track,
+input[type='range']::-moz-range-track,
+input[type='range']::range-track {
+  @apply h-2 rounded-lg cursor-pointer border-surface-2;
+  /* background-color: var(--range-color); */
+}
+
+input[type='range']::-moz-range-progress {
+  @apply h-2 rounded-lg cursor-pointer bg-accent-0;
+}
+input[type='range']::-webkit-range-progress {
+  @apply h-2 rounded-lg cursor-pointer bg-accent-0;
+}
+input[type='range']::range-progress {
+  @apply h-2 rounded-lg cursor-pointer bg-accent-0;
+}
+
+input[type='range']:disabled {
+  opacity: 0.6;
+}
+
+pre.htmlbars,
+.hljs,
+.docs-md__code {
+  filter: hue-rotate(-10deg);
+}
+
+.ui-button {
+  @apply inline-flex items-center px-3 py-1 text-lg border rounded-md shadow-sm text-on-accent-0 bg-accent-0 hover:bg-accent-0-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent-0;
+}
+
+.stereo-player {
+  @apply container flex flex-col content-center mx-auto border rounded place-items-center bg-background border-on-surface-0;
+}
+
+.stereo-player-main {
+  @apply container flex flex-col content-center gap-4 p-2 mx-auto rounded sm:flex-row place-items-center bg-background;
+}
+
+.stereo-player-position {
+  @apply flex items-center flex-grow w-full gap-2 whitespace-nowrap;
+}
+
+.stereo-player-position-slider {
+  @apply relative  w-full flex items-center justify-start bg-on-surface-3 rounded h-2;
+}
+
+.stereo-player-position-thumb {
+  @apply bg-on-surface-3 absolute h-4 w-4 flex rounded-lg shadow-sm;
+  top: 15px;
+}
+
+.stereo-player-position-progress {
+  @apply bg-accent-0 h-2 flex rounded;
+}
+
+.stereo-player input[type='range'] {
+  @apply bg-on-surface-2;
+}
+
+.stereo-player-controls {
+  @apply grid grid-cols-3 gap-2 place-items-center min-w-max;
+}
+
+.stereo-player-errors {
+  @apply px-2 text-left text-danger;
+}
+
+.stereo-player-volume {
+  @apply flex items-stretch items-center content-center gap-2;
+}
+
+.stereo-button {
+  @apply inline-flex items-center px-1 py-1 text-base font-medium border rounded-md shadow-none text-surface-0 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent-0 border-on-surface-3;
+}
+
+.stereo-button:disabled,
+.ui-button:disabled {
+  @apply opacity-50 pointer-events-none;
+}
+
+.autoplay-blocked-overlay {
+  @apply fixed top-0 bottom-0 left-0 right-0 flex items-center justify-center p-2 bg-surface-0 opacity-80 text-on-surface-2;
+}
