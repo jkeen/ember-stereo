@@ -6,7 +6,6 @@ const addon = new Addon({
   destDir: 'dist',
 });
 
-
 export default {
   // This provides defaults that work well alongside `publicEntrypoints` below.
   // You can augment this if you need to.

@@ -1,10 +1,11 @@
-import Ember from 'ember';
 import { tracked } from '@glimmer/tracking';
 import { A } from '@ember/array';
 import { run } from '@ember/runloop';
 
+import { isTesting, macroCondition } from '@embroider/macros';
 import { didCancel, task } from 'ember-concurrency';
 import BaseSound from 'ember-stereo/stereo-connections/base';
+
 // These are the events we're watching for
 const AUDIO_EVENTS = [
   'loadstart',
@@ -55,7 +56,7 @@ export default class NativeAudio extends BaseSound {
     audio.src = this.url;
     this._registerEvents(audio);
 
-    if (Ember.testing) {
+    if (macroCondition(isTesting())) {
       audio.muted = true;
     }
 
@@ -327,7 +328,8 @@ export default class NativeAudio extends BaseSound {
   }
 
   _setVolume(volume) {
-    if (!Ember.testing) {
+    if (macroCondition(isTesting())) {
+    } else {
       this.debug(`_setVolume: ${volume}`);
       let audio = this.audioElement;
       audio.volume = volume / 100;

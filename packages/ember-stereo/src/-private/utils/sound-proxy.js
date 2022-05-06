@@ -1,11 +1,12 @@
-import Ember from 'ember';
 import { tracked } from '@glimmer/tracking';
 import { isEmpty } from '@ember/utils';
 
+import { isTesting, macroCondition } from '@embroider/macros';
 import debug from 'debug';
 import { didCancel, task, waitForEvent, waitForProperty } from 'ember-concurrency';
 import Evented from 'ember-stereo/-private/utils/evented';
 import hasEqualUrls from 'ember-stereo/-private/utils/has-equal-urls';
+
 /**
 * This class lazy loads sounds based on identifiers
   @private
@@ -55,7 +56,7 @@ export default class SoundProxy extends Evented {
         break;
       }
 
-      if (Ember.testing) {
+      if (macroCondition(isTesting())) {
         break;
       }
     }

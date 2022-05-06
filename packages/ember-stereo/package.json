@@ -49,7 +49,7 @@
     "hls.js": "^1.1.1",
     "howler": "^2.2.1",
     "tracked-built-ins": "^2.0.1",
-    "tracked-toolbox": "^1.2.1"
+    "tracked-toolbox": "https://github.com/tracked-tools/tracked-toolbox"
   },
   "devDependencies": {
     "@babel/core": "7.17.10",

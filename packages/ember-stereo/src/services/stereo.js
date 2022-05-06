@@ -1,4 +1,3 @@
-import Ember from 'ember';
 import { tracked } from '@glimmer/tracking';
 import { getOwner, setOwner } from '@ember/application';
 import { A as emberArray, makeArray } from '@ember/array';
@@ -8,6 +7,7 @@ import { assign } from '@ember/polyfills';
 import { cancel, later, next } from '@ember/runloop';
 import Service from '@ember/service';
 
+import { isTesting, macroCondition } from '@embroider/macros';
 import canAutoplay from 'can-autoplay';
 import debug from 'debug';
 import { didCancel, race, task, waitForEvent, waitForProperty } from 'ember-concurrency';
@@ -93,10 +93,10 @@ export default class Stereo extends Service.extend(EmberEvented) {
 
     this.poll = setInterval(
       this._setCurrentPosition.bind(this),
-      Ember.testing ? 20 : this.pollInterval
+      macroCondition(isTesting()) ? 20 : this.pollInterval
     );
 
-    if (!Ember.testing) {
+    if (macroCondition(isTesting())) {
       this._determineAutoplayPermissions();
     }
     this.isReady = true;
