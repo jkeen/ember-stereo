@@ -1,17 +1,17 @@
 import Helper from '@ember/component/helper';
 import { inject as service } from '@ember/service';
 
-import { dedupeTracked } from 'tracked-toolbox';
+import { tracked } from '@glimmer/tracking';;
 
 const UNINITIALIZED = null;
 export default class StereoBaseIsHelper extends Helper {
   @service stereo;
 
   identifier = UNINITIALIZED;
-  @dedupeTracked task = UNINITIALIZED;
-  @dedupeTracked soundProxy = UNINITIALIZED;
-  @dedupeTracked _sound = UNINITIALIZED;
-  @dedupeTracked options = UNINITIALIZED;
+  @tracked task = UNINITIALIZED;
+  @tracked soundProxy = UNINITIALIZED;
+  @tracked _sound = UNINITIALIZED;
+  @tracked options = UNINITIALIZED;
 
   /**
   returns the state

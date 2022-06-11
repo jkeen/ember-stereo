@@ -1,8 +1,6 @@
 import { tracked } from '@glimmer/tracking';
 import { inject as service } from '@ember/service';
 
-import { TrackedObject, TrackedWeakMap } from 'tracked-built-ins';
-
 import normalizeIdentifier from './normalize-identifier';
 
 /**
@@ -12,14 +10,14 @@ import normalizeIdentifier from './normalize-identifier';
 export default class ObjectCache {
   @service stereo;
 
-  @tracked objectCache = new TrackedWeakMap();
-  @tracked keyCache = new TrackedObject();
+  @tracked objectCache = new Map();
+  @tracked keyCache = {};
   name = 'ember-stereo:object-cache';
 
   has(_identifier) {
     let identifier = normalizeIdentifier(_identifier);
     console.log(`has: ${identifier}`);
-    return this.objectCache.has(identifier) || identifier in this.keyCache;
+    return identifier in this.keyCache || this.objectCache.has(identifier);
   }
 
   find(_identifier) {

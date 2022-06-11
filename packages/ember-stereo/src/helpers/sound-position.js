@@ -1,4 +1,4 @@
-import StereoBaseIsHelper from 'ember-stereo/-private/helpers/is-helper';
+import FindSoundHelper from 'ember-stereo/-private/helpers/find-sound-helper';
 import debugMessage from 'ember-stereo/-private/utils/debug-message';
 import { numericDuration } from 'ember-stereo/helpers/numeric-duration';
 
@@ -21,7 +21,7 @@ import { numericDuration } from 'ember-stereo/helpers/numeric-duration';
   @param {String} format time, percent,
   @return {Float}
 */
-export default class SoundPosition extends StereoBaseIsHelper {
+export default class SoundPosition extends FindSoundHelper {
   name = 'sound-position';
 
   get result() {

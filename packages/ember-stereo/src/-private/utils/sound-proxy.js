@@ -1,9 +1,7 @@
-import { tracked } from '@glimmer/tracking';
 import { isEmpty } from '@ember/utils';
+import { tracked } from '@glimmer/tracking';;
 
-import { isTesting, macroCondition } from '@embroider/macros';
-import debug from 'debug';
-import { didCancel, task, waitForEvent, waitForProperty } from 'ember-concurrency';
+import { trackedFunction } from 'ember-resources/util/function';
 import Evented from 'ember-stereo/-private/utils/evented';
 import hasEqualUrls from 'ember-stereo/-private/utils/has-equal-urls';
 
@@ -13,9 +11,8 @@ import hasEqualUrls from 'ember-stereo/-private/utils/has-equal-urls';
 */
 
 export default class SoundProxy extends Evented {
+  @tracked identifier;
   @tracked isLoading = false;
-  @tracked url;
-  @tracked value;
 
   constructor(identifier, stereo) {
     super(...arguments);
@@ -25,57 +22,38 @@ export default class SoundProxy extends Evented {
     this.stereo.on('loadTask:errored', this.onFinish.bind(this));
     this.stereo.on('loadTask:succeeded', this.onFinish.bind(this));
 
-    this.resolveUrl.perform(identifier).catch((e) => {
-      if (!didCancel(e)) {
-        throw e;
-      }
-    });
-    this.waitForLoad.perform().catch((e) => {
-      if (!didCancel(e)) {
-        throw e;
-      }
-    });
+    this.stereo.on('sound-ready', this.onSoundReady.bind(this));
+    this.identifier = identifier;
   }
 
-  @task({ debug: true })
-  *waitForLoad() {
-    yield waitForProperty(this, 'url', (v) => !!v);
-    debug('ember-stereo:sound-proxy')(`waiting for ${this.url} to load`);
-    while (!this.value) {
-      let alreadyLoaded = this.stereo.findLoadedSound(this.url);
-      if (alreadyLoaded) {
-        this.value = alreadyLoaded;
-      } else {
-        let { sound } = yield waitForEvent(this.stereo, 'sound-ready');
-        if (hasEqualUrls(sound.url, this.url)) {
-          this.value = sound;
-        }
-      }
+  resolver = trackedFunction(this, async () => {
+    return await this.stereo.resolveIdentifier.perform(this.identifier);
+  });
 
-      if (this.value) {
-        break;
-      }
+  loader = trackedFunction(this, async () => {
+    return this.stereo.findLoadedSound(this.url);
+  });
 
-      if (macroCondition(isTesting())) {
-        break;
-      }
-    }
-    debug('ember-stereo:sound-proxy')(`the wait is over for ${this.url} to load`);
+  get url() {
+    return this.resolver.value;
+  }
+
+  @tracked _value;
+  set value(val) {
+    this._value = val;
+  }
+
+  get value() {
+    return this.loader.value || this._value;
   }
 
   async afterLoad(callback) {
     try {
-      await this.waitForLoad.perform();
+      // await this.waitForLoad.perform();
       callback(this.value);
     } catch (e) {
       // no-op
     }
-  }
-
-  @task
-  *resolveUrl(identifier) {
-    this.url = yield this.stereo.resolveIdentifier.perform(identifier);
-    debug('ember-stereo:sound-proxy')(`resolved identifier to ${this.url}`);
   }
 
   get isPending() {
@@ -92,6 +70,12 @@ export default class SoundProxy extends Evented {
 
   get errors() {
     return this.stereo.cachedErrors.find((error) => hasEqualUrls(error.url, this.url));
+  }
+
+  onSoundReady({ sound }) {
+    if (hasEqualUrls(sound.url, this.url)) {
+      this.value = sound;
+    }
   }
 
   async onStart(taskInstance) {
@@ -112,6 +96,7 @@ export default class SoundProxy extends Evented {
   }
 
   willDestroy() {
+    this.stereo.off('sound-ready', this.onSoundReady.bind(this));
     this.stereo.off('loadTask:started', this.onStart.bind(this));
     this.stereo.off('loadTask:errored', this.onFinish.bind(this));
     this.stereo.off('loadTask:succeeded', this.onFinish.bind(this));

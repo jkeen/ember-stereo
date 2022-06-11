@@ -5,7 +5,7 @@ import { assert } from '@ember/debug';
 import { isEmpty } from '@ember/utils';
 
 import StereoUrl from 'ember-stereo/-private/utils/stereo-url';
-import { cached } from 'tracked-toolbox';
+import { cached } from '@glimmer/tracking';
 
 import Strategy from './strategy';
 export default class Strategizer {

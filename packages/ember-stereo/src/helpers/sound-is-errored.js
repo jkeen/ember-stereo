@@ -2,7 +2,7 @@ import Helper from '@ember/component/helper';
 import { inject as service } from '@ember/service';
 
 import hasEqualUrls from 'ember-stereo/-private/utils/has-equal-urls';
-import { dedupeTracked } from 'tracked-toolbox';
+import { tracked } from '@glimmer/tracking';;
 
 /**
   A helper to detect if a sound is errored.
@@ -30,7 +30,7 @@ const UNINITIALIZED = Object.freeze({});
 export default class SoundIsErrored extends Helper {
   name = 'sound-is-errored';
   @service stereo;
-  @dedupeTracked result = false;
+  @tracked result = false;
   identifier = UNINITIALIZED;
 
   compute([identifier = 'system'], { connectionName }) {

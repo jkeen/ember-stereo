@@ -1,4 +1,4 @@
-import StereoBaseIsHelper from 'ember-stereo/-private/helpers/is-helper';
+import FindSoundHelper from 'ember-stereo/-private/helpers/find-sound-helper';
 import debugMessage from 'ember-stereo/-private/utils/debug-message';
 
 /**
@@ -20,7 +20,7 @@ A helper to detect if a sound is playing.
   @return {Boolean}
 */
 
-export default class SoundIsPlaying extends StereoBaseIsHelper {
+export default class SoundIsPlaying extends FindSoundHelper {
   name = 'sound-is-playing';
 
   get result() {

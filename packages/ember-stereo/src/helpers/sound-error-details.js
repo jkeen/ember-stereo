@@ -3,7 +3,7 @@ import { inject as service } from '@ember/service';
 
 import debugMessage from 'ember-stereo/-private/utils/debug-message';
 import hasEqualUrls from 'ember-stereo/-private/utils/has-equal-urls';
-import { dedupeTracked } from 'tracked-toolbox';
+import { tracked } from '@glimmer/tracking';;
 
 /**
   A helper to display error details.
@@ -30,7 +30,7 @@ export default class SoundIsErrored extends Helper {
   @service stereo;
 
   identifier = UNINITIALIZED;
-  @dedupeTracked url;
+  @tracked url;
 
   get result() {
     return this.stereo.cachedErrors.find((e) => hasEqualUrls(e.url, this.url));

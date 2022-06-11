@@ -1,4 +1,4 @@
-import StereoBaseIsHelper from 'ember-stereo/-private/helpers/is-helper';
+import FindSoundHelper from 'ember-stereo/-private/helpers/find-sound-helper';
 import debugMessage from 'ember-stereo/-private/utils/debug-message';
 
 /**
@@ -20,7 +20,7 @@ import debugMessage from 'ember-stereo/-private/utils/debug-message';
   @param {Any} identifier url, urls, url objects, promise that resolves to a url
   @return {Boolean}
 */
-export default class SoundIsLoaded extends StereoBaseIsHelper {
+export default class SoundIsLoaded extends FindSoundHelper {
   name = 'sound-is-loaded';
 
   get result() {

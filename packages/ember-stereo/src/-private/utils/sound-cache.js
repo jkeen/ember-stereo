@@ -1,14 +1,14 @@
 import { tracked } from '@glimmer/tracking';
 import { A as emberArray, makeArray } from '@ember/array';
+import { A } from '@ember/array';
 import { inject as service } from '@ember/service';
 
 import debug from 'debug';
+import { tracked as deepTracked } from 'ember-deep-tracked';
 import BaseSound from 'ember-stereo/stereo-connections/base';
-import { TrackedArray, TrackedObject } from 'tracked-built-ins';
 
 import hasEqualUrls from './has-equal-urls';
 import normalizeIdentifier from './normalize-identifier';
-
 /**
  *
 /**
@@ -20,9 +20,9 @@ export default class SoundCache {
   @service stereo;
 
   @tracked cachedCount = 0;
-  @tracked cachedList = new TrackedArray();
-  @tracked cachedSounds = new TrackedArray();
-  @tracked _cache = new TrackedObject();
+  @deepTracked cachedList = A();
+  @deepTracked cachedSounds = A();
+  @deepTracked _cache = {};
   name = 'ember-stereo:sound-cache';
 
   reset() {

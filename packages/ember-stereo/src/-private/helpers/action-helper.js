@@ -3,14 +3,13 @@ import { inject as service } from '@ember/service';
 
 import prepareOptions from 'ember-stereo/-private/utils/prepare-options';
 import BaseSound from 'ember-stereo/stereo-connections/base';
-import { dedupeTracked } from 'tracked-toolbox';
-
+import { tracked } from '@glimmer/tracking';
 export default class ActionHelper extends Helper {
   @service stereo;
   identifier = null;
-  @dedupeTracked options;
-  @dedupeTracked _sound;
-  @dedupeTracked soundProxy;
+  @tracked options;
+  @tracked _sound;
+  @tracked soundProxy;
 
   get sound() {
     if (this._sound) {
@@ -26,12 +25,11 @@ export default class ActionHelper extends Helper {
     this.options = prepareOptions(options);
 
     if (identifier !== this.identifier) {
-      this.identifier = identifier;
-      if (this.identifier instanceof BaseSound) {
+      if (identifier instanceof BaseSound) {
         this._sound = this.identifier;
       }
 
-      if (this.identifier) {
+      if (identifier) {
         this.soundProxy = this.stereo.soundProxy(identifier);
       }
 
@@ -40,6 +38,8 @@ export default class ActionHelper extends Helper {
           this.stereo.load(this.identifier, this.options);
         }
       }
+
+      this.identifier = identifier;
     }
 
     return (e) => this.performAction(this.sound, e);

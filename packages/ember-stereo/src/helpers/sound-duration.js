@@ -1,4 +1,4 @@
-import StereoBaseIsHelper from 'ember-stereo/-private/helpers/is-helper';
+import FindSoundHelper from 'ember-stereo/-private/helpers/find-sound-helper';
 import debugMessage from 'ember-stereo/-private/utils/debug-message';
 
 import { numericDuration } from './numeric-duration';
@@ -22,7 +22,7 @@ import { numericDuration } from './numeric-duration';
   @param {Boolean} load? load the sound if it's not loaded?
   @return {any}
 */
-export default class SoundDuration extends StereoBaseIsHelper {
+export default class SoundDuration extends FindSoundHelper {
   name = 'sound-duration';
 
   get result() {

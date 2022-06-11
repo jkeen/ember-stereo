@@ -1,4 +1,4 @@
-import StereoBaseIsHelper from 'ember-stereo/-private/helpers/is-helper';
+import FindSoundHelper from 'ember-stereo/-private/helpers/find-sound-helper';
 import debugMessage from 'ember-stereo/-private/utils/debug-message';
 
 /**
@@ -22,7 +22,7 @@ import debugMessage from 'ember-stereo/-private/utils/debug-message';
   @return {Boolean}
 */
 
-export default class SoundIsSeekable extends StereoBaseIsHelper {
+export default class SoundIsSeekable extends FindSoundHelper {
   name = 'sound-is-seekable';
 
   get result() {

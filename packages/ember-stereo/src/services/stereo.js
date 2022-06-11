@@ -364,7 +364,7 @@ export default class Stereo extends Service.extend(EmberEvented) {
   @task({ restartable: true, evented: true })
   *loadTask(urlsOrPromise, _options) {
     let options = this.prepareLoadOptions(_options);
-    let urlsToTry = yield this.urlCache.resolve(urlsOrPromise);
+    let urlsToTry = yield this.resolveIdentifier.perform(urlsOrPromise);
     debug('ember-stereo')(`given urls: ${urlsToTry.join(', ')}`);
     this.trigger('pre-load', urlsToTry);
     this.errorCache.remove(urlsToTry);
@@ -660,6 +660,13 @@ export default class Stereo extends Service.extend(EmberEvented) {
 
   get systemStereoOptions() {
     return config?.emberStereo;
+  }
+
+
+  strategizerFor(urlsToTry, options) {
+    let strategizer = new Strategizer(urlsToTry, options);
+    setOwner(strategizer, getOwner(this));
+    return strategizer;
   }
 
   _buildStrategies(urlsToTry, options) {

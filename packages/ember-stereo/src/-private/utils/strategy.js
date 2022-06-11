@@ -1,7 +1,6 @@
 import { tracked } from '@glimmer/tracking';
 import { getOwner, setOwner } from '@ember/application';
-
-import { cached } from 'tracked-toolbox';
+import { cached } from '@glimmer/tracking';
 
 export default class Strategy {
   @tracked stereoUrl;
