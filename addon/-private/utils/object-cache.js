@@ -4,7 +4,11 @@ import normalizeIdentifier from './normalize-identifier';
 import { TrackedObject, TrackedWeakMap } from 'tracked-built-ins';
 
 function isAnObject(identifier) {
-  return identifier.then || typeof identifier === 'object';
+  return (
+    identifier !== undefined &&
+    identifier !== null &&
+    (typeof identifier === 'object' || identifier.then)
+  );
 }
 
 /**
