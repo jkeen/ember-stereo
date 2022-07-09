@@ -25,6 +25,7 @@ import MetadataCache from 'ember-stereo/-private/utils/metadata-cache';
 import SharedAudioAccess from 'ember-stereo/-private/utils/shared-audio-access';
 import SoundCache from 'ember-stereo/-private/utils/sound-cache';
 import ObjectCache from 'ember-stereo/-private/utils/object-cache';
+import UntrackedObjectCache from 'ember-stereo/-private/utils/untracked-object-cache';
 import Strategizer from 'ember-stereo/-private/utils/strategizer';
 import StereoUrl from 'ember-stereo/-private/utils/stereo-url';
 import SoundProxy from 'ember-stereo/-private/utils/sound-proxy';
@@ -74,7 +75,7 @@ export default class Stereo extends Service.extend(EmberEvented) {
   @tracked errorCache = new ErrorCache();
   @tracked metadataCache = new MetadataCache();
   @tracked urlCache = new UrlCache();
-  proxyCache = new ObjectCache();
+  proxyCache = new UntrackedObjectCache();
 
   pollInterval = 500;
 
