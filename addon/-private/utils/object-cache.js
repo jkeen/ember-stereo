@@ -1,4 +1,5 @@
 import { tracked } from '@glimmer/tracking';
+import { inject as service } from '@ember/service';
 import normalizeIdentifier from './normalize-identifier';
 import { TrackedObject, TrackedWeakMap } from 'tracked-built-ins';
 
@@ -10,6 +11,8 @@ function isAnObject(identifier) {
  * This class caches things based on a strings or objects. You shouldn't have to interact with this class.
  */
 export default class ObjectCache {
+  @service stereo; // used by subclasses
+
   @tracked objectCache = new TrackedWeakMap();
   @tracked keyCache = new TrackedObject();
   name = 'ember-stereo:object-cache';
