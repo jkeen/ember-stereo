@@ -74,7 +74,7 @@ export default class Stereo extends Service.extend(EmberEvented) {
   @tracked errorCache = new ErrorCache();
   @tracked metadataCache = new MetadataCache();
   @tracked urlCache = new UrlCache();
-  @tracked proxyCache = new ObjectCache();
+  proxyCache = new ObjectCache();
 
   pollInterval = 500;
 
