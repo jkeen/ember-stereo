@@ -30,19 +30,19 @@ const HAVE_CURRENT_DATA = 2;
 // const HAVE_ENOUGH_DATA = 4;
 
 /**
-* This is the connection class that uses a plain ol audio element to play sounds.
-*
-* @class NativeAudio
-* @extends BaseSound
-* @constructor
-*/
+ * This is the connection class that uses a plain ol audio element to play sounds.
+ *
+ * @class NativeAudio
+ * @extends BaseSound
+ * @constructor
+ */
 export default class NativeAudio extends BaseSound {
   @tracked _internalElement;
 
   static canPlayMimeType(mimeType) {
     let audio = new Audio();
     // it returns "probably" and "maybe". Both are worth trying. Empty is bad.
-    return (audio.canPlayType(mimeType) !== "");
+    return audio.canPlayType(mimeType) !== '';
   }
 
   static key = 'NativeAudio';
@@ -63,17 +63,18 @@ export default class NativeAudio extends BaseSound {
   }
 
   _registerEvents(audio) {
-    AUDIO_EVENTS.forEach(eventName => {
-      audio.addEventListener(eventName, e => run(() => this._handleAudioEvent(eventName, e)));
+    AUDIO_EVENTS.forEach((eventName) => {
+      audio.addEventListener(eventName, (e) =>
+        run(() => this._handleAudioEvent(eventName, e))
+      );
     });
   }
 
   _unregisterEvents(audio) {
-    AUDIO_EVENTS.forEach(eventName => audio.removeEventListener(eventName));
+    AUDIO_EVENTS.forEach((eventName) => audio.removeEventListener(eventName));
   }
 
   _handleAudioEvent(eventName, e) {
-
     if (!this.urlsAreEqual(e.target?.src, this.url) && e.target?.src !== '') {
       // This event is not for us if our srcs aren't equal
 
@@ -102,7 +103,7 @@ export default class NativeAudio extends BaseSound {
         break;
       case 'onloadedmetadata':
         this._onAudioDurationChanged();
-        this.duration = this._audioDuration()
+        this.duration = this._audioDuration();
         break;
       case 'playing':
         this._onAudioPlayed();
@@ -115,7 +116,6 @@ export default class NativeAudio extends BaseSound {
         this._onAudioPaused();
         break;
       case 'durationchange':
-
         break;
       case 'ended':
         this._onAudioEnded();
@@ -175,8 +175,7 @@ export default class NativeAudio extends BaseSound {
 
     try {
       this.internalElement.currentTime = audio.currentTime;
-    }
-    catch (e) {
+    } catch (e) {
       this.debug('Errored while trying to save audio current time');
       this.debug(e);
     }
@@ -208,8 +207,7 @@ export default class NativeAudio extends BaseSound {
           sharedElement.volume = internalElement.volume;
         }
         this.debug('Restored audio state');
-      }
-      catch (e) {
+      } catch (e) {
         this.debug('Errored while trying to restore audio state');
         this.debug(e);
       }
@@ -218,18 +216,27 @@ export default class NativeAudio extends BaseSound {
 
   _onAudioProgress() {
     if (!this.isStream) {
-      this.trigger('audio-loading', { sound: this, ...this._calculatePercentLoaded() });
+      this.trigger('audio-loading', {
+        sound: this,
+        ...this._calculatePercentLoaded(),
+      });
     }
   }
 
   _onPositionChange() {
     if (!this.isStream) {
-      this.trigger('audio-position-changed', { sound: this, position: this.position });
+      this.trigger('audio-position-changed', {
+        sound: this,
+        position: this.position,
+      });
     }
   }
 
   _onAudioDurationChanged() {
-    this.trigger('audio-duration-changed', { sound: this, duration: this._audioDuration() });
+    this.trigger('audio-duration-changed', {
+      sound: this,
+      duration: this._audioDuration(),
+    });
   }
 
   _onAudioPlayed() {
@@ -245,10 +252,13 @@ export default class NativeAudio extends BaseSound {
   _onAudioError(error) {
     if (error.name === 'NotAllowedError') {
       this.stop();
-      this.trigger('audio-blocked', { sound: this, error: error.message, event: error });
-    }
-    else {
-      let message = "";
+      this.trigger('audio-blocked', {
+        sound: this,
+        error: error.message,
+        event: error,
+      });
+    } else {
+      let message = '';
       switch (error.code) {
         case error.MEDIA_ERR_ABORTED:
           message = 'You aborted the audio playback.';
@@ -268,7 +278,11 @@ export default class NativeAudio extends BaseSound {
       }
 
       this.debug(`audio element threw error ${message}`);
-      this.trigger('audio-load-error', { sound: this, error: message, event: error });
+      this.trigger('audio-load-error', {
+        sound: this,
+        error: message,
+        event: error,
+      });
     }
   }
 
@@ -281,7 +295,7 @@ export default class NativeAudio extends BaseSound {
   }
 
   _onAudioReady() {
-    this.debug('triggering audio ready')
+    this.debug('triggering audio ready');
     this.trigger('audio-ready', { sound: this });
     this.trigger('audio-loaded', { sound: this });
   }
@@ -296,15 +310,14 @@ export default class NativeAudio extends BaseSound {
         totals.push(ranges.end(index) - ranges.start(index));
       }
 
-      let total = A(totals).reduce((a, b) => (a + b), 0);
+      let total = A(totals).reduce((a, b) => a + b, 0);
 
       this.debug(`ms loaded: ${total * 1000}`);
       this.debug(`duration: ${this._audioDuration()}`);
       this.debug(`percent loaded = ${(total / audio.duration) * 100}`);
 
-      return { percentLoaded: (total / audio.duration) };
-    }
-    else {
+      return { percentLoaded: total / audio.duration };
+    } else {
       return 0;
     }
   }
@@ -328,22 +341,23 @@ export default class NativeAudio extends BaseSound {
   }
 
   _setPosition(position) {
-    this.audioElement.currentTime = (position / 1000);
+    this.audioElement.currentTime = position / 1000;
     return this._currentPosition();
   }
 
   _setVolume(volume) {
     if (macroCondition(isTesting())) {
+      this.debug(`skipping set volume in test env: ${volume}`);
     } else {
       this.debug(`_setVolume: ${volume}`);
       let audio = this.audioElement;
-      audio.volume = (volume / 100);
+      audio.volume = volume / 100;
     }
   }
 
   @task({ restartable: true })
   *playTask({ position /*, retryCount */ }) {
-    this.isLoading = true
+    this.isLoading = true;
     // retryCount = retryCount || 0
     let audio = this.requestControl();
 
@@ -357,9 +371,9 @@ export default class NativeAudio extends BaseSound {
 
     this.debug('telling audio to play');
     try {
-      yield audio.play().catch(e => {
+      yield audio.play().catch((e) => {
         throw e;
-      })
+      });
     } catch (e) {
       // if (retryCount < 2) {
       //   try {
@@ -371,9 +385,9 @@ export default class NativeAudio extends BaseSound {
       //     }
       //   }
       // }
-      this._onAudioError(e)
+      this._onAudioError(e);
     } finally {
-      this.isLoading = false
+      this.isLoading = false;
     }
   }
 
@@ -393,8 +407,7 @@ export default class NativeAudio extends BaseSound {
 
     if (this.isStream) {
       this.stop(); // we don't want the stream to continue loading while paused
-    }
-    else {
+    } else {
       audio.pause();
     }
   }
@@ -412,7 +425,7 @@ export default class NativeAudio extends BaseSound {
   }
 
   loadAudio(audio) {
-    this.defeatBrowserCaching()
+    this.defeatBrowserCaching();
 
     if (!this.urlsAreEqual(audio.src, this.url)) {
       audio.setAttribute('src', this.url);
@@ -430,7 +443,7 @@ export default class NativeAudio extends BaseSound {
 
     if (this.isStream) {
       let a = document.createElement('a');
-      a.href = this.url
+      a.href = this.url;
       a.hash = new Date().getTime();
       this.url = a.href;
     }
@@ -445,7 +458,7 @@ export default class NativeAudio extends BaseSound {
     parser1.href = url1;
     parser2.href = url2;
 
-    return (parser1.href === parser2.href);
+    return parser1.href === parser2.href;
   }
 
   teardown() {

@@ -4,6 +4,7 @@ import { getOwner, setOwner } from '@ember/application';
 import { A as emberArray, makeArray } from '@ember/array';
 import { assert } from '@ember/debug';
 import {
+  race,
   task,
   waitForProperty,
   waitForEvent,

@@ -10,7 +10,14 @@
 - Ember CLI v3.27 or above
 - Node.js v12 or above
 
-```shell
+* Ember.js v3.24 or above
+* Ember CLI v3.24 or above
+* Node.js v12 or above
+
+
+## Installation
+
+```
 ember install ember-stereo
 ```
 
