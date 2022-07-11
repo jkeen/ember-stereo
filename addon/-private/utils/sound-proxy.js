@@ -1,10 +1,16 @@
-import hasEqualUrls from 'ember-stereo/-private/utils/has-equal-urls';
 import { tracked } from '@glimmer/tracking';
-import { task, waitForProperty, waitForEvent, didCancel } from 'ember-concurrency';
 import { isEmpty } from '@ember/utils';
-import Evented from 'ember-stereo/-private/utils/evented';
-import Ember from 'ember';
+import { isTesting, macroCondition } from '@embroider/macros';
 import debug from 'debug';
+import Evented from 'ember-stereo/-private/utils/evented';
+import hasEqualUrls from 'ember-stereo/-private/utils/has-equal-urls';
+import {
+  task,
+  waitForProperty,
+  waitForEvent,
+  didCancel,
+} from 'ember-concurrency';
+
 /**
 * This class lazy loads sounds based on identifiers
   @private
@@ -54,7 +60,7 @@ export default class SoundProxy extends Evented {
         break;
       }
 
-      if (Ember.testing) {
+      if (macroCondition(isTesting())) {
         break;
       }
     }

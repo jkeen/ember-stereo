@@ -1,21 +1,21 @@
+import Service from '@ember/service';
+import { tracked } from '@glimmer/tracking';
+import { getOwner, setOwner } from '@ember/application';
 import { A as emberArray, makeArray } from '@ember/array';
 import { assert } from '@ember/debug';
-import { assign } from '@ember/polyfills';
-import { getOwner, setOwner } from '@ember/application';
-import { later, cancel, next } from '@ember/runloop';
 import {
   race,
-  waitForProperty,
-  didCancel,
   task,
+  waitForProperty,
   waitForEvent,
+  didCancel,
 } from 'ember-concurrency';
-import { tracked } from '@glimmer/tracking';
+import { assign } from '@ember/polyfills';
+import { cancel, later, next } from '@ember/runloop';
+import { isTesting, macroCondition } from '@embroider/macros';
+import canAutoplay from 'can-autoplay';
 import debug from 'debug';
 import config from 'ember-get-config';
-import canAutoplay from 'can-autoplay';
-import Service from '@ember/service';
-import Ember from 'ember';
 
 import EmberEvented from '@ember/object/evented';
 import ErrorCache from 'ember-stereo/-private/utils/error-cache';
@@ -24,7 +24,7 @@ import UrlCache from 'ember-stereo/-private/utils/url-cache';
 import MetadataCache from 'ember-stereo/-private/utils/metadata-cache';
 import SharedAudioAccess from 'ember-stereo/-private/utils/shared-audio-access';
 import SoundCache from 'ember-stereo/-private/utils/sound-cache';
-import ObjectCache from 'ember-stereo/-private/utils/object-cache';
+import UntrackedObjectCache from 'ember-stereo/-private/utils/untracked-object-cache';
 import Strategizer from 'ember-stereo/-private/utils/strategizer';
 import StereoUrl from 'ember-stereo/-private/utils/stereo-url';
 import SoundProxy from 'ember-stereo/-private/utils/sound-proxy';
@@ -74,7 +74,7 @@ export default class Stereo extends Service.extend(EmberEvented) {
   @tracked errorCache = new ErrorCache();
   @tracked metadataCache = new MetadataCache();
   @tracked urlCache = new UrlCache();
-  @tracked proxyCache = new ObjectCache();
+  proxyCache = new UntrackedObjectCache();
 
   pollInterval = 500;
 
@@ -103,10 +103,10 @@ export default class Stereo extends Service.extend(EmberEvented) {
 
     this.poll = setInterval(
       this._setCurrentPosition.bind(this),
-      Ember.testing ? 20 : this.pollInterval
+      macroCondition(isTesting()) ? 20 : this.pollInterval
     );
 
-    if (!Ember.testing) {
+    if (macroCondition(isTesting())) {
       this._determineAutoplayPermissions();
     }
     this.isReady = true;
@@ -260,12 +260,12 @@ export default class Stereo extends Service.extend(EmberEvented) {
   }
 
   /**
- * Gets the current sound currentTime (only available on some sounds, like HLS streams with annotated time values)
- * @property currentTime
- * @type {Object}
- * @readOnly
- * @public
- */
+   * Gets the current sound currentTime (only available on some sounds, like HLS streams with annotated time values)
+   * @property currentTime
+   * @type {Object}
+   * @readOnly
+   * @public
+   */
   get currentTime() {
     return this.currentSound?.currentTime;
   }
@@ -445,8 +445,8 @@ export default class Stereo extends Service.extend(EmberEvented) {
         if (options.metadata) {
           sound.metadata = {
             ...sound.metadata,
-            ...options.metadata
-          } // set current sound metadata
+            ...options.metadata,
+          }; // set current sound metadata
         }
 
         this.soundCache.cache(sound);
@@ -529,7 +529,7 @@ export default class Stereo extends Service.extend(EmberEvented) {
   *playTask(urlsOrPromise, options = {}) {
     options = assign({ metadata: {} }, options);
 
-    let previouslyPlayingSound = this.isPlaying ? this.currentSound : false
+    let previouslyPlayingSound = this.isPlaying ? this.currentSound : false;
 
     let loadPromise = this.loadTask.perform(urlsOrPromise, options);
     this.trigger('new-load-request', { loadPromise, urlsOrPromise, options }); //urls: Promise.resolve(resolveUrls(urlsOrPromise))
@@ -545,7 +545,9 @@ export default class Stereo extends Service.extend(EmberEvented) {
       ]);
 
       if (previouslyPlayingSound) {
-        this.trigger('current-sound-interrupted', { sound: previouslyPlayingSound });
+        this.trigger('current-sound-interrupted', {
+          sound: previouslyPlayingSound,
+        });
       }
 
       if (sound && 'position' in options) {
@@ -685,7 +687,7 @@ export default class Stereo extends Service.extend(EmberEvented) {
   }
 
   _buildStrategies(urlsToTry, options) {
-    let strategizer = new Strategizer(urlsToTry, options)
+    let strategizer = new Strategizer(urlsToTry, options);
     setOwner(strategizer, getOwner(this));
     return strategizer.strategies;
   }
@@ -958,7 +960,7 @@ export default class Stereo extends Service.extend(EmberEvented) {
     );
     this._unregisterEvents(sound);
     strategy.error = sound.error;
-    let result = { error: sound.error }
+    let result = { error: sound.error };
 
     return result;
   }
@@ -1121,14 +1123,16 @@ export default class Stereo extends Service.extend(EmberEvented) {
       let mediaAttributes = {
         title,
         artist,
-        album
-      }
+        album,
+      };
 
       if (makeArray(artwork).length > 0 && artwork[0]?.src) {
-        mediaAttributes.artwork = makeArray(artwork)
+        mediaAttributes.artwork = makeArray(artwork);
       }
 
-      navigator.mediaSession.metadata = new window.MediaMetadata(mediaAttributes);
+      navigator.mediaSession.metadata = new window.MediaMetadata(
+        mediaAttributes
+      );
     }
   }
 
@@ -1175,7 +1179,7 @@ export default class Stereo extends Service.extend(EmberEvented) {
       sound.trigger('audio-blocked');
     }, 2000);
 
-    sound.one('audio-load-error', () => { });
+    sound.one('audio-load-error', () => {});
 
     sound.one('audio-played', () => {
       document.removeEventListener('touchstart', touchPlay);

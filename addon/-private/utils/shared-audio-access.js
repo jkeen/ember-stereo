@@ -1,6 +1,5 @@
 import debug from 'debug';
 const log = debug('ember-stereo:shared-audio-access');
-import { tracked } from '@glimmer/tracking';
 
 /**
  * This class handles sharing a single audio element between multiple sounds.
@@ -13,9 +12,8 @@ import { tracked } from '@glimmer/tracking';
  */
 
 export default class SharedAudioAccess {
-
-  @tracked audioElement;
-  @tracked owner;
+  audioElement;
+  owner;
 
   debug(message) {
     log(message);
@@ -38,27 +36,27 @@ export default class SharedAudioAccess {
   requestControl(who) {
     let owner = this.owner;
 
-    if ((owner !== who) && owner) {
-      who.debug("[shared-audio-access] I need audio control");
-      this.debug("coordinating peaceful transfer of power");
+    if (owner !== who && owner) {
+      who.debug('[shared-audio-access] I need audio control');
+      this.debug('coordinating peaceful transfer of power');
     }
 
     if (owner) {
       owner.releaseControl();
-      if ((owner !== who) && owner) {
+      if (owner !== who && owner) {
         owner.debug("[shared-audio-access] I've released audio control");
       }
     }
 
     this.owner = who;
     if (owner !== who) {
-      who.debug("[shared-audio-access] I have control now");
+      who.debug('[shared-audio-access] I have control now');
     }
     return this.audioElement;
   }
 
   hasControl(who) {
-    return (this.owner === who);
+    return this.owner === who;
   }
 
   releaseControl(who) {

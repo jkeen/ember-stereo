@@ -1,23 +1,32 @@
 import Application from '@ember/application';
+import config from 'dummy/config/environment';
 import { run } from '@ember/runloop';
-import emberStereoInitializer from 'dummy/instance-initializers/ember-stereo';
+import { initialize } from 'dummy/instance-initializers/ember-stereo';
 import { module, test } from 'qunit';
-
-let application;
+import Resolver from 'ember-resolver';
 
 module('Unit | Initializer | ember-stereo', function (hooks) {
   hooks.beforeEach(function () {
-    run(function () {
-      application = Application.create();
-      application.deferReadiness();
+    this.StereoApplication = class StereoApplication extends Application {
+      modulePrefix = config.modulePrefix;
+      podModulePrefix = config.podModulePrefix;
+      Resolver = Resolver;
+    };
+    this.StereoApplication.initializer({
+      name: 'initializer under test',
+      initialize,
     });
+
+    this.application = this.StereoApplication.create({ autoboot: false });
   });
 
+  hooks.afterEach(function () {
+    run(this.application, 'destroy');
+  });
 
-  test('it works', function (assert) {
-    emberStereoInitializer.initialize(application);
+  test('it works', async function (assert) {
+    await this.application.boot();
 
-    // you would normally confirm the results of the initializer here
     assert.ok(true);
   });
 });
