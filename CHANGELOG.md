@@ -1,5 +1,12 @@
 ember-stereo changelog
 
+## [3.0.5](https://github.com/jkeen/ember-stereo/compare/v3.0.4...v3.0.5) (2022-07-11)
+
+
+### Performance Improvements
+
+* Fix tracked values being updated in the same runloop they were used([#11](https://github.com/jkeen/ember-stereo/issues/11)) ([bb032ce](https://github.com/jkeen/ember-stereo/commit/bb032ceb00b151460f2e09280dedda6c47425671))
+
 ## [3.0.4](https://github.com/jkeen/ember-stereo/compare/v3.0.3...v3.0.4) (2022-02-23)
 
 
