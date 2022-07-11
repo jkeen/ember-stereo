@@ -13,7 +13,7 @@ module.exports = async function () {
         name: 'ember-lts-3.24',
         npm: {
           devDependencies: {
-            'ember-source': '~3.27.5',
+            'ember-source': '~3.24.0',
           },
         },
       },
