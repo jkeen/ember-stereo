@@ -1,11 +1,26 @@
+import { tracked } from '@glimmer/tracking';
 import { A } from '@ember/array';
 import { run } from '@ember/runloop';
+
+import { isTesting, macroCondition } from '@embroider/macros';
+import { didCancel, task } from 'ember-concurrency';
 import BaseSound from 'ember-stereo/stereo-connections/base';
-import Ember from 'ember';
-import { task, didCancel } from 'ember-concurrency';
-import { tracked } from '@glimmer/tracking';
 // These are the events we're watching for
-const AUDIO_EVENTS = ['loadstart', 'durationchange', 'loadedmetadata', 'loadeddata', 'progress', 'canplay', 'canplaythrough', 'error', 'playing', 'pause', 'ended', 'emptied', 'timeupdate'];
+const AUDIO_EVENTS = [
+  'loadstart',
+  'durationchange',
+  'loadedmetadata',
+  'loadeddata',
+  'progress',
+  'canplay',
+  'canplaythrough',
+  'error',
+  'playing',
+  'pause',
+  'ended',
+  'emptied',
+  'timeupdate',
+];
 
 // Ready state values
 // const HAVE_NOTHING = 0;
@@ -40,7 +55,7 @@ export default class NativeAudio extends BaseSound {
     audio.src = this.url;
     this._registerEvents(audio);
 
-    if (Ember.testing) {
+    if (macroCondition(isTesting())) {
       audio.muted = true;
     }
 
@@ -318,7 +333,8 @@ export default class NativeAudio extends BaseSound {
   }
 
   _setVolume(volume) {
-    if (!Ember.testing) {
+    if (macroCondition(isTesting())) {
+    } else {
       this.debug(`_setVolume: ${volume}`);
       let audio = this.audioElement;
       audio.volume = (volume / 100);

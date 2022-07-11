@@ -52,7 +52,8 @@
     "hls.js": "^1.1.1",
     "howler": "^2.2.1",
     "tracked-built-ins": "^3.1.0",
-    "tracked-toolbox": "^1.2.1"
+    "tracked-toolbox": "^1.2.1",
+    "@embroider/macros": "^1.8.3"
   },
   "devDependencies": {
     "@ember/optional-features": "^2.0.0",
