@@ -1,5 +1,12 @@
 ember-stereo changelog
 
+# [3.1.0](https://github.com/jkeen/ember-stereo/compare/v3.0.4...v3.1.0) (2022-07-11)
+
+
+### Features
+
+* Ember 4 compatibility ([162f1bf](https://github.com/jkeen/ember-stereo/commit/162f1bf67c9f0da65a8e67f4d2d084bff0396867)), closes [#11](https://github.com/jkeen/ember-stereo/issues/11)
+
 ## [3.0.4](https://github.com/jkeen/ember-stereo/compare/v3.0.3...v3.0.4) (2022-02-23)
 
 
