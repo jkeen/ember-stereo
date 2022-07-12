@@ -1,5 +1,12 @@
 ember-stereo changelog
 
+## [3.1.1](https://github.com/jkeen/ember-stereo/compare/v3.1.0...v3.1.1) (2022-07-12)
+
+
+### Bug Fixes
+
+* use object spread operator to replace Ember.assign and fix deprecation ([#12](https://github.com/jkeen/ember-stereo/issues/12)) ([43a2358](https://github.com/jkeen/ember-stereo/commit/43a23584f182465bc6ffb9bdf55619d21c1d77bd))
+
 # [3.1.0](https://github.com/jkeen/ember-stereo/compare/v3.0.4...v3.1.0) (2022-07-11)
 
 
