@@ -7970,10 +7970,18 @@ ember-gesture-modifiers@^3.0.0:
     ember-cli-htmlbars "^6.0.1"
     ember-modifier "^3.0.0"
 
-ember-get-config@^1.0.0, ember-get-config@^1.0.1:
+ember-get-config@^1.0.0:
   version "1.0.4"
   resolved "https://registry.yarnpkg.com/ember-get-config/-/ember-get-config-1.0.4.tgz#e8c36b0937767ead32e16d157fabd8178c542587"
   integrity sha512-WOnf1E0ceRHWy7apnmUFbKcJm2c3KOg4rNNUKNtBFCFp770tOTwv5LAYcqV4+HootPCsQYL7oFUd/0JLiZpMeg==
+  dependencies:
+    "@embroider/macros" "^0.50.0 || ^1.0.0"
+    ember-cli-babel "^7.26.6"
+
+ember-get-config@^2.0:
+  version "2.1.1"
+  resolved "https://registry.yarnpkg.com/ember-get-config/-/ember-get-config-2.1.1.tgz#bede76c25d95dbefab8d30064abf7aa00bc19235"
+  integrity sha512-uNmv1cPG/4qsac8oIf5txJ2FZ8p88LEpG4P3dNcjsJS98Y8hd0GPMFwVqpnzI78Lz7VYRGQWY4jnE4qm5R3j4g==
   dependencies:
     "@embroider/macros" "^0.50.0 || ^1.0.0"
     ember-cli-babel "^7.26.6"
