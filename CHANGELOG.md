@@ -1,5 +1,12 @@
 ember-stereo changelog
 
+## [3.1.2](https://github.com/jkeen/ember-stereo/compare/v3.1.1...v3.1.2) (2022-07-12)
+
+
+### Bug Fixes
+
+* update ember-get-config to resolve docs not deploying ([a393404](https://github.com/jkeen/ember-stereo/commit/a3934045971540329d8453efd5245e7af80c154b))
+
 ## [3.1.1](https://github.com/jkeen/ember-stereo/compare/v3.1.0...v3.1.1) (2022-07-12)
 
 
