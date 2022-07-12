@@ -10,7 +10,6 @@ import {
   waitForEvent,
   didCancel,
 } from 'ember-concurrency';
-import { assign } from '@ember/polyfills';
 import { cancel, later, next } from '@ember/runloop';
 import { isTesting, macroCondition } from '@embroider/macros';
 import canAutoplay from 'can-autoplay';
@@ -364,16 +363,14 @@ export default class Stereo extends Service.extend(EmberEvented) {
    */
 
   prepareLoadOptions(options) {
-    return assign(
-      {
-        metadata: {},
-        sharedAudioAccess: this._createAndUnlockAudio(),
-        useSharedAudioAccess: this.useSharedAudioAccess,
-        isMobileDevice: this.isMobileDevice,
-        connections: this.connectionLoader.connections,
-      },
-      options
-    );
+    return {
+      metadata: {},
+      sharedAudioAccess: this._createAndUnlockAudio(),
+      useSharedAudioAccess: this.useSharedAudioAccess,
+      isMobileDevice: this.isMobileDevice,
+      connections: this.connectionLoader.connections,
+      ...options,
+    };
   }
 
   @task({ restartable: true, evented: true })
@@ -496,7 +493,7 @@ export default class Stereo extends Service.extend(EmberEvented) {
    */
 
   load(urlsOrPromise, options) {
-    options = assign({ metadata: {} }, options);
+    options = { metadata: {}, ...options };
 
     try {
       let promise = this.loadTask.perform(urlsOrPromise, options);
@@ -527,7 +524,7 @@ export default class Stereo extends Service.extend(EmberEvented) {
 
   @task({ restartable: true })
   *playTask(urlsOrPromise, options = {}) {
-    options = assign({ metadata: {} }, options);
+    options = { metadata: {}, ...options };
 
     let previouslyPlayingSound = this.isPlaying ? this.currentSound : false;
 
