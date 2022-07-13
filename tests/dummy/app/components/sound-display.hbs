@@ -28,7 +28,7 @@
   </div>
 
   <span
-    class='{{unless this.isCurrentSound 'opacity-0'}}
+    class='{{unless this.isCurrentSound "opacity-0"}}
       flex justify-center p-1 -ml-2 -mr-2 my-2 text-xs font-bold text-center text-on-surface-0 uppercase transform bg-accent-0'
   >Current Sound</span>
 
@@ -62,13 +62,13 @@
             Inspect
           </button>
         </:button>
-        <:default>
+        <:content>
           <div
             class='p-2 text-xs border rounded-md bg-surface-3
               {{if
                 this.hasControlOfAudioElement
-                'border-accent-1'
-                'border-surface-0'
+                "border-accent-1"
+                "border-surface-0"
               }}'
           >
             {{sound.audioElement.outerHTML}}
@@ -81,41 +81,47 @@
             {{/if}}
 
           {{/if}}
-        </:default>
+        </:content>
       </d.Section>
     {{/let}}
 
     <d.Section @title='Connections'>
-      <StrategyBreakdown
-        @url={{this.url}}
-        class='flex flex-col gap-1 justify-items-stretch'
-        as |data|
-      >
-        <li
-          class='inline
-            {{if (eq data.info.status 'failure') ' text-danger '}}
-            {{if (eq data.info.status 'success') ' text-success '}}
-            '
+      <:content>
+        <StrategyBreakdown
+          @url={{this.url}}
+          class='flex flex-col gap-1 justify-items-stretch'
+          as |data|
         >
-          <span class='text-sm'>
-            {{svg-jar
-              (concat 'connection-' data.info.status)
-              class='inline w-4 h-4'
-            }}
-            {{data.item.name}}
-          </span>
-          <span class='text-sm opacity-70'>{{data.info.message}}</span>
-        </li>
+          <li
+            class='inline
+              {{if (eq data.info.status "failure") " text-danger "}}
+              {{if (eq data.info.status "success") " text-success "}}
+              '
+          >
+            <span class='text-sm'>
+              {{svg-jar
+                (concat 'connection-' data.info.status)
+                class='inline w-4 h-4'
+              }}
+              {{data.item.name}}
+            </span>
+            <span class='text-sm opacity-70'>{{data.info.message}}</span>
+          </li>
 
-      </StrategyBreakdown>
+        </StrategyBreakdown>
+      </:content>
     </d.Section>
 
     <d.Section @title='Properties'>
-      <SoundProperties @url={{this.url}} />
+      <:content>
+        <SoundProperties @url={{this.url}} />
+      </:content>
     </d.Section>
 
     <d.Section @title='Events'>
-      <EventDisplay @url={{this.url}} />
+      <:content>
+        <EventDisplay @url={{this.url}} />
+      </:content>
     </d.Section>
   </DebugDetails>
 
