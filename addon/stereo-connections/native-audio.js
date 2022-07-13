@@ -1,9 +1,9 @@
 import { tracked } from '@glimmer/tracking';
 import { A } from '@ember/array';
 import { run } from '@ember/runloop';
-
 import { isTesting, macroCondition } from '@embroider/macros';
-import { didCancel, task } from 'ember-concurrency';
+import { didCancel, task, timeout } from 'ember-concurrency';
+import { cached } from 'tracked-toolbox';
 import BaseSound from 'ember-stereo/stereo-connections/base';
 // These are the events we're watching for
 const AUDIO_EVENTS = [
@@ -116,6 +116,8 @@ export default class NativeAudio extends BaseSound {
         this._onAudioPaused();
         break;
       case 'durationchange':
+        this._onAudioDurationChanged();
+        this.duration = this._audioDuration();
         break;
       case 'ended':
         this._onAudioEnded();
@@ -242,6 +244,7 @@ export default class NativeAudio extends BaseSound {
   _onAudioPlayed() {
     if (!this.isPlaying) {
       this.trigger('audio-played', { sound: this });
+      this.durationWorkaroundTask.perform();
     }
   }
 
@@ -324,9 +327,11 @@ export default class NativeAudio extends BaseSound {
 
   /* Public interface */
 
+  _durationHistory = [];
+
   _audioDuration() {
     let audio = this.audioElement;
-    if (audio.duration > 172800000) {
+    if (audio.duration > 172800000 || this.probablyAStream) {
       // if audio is longer than 3 days in milliseconds,
       // assume it's a stream, and set duration to infinity as it should be
       // this is a bug in Opera and was reported on 5/25/2017
@@ -352,6 +357,41 @@ export default class NativeAudio extends BaseSound {
       this.debug(`_setVolume: ${volume}`);
       let audio = this.audioElement;
       audio.volume = volume / 100;
+    }
+  }
+
+  // Some files that don't have an obvious mime-type/extension won't return Infinity for their duration
+  // despite it being a stream. Instead the duration will continue to increase as the file plays. This method
+  // samples the duration of the element and if it doesn't change durations for a while we know it's not a stream
+
+  @cached
+  get probablyAStream() {
+    let differences = this._durationHistory.reduce(
+      (val, cur, index, original) => [
+        ...val,
+        index === 0 ? 0 : original[index] - original[index - 1],
+      ],
+      []
+    );
+    return differences.filter((d) => d === 0).length !== differences.length;
+  }
+
+  @tracked _durationHistory = [];
+
+  @task({ restartable: true })
+  *durationWorkaroundTask() {
+    let audio = this.audioElement;
+
+    if (macroCondition(isTesting())) {
+      this._durationHistory = [0, 0, 0];
+    } else {
+      while (this.isPlaying) {
+        let duration = audio.duration * 1000;
+        this._durationHistory = this._durationHistory.slice(-20); // only keep last 20 items
+        this._durationHistory.push(duration);
+
+        yield timeout(250);
+      }
     }
   }
 
@@ -463,6 +503,7 @@ export default class NativeAudio extends BaseSound {
 
   teardown() {
     let audio = this.requestControl();
+    this.durationWorkaroundTask.cancelAll();
     this.trigger('_will_destroy', { sound: this });
     this._unregisterEvents(audio);
   }
