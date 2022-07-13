@@ -84,6 +84,21 @@ module('Unit | Connection | Native Audio', function (hooks) {
     assert.equal(stopSpy.callCount, 1, "stop was called");
   });
 
+  test("If it's fixed audio, we resume at same position we paused at", async function (assert) {
+    stereo.useSharedAudioAccess = true
+
+    let sharedAudioAccess = (new SharedAudioAccess).unlock();
+
+    let { sound } = await stereo.load('/good/10000/file.mp3', sharedAudioAccess)
+
+    assert.equal(sound.duration, 10000, 'sound is a file')
+    assert.false(sound.isStream, 'sound is a file')
+    sound.position = 1000
+    assert.notEqual(sound.position, 0)
+    await sound.play();
+    assert.ok(sound.position >= 1000)
+  });
+
   test("Don't fire audio-played events on position changes", async function (assert) {
     let { sound } = await stereo.load('/good/1000/position-changes.mp3');
 

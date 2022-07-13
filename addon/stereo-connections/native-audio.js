@@ -401,7 +401,7 @@ export default class NativeAudio extends BaseSound {
     // retryCount = retryCount || 0
     let audio = this.requestControl();
 
-    // since we clear the `src` attr on pause, restore it here
+    // since we clear the `src` attr on pause for streams, restore it here
     this.loadAudio(audio);
     this.restoreState();
 
@@ -466,12 +466,10 @@ export default class NativeAudio extends BaseSound {
 
   loadAudio(audio) {
     this.defeatBrowserCaching();
-
     if (!this.urlsAreEqual(audio.src, this.url)) {
       audio.setAttribute('src', this.url);
+      audio.load();
     }
-
-    audio.load();
   }
 
   defeatBrowserCaching() {
