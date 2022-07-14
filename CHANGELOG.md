@@ -1,5 +1,18 @@
 ember-stereo changelog
 
+# [3.2.0](https://github.com/jkeen/ember-stereo/compare/v3.1.2...v3.2.0) (2022-07-14)
+
+
+### Bug Fixes
+
+* diagnostic display problems ([1c20e8a](https://github.com/jkeen/ember-stereo/commit/1c20e8ae703d32020c8515320c0f9e5138f08993))
+* resume fixed audio at same point it was paused ([075d674](https://github.com/jkeen/ember-stereo/commit/075d67454a43a273bd410c2793fba7d4d424353f))
+
+
+### Features
+
+* try to better detect whether or not audio source is a stream based on duration changes for cases where element does not correctly indicate Infinity ([58bcd7c](https://github.com/jkeen/ember-stereo/commit/58bcd7c615870a19369c8226a0653c4aa9ffd53f))
+
 ## [3.1.2](https://github.com/jkeen/ember-stereo/compare/v3.1.1...v3.1.2) (2022-07-12)
 
 
