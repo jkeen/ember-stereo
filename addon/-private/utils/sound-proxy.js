@@ -25,16 +25,16 @@ export default class SoundProxy extends Evented {
     super(...arguments);
 
     this.stereo = stereo;
-    this.stereo.on('loadTask:started', this.onStart.bind(this))
-    this.stereo.on('loadTask:errored', this.onFinish.bind(this))
-    this.stereo.on('loadTask:succeeded', this.onFinish.bind(this))
+    this.stereo.on('loadTask:started', this.onStart.bind(this));
+    this.stereo.on('loadTask:errored', this.onFinish.bind(this));
+    this.stereo.on('loadTask:succeeded', this.onFinish.bind(this));
 
-    this.resolveUrl.perform(identifier).catch(e => {
+    this.resolveUrlTask.perform(identifier).catch((e) => {
       if (!didCancel(e)) {
         throw e;
       }
     });
-    this.waitForLoad.perform().catch(e => {
+    this.waitForLoadTask.perform().catch((e) => {
       if (!didCancel(e)) {
         throw e;
       }
@@ -42,9 +42,9 @@ export default class SoundProxy extends Evented {
   }
 
   @task({ debug: true })
-  *waitForLoad() {
-    yield waitForProperty(this, 'url', (v) => !!v)
-    debug('ember-stereo:sound-proxy')(`waiting for ${this.url} to load`)
+  *waitForLoadTask() {
+    yield waitForProperty(this, 'url', (v) => !!v);
+    debug('ember-stereo:sound-proxy')(`waiting for ${this.url} to load`);
     while (!this.value) {
       let alreadyLoaded = this.stereo.findLoadedSound(this.url);
       if (alreadyLoaded) {
@@ -64,42 +64,48 @@ export default class SoundProxy extends Evented {
         break;
       }
     }
-    debug('ember-stereo:sound-proxy')(`the wait is over for ${this.url} to load`)
+    debug('ember-stereo:sound-proxy')(
+      `the wait is over for ${this.url} to load`
+    );
   }
 
   async afterLoad(callback) {
     try {
-      await this.waitForLoad.perform();
-      callback(this.value)
+      await this.waitForLoadTask.perform();
+      callback(this.value);
     } catch (e) {
       // no-op
     }
   }
 
   @task
-  *resolveUrl(identifier) {
-    this.url = yield this.stereo.resolveIdentifier.perform(identifier)
-    debug('ember-stereo:sound-proxy')(`resolved identifier to ${this.url}`)
+  *resolveUrlTask(identifier) {
+    this.url = yield this.stereo.resolveIdentifierTask.perform(identifier);
+    debug('ember-stereo:sound-proxy')(`resolved identifier to ${this.url}`);
   }
 
   get isPending() {
-    return !this.value
+    return !this.value;
   }
 
   get isResolved() {
-    return !isEmpty(this.value)
+    return !isEmpty(this.value);
   }
 
   get isErrored() {
-    return !isEmpty(this.errors)
+    return !isEmpty(this.errors);
   }
 
   get errors() {
-    return this.stereo.cachedErrors.find(error => hasEqualUrls(error.url, this.url))
+    return this.stereo.cachedErrors.find((error) =>
+      hasEqualUrls(error.url, this.url)
+    );
   }
 
   async onStart(taskInstance) {
-    let urls = await this.stereo.resolveIdentifier.perform(taskInstance.args[0])
+    let urls = await this.stereo.resolveIdentifierTask.perform(
+      taskInstance.args[0]
+    );
 
     let match = hasEqualUrls(urls, this.url);
     if (match) {
@@ -108,7 +114,9 @@ export default class SoundProxy extends Evented {
   }
 
   async onFinish(taskInstance) {
-    let urls = await this.stereo.resolveIdentifier.perform(taskInstance.args[0])
+    let urls = await this.stereo.resolveIdentifierTask.perform(
+      taskInstance.args[0]
+    );
     let match = hasEqualUrls(urls, this.url);
     if (match) {
       this.isLoading = false;
@@ -116,8 +124,8 @@ export default class SoundProxy extends Evented {
   }
 
   willDestroy() {
-    this.stereo.off('loadTask:started', this.onStart.bind(this))
-    this.stereo.off('loadTask:errored', this.onFinish.bind(this))
-    this.stereo.off('loadTask:succeeded', this.onFinish.bind(this))
+    this.stereo.off('loadTask:started', this.onStart.bind(this));
+    this.stereo.off('loadTask:errored', this.onFinish.bind(this));
+    this.stereo.off('loadTask:succeeded', this.onFinish.bind(this));
   }
 }

@@ -244,7 +244,9 @@ export default class NativeAudio extends BaseSound {
   _onAudioPlayed() {
     if (!this.isPlaying) {
       this.trigger('audio-played', { sound: this });
-      this.durationWorkaroundTask.perform();
+      this.durationWorkaroundTask.perform().catch((e) => {
+        console.error(e);
+      });
     }
   }
 

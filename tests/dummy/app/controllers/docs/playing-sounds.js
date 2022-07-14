@@ -8,23 +8,20 @@ export default class DocsUsageController extends Controller {
   @service media;
   // END-SNIPPET
 
-
   // BEGIN-SNIPPET application-controller.js
-  onDemandUrl = "https://audio.wnyc.org/otm/otm04212017pod.mp3"
-  onDemandOgg = "https://file-examples-com.github.io/uploads/2017/11/file_example_OOG_1MG.ogg"
+  onDemandUrl = 'https://audio.wnyc.org/otm/otm04212017pod.mp3';
+  onDemandOgg =
+    'https://file-examples-com.github.io/uploads/2017/11/file_example_OOG_1MG.ogg';
 
-  streamUrl = "https://streaming.koop.org/stream.aac"
+  streamUrl = 'https://streaming.koop.org/stream.aac';
 
   // END-SNIPPET
-
 
   // BEGIN_SNIPPET play-sound-decorator-promise.js
   @task
-  *loadAudioUrl() {
+  *loadAudioUrlTask() {
     yield timeout(200);
-    return yield [this.onDemandUrl]
+    return yield [this.onDemandUrl];
   }
   // END-SNIPPET
-
-
 }

@@ -3,11 +3,14 @@
     <p>Using a try/catch block with async/await</p>
     <div>
       <button
-        {{on 'click' (perform this.playSound '/sounds/unplayable-scooby.au')}}
+        {{on
+          'click'
+          (perform this.playSoundTask '/sounds/unplayable-scooby.au')
+        }}
         type='button'
         class='ui-button'
       >
-        {{#if this.playSound.isRunning}}
+        {{#if this.playSoundTask.isRunning}}
           Loading…
         {{else if this.sound.isPlaying}}
           Pause
@@ -21,6 +24,6 @@
       <div class='px-1 py-2 text-sm text-danger'>{{this.error}}</div>
     {{/if}}
   </demo.example>
-  <demo.snippet @name='service-errors-try-catch.js'></demo.snippet>
-  <demo.snippet @name='service-errors-try-catch.hbs'></demo.snippet>
+  <demo.snippet @name='service-errors-try-catch.js' />
+  <demo.snippet @name='service-errors-try-catch.hbs' />
 </DocsDemo>

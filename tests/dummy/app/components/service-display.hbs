@@ -16,11 +16,14 @@
           {{get (current-sound) 'url'}}
         </p>
       </div>
-      <SoundDisplay::Position @url={{(current-sound)}} @class='flex flex-col' />
+      <SoundDisplay::Position
+        @url={{helper 'current-sound'}}
+        @class='flex flex-col'
+      />
     </div>
 
     <div class='flex flex-col p-2'>
-      <SoundDisplay::Controls @url={{(current-sound)}} />
+      <SoundDisplay::Controls @url={{helper 'current-sound'}} />
 
       <div class='service-display-volume'>
         <SoundDisplay::Volume />
@@ -52,4 +55,5 @@
       {{svg-jar 'angle-down' class='w-4 h-4'}}
     {{/if}}
   </button>
+
 </div>

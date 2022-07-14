@@ -1,10 +1,10 @@
-import Component from "@glimmer/component";
-import { EVENT_MAP, SERVICE_EVENT_MAP } from "ember-stereo/services/stereo";
-import { tracked } from "@glimmer/tracking";
-import { action } from "@ember/object";
+import Component from '@glimmer/component';
+import { EVENT_MAP, SERVICE_EVENT_MAP } from 'ember-stereo/services/stereo';
+import { tracked } from '@glimmer/tracking';
+import { action } from '@ember/object';
 import { inject as service } from '@ember/service';
-import { A as emberArray } from "@ember/array";
-import { set } from "@ember/object";
+import { A as emberArray } from '@ember/array';
+import { set } from '@ember/object';
 import { task, didCancel } from 'ember-concurrency';
 
 export default class EventDisplay extends Component {
@@ -16,19 +16,19 @@ export default class EventDisplay extends Component {
 
   constructor() {
     super(...arguments);
-    this.loadSoundFromUrl.perform().catch(e => {
+    this.loadSoundFromUrlTask.perform().catch((e) => {
       if (!didCancel(e)) {
-        throw (e);
+        throw e;
       }
-    })
+    });
   }
 
   @task({ debug: true })
-  * loadSoundFromUrl() {
+  *loadSoundFromUrlTask() {
     if (this.args.url) {
-      this.soundProxy = this.stereo.soundProxy(this.args.url)
-      yield this.soundProxy.waitForLoad.perform();
-      this.sound = this.soundProxy.value
+      this.soundProxy = this.stereo.soundProxy(this.args.url);
+      yield this.soundProxy.waitForLoadTask.perform();
+      this.sound = this.soundProxy.value;
       this.addSoundEvents(this.sound);
     } else {
       this.service = this.stereo;
@@ -48,7 +48,7 @@ export default class EventDisplay extends Component {
         if (lastItem) {
           groupedEvents.push(lastItem);
         }
-        set(e, 'count', 1) // eslint-disable-line
+        set(e, 'count', 1); // eslint-disable-line
         groupedEvents.push(e);
       }
     });
@@ -68,21 +68,25 @@ export default class EventDisplay extends Component {
   }
 
   addSoundEvents(item) {
-    if (!item) { return }
+    if (!item) {
+      return;
+    }
 
     EVENT_MAP.forEach((e) => {
       item.on(e.event, (data) => {
         this.eventsList.pushObject({
           name: e.event,
           data: data,
-          type: "sound",
+          type: 'sound',
         });
       });
     });
   }
 
   addServiceEvents(service) {
-    if (!service) { return }
+    if (!service) {
+      return;
+    }
 
     this.addSoundEvents(service);
 
@@ -91,18 +95,18 @@ export default class EventDisplay extends Component {
         this.eventsList.pushObject({
           name: e.event,
           data: data,
-          type: "service",
+          type: 'service',
         });
       });
     });
   }
 
-  removeEvents(/* item */) { }
+  removeEvents(/* item */) {}
 
   @action
   async displayEvent(e) {
     console.log(`$E = name: ${e.name}`); //eslint-disable-line
     console.log(e.data); //eslint-disable-line
-    window.$E = e.data
+    window.$E = e.data;
   }
 }

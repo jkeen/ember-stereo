@@ -32,31 +32,35 @@ export default class SoundIsErrored extends Helper {
   @dedupeTracked url;
 
   get result() {
-    return this.stereo.cachedErrors.find(e => hasEqualUrls(e.url, this.url))
+    return this.stereo.cachedErrors.find((e) => hasEqualUrls(e.url, this.url));
   }
 
   compute([identifier], { connectionName }) {
     if (identifier !== this.identifier) {
       this.identifier = identifier;
-      this.stereo.resolveIdentifier.perform(this.identifier).then(url => this.url = url).catch()
+      this.stereo.resolveIdentifierTask
+        .perform(this.identifier)
+        .then((url) => (this.url = url))
+        .catch();
     }
 
-    if (!this.result) { return }
+    if (!this.result) {
+      return;
+    }
 
     var errObject = this.result;
     if (connectionName) {
       debugMessage(this, `render = ${errObject.errors[connectionName]}`);
       return errObject.errors[connectionName];
-    }
-    else {
-      let errors = []
-      this.stereo.connectionNames.forEach(name => {
+    } else {
+      let errors = [];
+      this.stereo.connectionNames.forEach((name) => {
         if (errObject.errors[name]) {
-          errors.push(errObject.errors[name])
+          errors.push(errObject.errors[name]);
         }
-      })
+      });
 
-      return errors[0] || errObject.errors.generic
+      return errors[0] || errObject.errors.generic;
     }
   }
 }

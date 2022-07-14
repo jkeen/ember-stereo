@@ -390,7 +390,7 @@ export default class Stereo extends Service.extend(EmberEvented) {
       // let strategizer = new Strategizer(urlsToTry, options)
       // let { sound, error } = yield strategizer.tryLoading()
       // if (sound) {
-      //  this.handleCurrentSoundTransition.perform(sound)
+      //  this.handleCurrentSoundTransitionTask.perform(sound)
       //  this.soundCache.cache(sound);
       //  this.oneAtATime.register(sound)
       // }
@@ -415,7 +415,7 @@ export default class Stereo extends Service.extend(EmberEvented) {
       for (let strategy of strategies) {
         if (strategy.canPlay) {
           // worth trying
-          let result = yield this.tryLoadingSound
+          let result = yield this.tryLoadingSoundTask
             .perform(strategy)
             .catch((e) => {
               strategy.error = e;
@@ -437,7 +437,7 @@ export default class Stereo extends Service.extend(EmberEvented) {
 
       if (success && sound) {
         // eslint-disable-next-line ember-concurrency/no-perform-without-catch
-        this.handleCurrentSoundTransition.perform(sound);
+        this.handleCurrentSoundTransitionTask.perform(sound);
 
         if (options.metadata) {
           sound.metadata = {
@@ -461,7 +461,7 @@ export default class Stereo extends Service.extend(EmberEvented) {
   }
 
   @task
-  *handleCurrentSoundTransition(sound) {
+  *handleCurrentSoundTransitionTask(sound) {
     while (true) {
       yield waitForEvent(sound, 'audio-played');
       debug('ember-stereo')('handling sound transition');
@@ -671,7 +671,7 @@ export default class Stereo extends Service.extend(EmberEvented) {
   }
 
   @task({ maxConcurrency: 5 })
-  *resolveIdentifier(identifier) {
+  *resolveIdentifierTask(identifier) {
     return yield this.urlCache.resolve(identifier);
   }
 
@@ -922,7 +922,7 @@ export default class Stereo extends Service.extend(EmberEvented) {
   /**
    * Wait for sound to succeed
    *
-   * @method waitForSuccess
+   * @method waitForSuccessTask
    * @private
    * @param {Object} strategy a connection strategy object
    * @param {Sound} sound a sound object to play
@@ -930,7 +930,7 @@ export default class Stereo extends Service.extend(EmberEvented) {
    * @return {Object} { sound }
    **/
   @task
-  *waitForSuccess(strategy, sound) {
+  *waitForSuccessTask(strategy, sound) {
     yield waitForProperty(sound, 'isReady');
     debug('ember-stereo')(
       `SUCCESS: [${strategy.connectionName}] -> (${strategy.url})`
@@ -942,7 +942,7 @@ export default class Stereo extends Service.extend(EmberEvented) {
   /**
    * Wait for sound to succeed
    *
-   * @method waitForSuccess
+   * @method waitForSuccessTask
    * @private
    * @param {Object} strategy a connection strategy object
    * @param {Sound} sound a sound object to play
@@ -950,7 +950,7 @@ export default class Stereo extends Service.extend(EmberEvented) {
    * @return {Object} { error }
    **/
   @task
-  *waitForFailure(strategy, sound) {
+  *waitForFailureTask(strategy, sound) {
     yield waitForProperty(sound, 'isErrored');
     debug('ember-stereo')(
       `FAILED: [${strategy.connectionName}] -> ${sound.error} (${strategy.url})`
@@ -965,13 +965,13 @@ export default class Stereo extends Service.extend(EmberEvented) {
   /**
    * Try loading sound
    *
-   * @method tryLoadingSound
+   * @method tryLoadingSoundTask
    * @private
    * @param {Object} strategy a connection strategy object
    * @return {Object} { sound } or { error }
    **/
   @task
-  *tryLoadingSound(strategy) {
+  *tryLoadingSoundTask(strategy) {
     var newSound = strategy.createSound();
     this._registerEvents(newSound);
 
@@ -980,8 +980,8 @@ export default class Stereo extends Service.extend(EmberEvented) {
     );
     strategy.tried = true;
     return yield race([
-      this.waitForSuccess.perform(strategy, newSound),
-      this.waitForFailure.perform(strategy, newSound),
+      this.waitForSuccessTask.perform(strategy, newSound),
+      this.waitForFailureTask.perform(strategy, newSound),
     ]);
   }
 
