@@ -3,15 +3,15 @@ import HLS from 'hls.js';
 import { tracked } from '@glimmer/tracking';
 
 /**
-* This is the connection class that uses HLS.js to play sounds.
-*
-* @class HLS
-* @extends HLSSound
-* @constructor
-*/
+ * This is the connection class that uses HLS.js to play sounds.
+ *
+ * @class HLS
+ * @extends HLSSound
+ * @constructor
+ */
 
 export default class HLSSound extends BaseSound {
-  static acceptMimeTypes = ['application/vnd.apple.mpegurl']
+  static acceptMimeTypes = ['application/vnd.apple.mpegurl'];
   static canUseConnection() {
     // We basically never want to use this on a mobile device
     return HLS.isSupported();
@@ -22,13 +22,14 @@ export default class HLSSound extends BaseSound {
     return 'HLS';
   }
 
-  @tracked live = false
-  @tracked loaded = false
-  @tracked mediaRecoveryAttempts = 0
-  @tracked _currentTime = null
+  @tracked live = false;
+  @tracked loaded = false;
+  @tracked mediaRecoveryAttempts = 0;
+  @tracked _currentTime = null;
 
   setup() {
     let video = document.createElement('video');
+    video.setAttribute('crossorigin', 'anonymous');
     this.video = video;
     let hls = new HLS({ debug: false, startFragPrefetch: true });
 
@@ -61,14 +62,16 @@ export default class HLSSound extends BaseSound {
       hls.loadSource(this.url);
 
       hls.on(HLS.Events.MANIFEST_PARSED, (e, data) => {
-        this.debug(`manifest parsed and loaded, found ${data.levels.length} quality level(s)`);
+        this.debug(
+          `manifest parsed and loaded, found ${data.levels.length} quality level(s)`
+        );
         this.manifest = data;
       });
 
       hls.on(HLS.Events.LEVEL_LOADED, (e, data) => {
         this.debug(`level ${data.level} loaded`);
         this.live = data.details.live;
-        this._initializeCurrentTime()
+        this._initializeCurrentTime();
         this._signalAudioIsReady();
       });
 
@@ -88,25 +91,27 @@ export default class HLSSound extends BaseSound {
 
   _initializeCurrentTime(data) {
     if (!this.realTimeOffset && data?.details) {
-      this.realTimeOffset = data.details.fragments[0].programDateTime
+      this.realTimeOffset = data.details.fragments[0].programDateTime;
       this._updateCurrentTime();
     }
   }
 
   @tracked realTimeOffset;
-  @tracked appendedPts = 0
-  @tracked positionNow = 0
+  @tracked appendedPts = 0;
+  @tracked positionNow = 0;
   _updateRealTimeOffset(fragment) {
     if (fragment.programDateTime) {
       this.positionNow = this.video.currentTime;
-      this.realTimeOffset = fragment.programDateTime - fragment.start
-      this.appendedPts = fragment.appendedPTS
+      this.realTimeOffset = fragment.programDateTime - fragment.start;
+      this.appendedPts = fragment.appendedPTS;
     }
   }
 
   _updateCurrentTime() {
     if (this.realTimeOffset) {
-      this._currentTime = new Date(((this.video.currentTime - this.positionNow) * 1000) + this.realTimeOffset);
+      this._currentTime = new Date(
+        (this.video.currentTime - this.positionNow) * 1000 + this.realTimeOffset
+      );
       // this.debug(`time = ${this.currentTime}`);
     }
   }
@@ -116,14 +121,16 @@ export default class HLSSound extends BaseSound {
       title: fragment.title,
       programDateTime: fragment.programDateTime,
       rawProgramDateTime: fragment.rawProgramDateTime,
-    }
+    };
 
-    if (JSON.stringify(this.id3TagMetadata) !== JSON.stringify(newId3TagMetadata)) {
+    if (
+      JSON.stringify(this.id3TagMetadata) !== JSON.stringify(newId3TagMetadata)
+    ) {
       this.debug('hls metadata changed');
       this.trigger('audio-metadata-changed', {
         sound: this,
         old: this.id3TagMetadata,
-        new: newId3TagMetadata
+        new: newId3TagMetadata,
       });
 
       this.id3TagMetadata = newId3TagMetadata;
@@ -135,18 +142,35 @@ export default class HLSSound extends BaseSound {
       if (this.loaded) {
         this._updateCurrentTime();
         this.trigger('audio-played', { sound: this });
-      }
-      else {
+      } else {
         this._signalAudioIsReady();
       }
     });
 
-    video.addEventListener('pause', () => this.trigger('audio-paused', { sound: this }));
-    video.addEventListener('ended', () => this.trigger('audio-ended', { sound: this }));
-    video.addEventListener('durationchange', () => this.trigger('audio-duration-changed', { sound: this }));
-    video.addEventListener('seeked', () => this.trigger('audio-position-changed', { sound: this, currentTime: this.currentTime }));
-    video.addEventListener('timeupdate', () => this.trigger('audio-position-changed', { sound: this, currentTime: this.currentTime }));
-    video.addEventListener('progress', () => this.trigger('audio-loading', { sound: this }));
+    video.addEventListener('pause', () =>
+      this.trigger('audio-paused', { sound: this })
+    );
+    video.addEventListener('ended', () =>
+      this.trigger('audio-ended', { sound: this })
+    );
+    video.addEventListener('durationchange', () =>
+      this.trigger('audio-duration-changed', { sound: this })
+    );
+    video.addEventListener('seeked', () =>
+      this.trigger('audio-position-changed', {
+        sound: this,
+        currentTime: this.currentTime,
+      })
+    );
+    video.addEventListener('timeupdate', () =>
+      this.trigger('audio-position-changed', {
+        sound: this,
+        currentTime: this.currentTime,
+      })
+    );
+    video.addEventListener('progress', () =>
+      this.trigger('audio-loading', { sound: this })
+    );
     video.addEventListener('error', (e) => this._onVideoError(e));
   }
 
@@ -172,23 +196,23 @@ export default class HLSSound extends BaseSound {
   _onVideoError(e) {
     switch (e.target.error.code) {
       case e.target.error.MEDIA_ERR_ABORTED:
-        this.debug("video element error: playback aborted");
-        this._giveUpAndDie("unknown error");
+        this.debug('video element error: playback aborted');
+        this._giveUpAndDie('unknown error');
         break;
       case e.target.error.MEDIA_ERR_NETWORK:
-        this.debug("video element error: network error");
-        this._giveUpAndDie("Network error caused download to fail");
+        this.debug('video element error: network error');
+        this._giveUpAndDie('Network error caused download to fail');
         break;
       case e.target.error.MEDIA_ERR_DECODE:
-        this.debug("video element error: decoding error");
+        this.debug('video element error: decoding error');
         this._tryToRecoverFromMediaError(e.target.error.MEDIA_ERR_DECODE);
         break;
       case e.target.error.MEDIA_ERR_SRC_NOT_SUPPORTED:
-        this.debug("video element error: source format not supported");
-        this._giveUpAndDie("audio source format is not supported");
+        this.debug('video element error: source format not supported');
+        this._giveUpAndDie('audio source format is not supported');
         break;
       default:
-        this._giveUpAndDie("unknown error");
+        this._giveUpAndDie('unknown error');
         break;
     }
   }
@@ -196,7 +220,7 @@ export default class HLSSound extends BaseSound {
   _onHLSError(error, data) {
     if (data.fatal) {
       this.debug(data);
-      console.log(data)
+      console.log(data);
       switch (data.type) {
         case HLS.ErrorTypes.NETWORK_ERROR:
           this._giveUpAndDie(`${data.details}`);
@@ -221,7 +245,9 @@ export default class HLSSound extends BaseSound {
         hls.recoverMediaError();
         break;
       case 1:
-        this.debug(`Second attempt at media error recovery: switching codecs for error: ${error}`);
+        this.debug(
+          `Second attempt at media error recovery: switching codecs for error: ${error}`
+        );
         hls.swapAudioCodec();
         hls.recoverMediaError();
         break;
@@ -251,9 +277,8 @@ export default class HLSSound extends BaseSound {
 
   _audioDuration() {
     if (this.live) {
-      return Infinity
-    }
-    else {
+      return Infinity;
+    } else {
       return this.video.duration * 1000;
     }
   }
@@ -264,7 +289,7 @@ export default class HLSSound extends BaseSound {
   }
 
   _setPosition(position) {
-    this.video.currentTime = (position / 1000);
+    this.video.currentTime = position / 1000;
     if (!this.isPlaying) {
       this.hls.startLoad();
     }
@@ -274,25 +299,29 @@ export default class HLSSound extends BaseSound {
   }
 
   _setVolume(volume) {
-    this.video.volume = (volume / 100);
+    this.video.volume = volume / 100;
   }
 
   async tryPlaying() {
     try {
-      await this.video.play()
+      await this.video.play();
     } catch (error) {
       if (error.name == 'NotAllowedError') {
-        this.trigger('audio-blocked', { sound: this, error: error.message, event: error });
+        this.trigger('audio-blocked', {
+          sound: this,
+          error: error.message,
+          event: error,
+        });
         this.pause();
       }
     }
   }
 
   async play() {
-    this.isLoading = true
+    this.isLoading = true;
 
     if (!this.video.src) {
-      this.trigger('audio-loading', this)
+      this.trigger('audio-loading', this);
       this.setup(); // the stream was stopped before
     }
 
@@ -315,7 +344,7 @@ export default class HLSSound extends BaseSound {
   stop() {
     this.debug('#stop');
     this.pause();
-    this.video.removeAttribute('src')
+    this.video.removeAttribute('src');
   }
 
   teardown() {

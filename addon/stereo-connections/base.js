@@ -62,15 +62,19 @@ export default class Sound extends Evented {
    * @property url
    * @type {String}
    * @public
-  */
+   */
   @tracked url;
+
+  get identifier() {
+    return this.url;
+  }
 
   /**
    * name of the connection that produced the sound
    * @property connectionName
    * @type {String}
    * @public
-  */
+   */
   @tracked connectionName;
 
   /**
@@ -78,7 +82,7 @@ export default class Sound extends Evented {
    * @property hasPlayed
    * @type {Boolean}
    * @public
-  */
+   */
   @tracked hasPlayed = false;
 
   /**
@@ -86,7 +90,7 @@ export default class Sound extends Evented {
    * @property isLoading
    * @type {Boolean}
    * @public
-  */
+   */
   @tracked isLoading = false;
 
   /**
@@ -94,7 +98,7 @@ export default class Sound extends Evented {
    * @property isLoaded
    * @type {Boolean}
    * @public
-  */
+   */
   @tracked isLoaded = false;
 
   /**
@@ -102,7 +106,7 @@ export default class Sound extends Evented {
    * @property isPlaying
    * @type {Boolean}
    * @public
-  */
+   */
   @tracked isPlaying = false;
 
   /**
@@ -110,7 +114,7 @@ export default class Sound extends Evented {
    * @property isErrored
    * @type {Boolean}
    * @public
-  */
+   */
   @tracked isErrored = false;
 
   /**
@@ -118,7 +122,7 @@ export default class Sound extends Evented {
    * @property isReady
    * @type {Boolean}
    * @public
-  */
+   */
   @tracked isReady = false;
 
   /**
@@ -126,7 +130,7 @@ export default class Sound extends Evented {
    * @property isBlocked
    * @type {Boolean}
    * @public
-  */
+   */
   @tracked isBlocked = false;
 
   /**
@@ -134,7 +138,7 @@ export default class Sound extends Evented {
    * @property error
    * @type {String}
    * @public
-  */
+   */
   @tracked error = null;
   @tracked _position = 0;
 
@@ -143,14 +147,14 @@ export default class Sound extends Evented {
    * @property duration
    * @type {Integer} (ms)
    * @public
-  */
+   */
   @tracked duration = 0;
 
   /**
    * @property percentLoaded
    * @type {Integer} (0-100)
    * @public
-  */
+   */
   @tracked percentLoaded = 0;
 
   /**
@@ -158,12 +162,12 @@ export default class Sound extends Evented {
    * @property metadata
    * @type {Hash} (0-100)
    * @public
-  */
+   */
 
   get metadata() {
     let owner = getOwner(this);
     if (owner) {
-      let stereo = owner.lookup('service:stereo')
+      let stereo = owner.lookup('service:stereo');
       return stereo?.metadataCache?.find(this.url);
     }
 
@@ -174,13 +178,13 @@ export default class Sound extends Evented {
     let owner = getOwner(this);
 
     if (owner) {
-      let stereo = owner.lookup('service:stereo')
+      let stereo = owner.lookup('service:stereo');
       stereo?.metadataCache?.store(this.url, value);
     }
   }
 
   @tracked id3Tags = {};
-  @tracked id3TagMetadata = {}
+  @tracked id3TagMetadata = {};
   @tracked _debug = {}; // for internal debugging
   @tracked sharedAudioAccess;
 
@@ -189,8 +193,9 @@ export default class Sound extends Evented {
     parser.href = this.url;
 
     let parts = parser.pathname.split('/');
-    return `ember-stereo:${this.connectionName || this.constructor.toString()
-      } (${parts[parts.length - 1]})`;
+    return `ember-stereo:${
+      this.connectionName || this.constructor.toString()
+    } (${parts[parts.length - 1]})`;
   }
 
   trigger(eventName, info = {}) {
@@ -244,7 +249,7 @@ export default class Sound extends Evented {
    * @type {Boolean}
    * @readOnly
    * @public
- */
+   */
   get isSeekable() {
     return !this.isStream;
   }
@@ -254,7 +259,7 @@ export default class Sound extends Evented {
    * @property position
    * @type {Integer}
    * @public
-  */
+   */
   get position() {
     // _position is updated by the service on the currently playing sound
     return this._position;
@@ -274,7 +279,7 @@ export default class Sound extends Evented {
    * @property currentTime
    * @type {Integer}
    * @public
-  */
+   */
   get currentTime() {
     return null;
   }
@@ -284,7 +289,7 @@ export default class Sound extends Evented {
    * @property mimeType
    * @type {Integer}
    * @public
-  */
+   */
   get mimeType() {
     return getMimeType(this.url);
   }
@@ -302,7 +307,7 @@ export default class Sound extends Evented {
     this.connectionKey = args.connectionKey;
     this.options = args.options;
     this.sharedAudioAccess = args.sharedAudioAccess;
-    this.timeout = ('timeout' in args) ? args.timeout : 30000
+    this.timeout = 'timeout' in args ? args.timeout : 30000;
 
     let {
       audioLoading,
@@ -432,7 +437,7 @@ export default class Sound extends Evented {
    * @method fastForward
    * @param {Integer} duration
    * @public
-  */
+   */
   fastForward(duration) {
     let audioLength = this._audioDuration();
     let currentPosition = this._currentPosition();
@@ -452,7 +457,7 @@ export default class Sound extends Evented {
    * @method rewind
    * @param {Integer} duration
    * @public
-  */
+   */
   rewind(duration) {
     let currentPosition = this._currentPosition();
     let newPosition = Math.max(currentPosition - duration, 0);
@@ -469,7 +474,7 @@ export default class Sound extends Evented {
    * toggle the play/pause state
    * @method togglePause
    * @public
-  */
+   */
   togglePause() {
     if (this.isPlaying) {
       return this.pause();
@@ -499,12 +504,11 @@ export default class Sound extends Evented {
     assert('[ember-stereo] #_setPosition interface not implemented', false);
   }
 
-
   /**
    * play the sound
    * @method play
    * @public
-  */
+   */
   play() {
     assert('[ember-stereo] #play interface not implemented', false);
   }
@@ -513,7 +517,7 @@ export default class Sound extends Evented {
    * pause the sound
    * @method pause
    * @public
-  */
+   */
   pause() {
     assert('[ember-stereo] #pause interface not implemented', false);
   }
@@ -522,7 +526,7 @@ export default class Sound extends Evented {
    * stop the sound
    * @method stop
    * @public
-  */
+   */
   stop() {
     assert('[ember-stereo] #stop interface not implemented', false);
   }

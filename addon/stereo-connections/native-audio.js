@@ -150,6 +150,7 @@ export default class NativeAudio extends BaseSound {
     if (!this._internalElement) {
       this._internalElement = document.createElement('audio');
       this._internalElement.setAttribute('preload', 'metadata');
+      this._internalElement.setAttribute('crossorigin', 'anonymous');
     }
 
     return this._internalElement;
