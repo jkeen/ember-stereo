@@ -1,5 +1,12 @@
 ember-stereo changelog
 
+## [3.2.1](https://github.com/jkeen/ember-stereo/compare/v3.2.0...v3.2.1) (2022-08-21)
+
+
+### Bug Fixes
+
+* Set cross-origin to anonymous on elements to allow for audio analysis using web audio api ([34022a4](https://github.com/jkeen/ember-stereo/commit/34022a45a8aa7510783d6cbcac8a0fbd9733f46b))
+
 # [3.2.0](https://github.com/jkeen/ember-stereo/compare/v3.1.2...v3.2.0) (2022-07-14)
 
 
