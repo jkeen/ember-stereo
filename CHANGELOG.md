@@ -1,5 +1,12 @@
 ember-stereo changelog
 
+## [3.2.2](https://github.com/jkeen/ember-stereo/compare/v3.2.1...v3.2.2) (2022-09-02)
+
+
+### Bug Fixes
+
+* update import statement in setupStereoTest for Ember 4.x ([f53bd70](https://github.com/jkeen/ember-stereo/commit/f53bd7053e0d79b8a1242ec38bd9ec6833e2caa1))
+
 ## [3.2.1](https://github.com/jkeen/ember-stereo/compare/v3.2.0...v3.2.1) (2022-08-21)
 
 
