@@ -20,7 +20,7 @@ import StereoBaseIsHelper from 'ember-stereo/-private/helpers/is-helper';
   @return {Boolean}
 */
 export default class SoundIsBlocked extends StereoBaseIsHelper {
-  name = 'sound-is-blocked'
+  name = 'sound-is-blocked';
 
   get result() {
     return this.sound && this.sound.isBlocked;

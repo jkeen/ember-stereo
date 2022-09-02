@@ -68,7 +68,7 @@
       >Connections</label>
 
       {{#let (sound-is-loaded this.url) as |loaded|}}
-        <div class='flex flex-row gap-2 px-1 my-1 {{if loaded 'opacity-50'}}'>
+        <div class='flex flex-row gap-2 px-1 my-1 {{if loaded "opacity-50"}}'>
           <label>
             <input
               class='border-on-surface-0 text-accent-0 focus:ring-accent-0'
@@ -102,8 +102,8 @@
         <StrategyBreakdown class='grid' @url={{this.url}} as |data|>
           <li
             class='inline
-              {{if (eq data.info.status 'failure') 'text-danger'}}
-              {{if (eq data.info.status 'success') 'text-success'}}'
+              {{if (eq data.info.status "failure") "text-danger"}}
+              {{if (eq data.info.status "success") "text-success"}}'
           >
             <span class='text-sm'>
               {{svg-jar

@@ -1,4 +1,4 @@
-import { numericDuration } from "./numeric-duration";
+import { numericDuration } from './numeric-duration';
 import debugMessage from 'ember-stereo/-private/utils/debug-message';
 import StereoBaseIsHelper from 'ember-stereo/-private/helpers/is-helper';
 
@@ -22,21 +22,21 @@ import StereoBaseIsHelper from 'ember-stereo/-private/helpers/is-helper';
   @return {any}
 */
 export default class SoundDuration extends StereoBaseIsHelper {
-  name = 'sound-duration'
+  name = 'sound-duration';
 
   get result() {
-    let { defaultValue, format } = this.options
+    let { defaultValue, format } = this.options;
     let result = defaultValue;
 
-    if (format == "time") {
+    if (format == 'time') {
       if (this.sound?.duration) {
         if (this.sound?.duration === Infinity) {
-          result = "∞";
+          result = '∞';
         } else {
           result = numericDuration([this.sound?.duration]);
         }
       } else {
-        result = defaultValue || "--:--";
+        result = defaultValue || '--:--';
       }
     } else {
       result = this.sound?.duration || defaultValue;

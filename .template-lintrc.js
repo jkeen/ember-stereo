@@ -19,16 +19,17 @@ const stereoHelpers = [
   'toggle-stereo-mute',
   'find-sound',
   'autoplay-allowed',
-  'json-stringify']
+  'json-stringify',
+];
 
 module.exports = {
   extends: 'recommended',
-  'rules': {
+  rules: {
     'no-curly-component-invocation': {
-      allow: stereoHelpers
+      allow: stereoHelpers,
     },
     'no-implicit-this': {
-      allow: stereoHelpers
-    }
-  }
+      allow: stereoHelpers,
+    },
+  },
 };

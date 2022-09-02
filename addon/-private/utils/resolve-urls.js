@@ -12,22 +12,23 @@ import StereoUrl from './stereo-url';
  */
 
 function prepare(urls) {
-  return emberArray(makeArray(urls)).uniq().reject((i) => isEmpty(i));
+  return emberArray(makeArray(urls))
+    .uniq()
+    .reject((i) => isEmpty(i));
 }
 
 function resolveFunction(urlsOrPromise) {
   if (typeof urlsOrPromise === 'function' && !urlsOrPromise.then) {
     return urlsOrPromise();
-  }
-  else {
+  } else {
     return urlsOrPromise;
   }
 }
 
 export default async function resolveUrls(urlsOrPromise) {
   let resolved = await Promise.resolve(resolveFunction(urlsOrPromise));
-  let rawUrls = prepare(resolved)
-  let resolvedUrls = rawUrls.map(u => (new StereoUrl(u))); // keep custom mime type in there if provided
+  let rawUrls = prepare(resolved);
+  let resolvedUrls = rawUrls.map((u) => new StereoUrl(u)); // keep custom mime type in there if provided
 
-  return resolvedUrls
+  return resolvedUrls;
 }

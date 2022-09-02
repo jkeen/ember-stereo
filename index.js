@@ -9,15 +9,10 @@ module.exports = {
   name: 'ember-stereo',
   options: {
     svgJar: {
-      sourceDirs: [
-        'public',
-        'tests/dummy/public/assets/images/',
-      ],
+      sourceDirs: ['public', 'tests/dummy/public/assets/images/'],
     },
     babel: {
-      plugins: [
-        require.resolve('ember-auto-import/babel-plugin'),
-      ]
+      plugins: [require.resolve('ember-auto-import/babel-plugin')],
     },
   },
   included(app, parentAddon) {
@@ -32,7 +27,7 @@ module.exports = {
     if (this.stereoConnections.includes('Howler')) {
       target.import({
         development: 'vendor/third-party/howler.js',
-        production: 'vendor/third-party/howler.min.js'
+        production: 'vendor/third-party/howler.min.js',
       });
 
       target.import('vendor/howler.js');
@@ -41,7 +36,7 @@ module.exports = {
     if (this.stereoConnections.includes('HLS')) {
       target.import({
         development: 'vendor/third-party/hls.js',
-        production: 'vendor/third-party/hls.min.js'
+        production: 'vendor/third-party/hls.min.js',
       });
 
       target.import('vendor/hls.js');
@@ -58,17 +53,21 @@ module.exports = {
     }
 
     if (this.stereoConnections.includes('Howler')) {
-      trees.push(new Funnel(path.dirname(require.resolve('howler')), {
-        files: ['howler.js', 'howler.min.js'],
-        destDir: 'third-party'
-      }));
+      trees.push(
+        new Funnel(path.dirname(require.resolve('howler')), {
+          files: ['howler.js', 'howler.min.js'],
+          destDir: 'third-party',
+        })
+      );
     }
 
     if (this.stereoConnections.includes('HLS')) {
-      trees.push(new Funnel(path.dirname(require.resolve('hls.js')), {
-        files: ['hls.js', 'hls.min.js', 'hls.js.map'],
-        destDir: 'third-party'
-      }));
+      trees.push(
+        new Funnel(path.dirname(require.resolve('hls.js')), {
+          files: ['hls.js', 'hls.min.js', 'hls.js.map'],
+          destDir: 'third-party',
+        })
+      );
     }
 
     return mergeTrees(trees);
@@ -79,19 +78,20 @@ module.exports = {
       return;
     }
 
-    let projectConfig = this.project.config(process.env.EMBER_ENV)
+    let projectConfig = this.project.config(process.env.EMBER_ENV);
     let stereoConfig = projectConfig.emberStereo;
 
     if (stereoConfig && stereoConfig.connections) {
-      this.stereoConnections = stereoConfig.connections.map((connection) => connection.name);
-    }
-    else {
+      this.stereoConnections = stereoConfig.connections.map(
+        (connection) => connection.name
+      );
+    } else {
       // Default
-      this.stereoConnections = ["NativeAudio", "HLS", "Howler"]
+      this.stereoConnections = ['NativeAudio', 'HLS', 'Howler'];
     }
   },
 
   isDevelopingAddon: function () {
     return true;
-  }
+  },
 };

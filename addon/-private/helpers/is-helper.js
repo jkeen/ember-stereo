@@ -7,10 +7,10 @@ export default class StereoBaseIsHelper extends Helper {
   @service stereo;
 
   identifier = UNINITIALIZED;
-  @dedupeTracked task = UNINITIALIZED
-  @dedupeTracked soundProxy = UNINITIALIZED
-  @dedupeTracked _sound = UNINITIALIZED
-  @dedupeTracked options = UNINITIALIZED
+  @dedupeTracked task = UNINITIALIZED;
+  @dedupeTracked soundProxy = UNINITIALIZED;
+  @dedupeTracked _sound = UNINITIALIZED;
+  @dedupeTracked options = UNINITIALIZED;
 
   /**
   returns the state
@@ -20,15 +20,17 @@ export default class StereoBaseIsHelper extends Helper {
   */
 
   get isLoading() {
-    return (this.sound && this.sound.isLoading) || (this.soundProxy && this.soundProxy.isLoading)
+    return (
+      (this.sound && this.sound.isLoading) ||
+      (this.soundProxy && this.soundProxy.isLoading)
+    );
   }
 
   get sound() {
     if (this._sound) {
       return this._sound;
-    }
-    else if (this.soundProxy && this.soundProxy.isResolved) {
-      return this.soundProxy.value
+    } else if (this.soundProxy && this.soundProxy.isResolved) {
+      return this.soundProxy.value;
     }
 
     return null;
@@ -42,7 +44,7 @@ export default class StereoBaseIsHelper extends Helper {
     this.options = options;
 
     if (identifier !== this.identifier) {
-      this.identifier = identifier
+      this.identifier = identifier;
 
       if (identifier && identifier.url && identifier.play) {
         this._sound = identifier;

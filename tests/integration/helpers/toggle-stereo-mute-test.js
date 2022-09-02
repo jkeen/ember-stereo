@@ -1,6 +1,6 @@
 import { module, test } from 'qunit';
 import { setupRenderingTest } from 'ember-qunit';
-import { setupStereoTest } from 'ember-stereo/test-support/stereo-setup'
+import { setupStereoTest } from 'ember-stereo/test-support/stereo-setup';
 import { render, click } from '@ember/test-helpers';
 import { hbs } from 'ember-cli-htmlbars';
 

@@ -1,6 +1,6 @@
-import { inject as service } from "@ember/service";
-import Helper from "@ember/component/helper";
-import prepareOptions from "ember-stereo/-private/utils/prepare-options";
+import { inject as service } from '@ember/service';
+import Helper from '@ember/component/helper';
+import prepareOptions from 'ember-stereo/-private/utils/prepare-options';
 /**
   A helper to load a sound
   ```hbs

@@ -1,1 +1,4 @@
-export { default, fastForwardSound } from 'ember-stereo/helpers/fastforward-sound';
+export {
+  default,
+  fastForwardSound,
+} from 'ember-stereo/helpers/fastforward-sound';

@@ -6,18 +6,18 @@ import normalizeIdentifier from './normalize-identifier';
 import { inject as service } from '@ember/service';
 
 /**
-* This class caches errors based on urls.
-* @private
-*/
+ * This class caches errors based on urls.
+ * @private
+ */
 
 export default class ErrorCache {
   @service stereo;
 
   @tracked cachedCount = 0;
   @tracked cachedErrors = [];
-  @tracked cachedList = []
+  @tracked cachedList = [];
   @tracked _cache = {};
-  name = 'ember-stereo:error-cache'
+  name = 'ember-stereo:error-cache';
 
   reset() {
     this._cache = {};
@@ -33,46 +33,48 @@ export default class ErrorCache {
    * @return {Sound}
    */
   find(urls) {
-    let identifiers = makeArray(urls).map(i => normalizeIdentifier(i));
-    let errors = emberArray(identifiers).map(identity => this.cachedErrors.find(err => hasEqualUrls(err.url, identity)));
+    let identifiers = makeArray(urls).map((i) => normalizeIdentifier(i));
+    let errors = emberArray(identifiers).map((identity) =>
+      this.cachedErrors.find((err) => hasEqualUrls(err.url, identity))
+    );
     let foundErrors = emberArray(errors).compact();
 
     if (foundErrors.length > 0) {
       debug(this.name)(`cache hit for ${foundErrors[0].url}`);
       return foundErrors[0];
-    }
-    else {
+    } else {
       debug(this.name)(`cache miss for ${makeArray(identifiers).join(',')}`);
     }
   }
 
   remove(urls) {
-    let identifiers = makeArray(urls).map(i => normalizeIdentifier(i));
-    this.cachedErrors = this.cachedErrors.filter(err => !hasEqualUrls(err.url, identifiers));
+    let identifiers = makeArray(urls).map((i) => normalizeIdentifier(i));
+    this.cachedErrors = this.cachedErrors.filter(
+      (err) => !hasEqualUrls(err.url, identifiers)
+    );
 
-    identifiers.forEach(identity => {
+    identifiers.forEach((identity) => {
       delete this._cache[identity];
-    })
+    });
   }
 
   cache({ url, error, connectionKey, debugInfo }) {
     let identifier = normalizeIdentifier(url);
 
     if (!this._cache[identifier]) {
-      this._cache[identifier] = {}
+      this._cache[identifier] = {};
     }
 
     let errorObject = this._cache[identifier];
     errorObject.url = url;
 
     if (!errorObject.errors) {
-      errorObject.errors = {}
+      errorObject.errors = {};
     }
 
     if (!connectionKey) {
       errorObject.errors.generic = error;
-    }
-    else {
+    } else {
       errorObject.errors[connectionKey] = error;
     }
 

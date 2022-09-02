@@ -17,7 +17,7 @@ export default class SoundPositionProgressModifier extends Modifier {
   @service stereo;
 
   get url() {
-    return this.args.positional[0]
+    return this.args.positional[0];
   }
 
   get loadedSound() {
@@ -29,29 +29,43 @@ export default class SoundPositionProgressModifier extends Modifier {
   }
 
   modifyPosition({ newPosition }) {
-    this.element.style.width = `${((newPosition || this.loadedSound.position) / this.loadedSound.duration) * 100}%`;
+    this.element.style.width = `${
+      ((newPosition || this.loadedSound.position) / this.loadedSound.duration) *
+      100
+    }%`;
     this.element.style.pointerEvents = 'none';
   }
 
   didInstall() {
-    this.element.setAttribute('data-sound-position-progress', true)
+    this.element.setAttribute('data-sound-position-progress', true);
   }
 
   didReceiveArguments() {
     if (this.url) {
-      this.stereo.soundProxy(this.url).afterLoad(sound => {
-        sound.on('audio-position-will-change', this.onPositionChange.bind(this));
+      this.stereo.soundProxy(this.url).afterLoad((sound) => {
+        sound.on(
+          'audio-position-will-change',
+          this.onPositionChange.bind(this)
+        );
         sound.on('audio-position-changed', this.onPositionChange.bind(this));
-      })
+      });
     }
   }
 
   willRemove() {
     try {
       if (this.loadedSound) {
-        this.loadedSound.off('audio-position-changed', this.onPositionChange.bind(this));
-        this.loadedSound.off('audio-position-will-change', this.onPositionChange.bind(this));
+        this.loadedSound.off(
+          'audio-position-changed',
+          this.onPositionChange.bind(this)
+        );
+        this.loadedSound.off(
+          'audio-position-will-change',
+          this.onPositionChange.bind(this)
+        );
       }
-    } catch (e) { /* geez, relax */ }
+    } catch (e) {
+      /* geez, relax */
+    }
   }
 }

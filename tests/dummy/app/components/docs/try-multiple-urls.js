@@ -1,7 +1,7 @@
 import Component from '@glimmer/component';
 import { inject as service } from '@ember/service';
 import { tracked } from '@glimmer/tracking';
-import { task } from 'ember-concurrency'
+import { task } from 'ember-concurrency';
 
 export default class DocsTryMultipleUrlsComponent extends Component {
   // BEGIN-SNIPPET try-multiple-urls-via-service.js
@@ -10,20 +10,20 @@ export default class DocsTryMultipleUrlsComponent extends Component {
 
   @task
   *playTask() {
-    this.error = false
+    this.error = false;
 
     if (this.sound) {
       yield this.sound.togglePause();
-    }
-    else {
+    } else {
       try {
-        let { sound, /* error, failures */ } = yield this.stereo.playTask.perform([
-          'https://archive.org/download/KmartOctober1989/Kmart%20October%201989.ogg',
-          'https://archive.org/download/KmartOctober1989/Kmart%20October%201989.mp3'
-        ])
+        let { sound /* error, failures */ } =
+          yield this.stereo.playTask.perform([
+            'https://archive.org/download/KmartOctober1989/Kmart%20October%201989.ogg',
+            'https://archive.org/download/KmartOctober1989/Kmart%20October%201989.mp3',
+          ]);
         this.sound = sound;
       } catch (e) {
-        this.error = e.message
+        this.error = e.message;
       }
     }
   }

@@ -1,6 +1,6 @@
 import Service, { inject as service } from '@ember/service';
 export default class Audio extends Service {
-  @service stereo
+  @service stereo;
 
   async playGood() {
     return this.stereo.play('/good/1252/ok.mp3');

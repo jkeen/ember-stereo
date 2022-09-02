@@ -1,6 +1,6 @@
 import { module, test } from 'qunit';
 import { setupRenderingTest } from 'ember-qunit';
-import { setupStereoTest } from 'ember-stereo/test-support/stereo-setup'
+import { setupStereoTest } from 'ember-stereo/test-support/stereo-setup';
 import { render } from '@ember/test-helpers';
 import { hbs } from 'ember-cli-htmlbars';
 
@@ -40,7 +40,7 @@ module('Integration | Helper | sound-duration', function (hooks) {
     let service = this.owner.lookup('service:stereo');
     this.url = '/good/stream/duration-stream.mp3';
 
-    await service.load(this.url)
+    await service.load(this.url);
     await render(hbs`{{sound-duration this.url}}`);
     assert.equal(this.element.textContent.trim(), 'Infinity');
 
@@ -49,19 +49,19 @@ module('Integration | Helper | sound-duration', function (hooks) {
   });
 
   test('if changing input it updates underlying sound', async function (assert) {
-    let service = this.owner.lookup('service:stereo')
+    let service = this.owner.lookup('service:stereo');
     service.loadConnections(['NativeAudio']);
 
     this.url = '/good/10000/duration-updating.mp3';
     this.url2 = '/good/20000/duration-updating-2.mp3';
 
-    await service.load(this.url)
-    await service.load(this.url2)
+    await service.load(this.url);
+    await service.load(this.url2);
 
     await render(hbs`{{sound-duration this.url load=false format='time'}}`);
     assert.equal(this.element.textContent.trim(), '00:10');
 
-    this.url = this.url2
+    this.url = this.url2;
     await render(hbs`{{sound-duration this.url load=false format='time'}}`);
 
     assert.equal(this.element.textContent.trim(), '00:20');

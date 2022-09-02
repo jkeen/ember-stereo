@@ -20,11 +20,9 @@ export default class rewindSound extends StereoBaseActionHelper {
   */
   performAction(sound) {
     if (sound) {
-      sound.rewind(this.options?.increment || 15000)
-    }
-    else {
-      return false
+      sound.rewind(this.options?.increment || 15000);
+    } else {
+      return false;
     }
   }
 }
-

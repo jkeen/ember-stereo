@@ -1,6 +1,6 @@
 import { module, test } from 'qunit';
 import { setupRenderingTest } from 'ember-qunit';
-import { setupStereoTest } from 'ember-stereo/test-support/stereo-setup'
+import { setupStereoTest } from 'ember-stereo/test-support/stereo-setup';
 import { render } from '@ember/test-helpers';
 import { hbs } from 'ember-cli-htmlbars';
 
@@ -15,5 +15,4 @@ module('Integration | Helper | sound-error-details', function (hooks) {
     await render(hbs`{{sound-error-details this.url}}`);
     assert.equal(this.element.textContent.trim(), 'codec-error');
   });
-
 });

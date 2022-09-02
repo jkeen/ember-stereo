@@ -57,16 +57,22 @@
       {{#if (sound-is-seekable @identifier)}}
         {{! template-lint-disable require-input-label }}
         {{! BEGIN-SNIPPET position-modifiers.hbs }}
-        <div {{sound-position-slider @identifier}} class="stereo-player-position-slider" >
-          <div {{sound-position-progress @identifier}} class="stereo-player-position-progress" ></div>
+        <div
+          {{sound-position-slider @identifier}}
+          class='stereo-player-position-slider'
+        >
+          <div
+            {{sound-position-progress @identifier}}
+            class='stereo-player-position-progress'
+          ></div>
         </div>
         {{! END-SNIPPET }}
       {{else}}
         <div
           class='{{if
               (sound-is-playing @identifier)
-              'from-accent-0 to-accent-2 bg-gradient-to-r animate-gradient-x animated'
-              'bg-on-surface-3'
+              "from-accent-0 to-accent-2 bg-gradient-to-r animate-gradient-x animated"
+              "bg-on-surface-3"
             }}
             w-full h-2 rounded-md inset-1 shadow-inset'
         >
@@ -101,7 +107,6 @@
   {{/if}}
 </div>
 
-
 <DocsDemo as |demo|>
-  <demo.snippet @name='position-modifiers.hbs'></demo.snippet>
+  <demo.snippet @name='position-modifiers.hbs' />
 </DocsDemo>

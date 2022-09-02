@@ -9,12 +9,12 @@ export default class Router extends AddonDocsRouter {
 Router.map(function () {
   docsRoute(this, function () {
     /* Your docs routes go here */
-    this.route('install')
-    this.route('overview')
-    this.route('upgrading')
+    this.route('install');
+    this.route('overview');
+    this.route('upgrading');
 
-    this.route('usage')
-    this.route('autoplay')
+    this.route('usage');
+    this.route('autoplay');
     this.route('playing-sounds');
     this.route('audio-format');
     this.route('metadata');
@@ -27,11 +27,10 @@ Router.map(function () {
   });
 
   this.route('diagnostic', function () {
-    this.route('index')
-    this.route('sync')
+    this.route('index');
+    this.route('sync');
   });
 
   this.route('autoplay-test');
   this.route('not-found', { path: '/*path' });
-
 });

@@ -91,7 +91,7 @@ module('Unit | Service | stereo integration test.js', function (hooks) {
   });
 
   test('it sends an audio-ended event when the sound ends', async function (assert) {
-    let done = assert.async()
+    let done = assert.async();
     assert.expect(1);
 
     let stereo = this.owner.lookup('service:stereo');

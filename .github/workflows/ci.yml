@@ -5,6 +5,7 @@ on:
   push:
     branches:
       - main
+      - develop
       # npm version tags
       - /^v\d+.\d+.\d+(?:-(?:alpha|beta|rc)\.\d+)?/
   pull_request:
@@ -174,6 +175,7 @@ jobs:
   deploy:
     name: Deploy
     runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
     needs: [test, floating-dependencies, ember-try-required]
     steps:
       - uses: actions/checkout@v2

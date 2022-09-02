@@ -6,25 +6,25 @@ import { isEmpty } from '@ember/utils';
 /* This class loads system/user connections */
 
 export default class ConnectionLoader {
-  @tracked loaded = {}
-  @tracked connectionOrder = []
+  @tracked loaded = {};
+  @tracked connectionOrder = [];
 
   constructor(service, connectionsToLoad) {
-    this.service = service
+    this.service = service;
 
-    this.load(connectionsToLoad)
-    this.connectionOrder = connectionsToLoad.map(info => {
-      return (typeof info === 'string') ? info : info.name
-    })
+    this.load(connectionsToLoad);
+    this.connectionOrder = connectionsToLoad.map((info) => {
+      return typeof info === 'string' ? info : info.name;
+    });
   }
 
   // get loaded connection objects in order specified by system options
   get connections() {
-    return this.names.map(name => this.loaded[name])
+    return this.names.map((name) => this.loaded[name]);
   }
 
   get names() {
-    return this.connectionOrder.filter(name => !!this.loaded[name])
+    return this.connectionOrder.filter((name) => !!this.loaded[name]);
   }
 
   get(name) {
@@ -32,29 +32,31 @@ export default class ConnectionLoader {
   }
 
   /**
-    * Loads the connections as specified in the config options
-    *
-    * @method load
-    * @private
-    * @param {Array} connectionOptions
-    * @return {Object} instantiated connections
-    */
+   * Loads the connections as specified in the config options
+   *
+   * @method load
+   * @private
+   * @param {Array} connectionOptions
+   * @return {Object} instantiated connections
+   */
 
   load(connectionsToLoad) {
-    assert(`[ember-stereo] ConnectionLoader needs an array of connection, you provided ${connectionsToLoad}`, !isEmpty(connectionsToLoad));
-    connectionsToLoad.forEach(connectionOption => {
+    assert(
+      `[ember-stereo] ConnectionLoader needs an array of connection, you provided ${connectionsToLoad}`,
+      !isEmpty(connectionsToLoad)
+    );
+    connectionsToLoad.forEach((connectionOption) => {
       let name, connection;
       if (typeof connectionOption === 'string') {
         name = connectionOption;
         connection = this.activate({ name, config: {} });
-      }
-      else {
+      } else {
         name = connectionOption.name;
         connection = this.activate(connectionOption);
       }
 
-      this.loaded[name] = connection
-    })
+      this.loaded[name] = connection;
+    });
   }
 
   /**

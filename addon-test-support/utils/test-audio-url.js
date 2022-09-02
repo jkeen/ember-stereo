@@ -1,7 +1,6 @@
-import StereoUrl from 'ember-stereo/-private/utils/stereo-url'
+import StereoUrl from 'ember-stereo/-private/utils/stereo-url';
 
 export default class TestAudioUrl {
-
   constructor(testUrl) {
     this.url = new StereoUrl(testUrl);
 
@@ -36,7 +35,7 @@ export default class TestAudioUrl {
   }
 
   get isValid() {
-    return this.isSuccess() || this.isError()
+    return this.isSuccess() || this.isError();
   }
 
   get isStream() {

@@ -20,11 +20,9 @@ import StereoBaseActionHelper from 'ember-stereo/-private/helpers/action-helper'
 export default class fastForwardSound extends StereoBaseActionHelper {
   performAction(sound) {
     if (sound) {
-      sound.fastForward(this.options.increment || 15000)
-    }
-    else {
-      return false
+      sound.fastForward(this.options.increment || 15000);
+    } else {
+      return false;
     }
   }
 }
-

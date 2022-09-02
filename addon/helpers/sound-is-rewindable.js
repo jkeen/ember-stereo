@@ -25,10 +25,10 @@ import debugMessage from 'ember-stereo/-private/utils/debug-message';
 */
 
 export default class SoundIsRewindable extends StereoBaseIsHelper {
-  name = 'sound-is-rewindable'
+  name = 'sound-is-rewindable';
 
   get result() {
-    debugMessage(this, `render = ${this.stereo.isRewindable}`)
+    debugMessage(this, `render = ${this.stereo.isRewindable}`);
     return this.sound?.isRewindable;
   }
 }

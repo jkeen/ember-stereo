@@ -6,7 +6,7 @@
     as |id status selected|
   }}
     <label
-      class='{{unless selected 'opacity-50'}}
+      class='{{unless selected "opacity-50"}}
         hover:border-surface-3 relative block px-2 py-1 my-2 border rounded-md shadow-sm cursor-pointer bg-on-surface-3 border-on-surface-0 text-on-background hover:border-gray-400 focus:outline-none'
     >
       {{#if @allowSelection}}

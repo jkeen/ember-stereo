@@ -9,179 +9,156 @@ ember-stereo changelog
 
 # [3.2.0](https://github.com/jkeen/ember-stereo/compare/v3.1.2...v3.2.0) (2022-07-14)
 
-
 ### Bug Fixes
 
-* diagnostic display problems ([1c20e8a](https://github.com/jkeen/ember-stereo/commit/1c20e8ae703d32020c8515320c0f9e5138f08993))
-* resume fixed audio at same point it was paused ([075d674](https://github.com/jkeen/ember-stereo/commit/075d67454a43a273bd410c2793fba7d4d424353f))
-
+- diagnostic display problems ([1c20e8a](https://github.com/jkeen/ember-stereo/commit/1c20e8ae703d32020c8515320c0f9e5138f08993))
+- resume fixed audio at same point it was paused ([075d674](https://github.com/jkeen/ember-stereo/commit/075d67454a43a273bd410c2793fba7d4d424353f))
 
 ### Features
 
-* try to better detect whether or not audio source is a stream based on duration changes for cases where element does not correctly indicate Infinity ([58bcd7c](https://github.com/jkeen/ember-stereo/commit/58bcd7c615870a19369c8226a0653c4aa9ffd53f))
+- try to better detect whether or not audio source is a stream based on duration changes for cases where element does not correctly indicate Infinity ([58bcd7c](https://github.com/jkeen/ember-stereo/commit/58bcd7c615870a19369c8226a0653c4aa9ffd53f))
 
 ## [3.1.2](https://github.com/jkeen/ember-stereo/compare/v3.1.1...v3.1.2) (2022-07-12)
 
-
 ### Bug Fixes
 
-* update ember-get-config to resolve docs not deploying ([a393404](https://github.com/jkeen/ember-stereo/commit/a3934045971540329d8453efd5245e7af80c154b))
+- update ember-get-config to resolve docs not deploying ([a393404](https://github.com/jkeen/ember-stereo/commit/a3934045971540329d8453efd5245e7af80c154b))
 
 ## [3.1.1](https://github.com/jkeen/ember-stereo/compare/v3.1.0...v3.1.1) (2022-07-12)
 
-
 ### Bug Fixes
 
-* use object spread operator to replace Ember.assign and fix deprecation ([#12](https://github.com/jkeen/ember-stereo/issues/12)) ([43a2358](https://github.com/jkeen/ember-stereo/commit/43a23584f182465bc6ffb9bdf55619d21c1d77bd))
+- use object spread operator to replace Ember.assign and fix deprecation ([#12](https://github.com/jkeen/ember-stereo/issues/12)) ([43a2358](https://github.com/jkeen/ember-stereo/commit/43a23584f182465bc6ffb9bdf55619d21c1d77bd))
 
 # [3.1.0](https://github.com/jkeen/ember-stereo/compare/v3.0.4...v3.1.0) (2022-07-11)
 
-
 ### Features
-* Ember 4 compatibility ([162f1bf](https://github.com/jkeen/ember-stereo/commit/162f1bf67c9f0da65a8e67f4d2d084bff0396867)), closes [#11](https://github.com/jkeen/ember-stereo/issues/11). 
-* upgrade addon to Ember 4.4, upgrade some dependencies
+
+- Ember 4 compatibility ([162f1bf](https://github.com/jkeen/ember-stereo/commit/162f1bf67c9f0da65a8e67f4d2d084bff0396867)), closes [#11](https://github.com/jkeen/ember-stereo/issues/11).
+- upgrade addon to Ember 4.4, upgrade some dependencies
 
 ### Bug Fixes
-* Fix tracked values being updated in the same runloop they were used. Thanks @fusion2004!
+
+- Fix tracked values being updated in the same runloop they were used. Thanks @fusion2004!
+
 ## [3.0.4](https://github.com/jkeen/ember-stereo/compare/v3.0.3...v3.0.4) (2022-02-23)
 
-
 ### Bug Fixes
 
-* improve performance of sound-metadata helper ([f2ce636](https://github.com/jkeen/ember-stereo/commit/f2ce63696e71c797d2713bc2f99a5ecd011a12c9))
+- improve performance of sound-metadata helper ([f2ce636](https://github.com/jkeen/ember-stereo/commit/f2ce63696e71c797d2713bc2f99a5ecd011a12c9))
 
 ## [3.0.3](https://github.com/jkeen/ember-stereo/compare/v3.0.2...v3.0.3) (2022-02-23)
 
-
 ### Bug Fixes
 
-* lookup sound metadata through the service and not through the sound (which may not be loaded yet) ([424f119](https://github.com/jkeen/ember-stereo/commit/424f1190f2cc090f720a1803ad81d96bd98839c4))
+- lookup sound metadata through the service and not through the sound (which may not be loaded yet) ([424f119](https://github.com/jkeen/ember-stereo/commit/424f1190f2cc090f720a1803ad81d96bd98839c4))
 
 ## [3.0.2](https://github.com/jkeen/ember-stereo/compare/v3.0.1...v3.0.2) (2022-02-14)
 
-
 ### Bug Fixes
 
-* use forked ember-cli-addon docs to work with ember-auto-import 2/embroider so we can deploy the docs correctly. Update to angle bracket syntax of demo.snippet ([520f2f7](https://github.com/jkeen/ember-stereo/commit/520f2f7b2d19a580270d2436a8d7543d83f49458))
+- use forked ember-cli-addon docs to work with ember-auto-import 2/embroider so we can deploy the docs correctly. Update to angle bracket syntax of demo.snippet ([520f2f7](https://github.com/jkeen/ember-stereo/commit/520f2f7b2d19a580270d2436a8d7543d83f49458))
 
 ## [3.0.1](https://github.com/jkeen/ember-stereo/compare/v3.0.0...v3.0.1) (2022-02-03)
 
-
 ### Bug Fixes
 
-* preventDefault on {{sound-position-slider}} and {{stereo-volume}} modifier clicks ([6252d95](https://github.com/jkeen/ember-stereo/commit/6252d95263d5706be5dff14af2d1eed5afa77005))
+- preventDefault on {{sound-position-slider}} and {{stereo-volume}} modifier clicks ([6252d95](https://github.com/jkeen/ember-stereo/commit/6252d95263d5706be5dff14af2d1eed5afa77005))
 
 # [3.0.0](https://github.com/jkeen/ember-stereo/compare/v2.2.2...v3.0.0) (2022-02-02)
 
-
 ### Bug Fixes
 
-* address double compute error in docs uncovered in 3.28 update ([8f274ae](https://github.com/jkeen/ember-stereo/commit/8f274aefc4b942900f271a9bab97a02e225b19f7))
-* Use ember keyboard beta to resolve build issue on CI with ember-cli-addon-docs ([2c894a6](https://github.com/jkeen/ember-stereo/commit/2c894a66e21e8af65cde29e17669e9f290920321))
-
+- address double compute error in docs uncovered in 3.28 update ([8f274ae](https://github.com/jkeen/ember-stereo/commit/8f274aefc4b942900f271a9bab97a02e225b19f7))
+- Use ember keyboard beta to resolve build issue on CI with ember-cli-addon-docs ([2c894a6](https://github.com/jkeen/ember-stereo/commit/2c894a66e21e8af65cde29e17669e9f290920321))
 
 ### chore
 
-* Update node requirements, dropping old support ([ece3c4e](https://github.com/jkeen/ember-stereo/commit/ece3c4e0678395674e40d57c71f71f72670eca15))
-
+- Update node requirements, dropping old support ([ece3c4e](https://github.com/jkeen/ember-stereo/commit/ece3c4e0678395674e40d57c71f71f72670eca15))
 
 ### Features
 
-* Now works in apps using ember-auto-import 2. The path to the future is a bumpy one. ([26cb228](https://github.com/jkeen/ember-stereo/commit/26cb22894c8a73e8780d9eb617d57a9ceb812f88))
-
+- Now works in apps using ember-auto-import 2. The path to the future is a bumpy one. ([26cb228](https://github.com/jkeen/ember-stereo/commit/26cb22894c8a73e8780d9eb617d57a9ceb812f88))
 
 ### BREAKING CHANGES
 
-* node 14.x + required
-* ember-auto-import > 2 required now!
+- node 14.x + required
+- ember-auto-import > 2 required now!
 
 ## [2.2.2](https://github.com/jkeen/ember-stereo/compare/v2.2.1...v2.2.2) (2022-01-20)
 
-
 ### Bug Fixes
 
-* load audio after ensuring URL is not cached by the browser ([3ea70f9](https://github.com/jkeen/ember-stereo/commit/3ea70f94ace72da72f1286abf8939367987f5497))
+- load audio after ensuring URL is not cached by the browser ([3ea70f9](https://github.com/jkeen/ember-stereo/commit/3ea70f94ace72da72f1286abf8939367987f5497))
 
 ## [2.2.1](https://github.com/jkeen/ember-stereo/compare/v2.2.0...v2.2.1) (2021-12-28)
 
-
 ### Bug Fixes
 
-* Update HLS loading negotiation and correctly trigger audio-blocked event if play is blocked ([4add770](https://github.com/jkeen/ember-stereo/commit/4add770ce285696370f1d40299b4487269e54190))
+- Update HLS loading negotiation and correctly trigger audio-blocked event if play is blocked ([4add770](https://github.com/jkeen/ember-stereo/commit/4add770ce285696370f1d40299b4487269e54190))
 
 # [2.2.0](https://github.com/jkeen/ember-stereo/compare/v2.1.2...v2.2.0) (2021-11-20)
 
-
 ### Bug Fixes
 
-* Merge existing cached metadata when playing fresh sound ([2d88074](https://github.com/jkeen/ember-stereo/commit/2d880743bec24da5d488b9e19dc174dfc34bf9fd))
-
+- Merge existing cached metadata when playing fresh sound ([2d88074](https://github.com/jkeen/ember-stereo/commit/2d880743bec24da5d488b9e19dc174dfc34bf9fd))
 
 ### Features
 
-* Sound metadata is stored centrally now and will automatically update navigator.mediasession when changed, providing accurate now-playing info to iOS lock screens, etc ([848588b](https://github.com/jkeen/ember-stereo/commit/848588b6f92b03041ed457a76461544a13132fa6))
+- Sound metadata is stored centrally now and will automatically update navigator.mediasession when changed, providing accurate now-playing info to iOS lock screens, etc ([848588b](https://github.com/jkeen/ember-stereo/commit/848588b6f92b03041ed457a76461544a13132fa6))
 
 ## [2.1.2](https://github.com/jkeen/ember-stereo/compare/v2.1.1...v2.1.2) (2021-11-19)
 
-
 ### Bug Fixes
 
-* make isMobileDevice a tracked variable so volume-related logic works reliably ([e94dc6c](https://github.com/jkeen/ember-stereo/commit/e94dc6c23af469f9c50080477c4138eb2434baf0))
+- make isMobileDevice a tracked variable so volume-related logic works reliably ([e94dc6c](https://github.com/jkeen/ember-stereo/commit/e94dc6c23af469f9c50080477c4138eb2434baf0))
 
 ## [2.1.1](https://github.com/jkeen/ember-stereo/compare/v2.1.0...v2.1.1) (2021-11-19)
 
-
 ### Bug Fixes
 
-* fail gracefully if findSound is passed an empty string ([69754d7](https://github.com/jkeen/ember-stereo/commit/69754d72e0b24590ae3be0e0bfcefcb3283fb8ff))
+- fail gracefully if findSound is passed an empty string ([69754d7](https://github.com/jkeen/ember-stereo/commit/69754d72e0b24590ae3be0e0bfcefcb3283fb8ff))
 
 # [2.1.0](https://github.com/jkeen/ember-stereo/compare/v2.0.10...v2.1.0) (2021-11-19)
 
-
 ### Bug Fixes
 
-* resolved infinite invalidation loop caused by faulty soundproxy task. Updated dependencies ([f830a88](https://github.com/jkeen/ember-stereo/commit/f830a887a95ff2676a8a102691cb8decb376f696))
-
+- resolved infinite invalidation loop caused by faulty soundproxy task. Updated dependencies ([f830a88](https://github.com/jkeen/ember-stereo/commit/f830a887a95ff2676a8a102691cb8decb376f696))
 
 ### Features
 
-* add {{stereo-volume-is-adjustable}} helper, which returns whether or not the device supports adjusting volume at the sound level ([a41e759](https://github.com/jkeen/ember-stereo/commit/a41e759b0ff4580f6700ba02f96a65482b61110c))
+- add {{stereo-volume-is-adjustable}} helper, which returns whether or not the device supports adjusting volume at the sound level ([a41e759](https://github.com/jkeen/ember-stereo/commit/a41e759b0ff4580f6700ba02f96a65482b61110c))
 
 ## [2.0.10](https://github.com/jkeen/ember-stereo/compare/v2.0.9...v2.0.10) (2021-11-08)
 
-
 ### Bug Fixes
 
-* fix {{sound-position-slider}} modifier gestures ([9c48a18](https://github.com/jkeen/ember-stereo/commit/9c48a18980a55b72671b372848f0f143adf35ed6))
-* update {{sound-position-progress}} bar on audio-position-will-change event as well as audio-position-changed event ([4dcea0d](https://github.com/jkeen/ember-stereo/commit/4dcea0dc86ae9ef284f204034c0b7e74e4cd5a2a))
+- fix {{sound-position-slider}} modifier gestures ([9c48a18](https://github.com/jkeen/ember-stereo/commit/9c48a18980a55b72671b372848f0f143adf35ed6))
+- update {{sound-position-progress}} bar on audio-position-will-change event as well as audio-position-changed event ([4dcea0d](https://github.com/jkeen/ember-stereo/commit/4dcea0dc86ae9ef284f204034c0b7e74e4cd5a2a))
 
 ## [2.0.9](https://github.com/jkeen/ember-stereo/compare/v2.0.8...v2.0.9) (2021-10-13)
 
-
 ### Bug Fixes
 
-* load HLS fragment on position change if changed to surface correct PROGRAM-DATE-TIME if available ([5d40d57](https://github.com/jkeen/ember-stereo/commit/5d40d57e524920300f4289f57884949c1b53b471))
+- load HLS fragment on position change if changed to surface correct PROGRAM-DATE-TIME if available ([5d40d57](https://github.com/jkeen/ember-stereo/commit/5d40d57e524920300f4289f57884949c1b53b471))
 
 ## [2.0.8](https://github.com/jkeen/ember-stereo/compare/v2.0.7...v2.0.8) (2021-09-22)
 
-
 ### Bug Fixes
 
-* allow id3 metadata to be accessed on any type of sound ([5eec65d](https://github.com/jkeen/ember-stereo/commit/5eec65d8b48328432a03c7173558cd6cdc7557e2))
+- allow id3 metadata to be accessed on any type of sound ([5eec65d](https://github.com/jkeen/ember-stereo/commit/5eec65d8b48328432a03c7173558cd6cdc7557e2))
 
 ## [2.0.7](https://github.com/jkeen/ember-stereo/compare/v2.0.6...v2.0.7) (2021-09-19)
 
-
 ### Bug Fixes
 
-* safely check systemStereoOptions incase it's not set and we're going full defaults ([cf21113](https://github.com/jkeen/ember-stereo/commit/cf2111375375c8943e6653fcf007294f5b9beed2))
+- safely check systemStereoOptions incase it's not set and we're going full defaults ([cf21113](https://github.com/jkeen/ember-stereo/commit/cf2111375375c8943e6653fcf007294f5b9beed2))
 
 ## [2.0.6](https://github.com/jkeen/ember-stereo/compare/v2.0.5...v2.0.6) (2021-09-11)
 
-
 ### Bug Fixes
 
-* Fire audio-ended event when fixed length audio ends using HLS connection ([f3d66b0](https://github.com/jkeen/ember-stereo/commit/f3d66b0599856944c4255f6c7749e022210e2942))
+- Fire audio-ended event when fixed length audio ends using HLS connection ([f3d66b0](https://github.com/jkeen/ember-stereo/commit/f3d66b0599856944c4255f6c7749e022210e2942))
 
 ## [2.0.5](https://github.com/jkeen/ember-stereo/compare/v2.0.4...v2.0.5) (2021-09-08)
 

@@ -17,5 +17,3 @@ export default class LocalDummySound extends BaseSound {
 
   _audioDuration() {}
 }
-
-

@@ -7,7 +7,7 @@ export default class Diagnostic extends Route {
   model() {
     return {
       testSounds: testSounds,
-      connections: this.stereo.connectionLoader.connections
+      connections: this.stereo.connectionLoader.connections,
     };
   }
 }

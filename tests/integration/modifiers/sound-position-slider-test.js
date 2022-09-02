@@ -6,7 +6,6 @@ import { hbs } from 'ember-cli-htmlbars';
 module('Integration | Modifier | sound-position-slider', function (hooks) {
   setupRenderingTest(hooks);
 
-
   test('it renders', async function (assert) {
     await render(hbs`<div {{sound-position-slider}}></div>`);
 
