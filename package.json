@@ -50,6 +50,7 @@
     "ember-concurrency": "^2.1.2",
     "ember-gesture-modifiers": "^3.0.0",
     "ember-get-config": "^2.0",
+    "ember-modal-dialog": "^4.0.0",
     "ember-modifier": "^3.0.0",
     "hls.js": "^1.1.1",
     "howler": "^2.2.1",
