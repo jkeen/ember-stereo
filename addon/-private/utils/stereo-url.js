@@ -1,12 +1,12 @@
-import { getMimeType } from "./mime-types";
+import { getMimeType } from './mime-types';
 import { tracked } from '@glimmer/tracking';
 import { isArray } from '@ember/array';
 export default class StereoUrl {
-  @tracked options = {}
+  @tracked options = {};
   constructor(input, options = {}) {
-    this.el = document.createElement('a')
+    this.el = document.createElement('a');
     if (!input) {
-      throw new Error("can't create URL without any input")
+      throw new Error("can't create URL without any input");
     }
 
     if (input) {
@@ -17,17 +17,15 @@ export default class StereoUrl {
       this.input = input;
 
       if (input.url) {
-        this.el.href = input.url
-      }
-      else if (typeof input === 'string') {
+        this.el.href = input.url;
+      } else if (typeof input === 'string') {
         this.el.href = input;
       }
 
       if (input.mimeType) {
-        this.options = { mimeType: input.mimeType }
-      }
-      else if (options.mimeType) {
-        this.options = { mimeType: options.mimeType }
+        this.options = { mimeType: input.mimeType };
+      } else if (options.mimeType) {
+        this.options = { mimeType: options.mimeType };
       }
     }
   }
@@ -35,22 +33,21 @@ export default class StereoUrl {
   get mimeType() {
     if (this.options.mimeType) {
       return this.options.mimeType;
-    }
-    else {
-      return getMimeType(this.url)
+    } else {
+      return getMimeType(this.url);
     }
   }
 
   // this is the key used for comparisons
   get key() {
-    return `${this.el.origin}${this.el.pathname}`
+    return `${this.el.origin}${this.el.pathname}`;
   }
 
   get href() {
-    return this.el.href
+    return this.el.href;
   }
   set href(u) {
-    this.el.href = u
+    this.el.href = u;
   }
 
   get pathname() {
@@ -58,10 +55,10 @@ export default class StereoUrl {
   }
 
   get url() {
-    return this.el.href
+    return this.el.href;
   }
   set url(u) {
-    this.el.href = u
+    this.el.href = u;
   }
 
   toString() {

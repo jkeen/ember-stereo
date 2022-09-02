@@ -1,16 +1,15 @@
-import Component from "@glimmer/component";
-import { throttle, next } from "@ember/runloop";
-import { inject as service } from "@ember/service";
-import { action } from "@ember/object";
-import { tracked } from "@glimmer/tracking";
+import Component from '@glimmer/component';
+import { throttle, next } from '@ember/runloop';
+import { inject as service } from '@ember/service';
+import { action } from '@ember/object';
+import { tracked } from '@glimmer/tracking';
 export default class Position extends Component {
   @service stereo;
   @tracked element;
   @tracked dragAdjustment = 0;
 
-
   get loadedSound() {
-    return this.stereo.soundProxy(this.args.url)
+    return this.stereo.soundProxy(this.args.url);
   }
 
   @action
@@ -47,7 +46,8 @@ export default class Position extends Component {
       let width = this.element.getBoundingClientRect().width;
       let changePercentage = deltaX / width;
       let newPercentage =
-        this.loadedSound.position / this.loadedSound.duration + changePercentage;
+        this.loadedSound.position / this.loadedSound.duration +
+        changePercentage;
       let newPosition = parseFloat(
         this.loadedSound.duration * newPercentage,
         10
@@ -64,12 +64,12 @@ export default class Position extends Component {
     let { deltaX } = e.gesture;
     if (this.element) {
       let width = this.element.getBoundingClientRect().width;
-      let percentage = (this.loadedSound.position / this.loadedSound.duration);
+      let percentage = this.loadedSound.position / this.loadedSound.duration;
       let pxPosition = width * percentage;
 
-      if ((pxPosition + deltaX) < 0) {
-        deltaX = -pxPosition
-      } else if ((pxPosition + deltaX) >= width) {
+      if (pxPosition + deltaX < 0) {
+        deltaX = -pxPosition;
+      } else if (pxPosition + deltaX >= width) {
         deltaX = width - pxPosition;
       }
     }

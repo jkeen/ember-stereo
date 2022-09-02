@@ -4,8 +4,12 @@ import { module, test } from 'qunit';
 module('Unit | Utility | error-cache', function () {
   test('it works', function (assert) {
     let errorCache = new ErrorCache();
-    errorCache.cache({ url: '/what/sound.mp3', error: 'errorsville', connectionKey: 'NativeAudio' })
-    let errorObj = errorCache.find('/what/sound.mp3')
+    errorCache.cache({
+      url: '/what/sound.mp3',
+      error: 'errorsville',
+      connectionKey: 'NativeAudio',
+    });
+    let errorObj = errorCache.find('/what/sound.mp3');
 
     assert.equal(errorObj.errors['NativeAudio'], 'errorsville');
   });

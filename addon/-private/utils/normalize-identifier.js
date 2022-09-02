@@ -7,7 +7,7 @@ export default function normalizeIdentifier(identifier) {
   } else if (identifier instanceof StereoUrl) {
     return identifier.key;
   } else if (identifier instanceof BaseSound) {
-    return new StereoUrl(identifier.url).key
+    return new StereoUrl(identifier.url).key;
   } else if (typeof identifier === 'object' && identifier?.url) {
     return new StereoUrl(identifier).key;
   } else {

@@ -1,6 +1,13 @@
 <DocsDemo as |demo|>
-  <demo.example @name="service-example.hbs">
-    <button type="button" {{on 'click' (fn this.togglePlaySound "https://streaming.koop.org/stream.mp3")}} class="ui-button">
+  <demo.example @name='service-example.hbs'>
+    <button
+      type='button'
+      {{on
+        'click'
+        (fn this.togglePlaySound 'https://streaming.koop.org/stream.mp3')
+      }}
+      class='ui-button'
+    >
       {{#if this.sound.isPlaying}}
         Pause
       {{else}}
@@ -8,6 +15,6 @@
       {{/if}}
     </button>
   </demo.example>
-  <demo.snippet @name='service-example.hbs'></demo.snippet>
-  <demo.snippet @name='service-example.js'></demo.snippet>
+  <demo.snippet @name='service-example.hbs' />
+  <demo.snippet @name='service-example.js' />
 </DocsDemo>

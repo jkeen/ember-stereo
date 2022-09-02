@@ -19,10 +19,9 @@ import StereoBaseActionHelper from 'ember-stereo/-private/helpers/action-helper'
 export default class pauseSound extends StereoBaseActionHelper {
   performAction(sound) {
     if (sound) {
-      sound.pause()
-    }
-    else {
-      return false
+      sound.pause();
+    } else {
+      return false;
     }
   }
 }

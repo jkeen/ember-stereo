@@ -1,6 +1,6 @@
 const circle = process.env.CIRCLE_TEST_RESULTS;
 
-'use strict';
+('use strict');
 
 module.exports = {
   test_page: 'tests/index.html?hidepassed',
@@ -12,8 +12,7 @@ module.exports = {
     'Chrome',
     // 'Firefox', sad to say but Firefox headless struggles with some of these tests
   ],
-  launch_in_dev: [
-  ],
+  launch_in_dev: [],
   browser_start_timeout: 120,
   browser_args: {
     Chrome: {
@@ -33,11 +32,13 @@ module.exports = {
     },
     Firefox: {
       mode: 'ci',
-      args: ['-headless', // not sure if the flags below even work, but can't find the docs
+      args: [
+        '-headless', // not sure if the flags below even work, but can't find the docs
         '--ignore-autoplay-restriction',
         '--autoplay-policy=no-user-gesture-required',
         '--no-user-gesture-required',
-        '--mute-audio'],
+        '--mute-audio',
+      ],
     },
   },
 };

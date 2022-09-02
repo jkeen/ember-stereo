@@ -5,10 +5,7 @@ import BaseSound from 'ember-stereo/stereo-connections/base';
 import hasEqualUrls from './has-equal-urls';
 import normalizeIdentifier from './normalize-identifier';
 import { inject as service } from '@ember/service';
-import {
-  TrackedObject,
-  TrackedArray,
-} from 'tracked-built-ins';
+import { TrackedObject, TrackedArray } from 'tracked-built-ins';
 
 /**
  *
@@ -24,7 +21,7 @@ export default class SoundCache {
   @tracked cachedList = new TrackedArray();
   @tracked cachedSounds = new TrackedArray();
   @tracked _cache = new TrackedObject();
-  name = 'ember-stereo:sound-cache'
+  name = 'ember-stereo:sound-cache';
 
   reset() {
     this._cache = {};
@@ -42,14 +39,15 @@ export default class SoundCache {
   find(_identifiers) {
     let cache = this._cache;
     _identifiers = makeArray(_identifiers);
-    let identifiers = _identifiers.map(identity => normalizeIdentifier(identity))
-    let sounds = emberArray(identifiers).map(url => cache[url]);
-    let foundSounds  = emberArray(sounds).compact();
+    let identifiers = _identifiers.map((identity) =>
+      normalizeIdentifier(identity)
+    );
+    let sounds = emberArray(identifiers).map((url) => cache[url]);
+    let foundSounds = emberArray(sounds).compact();
 
     if (foundSounds.length > 0) {
       debug(this.name)(`cache hit for `, foundSounds[0].url);
-    }
-    else {
+    } else {
       debug(this.name)(`cache miss for`, identifiers);
     }
 
@@ -67,17 +65,19 @@ export default class SoundCache {
 
     if (this.isDestroyed) return;
     if (_identifier instanceof BaseSound) {
-      identifier = _identifier.url
+      identifier = _identifier.url;
     } else {
       identifier = normalizeIdentifier(_identifier);
     }
 
-    let url = Object.keys(this._cache).find(key => hasEqualUrls(key, identifier))
+    let url = Object.keys(this._cache).find((key) =>
+      hasEqualUrls(key, identifier)
+    );
 
     debug(this.name)(`removing sound from cache with url: ${identifier}`);
     if (this._cache[url]) {
       delete this._cache[url];
-      this.cachedCount = Object.keys(this._cache).length
+      this.cachedCount = Object.keys(this._cache).length;
       this.cachedList = Object.keys(this._cache);
       this.cachedSounds = Object.values(this._cache);
     }

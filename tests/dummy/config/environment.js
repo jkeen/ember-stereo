@@ -14,7 +14,7 @@ module.exports = function (environment) {
       EXTEND_PROTOTYPES: {
         // Prevent Ember Data from overriding Date.parse.
         Date: false,
-      }
+      },
     },
 
     APP: {
@@ -22,7 +22,7 @@ module.exports = function (environment) {
       // when it is created
     },
     fontawesome: {
-      defaultPrefix: 'fas'
+      defaultPrefix: 'fas',
     },
     emberStereo: {
       debug: false,
@@ -30,9 +30,9 @@ module.exports = function (environment) {
       connections: [
         { name: 'NativeAudio' },
         { name: 'Howler' },
-        { name: 'HLS' }
-      ]
-    }
+        { name: 'HLS' },
+      ],
+    },
   };
 
   if (environment === 'development') {

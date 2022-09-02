@@ -1,7 +1,6 @@
 import { inject as service } from '@ember/service';
 import Helper from '@ember/component/helper';
 
-
 /**
   returns current stereo volume when used as a helper. When used as a modifier it transforms an range input control into a volume control
 
@@ -31,4 +30,3 @@ export default class StereoVolume extends Helper {
     return this.stereo.volume;
   }
 }
-

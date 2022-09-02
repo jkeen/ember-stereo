@@ -7,7 +7,7 @@ import ObjectCache from 'ember-stereo/-private/utils/object-cache';
 */
 
 export default class UrlCache extends ObjectCache {
-  name = 'ember-stereo:url-cache'
+  name = 'ember-stereo:url-cache';
 
   /**
    * Caches promise resolutions to urls, or just resolves the urls
@@ -18,10 +18,10 @@ export default class UrlCache extends ObjectCache {
 
   async resolve(identifier) {
     if (this.has(identifier)) {
-      return this.find(identifier)
+      return this.find(identifier);
     } // success! we didn't unnecessarily resolve the promise again
 
-    let stereoUrls = await resolveUrls(identifier)
+    let stereoUrls = await resolveUrls(identifier);
 
     this.store(identifier, stereoUrls);
 

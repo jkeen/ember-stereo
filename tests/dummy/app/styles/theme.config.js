@@ -2,7 +2,7 @@
 /* eslint-disable no-undef */
 
 const { ThemeManager, Theme } = require('tailwindcss-theming/api');
-const { TinyColor } = require('@ctrl/tinycolor')
+const { TinyColor } = require('@ctrl/tinycolor');
 
 const palette = {
   // Polar night
@@ -29,12 +29,12 @@ const palette = {
   nord14: '#A3BE8C',
   nord15: '#B48EAD',
 
-  white: '#FFFFFF'
+  white: '#FFFFFF',
 };
 
 const dark = new Theme()
   .addColors({
-    'accent': {
+    accent: {
       0: '#00BCB8',
       1: '#00A2D0',
       2: '#0061C1',
@@ -43,9 +43,9 @@ const dark = new Theme()
     'on-accent': {
       0: '#FFF',
     },
-    'background': '#FFF',
+    background: '#FFF',
     'on-background': palette.nord0,
-    'surface': {
+    surface: {
       0: palette.nord0,
       1: palette.nord1,
       2: palette.nord2,
@@ -57,26 +57,26 @@ const dark = new Theme()
       2: palette.nord6,
       3: palette.nord6,
     },
-    'attention': {
-      'primary': palette.nord7,
-      'secondary': palette.nord8,
-      'tertiary': palette.nord9,
-      'quaternary': palette.nord10,
+    attention: {
+      primary: palette.nord7,
+      secondary: palette.nord8,
+      tertiary: palette.nord9,
+      quaternary: palette.nord10,
     },
-    'danger': '#f14668',
+    danger: '#f14668',
     'on-danger': '#F9FAFA',
-    'success': '#00BCB8',
+    success: '#00BCB8',
     'on-success': '#F9FAFA',
-    'gray': palette.nord1,
-    'white': '#FFF',
+    gray: palette.nord1,
+    white: '#FFF',
     'light-gray': palette.nord0,
-    'current': 'currentColor',
+    current: 'currentColor',
   })
-  .addCustomVariant('hover', (c) => new TinyColor(c).darken(5), ['accent-0'])
+  .addCustomVariant('hover', (c) => new TinyColor(c).darken(5), ['accent-0']);
 
 const light = new Theme()
   .addColors({
-    'accent': {
+    accent: {
       0: '#00BCB8',
       1: '#00A2D0',
       2: '#0061C1',
@@ -85,9 +85,9 @@ const light = new Theme()
     'on-accent': {
       0: palette.nord4,
     },
-    'background': '#FFF',
+    background: '#FFF',
     'on-background': palette.nord0,
-    'surface': {
+    surface: {
       0: palette.nord4,
       1: palette.nord5,
       2: palette.nord6,
@@ -99,22 +99,21 @@ const light = new Theme()
       2: palette.nord2,
       3: palette.nord3,
     },
-    'attention': {
-      'primary': palette.nord7,
-      'secondary': palette.nord8,
-      'tertiary': palette.nord9,
-      'quaternary': palette.nord10,
+    attention: {
+      primary: palette.nord7,
+      secondary: palette.nord8,
+      tertiary: palette.nord9,
+      quaternary: palette.nord10,
     },
-    'danger': '#f14668',
+    danger: '#f14668',
     'on-danger': '#F9FAFA',
-    'success': '#00BCB8',
+    success: '#00BCB8',
     'on-success': '#F9FAFA',
-    'current': 'currentColor',
+    current: 'currentColor',
   })
-  .addCustomVariant('hover', (c) => new TinyColor(c).darken(5), ['accent-0'])
+  .addCustomVariant('hover', (c) => new TinyColor(c).darken(5), ['accent-0']);
 
-const StereoTheme = new ThemeManager()
-  .setDefaultTheme(dark.targetable())
+const StereoTheme = new ThemeManager().setDefaultTheme(dark.targetable());
 // .setDefaultLightTheme(light.setName('light').targetable())
 // .setDefaultDarkTheme(dark.setName('dark').targetable());
 

@@ -1,1 +1,4 @@
-export { default, togglePlaySound } from 'ember-stereo/helpers/toggle-play-sound';
+export {
+  default,
+  togglePlaySound,
+} from 'ember-stereo/helpers/toggle-play-sound';

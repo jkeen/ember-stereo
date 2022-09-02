@@ -11,16 +11,13 @@ module.exports = {
     },
   },
   plugins: ['ember', 'ember-concurrency'],
-  extends: [
-    'eslint:recommended',
-    'plugin:ember/recommended'
-  ],
+  extends: ['eslint:recommended', 'plugin:ember/recommended'],
   env: {
     browser: true,
     node: true,
   },
   rules: {
-    "ember/no-new-mixins": "warn",
+    'ember/no-new-mixins': 'warn',
     'ember/no-jquery': 'error',
     'ember-concurrency/no-perform-without-catch': 'error',
     'ember-concurrency/require-task-name-suffix': 'warn',
@@ -60,7 +57,7 @@ module.exports = {
       extends: ['plugin:qunit/recommended'],
       rules: {
         'qunit/no-assert-equal': 'off',
-      }
+      },
     },
   ],
 };

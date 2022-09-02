@@ -1,11 +1,11 @@
 /* eslint-env node */
 'use strict';
 
-module.exports = function(deployTarget) {
+module.exports = function (deployTarget) {
   let ENV = {
     build: {},
     git: {
-      repo: 'git@github.com:jkeen/ember-stereo.git'
+      repo: 'git@github.com:jkeen/ember-stereo.git',
     },
     // 'git-ci': {
     //   userName: 'deploy',

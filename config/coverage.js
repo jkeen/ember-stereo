@@ -1,4 +1,4 @@
 module.exports = {
-    coverageEnvVar: 'CI',
-    useBabelInstrumenter: true,
-}
+  coverageEnvVar: 'CI',
+  useBabelInstrumenter: true,
+};

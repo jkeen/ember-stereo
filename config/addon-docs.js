@@ -11,6 +11,6 @@ module.exports = class extends AddonDocsConfig {
   }
 
   getPrimaryBranch() {
-    return 'main'
+    return 'main';
   }
 };

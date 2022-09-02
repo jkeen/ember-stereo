@@ -20,13 +20,12 @@ export default class StereoVolumeModifier extends Modifier {
   }
 
   get isRangeControl() {
-    return this.element.tagName === "INPUT" && this.element.type === "range"
+    return this.element.tagName === 'INPUT' && this.element.type === 'range';
   }
 
   get options() {
     return this.args.named;
   }
-
 
   @action
   handleTap(e) {
@@ -34,7 +33,7 @@ export default class StereoVolumeModifier extends Modifier {
 
     var rect = e.target.getBoundingClientRect();
     var x = e.clientX - rect.left; //x position within the element.
-    let volumeLevel = parseInt((x / rect.width) * 100, 10)
+    let volumeLevel = parseInt((x / rect.width) * 100, 10);
     this.stereo.volume = volumeLevel;
   }
 
@@ -46,7 +45,7 @@ export default class StereoVolumeModifier extends Modifier {
   }
 
   @action onStereoVolumeChange(volume) {
-    this.element.value = volume
+    this.element.value = volume;
   }
 
   didInstall() {
@@ -55,8 +54,7 @@ export default class StereoVolumeModifier extends Modifier {
       this.element.setAttribute('min', 0);
       this.element.addEventListener('change', this.onChange, true);
       this.element.value = this.stereo.volume;
-    }
-    else {
+    } else {
       this.element.addEventListener('click', this.handleTap, true);
     }
 

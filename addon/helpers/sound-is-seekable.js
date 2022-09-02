@@ -23,10 +23,10 @@ import debugMessage from 'ember-stereo/-private/utils/debug-message';
 */
 
 export default class SoundIsSeekable extends StereoBaseIsHelper {
-  name = 'sound-is-seekable'
+  name = 'sound-is-seekable';
 
   get result() {
-    debugMessage(this, `render = ${this.sound?.isSeekable}`)
+    debugMessage(this, `render = ${this.sound?.isSeekable}`);
     return this.sound?.isSeekable;
   }
 }

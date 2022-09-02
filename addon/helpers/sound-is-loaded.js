@@ -21,12 +21,12 @@ import debugMessage from 'ember-stereo/-private/utils/debug-message';
   @return {Boolean}
 */
 export default class SoundIsLoaded extends StereoBaseIsHelper {
-  name = 'sound-is-loaded'
+  name = 'sound-is-loaded';
 
   get result() {
-    debugMessage(this, `render = ${this.sound?.isLoaded}`)
+    debugMessage(this, `render = ${this.sound?.isLoaded}`);
     // let isLoaded = this.stereo.cachedSounds.filter(url => this.sound && url === this.sound.url).length > 0;
 
-    return (this.sound && this.sound.isLoaded)
+    return this.sound && this.sound.isLoaded;
   }
 }

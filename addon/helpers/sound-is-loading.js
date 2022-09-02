@@ -21,10 +21,10 @@ import debugMessage from 'ember-stereo/-private/utils/debug-message';
   @return {Boolean}
 */
 export default class SoundIsLoading extends StereoBaseIsHelper {
-  name = 'sound-is-loading'
+  name = 'sound-is-loading';
 
   get result() {
-    debugMessage(this, `render = ${this.sound?.isLoaded}`)
-    return (this.sound && this.sound.isLoading) || this.isLoading
+    debugMessage(this, `render = ${this.sound?.isLoaded}`);
+    return (this.sound && this.sound.isLoading) || this.isLoading;
   }
 }

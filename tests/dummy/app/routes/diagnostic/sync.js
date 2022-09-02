@@ -5,6 +5,6 @@ export default class Sync extends Route {
   model() {
     return {
       testSounds: testSounds.slice(0, 3),
-    }
+    };
   }
 }

@@ -1,6 +1,5 @@
 import Evented from 'ember-stereo/-private/utils/evented';
 import { tracked } from '@glimmer/tracking';
-import { later } from '@ember/runloop';
 import TestAudioUrl from './test-audio-url';
 import debug from 'debug';
 // Ready state values
@@ -9,8 +8,6 @@ import debug from 'debug';
 const HAVE_CURRENT_DATA = 2;
 // const HAVE_FUTURE_DATA = 3;
 // const HAVE_ENOUGH_DATA = 4;
-
-
 
 export default class FakeMediaElement extends Evented {
   @tracked volume = 0;
@@ -27,7 +24,9 @@ export default class FakeMediaElement extends Evented {
   constructor() {
     super(...arguments);
 
-    debug('ember-stereo:fake-element')(`initializing fake ${arguments[0]} element`);
+    debug('ember-stereo:fake-element')(
+      `initializing fake ${arguments[0]} element`
+    );
     this.setInitialState();
   }
 
@@ -67,7 +66,7 @@ export default class FakeMediaElement extends Evented {
 
       this.duration = info.duration;
 
-      later(() => {
+      setTimeout(() => {
         this.trigger('onloadedmetadata', { target: this });
         this.trigger('canplaythrough', { target: this });
         this.trigger('loadeddata', { target: this });
@@ -77,7 +76,7 @@ export default class FakeMediaElement extends Evented {
       }, 20);
     } else if (info.isError) {
       debug('ember-stereo:fake-element')(`${this.src} will error`);
-      later(() => {
+      setTimeout(() => {
         this.loaded = false;
         this.error = {
           code: 100, // custom
@@ -85,8 +84,8 @@ export default class FakeMediaElement extends Evented {
         };
 
         this.trigger('error', { target: this });
-      }, 200);
-      return
+      }, 50);
+      return;
     } else if (this.src.startsWith('blob://')) {
       this.readyState = HAVE_CURRENT_DATA;
       this.duration = 1;
@@ -104,7 +103,9 @@ export default class FakeMediaElement extends Evented {
       // };
       // this.trigger('error', { target: this })
 
-      console.warn(`unrecognized fake media element url. Format should be /:status/:length_or_error/:name, received ${this.src}`)
+      console.warn(
+        `unrecognized fake media element url. Format should be /:status/:length_or_error/:name, received ${this.src}`
+      );
 
       // maybe this is a real element?
       // throw 'must provide a test url'
@@ -117,7 +118,7 @@ export default class FakeMediaElement extends Evented {
     }
 
     if (!this.src) {
-      return
+      return;
     }
 
     debug('ember-stereo:fake-element')(`${this.src} play`);
@@ -135,7 +136,7 @@ export default class FakeMediaElement extends Evented {
   }
 
   stop() {
-    this.pause()
+    this.pause();
     this.stopTimer();
   }
 
@@ -179,9 +180,9 @@ export default class FakeMediaElement extends Evented {
 
       this._src = value;
       this.setInitialState();
-      this.load()
+      this.load();
 
-      this.paused = true
+      this.paused = true;
     }
   }
 
@@ -206,7 +207,10 @@ export default class FakeMediaElement extends Evented {
   }
 
   startTimer() {
-    this._stereoFakeMediaElementPoller = setInterval(this.advance.bind(this), 100);
+    this._stereoFakeMediaElementPoller = setInterval(
+      this.advance.bind(this),
+      100
+    );
   }
 
   stopTimer() {

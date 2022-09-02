@@ -201,8 +201,8 @@ module('Unit | Service | stereo', function (hooks) {
       sound2.url,
       'sound2 should be set as current sound'
     );
-    sound2.stop()
-    sound1.stop()
+    sound2.stop();
+    sound1.stop();
   });
 
   test('Setting currentSound multiple times will not register duplicate events on the sound', async function (assert) {
@@ -283,7 +283,6 @@ module('Unit | Service | stereo', function (hooks) {
     let soundCache = service.soundCache;
     let findSpy = sandbox.spy(soundCache, 'find');
     let cacheSpy = sandbox.spy(soundCache, 'cache');
-
 
     let { sound } = await service.load(url);
     assert.equal(findSpy.callCount, 2, 'cache should have been checked');
@@ -1044,7 +1043,7 @@ module('Unit | Service | stereo', function (hooks) {
 
     let { sound } = await service.play(s1url, { position: 5000 });
     service.fastForward(1000);
-    sound.pause()
+    sound.pause();
   });
 
   test("altering a sound's url during the pre-load event will not prevent the cache", async function (assert) {
@@ -1082,5 +1081,5 @@ module('Unit | Service | stereo', function (hooks) {
     );
   });
 
-  skip('currenly playing sound does not pause until load has succeeded', function () { });
+  skip('currenly playing sound does not pause until load has succeeded', function () {});
 });

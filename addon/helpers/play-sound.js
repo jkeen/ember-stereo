@@ -23,6 +23,6 @@ import StereoBaseActionHelper from 'ember-stereo/-private/helpers/action-helper'
 */
 export default class playSound extends StereoBaseActionHelper {
   async performAction() {
-    return await this.stereo.play(this.identifier, this.options)
+    return await this.stereo.play(this.identifier, this.options);
   }
 }

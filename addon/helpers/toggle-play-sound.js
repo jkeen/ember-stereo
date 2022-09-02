@@ -12,7 +12,6 @@ import StereoBaseActionHelper from 'ember-stereo/-private/helpers/action-helper'
   @param {String} url
   */
 
-
 /**
   @method compute
   @param {Any} identifier url, urls, url objects, promise that resolves to a url
@@ -23,10 +22,9 @@ import StereoBaseActionHelper from 'ember-stereo/-private/helpers/action-helper'
 export default class togglePlaySound extends StereoBaseActionHelper {
   performAction(sound) {
     if (sound) {
-      sound.togglePause()
-    }
-    else {
-      this.stereo.play(this.identifier, this.options)
+      sound.togglePause();
+    } else {
+      this.stereo.play(this.identifier, this.options);
     }
   }
 }

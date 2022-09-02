@@ -33,12 +33,15 @@ export default class SoundIsErrored extends Helper {
   identifier = UNINITIALIZED;
 
   compute([identifier = 'system'], { connectionName }) {
-    let errors = this.stereo.cachedErrors.filter(async e => hasEqualUrls(e.url, identifier))
+    let errors = this.stereo.cachedErrors.filter(async (e) =>
+      hasEqualUrls(e.url, identifier)
+    );
 
     if (connectionName) {
-      return errors.filter(e => e.connectionName === connectionName).length > 0
-    }
-    else {
+      return (
+        errors.filter((e) => e.connectionName === connectionName).length > 0
+      );
+    } else {
       return errors.length > 0;
     }
   }

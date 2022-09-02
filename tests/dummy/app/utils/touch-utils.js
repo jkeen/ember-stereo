@@ -1,4 +1,3 @@
-
 // https://developer.mozilla.org/en-US/docs/Web/API/Touch_events#Finding_an_ongoing_touch
 export function findTouchById(touchList, identifier) {
   for (let i = 0; i < touchList.length; i++) {
@@ -21,7 +20,9 @@ export function findTouchById(touchList, identifier) {
 export function isSimulatedMouseEvent(mouseEvent) {
   if (mouseEvent) {
     // https://developer.mozilla.org/en-US/docs/Web/API/InputDeviceCapabilities
-    const isChromeFakeEvent = mouseEvent.sourceCapabilities && mouseEvent.sourceCapabilities.firesTouchEvents === true;
+    const isChromeFakeEvent =
+      mouseEvent.sourceCapabilities &&
+      mouseEvent.sourceCapabilities.firesTouchEvents === true;
     // https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent/mozInputSource
     const isMozFakeEvent = mouseEvent.mozInputSource === 5;
     // https://github.com/ftlabs/fastclick/blob/3db9f899c25b7b2e1517dc5cc17494ec9094bc43/lib/fastclick.js#L304

@@ -18,12 +18,12 @@ export default class OneAtATime {
   }
 
   pauseAll(sound) {
-    this.sounds.forEach(s => {
+    this.sounds.forEach((s) => {
       if (!hasEqualUrls(s.url, sound.url)) {
-        debug('ember-stereo:one-at-at-time')(`pausing ${s.url}`)
+        debug('ember-stereo:one-at-at-time')(`pausing ${s.url}`);
         s.pause();
       }
     });
-    debug('ember-stereo:one-at-at-time')(`playing ${sound.url}`)
+    debug('ember-stereo:one-at-at-time')(`playing ${sound.url}`);
   }
 }

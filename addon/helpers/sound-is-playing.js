@@ -21,10 +21,10 @@ A helper to detect if a sound is playing.
 */
 
 export default class SoundIsPlaying extends StereoBaseIsHelper {
-  name = 'sound-is-playing'
+  name = 'sound-is-playing';
 
   get result() {
-    debugMessage(this, `render = ${this.sound?.isPlaying}`)
-    return this.sound?.isPlaying
+    debugMessage(this, `render = ${this.sound?.isPlaying}`);
+    return this.sound?.isPlaying;
   }
 }

@@ -16,17 +16,17 @@ If you're coming from [ember-hifi](http://github.com/nypublicradio/ember-hifi), 
 2. Any event handlers that were expecting `(sound)` should now have a new signature and need to be changed to `({sound})`
    e.g.
 
-  ```js
-  //BEFORE
-  this.hifi.on('event-name', (sound) => {
-    /* handler */
-  });
+```js
+//BEFORE
+this.hifi.on('event-name', (sound) => {
+  /* handler */
+});
 
-  //AFTER
-  this.stereo.on('event-name', ({ sound }) => {
-    /* handler */
-  });
-  ```
+//AFTER
+this.stereo.on('event-name', ({ sound }) => {
+  /* handler */
+});
+```
 
 3. Whatever tricks you had implement to do in order to catch that uncatchable 'All Promises Failed' error in `hifi` you can remove them. `play` and `load` requests will now fail sanely. And if you don't want them to throw errors at all, instead returning the error as part of the response, you can pass `silenceErrors: true` as an option. (fixes hifi issue [#86](https://github.com/nypublicradio/ember-hifi/issues/86) and [#16](https://github.com/nypublicradio/ember-hifi/issues/16))
 4. `this.stereo.connections` has been renamed to `this.stereo.connectionNames`. `this.stereo.connections` now returns the actual connection objects.

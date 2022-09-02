@@ -1,5 +1,5 @@
-import Component from "@glimmer/component";
-import { inject as service } from "@ember/service";
+import Component from '@glimmer/component';
+import { inject as service } from '@ember/service';
 import { action } from '@ember/object';
 import { tracked } from '@glimmer/tracking';
 
@@ -12,8 +12,7 @@ export default class ServiceExample extends Component {
   async togglePlaySound(url) {
     if (this.sound) {
       this.sound.togglePause();
-    }
-    else {
+    } else {
       let { sound } = await this.stereo.play(url);
       this.sound = sound;
     }

@@ -1,6 +1,6 @@
 import { module, test } from 'qunit';
 import { setupRenderingTest } from 'ember-qunit';
-import { setupStereoTest } from 'ember-stereo/test-support/stereo-setup'
+import { setupStereoTest } from 'ember-stereo/test-support/stereo-setup';
 import { render } from '@ember/test-helpers';
 import { hbs } from 'ember-cli-htmlbars';
 
@@ -13,7 +13,10 @@ module('Integration | Helper | json-stringify', function (hooks) {
 
     await render(hbs`{{json-stringify this.inputValue}}`);
 
-    assert.equal(this.element.textContent.trim(), '{"title":"Morning Edition"}');
+    assert.equal(
+      this.element.textContent.trim(),
+      '{"title":"Morning Edition"}'
+    );
   });
 
   test('a null input returns an empty string', async function (assert) {

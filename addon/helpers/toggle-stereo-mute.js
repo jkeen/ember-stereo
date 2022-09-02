@@ -22,8 +22,7 @@ export default class ToggleStereoMute extends Helper {
 
   compute() {
     return () => {
-      return this.stereo.toggleMute()
-    }
+      return this.stereo.toggleMute();
+    };
   }
 }
-

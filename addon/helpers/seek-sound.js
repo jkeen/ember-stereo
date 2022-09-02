@@ -23,25 +23,25 @@ export default class SeekSound extends StereoBaseActionHelper {
 
   performAction(sound, eventOrItem) {
     if (sound) {
-      let unit = (this.options.unit || "percentage");
-      let value = this.options.position === undefined ? eventOrItem : this.options.position
+      let unit = this.options.unit || 'percentage';
+      let value =
+        this.options.position === undefined
+          ? eventOrItem
+          : this.options.position;
 
-      if (eventOrItem && eventOrItem.target?.type == "range") {
-        value = eventOrItem?.target?.value
-        unit = "percentage";
+      if (eventOrItem && eventOrItem.target?.type == 'range') {
+        value = eventOrItem?.target?.value;
+        unit = 'percentage';
       }
 
-      if (unit == "percentage") {
+      if (unit == 'percentage') {
         // this is a percentage
-        let newPosition = (parseFloat(value, 10) / 100) * sound.duration
-        return sound.position = newPosition;
+        let newPosition = (parseFloat(value, 10) / 100) * sound.duration;
+        return (sound.position = newPosition);
+      } else if (unit == 'seconds') {
+        return (sound.position = parseFloat(value, 10) * 1000);
       }
-      else if (unit == "seconds") {
-        return sound.position = (parseFloat(value, 10) * 1000);
-      }
-
-    }
-    else {
+    } else {
       return false;
     }
   }

@@ -1,1 +1,4 @@
-export { default, autoplayAllowed } from 'ember-stereo/helpers/autoplay-allowed';
+export {
+  default,
+  autoplayAllowed,
+} from 'ember-stereo/helpers/autoplay-allowed';

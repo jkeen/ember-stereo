@@ -12,7 +12,7 @@ import StereoBaseIsHelper from 'ember-stereo/-private/helpers/is-helper';
 */
 
 export default class FindSound extends StereoBaseIsHelper {
-  name = 'find-sound'
+  name = 'find-sound';
 
   /**
     @method compute

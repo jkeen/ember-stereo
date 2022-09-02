@@ -3,7 +3,7 @@ import { inject as service } from '@ember/service';
 import { action } from '@ember/object';
 import { tracked } from '@glimmer/tracking';
 export default class AutoplayChecking extends Component {
-  @service stereo
+  @service stereo;
   @tracked sound;
 
   @action
@@ -12,11 +12,10 @@ export default class AutoplayChecking extends Component {
       this.sound.togglePause();
     } else {
       window.setTimeout(async () => {
-        let { sound, error, /* failures */ } = await this.stereo.play(url);
+        let { sound, error /* failures */ } = await this.stereo.play(url);
         this.sound = sound;
         this.error = error;
-      }, 5000)
+      }, 5000);
     }
-
   }
 }

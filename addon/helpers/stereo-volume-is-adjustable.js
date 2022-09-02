@@ -1,7 +1,6 @@
 import { inject as service } from '@ember/service';
 import Helper from '@ember/component/helper';
 
-
 /**
   returns true if not mobile device. Mobile devices can't have audio adjusted at the stereo/sound level.
 
@@ -26,4 +25,3 @@ export default class StereoVolumeIsAdjustable extends Helper {
     return !this.stereo.isMobileDevice;
   }
 }
-
