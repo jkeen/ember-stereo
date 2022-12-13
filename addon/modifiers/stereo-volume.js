@@ -49,7 +49,6 @@ export default class StereoVolumeModifier extends Modifier {
 
   modify(element, [eventName], options) {
     if (!this.element) {
-      console.log('modify');
       this.element = element;
       this.eventName = eventName;
       this.options = options;
