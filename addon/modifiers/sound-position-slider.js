@@ -18,6 +18,7 @@ import { registerDestructor } from '@ember/destroyable';
 
 export default class SoundPositionSliderModifier extends DidPanModifier {
   @service stereo;
+  element = null;
 
   constructor() {
     super(...arguments);

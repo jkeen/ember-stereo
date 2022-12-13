@@ -15,6 +15,7 @@ import { inject as service } from '@ember/service';
 import Modifier from 'ember-modifier';
 export default class StereoVolumeModifier extends Modifier {
   @service stereo;
+  element = null;
 
   constructor() {
     super(...arguments);
@@ -48,9 +49,11 @@ export default class StereoVolumeModifier extends Modifier {
 
   modify(element, [eventName], options) {
     if (!this.element) {
+      console.log('modify');
+      this.element = element;
       this.eventName = eventName;
       this.options = options;
-      this.element = element;
+
       if (this.isRangeControl) {
         this.element.setAttribute('max', 100);
         this.element.setAttribute('min', 0);

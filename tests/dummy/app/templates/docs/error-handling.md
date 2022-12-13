@@ -12,5 +12,5 @@ When interacting with the service, you'll handle errors like you'd expect.
 
 <Docs::ServiceErrorsTryCatch />
 <Docs::ServiceErrorsTryThen />
-<Docs::ServiceErrorsSilenceErrors />
+<Docs::ServiceErrorsSilenceError />
 <Docs::ServiceErrorsThrowError />

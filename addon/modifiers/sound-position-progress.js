@@ -17,6 +17,7 @@ import { registerDestructor } from '@ember/destroyable';
 
 export default class SoundPositionProgressModifier extends Modifier {
   @service stereo;
+  element = null;
 
   constructor() {
     super(...arguments);
