@@ -1,5 +1,15 @@
 ember-stereo changelog
 
+# [4.0.0](https://github.com/jkeen/ember-stereo/compare/v3.2.2...v4.0.0) (2022-12-13)
+
+
+* chore!: update to Ember 4.8, modify release settings ([871c7e5](https://github.com/jkeen/ember-stereo/commit/871c7e534aee7a4dbfd46fb1cda3c7192909cd41))
+
+
+### BREAKING CHANGES
+
+* drop support for Ember < 3.28
+
 ## [3.2.2](https://github.com/jkeen/ember-stereo/compare/v3.2.1...v3.2.2) (2022-09-02)
 
 
