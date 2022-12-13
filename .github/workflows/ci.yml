@@ -42,6 +42,15 @@ jobs:
       matrix:
         os: [ubuntu-latest]
         browser: [chrome] # disabling firefox for now, sad to say but Firefox headless struggles with some of these tests
+        try-scenario:
+          - ember-lts-3.28
+          - ember-lts-4.4
+          - ember-release
+          - ember-beta
+          - ember-canary
+          - ember-classic
+          - embroider-safe
+          - embroider-optimized
 
     steps:
       - uses: actions/checkout@v2
