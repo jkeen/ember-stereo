@@ -143,5 +143,83 @@
     "node": "14.18.1",
     "yarn": "1.22.11",
     "npm": "7.22.0"
+  },
+  "release": {
+    "branches": [
+      "main"
+    ],
+    "plugins": [
+      [
+        "@semantic-release/commit-analyzer",
+        {
+          "releaseRules": [
+            {
+              "type": "*!",
+              "release": "major"
+            },
+            {
+              "type": "feat",
+              "release": "minor"
+            },
+            {
+              "type": "build",
+              "release": "patch"
+            },
+            {
+              "type": "ci",
+              "release": "patch"
+            },
+            {
+              "type": "chore",
+              "release": "patch"
+            },
+            {
+              "type": "docs",
+              "release": "patch"
+            },
+            {
+              "type": "refactor",
+              "release": "patch"
+            },
+            {
+              "type": "style",
+              "release": "patch"
+            },
+            {
+              "type": "test",
+              "release": "patch"
+            }
+          ],
+          "parserOpts": {
+            "noteKeywords": [
+              "BREAKING CHANGE",
+              "BREAKING CHANGES",
+              "BREAKING"
+            ]
+          }
+        }
+      ],
+      "@semantic-release/release-notes-generator",
+      [
+        "@semantic-release/changelog",
+        {
+          "changelogTitle": "ember-stereo changelog",
+          "changelogFile": "CHANGELOG.md"
+        }
+      ],
+      "@semantic-release/npm",
+      "@semantic-release/github",
+      [
+        "@semantic-release/git",
+        {
+          "assets": [
+            "CHANGELOG.md"
+          ],
+          "message": "${nextRelease.version} CHANGELOG [skip ci]\n\n${nextRelease.notes}"
+        }
+      ]
+    ],
+    "debug": false,
+    "dryRun": false
   }
 }
