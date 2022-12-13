@@ -30,9 +30,9 @@ this.stereo.on('current-sound-interrupted', ({ sound }) => {
 
 Here's a long audio file, play around with it and see the events that are triggered below. Clicking on the event will put it in your javascript console.
 
-{{docs/stereo-player identifier="/sounds/internet-on-computers.mp3"}}
 
-{{docs/event-display url="/sounds/internet-on-computers.mp3"}}
+<Docs::StereoPlayer @identifier="/sounds/internet-on-computers.mp3" />
+<Docs::EventDisplay @url="/sounds/internet-on-computers.mp3" />
 
 ### Triggered on both the sound and relayed through the stereo service
 

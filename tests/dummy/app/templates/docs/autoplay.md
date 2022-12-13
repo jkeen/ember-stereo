@@ -8,8 +8,8 @@ Here's [Mozilla'a guide on autoplay](https://developer.mozilla.org/en-US/docs/We
 
 You might want to check if autoplay is allowed on your user's browser, and take some additional steps if it isn't. Here's how you might do that
 
-{{docs/autoplay-checking}}
+<Docs::AutoplayChecking />
 
 ### Gotchas
 
-{{docs/autoplay-gotchas}}
+<Docs::AutoplayGotchas />

@@ -12,20 +12,22 @@ Provide `stereo` an array of urls in preferential order and it'll try each url o
 
 To illustrate let's try and play this [(incredible) digitized in-store cassete tape from K-Mart in 1989](https://archive.org/details/KmartOctober1989) from archive.org. The `ogg` version of this file is `60M`, the `mp3` version is `200M`. Woof! Obviously, the higher quality `60M` file would be preferable.
 
-{{docs/try-multiple-urls}}
+<Docs::TryMultipleUrls/>
 
-Looks like you're running {{docs/current-browser}} on {{docs/current-os}}.
+Looks like you're running <Docs::CurrentBrowser/> on <Docs::CurrentOS/>
 
 ### Ogg
 
-Here's what {{docs/current-browser}} for {{docs/current-os}} told `ember-stereo` about the chances of this `ogg` file succeeding.
+Here's what  <Docs::CurrentBrowser/> for <Docs::CurrentOS/> told `ember-stereo` about the chances of this `ogg` file succeeding.
 
-{{docs/strategy-breakdown identifier="https://archive.org/download/KmartOctober1989/Kmart%20October%201989.ogg"}}
-{{docs/stereo-player identifier="https://archive.org/download/KmartOctober1989/Kmart%20October%201989.ogg"}}
+
+
+<Docs::StrategyBreakdown @identifier="https://archive.org/download/KmartOctober1989/Kmart%20October%201989.ogg"/>
+<Docs::StereoPlayer @identifier="https://archive.org/download/KmartOctober1989/Kmart%20October%201989.ogg"/>
 
 ### Mp3
 
-This for sure works on {{docs/current-browser}} for {{docs/current-os}}. Nothing to get excited about, but here's the details anyway:
+This for sure works on  <Docs::CurrentBrowser/> for <Docs::CurrentOS/>. Nothing to get excited about, but here's the details anyway:
 
-{{docs/strategy-breakdown identifier="https://archive.org/download/KmartOctober1989/Kmart%20October%201989.mp3"}}
-{{docs/stereo-player identifier="https://archive.org/download/KmartOctober1989/Kmart%20October%201989.mp3"}}
+<Docs::StrategyBreakdown @identifier="https://archive.org/download/KmartOctober1989/Kmart%20October%201989.mp3"/>
+<Docs::StereoPlayer @identifier="https://archive.org/download/KmartOctober1989/Kmart%20October%201989.mp3"/>

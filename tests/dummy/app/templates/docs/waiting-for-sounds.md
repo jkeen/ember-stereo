@@ -1,1 +1,1 @@
-{{docs/proxy-example}}
+<Docs::ProxyExample/>

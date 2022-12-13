@@ -9,7 +9,9 @@ When a sound is played, the [MediaSession](https://developer.mozilla.org/en-US/d
 ### Examples
 
 Here's a super simple "Now Playing" display.
-{{docs/custom-metadata}}
+
+
+<Docs::CustomMetadata/>
 
 You can also pass in metadata through the service.
 
