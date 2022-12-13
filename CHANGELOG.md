@@ -1,5 +1,12 @@
 ember-stereo changelog
 
+## [4.0.1](https://github.com/jkeen/ember-stereo/compare/v4.0.0...v4.0.1) (2022-12-13)
+
+
+### Bug Fixes
+
+* remove console.log statement in volume modifier ([6ff4940](https://github.com/jkeen/ember-stereo/commit/6ff494048d3c591157adb587a736095de0183872))
+
 # [4.0.0](https://github.com/jkeen/ember-stereo/compare/v3.2.2...v4.0.0) (2022-12-13)
 
 
