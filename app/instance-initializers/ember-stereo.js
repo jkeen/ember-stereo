@@ -8,7 +8,7 @@ export function initialize(application) {
   application.register('stereo:sharedAudioAccess', sharedAudioAccess, {
     instantiate: true,
   });
-  application.inject('service:stereo', 'options', 'config:stereo');
+  // application.inject('service:stereo', 'options', 'config:stereo');
 }
 
 export default {

@@ -13,11 +13,14 @@ import { action } from '@ember/object';
 import { inject as service } from '@ember/service';
 import Modifier from 'ember-modifier';
 import { once } from '@ember/runloop';
+import { registerDestructor } from '@ember/destroyable';
+
 export default class SoundPositionProgressModifier extends Modifier {
   @service stereo;
 
-  get url() {
-    return this.args.positional[0];
+  constructor() {
+    super(...arguments);
+    registerDestructor(this, this.unregisterListeners.bind(this));
   }
 
   get loadedSound() {
@@ -36,11 +39,15 @@ export default class SoundPositionProgressModifier extends Modifier {
     this.element.style.pointerEvents = 'none';
   }
 
-  didInstall() {
-    this.element.setAttribute('data-sound-position-progress', true);
-  }
+  modify(element, [url], options) {
+    if (!this.element) {
+      this.element = element;
+      this.url = url;
+      this.options = options;
 
-  didReceiveArguments() {
+      this.element.setAttribute('data-sound-position-progress', true);
+    }
+
     if (this.url) {
       this.stereo.soundProxy(this.url).afterLoad((sound) => {
         sound.on(
@@ -52,7 +59,7 @@ export default class SoundPositionProgressModifier extends Modifier {
     }
   }
 
-  willRemove() {
+  unregisterListeners() {
     try {
       if (this.loadedSound) {
         this.loadedSound.off(

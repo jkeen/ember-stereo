@@ -14,11 +14,14 @@ import { inject as service } from '@ember/service';
 import { task, waitForProperty } from 'ember-concurrency';
 import { next } from '@ember/runloop';
 import DidPanModifier from 'ember-gesture-modifiers/modifiers/did-pan';
+import { registerDestructor } from '@ember/destroyable';
+
 export default class SoundPositionSliderModifier extends DidPanModifier {
   @service stereo;
 
-  get url() {
-    return this.args.positional[0];
+  constructor() {
+    super(...arguments);
+    registerDestructor(this, this.unregisterListeners.bind(this));
   }
 
   get loadedSound() {
@@ -27,10 +30,6 @@ export default class SoundPositionSliderModifier extends DidPanModifier {
 
   get isRangeControl() {
     return this.element.tagName === 'INPUT' && this.element.type === 'range';
-  }
-
-  get options() {
-    return this.args.named;
   }
 
   @action onChange(event) {
@@ -79,19 +78,55 @@ export default class SoundPositionSliderModifier extends DidPanModifier {
     }
   }
 
-  didInstall() {
-    if (this.isRangeControl) {
-      this.element.setAttribute('max', 100);
-      this.element.setAttribute('min', 0);
-      this.element.setAttribute('value', 0);
-      this.element.setAttribute('disabled', 'disabled');
-    } else {
-      super.didInstall(...arguments);
-      this.element.addEventListener('click', this.handleTap);
-      this.element.addEventListener('mousedown', this.handleTap);
-      this.element.addEventListener('tap', this.handleTap);
+  modify(element, [url], options) {
+    if (!this.element) {
+      this.url = url;
+      this.options = options;
+      this.element = element;
+
+      if (this.isRangeControl) {
+        this.element.setAttribute('max', 100);
+        this.element.setAttribute('min', 0);
+        this.element.setAttribute('value', 0);
+        this.element.setAttribute('disabled', 'disabled');
+
+        this.afterLoadTask
+          .perform((sound) => {
+            sound.on(
+              'audio-position-changed',
+              this.onPositionChange.bind(this)
+            );
+
+            this.element.addEventListener('change', this.onChange, true);
+            if (sound.isSeekable) {
+              this.element.removeAttribute('disabled');
+            }
+          })
+          .catch(() => {});
+      } else {
+        super.didInstall(...arguments);
+        this.element.addEventListener('click', this.handleTap);
+        this.element.addEventListener('mousedown', this.handleTap);
+        this.element.addEventListener('tap', this.handleTap);
+      }
+      this.element.setAttribute('data-sound-position-slider', true);
     }
-    this.element.setAttribute('data-sound-position-slider', true);
+
+    if (!this.isRangeControl) {
+      super.removeEventListeners();
+
+      super.threshold = 10;
+      super.axis = 'horizontal';
+      super.capture = false;
+      super.preventScroll = false;
+      super.pointerTypes = ['touch', 'mouse'];
+
+      super.didPanStart = this.onPanStart.bind(this);
+      super.didPan = this.onPan.bind(this);
+      super.didPanEnd = this.onPanEnd.bind(this);
+
+      super.addEventListeners();
+    }
   }
 
   @action
@@ -115,36 +150,7 @@ export default class SoundPositionSliderModifier extends DidPanModifier {
   @action
   onPanEnd() {}
 
-  didReceiveArguments() {
-    if (this.isRangeControl) {
-      this.afterLoadTask
-        .perform((sound) => {
-          sound.on('audio-position-changed', this.onPositionChange.bind(this));
-
-          this.element.addEventListener('change', this.onChange, true);
-          if (sound.isSeekable) {
-            this.element.removeAttribute('disabled');
-          }
-        })
-        .catch(() => {});
-    } else {
-      super.removeEventListeners();
-
-      super.threshold = 10;
-      super.axis = 'horizontal';
-      super.capture = false;
-      super.preventScroll = false;
-      super.pointerTypes = ['touch', 'mouse'];
-
-      super.didPanStart = this.onPanStart.bind(this);
-      super.didPan = this.onPan.bind(this);
-      super.didPanEnd = this.onPanEnd.bind(this);
-
-      super.addEventListeners();
-    }
-  }
-
-  willRemove() {
+  unregisterListeners() {
     try {
       if (this.isRangeControl) {
         if (this.loadedSound) {

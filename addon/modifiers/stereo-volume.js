@@ -9,22 +9,20 @@
   @type Modifier
 */
 
+import { registerDestructor } from '@ember/destroyable';
 import { action } from '@ember/object';
 import { inject as service } from '@ember/service';
 import Modifier from 'ember-modifier';
 export default class StereoVolumeModifier extends Modifier {
   @service stereo;
 
-  get eventName() {
-    return this.args.positional[0];
+  constructor() {
+    super(...arguments);
+    registerDestructor(this, this.unregisterListeners.bind(this));
   }
 
   get isRangeControl() {
     return this.element.tagName === 'INPUT' && this.element.type === 'range';
-  }
-
-  get options() {
-    return this.args.named;
   }
 
   @action
@@ -48,20 +46,25 @@ export default class StereoVolumeModifier extends Modifier {
     this.element.value = volume;
   }
 
-  didInstall() {
-    if (this.isRangeControl) {
-      this.element.setAttribute('max', 100);
-      this.element.setAttribute('min', 0);
-      this.element.addEventListener('change', this.onChange, true);
-      this.element.value = this.stereo.volume;
-    } else {
-      this.element.addEventListener('click', this.handleTap, true);
-    }
+  modify(element, [eventName], options) {
+    if (!this.element) {
+      this.eventName = eventName;
+      this.options = options;
+      this.element = element;
+      if (this.isRangeControl) {
+        this.element.setAttribute('max', 100);
+        this.element.setAttribute('min', 0);
+        this.element.addEventListener('change', this.onChange, true);
+        this.element.value = this.stereo.volume;
+      } else {
+        this.element.addEventListener('click', this.handleTap, true);
+      }
 
-    this.stereo.on('volume-change', this.onStereoVolumeChange);
+      this.stereo.on('volume-change', this.onStereoVolumeChange);
+    }
   }
 
-  willRemove() {
+  unregisterListeners() {
     if (this.isRangeControl) {
       this.element.removeEventListener('change', this.onChange, true);
     } else {
