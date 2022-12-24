@@ -105,7 +105,6 @@ export default class SoundPositionSliderModifier extends DidPanModifier {
           })
           .catch(() => {});
       } else {
-        super.didInstall(...arguments);
         this.element.addEventListener('click', this.handleTap);
         this.element.addEventListener('mousedown', this.handleTap);
         this.element.addEventListener('tap', this.handleTap);
