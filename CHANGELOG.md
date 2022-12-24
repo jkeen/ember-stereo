@@ -1,5 +1,12 @@
 ember-stereo changelog
 
+## [4.0.2](https://github.com/jkeen/ember-stereo/compare/v4.0.1...v4.0.2) (2022-12-24)
+
+
+### Bug Fixes
+
+* update ember-modifier, fix invalid super call on sound-position-slider modifier ([f68b01b](https://github.com/jkeen/ember-stereo/commit/f68b01b56f35e02233a58c9739839e7d99bd78b1))
+
 ## [4.0.1](https://github.com/jkeen/ember-stereo/compare/v4.0.0...v4.0.1) (2022-12-13)
 
 
