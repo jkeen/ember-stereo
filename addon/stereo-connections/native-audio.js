@@ -18,6 +18,8 @@ const AUDIO_EVENTS = [
   'playing',
   'pause',
   'ended',
+  'seeking',
+  'seeked',
   'emptied',
   'timeupdate',
 ];
@@ -122,9 +124,8 @@ export default class NativeAudio extends BaseSound {
       case 'ended':
         this._onAudioEnded();
         break;
+      case 'seeking':
       case 'seeked':
-        this._onPositionChange();
-        break;
       case 'timeupdate':
         this._onPositionChange();
         break;

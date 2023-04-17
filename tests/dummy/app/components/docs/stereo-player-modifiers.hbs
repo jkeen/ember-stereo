@@ -53,17 +53,16 @@
       </button>
     </div>
 
-    <div class='stereo-player-position'>
-      {{sound-position @identifier format='time'}}
+    <div
+      class='stereo-player-position h-2 rounded-md bg-on-surface-3 inset-1'
+      {{sound-position-slider @identifier}}
+    >
       {{#if (sound-is-seekable @identifier)}}
-        {{! template-lint-disable require-input-label }}
-        <Input
-          @type='range'
-          class='flex-auto flex-shrink w-16 lg:w-1/6'
-          {{on 'change' (seek-sound @identifier)}}
-          @value={{sound-position @identifier format='percentage'}}
-          disabled={{not (sound-is-seekable @identifier)}}
-        />
+        <div
+          class='h-2 rounded-md bg-accent-1 inset-1'
+          data-test-element='progress'
+          {{sound-position-progress @identifier}}
+        ></div>
       {{else}}
         <div
           class='{{if
@@ -75,7 +74,6 @@
         >
         </div>
       {{/if}}
-      {{sound-duration @identifier format='time'}}
     </div>
 
     {{! BEGIN-SNIPPET stereo-volume-control.hbs }}

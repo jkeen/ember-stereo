@@ -12,7 +12,6 @@
 import { action } from '@ember/object';
 import { inject as service } from '@ember/service';
 import Modifier from 'ember-modifier';
-import { once } from '@ember/runloop';
 import { registerDestructor } from '@ember/destroyable';
 
 export default class SoundPositionProgressModifier extends Modifier {
@@ -28,11 +27,15 @@ export default class SoundPositionProgressModifier extends Modifier {
     return this.stereo.findLoadedSound(this.url);
   }
 
-  @action onPositionChange() {
-    once(this, this.modifyPosition, ...arguments, 500);
+  @action
+  onPositionChange({ sound }) {
+    if (sound.hasUrl(this.url)) {
+      this.modifyPosition(...arguments);
+    }
   }
 
   modifyPosition({ newPosition }) {
+    newPosition = newPosition || this.loadedSound.position;
     this.element.style.width = `${
       ((newPosition || this.loadedSound.position) / this.loadedSound.duration) *
       100
@@ -41,37 +44,34 @@ export default class SoundPositionProgressModifier extends Modifier {
   }
 
   modify(element, [url], options) {
+    this.url = url;
+    this.options = options;
+
     if (!this.element) {
       this.element = element;
-      this.url = url;
-      this.options = options;
-
       this.element.setAttribute('data-sound-position-progress', true);
-    }
 
-    if (this.url) {
-      this.stereo.soundProxy(this.url).afterLoad((sound) => {
-        sound.on(
-          'audio-position-will-change',
-          this.onPositionChange.bind(this)
-        );
-        sound.on('audio-position-changed', this.onPositionChange.bind(this));
-      });
+      this.stereo.on(
+        'audio-position-will-change',
+        this.onPositionChange.bind(this)
+      );
+      this.stereo.on(
+        'audio-position-changed',
+        this.onPositionChange.bind(this)
+      );
     }
   }
 
   unregisterListeners() {
     try {
-      if (this.loadedSound) {
-        this.loadedSound.off(
-          'audio-position-changed',
-          this.onPositionChange.bind(this)
-        );
-        this.loadedSound.off(
-          'audio-position-will-change',
-          this.onPositionChange.bind(this)
-        );
-      }
+      this.stereo.off(
+        'audio-position-changed',
+        this.onPositionChange.bind(this)
+      );
+      this.stereo.off(
+        'audio-position-will-change',
+        this.onPositionChange.bind(this)
+      );
     } catch (e) {
       /* geez, relax */
     }

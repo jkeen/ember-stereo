@@ -29,6 +29,7 @@ Router.map(function () {
   this.route('diagnostic', function () {
     this.route('index');
     this.route('sync');
+    this.route('players');
   });
 
   this.route('autoplay-test');

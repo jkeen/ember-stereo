@@ -16,7 +16,7 @@ Template helpers like like [sound-is-playing](/docs/api/helpers/sound-is-playing
 
 This is using the same url as the player example above. Sound status is app-wide and stays in sync.
 
-<Docs::StereoPlayer @identifier="/sounds/works-just-like-a-vcr.mp3" />
+<Docs::StereoPlayer @identifier="/sounds/works-just-like-a-vcr.mp3"/>
 
 ### Streaming URL
 

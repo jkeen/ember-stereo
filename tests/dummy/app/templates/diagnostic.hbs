@@ -5,9 +5,11 @@
 </DocsHeader>
 <DocsViewer as |viewer|>
   <viewer.nav @media={{this.media}} as |nav|>
-    <nav.section @label='Diagnostic'/>
-    <nav.item @label='Main' @route='diagnostic.index'/>
-    <nav.item @label="Sync" @route='diagnostic.sync'/>
+    <nav.section @label='Diagnostic' />
+    <nav.item @label='Main' @route='diagnostic.index' />
+    <nav.item @label='Sync' @route='diagnostic.sync' />
+    <nav.item @label='Players' @route='diagnostic.players' />
+
   </viewer.nav>
 
   <viewer.main @media={{this.media}}>

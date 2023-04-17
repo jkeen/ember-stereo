@@ -26,7 +26,7 @@ export default class SoundPositionSliderModifier extends DidPanModifier {
   }
 
   get loadedSound() {
-    return this.stereo.findSound(this.url);
+    return this.stereo.findLoadedSound(this.url);
   }
 
   get isRangeControl() {
@@ -57,7 +57,6 @@ export default class SoundPositionSliderModifier extends DidPanModifier {
   @action
   handleTap(e) {
     e.preventDefault();
-
     var rect = this.element.getBoundingClientRect();
     var x = e.clientX - rect.left; //x position within the element.
 
@@ -81,35 +80,43 @@ export default class SoundPositionSliderModifier extends DidPanModifier {
 
   modify(element, [url], options) {
     if (!this.element) {
-      this.url = url;
-      this.options = options;
       this.element = element;
+      this.options = options;
 
       if (this.isRangeControl) {
         this.element.setAttribute('max', 100);
         this.element.setAttribute('min', 0);
         this.element.setAttribute('value', 0);
         this.element.setAttribute('disabled', 'disabled');
-
-        this.afterLoadTask
-          .perform((sound) => {
-            sound.on(
-              'audio-position-changed',
-              this.onPositionChange.bind(this)
-            );
-
-            this.element.addEventListener('change', this.onChange, true);
-            if (sound.isSeekable) {
-              this.element.removeAttribute('disabled');
-            }
-          })
-          .catch(() => {});
       } else {
         this.element.addEventListener('click', this.handleTap);
         this.element.addEventListener('mousedown', this.handleTap);
         this.element.addEventListener('tap', this.handleTap);
       }
       this.element.setAttribute('data-sound-position-slider', true);
+    }
+
+    if (this.isRangeControl && this.url !== url) {
+      this.url = url;
+
+      if (this.loadedSound) {
+        this.loadedSound.off(
+          'audio-position-changed',
+          this.onPositionChange.bind(this)
+        );
+      }
+      this.afterLoadTask
+        .perform((sound) => {
+          sound.on('audio-position-changed', this.onPositionChange.bind(this));
+
+          this.element.addEventListener('change', this.onChange, true);
+          if (sound.isSeekable) {
+            this.element.removeAttribute('disabled');
+          }
+        })
+        .catch(() => {});
+    } else if (this.url !== url) {
+      this.url = url;
     }
 
     if (!this.isRangeControl) {
