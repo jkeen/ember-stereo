@@ -1,5 +1,12 @@
 ember-stereo changelog
 
+## [4.0.3](https://github.com/jkeen/ember-stereo/compare/v4.0.2...v4.0.3) (2023-04-17)
+
+
+### Bug Fixes
+
+* update slider and progress modifiers to better handle changes when the url changes ([235d563](https://github.com/jkeen/ember-stereo/commit/235d5637419ddf419c07e4ce5897ee4fd27af0cc))
+
 ## [4.0.2](https://github.com/jkeen/ember-stereo/compare/v4.0.1...v4.0.2) (2022-12-24)
 
 
