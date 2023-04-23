@@ -34,11 +34,9 @@ export default class SoundPositionProgressModifier extends Modifier {
     }
   }
 
-  modifyPosition({ newPosition }) {
-    newPosition = newPosition || this.loadedSound.position;
+  modifyPosition({ sound }) {
     this.element.style.width = `${
-      ((newPosition || this.loadedSound.position) / this.loadedSound.duration) *
-      100
+      ((sound.position || 0) / sound.duration) * 100
     }%`;
     this.element.style.pointerEvents = 'none';
   }
