@@ -1,5 +1,12 @@
 ember-stereo changelog
 
+# [4.1.0](https://github.com/jkeen/ember-stereo/compare/v4.0.3...v4.1.0) (2023-04-23)
+
+
+### Features
+
+* Accept multiple identifiers into metadata cache in order to support providing fallback urls into stereo ([7a8226b](https://github.com/jkeen/ember-stereo/commit/7a8226b495a59b673e3cf9692e69d34242d515ba))
+
 ## [4.0.3](https://github.com/jkeen/ember-stereo/compare/v4.0.2...v4.0.3) (2023-04-17)
 
 
