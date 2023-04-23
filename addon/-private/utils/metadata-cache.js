@@ -9,7 +9,7 @@ import normalizeIdentifier from './normalize-identifier';
 export default class MetadataCache extends ObjectCache {
   name = 'ember-stereo:metadata-cache';
 
-  store(_identifier, value) {
+  _store(_identifier, value) {
     let identifier = normalizeIdentifier(_identifier);
     if (identifier) {
       let oldMetadata = this.find(_identifier);

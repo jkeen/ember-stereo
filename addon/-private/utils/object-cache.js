@@ -2,6 +2,7 @@ import { tracked } from '@glimmer/tracking';
 import { inject as service } from '@ember/service';
 import normalizeIdentifier from './normalize-identifier';
 import { TrackedObject, TrackedWeakMap } from 'tracked-built-ins';
+import { makeArray } from '@ember/array';
 
 function isAnObject(identifier) {
   return (
@@ -21,7 +22,35 @@ export default class ObjectCache {
   @tracked keyCache = new TrackedObject();
   name = 'ember-stereo:object-cache';
 
-  has(_identifier) {
+  has(idOrIds) {
+    let id = makeArray(idOrIds).find((id) => {
+      return this._has(id);
+    });
+
+    return this._has(id);
+  }
+
+  find(idOrIds) {
+    let id = makeArray(idOrIds).find((id) => {
+      return this._find(id);
+    });
+
+    return this._find(id);
+  }
+
+  remove(idOrIds) {
+    return makeArray(idOrIds).forEach((id) => {
+      return this._remove(id);
+    });
+  }
+
+  store(idOrIds, value) {
+    return makeArray(idOrIds).forEach((id) => {
+      return this._store(id, value);
+    });
+  }
+
+  _has(_identifier) {
     let identifier = normalizeIdentifier(_identifier);
     if (isAnObject(identifier)) {
       return this.objectCache.has(identifier);
@@ -30,7 +59,7 @@ export default class ObjectCache {
     }
   }
 
-  find(_identifier) {
+  _find(_identifier) {
     let identifier = normalizeIdentifier(_identifier);
 
     if (isAnObject(identifier) && this.objectCache.has(identifier)) {
@@ -40,7 +69,7 @@ export default class ObjectCache {
     }
   }
 
-  remove(_identifier) {
+  _remove(_identifier) {
     let identifier = normalizeIdentifier(_identifier);
 
     if (isAnObject(identifier) && this.objectCache.has(identifier)) {
@@ -51,7 +80,7 @@ export default class ObjectCache {
     }
   }
 
-  store(_identifier, value) {
+  _store(_identifier, value) {
     let identifier = normalizeIdentifier(_identifier);
 
     if (identifier) {
