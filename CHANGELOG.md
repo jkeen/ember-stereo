@@ -1,5 +1,12 @@
 ember-stereo changelog
 
+## [4.1.1](https://github.com/jkeen/ember-stereo/compare/v4.1.0...v4.1.1) (2023-04-23)
+
+
+### Bug Fixes
+
+* correct logical error in sound-position-progress modifier ([8ac52ba](https://github.com/jkeen/ember-stereo/commit/8ac52ba3f6630f31aa34fb1059e8ecbd3a5ae1d1))
+
 # [4.1.0](https://github.com/jkeen/ember-stereo/compare/v4.0.3...v4.1.0) (2023-04-23)
 
 
