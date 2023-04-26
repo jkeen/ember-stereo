@@ -14,6 +14,15 @@ module.exports = {
     babel: {
       plugins: [require.resolve('ember-auto-import/babel-plugin')],
     },
+    autoImport: {
+      webpack: {
+        resolve: {
+          fallback: {
+            'hls.js': require.resolve('hls.js'),
+          },
+        },
+      },
+    },
   },
   included(app, parentAddon) {
     this._super.included.apply(this, arguments);
