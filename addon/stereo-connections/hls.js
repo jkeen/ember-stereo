@@ -1,5 +1,6 @@
 import BaseSound from 'ember-stereo/stereo-connections/base';
 import { tracked } from '@glimmer/tracking';
+import { waitFor } from '@ember/test-waiters';
 
 /**
  * This is the connection class that uses HLS.js to play sounds.
@@ -385,6 +386,7 @@ export default class HLSSound extends BaseSound {
     this.hls.destroy();
   }
 
+  @waitFor
   async loadHLS() {
     return import('hls.js')
       .then((module) => module.default)

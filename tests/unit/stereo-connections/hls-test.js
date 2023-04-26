@@ -3,7 +3,7 @@ import { setupTest } from 'ember-qunit';
 import sinon from 'sinon';
 import { module, test, skip } from 'qunit';
 import HLSConnection from 'ember-stereo/stereo-connections/hls';
-import { waitUntil } from '@ember/test-helpers';
+import { settled } from '@ember/test-helpers';
 import { setupHLSSpies, throwMediaError } from '../../helpers/hls-test-helpers';
 import StereoUrl from 'ember-stereo/-private/utils/stereo-url';
 
@@ -96,12 +96,7 @@ module('Unit | Connection | HLS', function (hooks) {
   test('On first media error stream will attempt a retry', async function (assert) {
     let sound = new HLSConnection({ url: goodUrl, timeout: false });
 
-    await waitUntil(
-      function () {
-        return sound.hls;
-      },
-      { timeout: 2000 }
-    );
+    await settled();
 
     let recoverSpy = sandbox.stub(sound.hls, 'recoverMediaError');
     let switchSpy = sandbox.stub(sound.hls, 'swapAudioCodec');
@@ -123,12 +118,7 @@ module('Unit | Connection | HLS', function (hooks) {
       timeout: false,
     });
 
-    await waitUntil(
-      function () {
-        return sound.hls;
-      },
-      { timeout: 2000 }
-    );
+    await settled();
 
     let { destroySpy, switchSpy, recoverSpy } = setupHLSSpies(
       sound.hls,
@@ -153,12 +143,7 @@ module('Unit | Connection | HLS', function (hooks) {
       timeout: false,
     });
 
-    await waitUntil(
-      function () {
-        return sound.hls;
-      },
-      { timeout: 2000 }
-    );
+    await settled();
 
     let loadErrorFired = false;
 
