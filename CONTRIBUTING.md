@@ -4,7 +4,7 @@
 
 - `git clone <repository-url>`
 - `cd my-addon`
-- `npm install`
+- `pnpm install`
 
 ## Linting
 
