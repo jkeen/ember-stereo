@@ -1,5 +1,4 @@
 import BaseSound from 'ember-stereo/stereo-connections/base';
-import HLS from 'hls.js';
 import { tracked } from '@glimmer/tracking';
 
 /**
@@ -10,11 +9,37 @@ import { tracked } from '@glimmer/tracking';
  * @constructor
  */
 
+export function getMediaSource() {
+  if (typeof self === 'undefined') return undefined;
+  return self.MediaSource || self.WebKitMediaSource;
+}
+
+function getSourceBuffer() {
+  return self.SourceBuffer || self.WebKitSourceBuffer;
+}
+
 export default class HLSSound extends BaseSound {
   static acceptMimeTypes = ['application/vnd.apple.mpegurl'];
   static canUseConnection() {
-    // We basically never want to use this on a mobile device
-    return HLS.isSupported();
+    // This is copied from the HLS source. We don't want to load all of HLS.js just to check if it can be used
+    const mediaSource = getMediaSource();
+    if (!mediaSource) {
+      return false;
+    }
+    const sourceBuffer = getSourceBuffer();
+    const isTypeSupported =
+      mediaSource &&
+      typeof mediaSource.isTypeSupported === 'function' &&
+      mediaSource.isTypeSupported('video/mp4; codecs="avc1.42E01E,mp4a.40.2"');
+
+    // if SourceBuffer is exposed ensure its API is valid
+    // Older browsers do not expose SourceBuffer globally so checking SourceBuffer.prototype is impossible
+    const sourceBufferValidAPI =
+      !sourceBuffer ||
+      (sourceBuffer.prototype &&
+        typeof sourceBuffer.prototype.appendBuffer === 'function' &&
+        typeof sourceBuffer.prototype.remove === 'function');
+    return !!isTypeSupported && !!sourceBufferValidAPI;
   }
 
   static key = 'HLS';
@@ -27,26 +52,32 @@ export default class HLSSound extends BaseSound {
   @tracked mediaRecoveryAttempts = 0;
   @tracked _currentTime = null;
 
-  setup() {
-    let video = document.createElement('video');
-    video.setAttribute('crossorigin', 'anonymous');
-    this.video = video;
-    let hls = new HLS({ debug: false, startFragPrefetch: true });
+  async setup() {
+    await this.loadHLS().then(({ HLS }) => {
+      let video = document.createElement('video');
+      video.setAttribute('crossorigin', 'anonymous');
+      this.video = video;
 
-    this.hls = hls;
-    this._setupHLSEvents(hls);
-    this._setupPlayerEvents(video);
-    hls.attachMedia(video);
+      let hls = new HLS({
+        debug: false,
+        startFragPrefetch: true,
+      });
+
+      this.hls = hls;
+      this._setupHLSEvents(hls, HLS);
+      this._setupPlayerEvents(video);
+      hls.attachMedia(video);
+    });
   }
 
-  _setupHLSEvents(hls) {
-    hls.on(HLS.Events.MEDIA_ATTACHING, () => {
+  _setupHLSEvents(instance, HLS) {
+    instance.on(HLS.Events.MEDIA_ATTACHING, () => {
       this.debug('media attaching');
     });
-    hls.on(HLS.Events.MEDIA_DETACHING, () => {
+    instance.on(HLS.Events.MEDIA_DETACHING, () => {
       this.debug('media detaching');
     });
-    hls.on(HLS.Events.MEDIA_DETACHED, () => {
+    instance.on(HLS.Events.MEDIA_DETACHED, () => {
       this.debug('media detached');
     });
 
@@ -55,34 +86,37 @@ export default class HLSSound extends BaseSound {
     //   this._checkIfAudioIsReady();
     // });
 
-    hls.on(HLS.Events.ERROR, (e, data) => this._onHLSError(e, data));
+    instance.on(HLS.Events.ERROR, (e, data) => this._onHLSError(e, data, HLS));
 
-    hls.on(HLS.Events.MEDIA_ATTACHED, () => {
+    instance.on(HLS.Events.MEDIA_ATTACHED, () => {
       this.debug('media attached');
-      hls.loadSource(this.url);
+      instance.loadSource(this.url);
 
-      hls.on(HLS.Events.MANIFEST_PARSED, (e, data) => {
+      instance.on(HLS.Events.MANIFEST_PARSED, (e, data) => {
         this.debug(
           `manifest parsed and loaded, found ${data.levels.length} quality level(s)`
         );
         this.manifest = data;
       });
 
-      hls.on(HLS.Events.LEVEL_LOADED, (e, data) => {
+      instance.on(HLS.Events.LEVEL_LOADED, (e, data) => {
         this.debug(`level ${data.level} loaded`);
         this.live = data.details.live;
         this._initializeCurrentTime();
         this._signalAudioIsReady();
       });
 
-      hls.on(HLS.Events.AUDIO_TRACK_LOADED, () => {
+      instance.on(HLS.Events.AUDIO_TRACK_LOADED, () => {
         this.debug('audio track loaded');
         this._signalAudioIsReady();
       });
 
-      hls.on(HLS.Events.ERROR, (e, data) => this._onHLSError(e, data));
+      instance.on(HLS.Events.ERROR, (e, data) =>
+        this._onHLSError(e, data, HLS)
+      );
 
-      hls.on(HLS.Events.FRAG_CHANGED, (e, f) => {
+      instance.on(HLS.Events.FRAG_CHANGED, (e, f) => {
+        this._updateAudioBuffer(f.frag);
         this._updateId3Info(f.frag);
         this._updateRealTimeOffset(f.frag);
       });
@@ -217,7 +251,7 @@ export default class HLSSound extends BaseSound {
     }
   }
 
-  _onHLSError(error, data) {
+  _onHLSError(error, data, HLS) {
     if (data.fatal) {
       this.debug(data);
       console.log(data);
@@ -349,5 +383,15 @@ export default class HLSSound extends BaseSound {
 
   teardown() {
     this.hls.destroy();
+  }
+
+  async loadHLS() {
+    return import('hls.js')
+      .then((module) => module.default)
+      .then((HLS) => {
+        return Promise.resolve({
+          HLS: HLS,
+        });
+      });
   }
 }

@@ -3,6 +3,7 @@ import { setupTest } from 'ember-qunit';
 import sinon from 'sinon';
 import { module, test, skip } from 'qunit';
 import HLSConnection from 'ember-stereo/stereo-connections/hls';
+import { waitUntil } from '@ember/test-helpers';
 import { setupHLSSpies, throwMediaError } from '../../helpers/hls-test-helpers';
 import StereoUrl from 'ember-stereo/-private/utils/stereo-url';
 
@@ -92,8 +93,15 @@ module('Unit | Connection | HLS', function (hooks) {
     });
   });
 
-  test('On first media error stream will attempt a retry', function (assert) {
+  test('On first media error stream will attempt a retry', async function (assert) {
     let sound = new HLSConnection({ url: goodUrl, timeout: false });
+
+    await waitUntil(
+      function () {
+        return sound.hls;
+      },
+      { timeout: 2000 }
+    );
 
     let recoverSpy = sandbox.stub(sound.hls, 'recoverMediaError');
     let switchSpy = sandbox.stub(sound.hls, 'swapAudioCodec');
@@ -106,7 +114,7 @@ module('Unit | Connection | HLS', function (hooks) {
     assert.equal(destroySpy.callCount, 0, 'should not destroy');
   });
 
-  test('On second media error stream will try switching codecs', function (assert) {
+  test('On second media error stream will try switching codecs', async function (assert) {
     let sound = new (this.owner.factoryFor(
       'ember-stereo@stereo-connection:hls',
       {}
@@ -114,6 +122,13 @@ module('Unit | Connection | HLS', function (hooks) {
       url: goodUrl,
       timeout: false,
     });
+
+    await waitUntil(
+      function () {
+        return sound.hls;
+      },
+      { timeout: 2000 }
+    );
 
     let { destroySpy, switchSpy, recoverSpy } = setupHLSSpies(
       sound.hls,
@@ -128,7 +143,7 @@ module('Unit | Connection | HLS', function (hooks) {
     assert.equal(destroySpy.callCount, 0, 'should not destroy');
   });
 
-  test('On third media error we will give up', function (assert) {
+  test('On third media error we will give up', async function (assert) {
     let done = assert.async();
     let sound = new (this.owner.factoryFor(
       'ember-stereo@stereo-connection:hls',
@@ -137,6 +152,14 @@ module('Unit | Connection | HLS', function (hooks) {
       url: goodUrl,
       timeout: false,
     });
+
+    await waitUntil(
+      function () {
+        return sound.hls;
+      },
+      { timeout: 2000 }
+    );
+
     let loadErrorFired = false;
 
     sound.on('audio-load-error', function () {
