@@ -1,6 +1,5 @@
 import { makeArray } from '@ember/array';
 import BaseSound from 'ember-stereo/stereo-connections/base';
-import { Howl } from 'howler';
 
 /**
 * This is the connection class that uses Howler to play sounds.
@@ -91,7 +90,9 @@ export default class Howler extends BaseSound {
       this.options
     );
 
-    this.howl = new Howl(options);
+    this.loadHowler().then(({ Howl }) => {
+      this.howl = new Howl(options);
+    });
   }
 
   teardown() {
@@ -149,5 +150,15 @@ export default class Howler extends BaseSound {
   stop() {
     this.debug('#stop');
     this.howl.stop();
+  }
+
+  loadHowler() {
+    return import('howler')
+      .then((module) => module.default)
+      .then((mod) => {
+        return Promise.resolve({
+          Howl: mod.Howl,
+        });
+      });
   }
 }
