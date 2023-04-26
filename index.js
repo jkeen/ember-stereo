@@ -35,8 +35,8 @@ module.exports = {
 
     if (this.stereoConnections.includes('HLS')) {
       target.import({
-        development: 'vendor/third-party/hls.js',
-        production: 'vendor/third-party/hls.min.js',
+        development: 'vendor/third-party/hls.light.js',
+        production: 'vendor/third-party/hls.light.min.js',
       });
 
       target.import('vendor/hls.js');
@@ -64,7 +64,7 @@ module.exports = {
     if (this.stereoConnections.includes('HLS')) {
       trees.push(
         new Funnel(path.dirname(require.resolve('hls.js')), {
-          files: ['hls.js', 'hls.min.js', 'hls.js.map'],
+          files: ['hls.light.js', 'hls.light.min.js', 'hls.light.js.map'],
           destDir: 'third-party',
         })
       );
