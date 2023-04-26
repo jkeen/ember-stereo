@@ -1,0 +1,241 @@
+{
+  "name": "ember-stereo",
+  "version": "5.0.0-semantically-released",
+  "description": "The best way to play audio in your modern ember app",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jkeen/ember-stereo.git"
+  },
+  "license": "MIT",
+  "author": "Jeff Keen <jeff@keen.me>",
+  "exports": {
+    ".": "./dist/index.js",
+    "./*": "./dist/*",
+    "./test-support": "./dist/test-support/index.js",
+    "./addon-main.js": "./addon-main.js"
+  },
+  "keywords": [
+    "ember",
+    "audio",
+    "ember-addon"
+  ],
+  "files": [
+    "dist",
+    "addon-main.js"
+  ],
+  "scripts": {
+    "start": "concurrently 'npm:watch:*'",
+    "build": "concurrently 'npm:build:*'",
+    "build:js": "rollup -c ./rollup.config.js",
+    "build:docs": "cp ../README.md ./README.md",
+    "watch:js": "rollup -c --watch --no-watch.clearScreen",
+    "lint": "concurrently 'npm:lint:js'",
+    "lint:fix": "concurrently 'npm:lint:js:fix'",
+    "lint:js": "eslint . --cache",
+    "lint:js:fix": "eslint . --fix",
+    "test": "echo 'Addon does not have tests, run tests in test-app'",
+    "prepare": "pnpm run build",
+    "prepublishOnly": "pnpm run build",
+    "format": "prettier --write \"**/*.{js,hbs,ts,tsx,md}\""
+  },
+  "dependencies": {
+    "@embroider/addon-shim": "1.6.0",
+    "@embroider/macros": "^1.8.3",
+    "can-autoplay": "3.0.2",
+    "debug": "4.3.2",
+    "ember-auto-import": "^2.4.3",
+    "ember-cli-babel": "^7.26.11",
+    "ember-cli-htmlbars": "^6.1.1",
+    "ember-concurrency": "^2.1.2",
+    "ember-gesture-modifiers": "^4.0.1",
+    "ember-get-config": "^2.0",
+    "ember-modal-dialog": "^4.0.0",
+    "ember-modifier": "^4.0.0",
+    "hls.js": "^1.4.0",
+    "howler": "^2.2.3",
+    "tracked-built-ins": "^3.1.0",
+    "tracked-toolbox": "^2.0.0"
+  },
+  "devDependencies": {
+    "@glimmer/tracking": "^1.1.2",
+    "@babel/core": "7.17.10",
+    "@babel/plugin-proposal-class-properties": "7.16.7",
+    "@babel/plugin-proposal-decorators": "7.17.9",
+    "@babel/plugin-syntax-decorators": "7.17.0",
+    "@embroider/addon-dev": "3.0.0",
+    "@nullvoxpopuli/eslint-configs": "2.2.14",
+    "@rollup/plugin-babel": "5.3.1",
+    "@semantic-release/changelog": "^6.0.1",
+    "@semantic-release/git": "^10.0.1",
+    "babel-eslint": "10.1.0",
+    "concurrently": "7.1.0",
+    "ember-resources": "^4.7.1",
+    "eslint": "^7.0.0",
+    "ember-sinon": "^5.0.0",
+    "eslint-config-prettier": "8.5.0",
+    "eslint-plugin-decorator-position": "4.0.1",
+    "eslint-plugin-ember": "10.6.0",
+    "eslint-plugin-import": "2.26.0",
+    "eslint-plugin-json": "3.1.0",
+    "eslint-plugin-node": "11.1.0",
+    "eslint-plugin-prettier": "4.0.0",
+    "eslint-plugin-simple-import-sort": "7.0.0",
+    "rollup": "2.71.1"
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org"
+  },
+  "ember": {
+    "edition": "octane"
+  },
+  "ember-addon": {
+    "version": 2,
+    "type": "addon",
+    "main": "addon-main.js",
+    "app-js": {
+      "./-private/helpers/action-helper.js": "./dist/_app_/-private/helpers/action-helper.js",
+      "./-private/helpers/is-helper.js": "./dist/_app_/-private/helpers/is-helper.js",
+      "./-private/utils/connection-loader.js": "./dist/_app_/-private/utils/connection-loader.js",
+      "./-private/utils/debug-message.js": "./dist/_app_/-private/utils/debug-message.js",
+      "./-private/utils/error-cache.js": "./dist/_app_/-private/utils/error-cache.js",
+      "./-private/utils/evented.js": "./dist/_app_/-private/utils/evented.js",
+      "./-private/utils/has-equal-identifiers.js": "./dist/_app_/-private/utils/has-equal-identifiers.js",
+      "./-private/utils/has-equal-urls.js": "./dist/_app_/-private/utils/has-equal-urls.js",
+      "./-private/utils/metadata-cache.js": "./dist/_app_/-private/utils/metadata-cache.js",
+      "./-private/utils/mime-types.js": "./dist/_app_/-private/utils/mime-types.js",
+      "./-private/utils/normalize-identifier.js": "./dist/_app_/-private/utils/normalize-identifier.js",
+      "./-private/utils/object-cache.js": "./dist/_app_/-private/utils/object-cache.js",
+      "./-private/utils/one-at-a-time.js": "./dist/_app_/-private/utils/one-at-a-time.js",
+      "./-private/utils/prepare-options.js": "./dist/_app_/-private/utils/prepare-options.js",
+      "./-private/utils/resolve-urls.js": "./dist/_app_/-private/utils/resolve-urls.js",
+      "./-private/utils/shared-audio-access.js": "./dist/_app_/-private/utils/shared-audio-access.js",
+      "./-private/utils/sound-cache.js": "./dist/_app_/-private/utils/sound-cache.js",
+      "./-private/utils/sound-proxy.js": "./dist/_app_/-private/utils/sound-proxy.js",
+      "./-private/utils/stereo-url.js": "./dist/_app_/-private/utils/stereo-url.js",
+      "./-private/utils/strategizer.js": "./dist/_app_/-private/utils/strategizer.js",
+      "./-private/utils/strategy.js": "./dist/_app_/-private/utils/strategy.js",
+      "./-private/utils/untracked-object-cache.js": "./dist/_app_/-private/utils/untracked-object-cache.js",
+      "./-private/utils/url-cache.js": "./dist/_app_/-private/utils/url-cache.js",
+      "./helpers/autoplay-allowed.js": "./dist/_app_/helpers/autoplay-allowed.js",
+      "./helpers/current-sound.js": "./dist/_app_/helpers/current-sound.js",
+      "./helpers/fastforward-sound.js": "./dist/_app_/helpers/fastforward-sound.js",
+      "./helpers/find-sound.js": "./dist/_app_/helpers/find-sound.js",
+      "./helpers/json-stringify.js": "./dist/_app_/helpers/json-stringify.js",
+      "./helpers/load-sound.js": "./dist/_app_/helpers/load-sound.js",
+      "./helpers/numeric-duration.js": "./dist/_app_/helpers/numeric-duration.js",
+      "./helpers/pause-sound.js": "./dist/_app_/helpers/pause-sound.js",
+      "./helpers/play-sound.js": "./dist/_app_/helpers/play-sound.js",
+      "./helpers/rewind-sound.js": "./dist/_app_/helpers/rewind-sound.js",
+      "./helpers/seek-sound.js": "./dist/_app_/helpers/seek-sound.js",
+      "./helpers/sound-duration.js": "./dist/_app_/helpers/sound-duration.js",
+      "./helpers/sound-error-details.js": "./dist/_app_/helpers/sound-error-details.js",
+      "./helpers/sound-is-blocked.js": "./dist/_app_/helpers/sound-is-blocked.js",
+      "./helpers/sound-is-errored.js": "./dist/_app_/helpers/sound-is-errored.js",
+      "./helpers/sound-is-fastforwardable.js": "./dist/_app_/helpers/sound-is-fastforwardable.js",
+      "./helpers/sound-is-loaded.js": "./dist/_app_/helpers/sound-is-loaded.js",
+      "./helpers/sound-is-loading.js": "./dist/_app_/helpers/sound-is-loading.js",
+      "./helpers/sound-is-playing.js": "./dist/_app_/helpers/sound-is-playing.js",
+      "./helpers/sound-is-rewindable.js": "./dist/_app_/helpers/sound-is-rewindable.js",
+      "./helpers/sound-is-seekable.js": "./dist/_app_/helpers/sound-is-seekable.js",
+      "./helpers/sound-metadata.js": "./dist/_app_/helpers/sound-metadata.js",
+      "./helpers/sound-position.js": "./dist/_app_/helpers/sound-position.js",
+      "./helpers/stereo-volume-is-adjustable.js": "./dist/_app_/helpers/stereo-volume-is-adjustable.js",
+      "./helpers/stereo-volume.js": "./dist/_app_/helpers/stereo-volume.js",
+      "./helpers/stop-sound.js": "./dist/_app_/helpers/stop-sound.js",
+      "./helpers/toggle-play-sound.js": "./dist/_app_/helpers/toggle-play-sound.js",
+      "./helpers/toggle-stereo-mute.js": "./dist/_app_/helpers/toggle-stereo-mute.js",
+      "./modifiers/sound-position-progress.js": "./dist/_app_/modifiers/sound-position-progress.js",
+      "./modifiers/sound-position-slider.js": "./dist/_app_/modifiers/sound-position-slider.js",
+      "./modifiers/stereo-volume.js": "./dist/_app_/modifiers/stereo-volume.js",
+      "./services/stereo.js": "./dist/_app_/services/stereo.js",
+      "./stereo-connections/base.js": "./dist/_app_/stereo-connections/base.js",
+      "./stereo-connections/hls.js": "./dist/_app_/stereo-connections/hls.js",
+      "./stereo-connections/howler.js": "./dist/_app_/stereo-connections/howler.js",
+      "./stereo-connections/native-audio.js": "./dist/_app_/stereo-connections/native-audio.js"
+    }
+  },
+  "engines": {
+    "node": "14.* || >= 16"
+  },
+  "volta": {
+    "extends": "../package.json"
+  },
+  "release": {
+    "branches": [
+      "main"
+    ],
+    "plugins": [
+      [
+        "@semantic-release/commit-analyzer",
+        {
+          "releaseRules": [
+            {
+              "type": "*!",
+              "release": "major"
+            },
+            {
+              "type": "feat",
+              "release": "minor"
+            },
+            {
+              "type": "build",
+              "release": "patch"
+            },
+            {
+              "type": "ci",
+              "release": "patch"
+            },
+            {
+              "type": "chore",
+              "release": "patch"
+            },
+            {
+              "type": "docs",
+              "release": "patch"
+            },
+            {
+              "type": "refactor",
+              "release": "patch"
+            },
+            {
+              "type": "style",
+              "release": "patch"
+            },
+            {
+              "type": "test",
+              "release": "patch"
+            }
+          ],
+          "parserOpts": {
+            "noteKeywords": [
+              "BREAKING CHANGE",
+              "BREAKING CHANGES",
+              "BREAKING"
+            ]
+          }
+        }
+      ],
+      "@semantic-release/release-notes-generator",
+      [
+        "@semantic-release/changelog",
+        {
+          "changelogTitle": "ember-stereo changelog",
+          "changelogFile": "CHANGELOG.md"
+        }
+      ],
+      "@semantic-release/npm",
+      "@semantic-release/github",
+      [
+        "@semantic-release/git",
+        {
+          "assets": [
+            "CHANGELOG.md"
+          ],
+          "message": "${nextRelease.version} CHANGELOG [skip ci]\n\n${nextRelease.notes}"
+        }
+      ]
+    ],
+    "debug": false,
+    "dryRun": false
+  }
+}

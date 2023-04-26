@@ -1,0 +1,100 @@
+{
+  "name": "docs",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Ember stereo docs",
+  "repository": "",
+  "license": "MIT",
+  "author": "",
+  "directories": {
+    "doc": "doc",
+    "test": "tests"
+  },
+  "scripts": {
+    "build": "ember build --environment=production",
+    "lint": "npm-run-all --print-name --aggregate-output --continue-on-error --parallel \"lint:!(fix)\"",
+    "lint:fix": "npm-run-all --print-name --aggregate-output --continue-on-error --parallel \"lint:*:fix\"",
+    "lint:hbs": "ember-template-lint .",
+    "lint:hbs:fix": "ember-template-lint . --fix",
+    "lint:js": "eslint . --cache",
+    "lint:js:fix": "eslint . --fix",
+    "start": "ember serve",
+    "test": "npm-run-all --print-name \"lint\" \"test:*\"",
+    "test:ember": "ember test"
+  },
+  "dependencies": {
+    "debug": "4.3.2"
+  },
+  "devDependencies": {
+    "@ctrl/tinycolor": "^3.6.0",
+    "@ember/optional-features": "^2.0.0",
+    "@ember/test-helpers": "^2.9.3",
+    "@fullhuman/postcss-purgecss": "^4.1.3",
+    "@glimmer/component": "^1.1.2",
+    "@glimmer/tracking": "^1.1.2",
+    "@tailwindcss/forms": "^0.3.4",
+    "autoprefixer": "^10.4.14",
+    "babel-eslint": "^10.1.0",
+    "broccoli-asset-rev": "^3.0.0",
+    "ember-auto-import": "^2.6.3",
+    "ember-cli": "~4.8.0",
+    "ember-cli-addon-docs": "^4.2.2",
+    "ember-cli-addon-docs-yuidoc": "^1.0.0",
+    "ember-cli-app-version": "^5.0.0",
+    "ember-cli-babel": "^7.26.11",
+    "ember-cli-dependency-checker": "^3.3.1",
+    "ember-cli-deploy": "^1.0.2",
+    "ember-cli-deploy-build": "^2.0.0",
+    "ember-cli-deploy-git": "^1.3.4",
+    "ember-cli-deploy-git-ci": "^1.0.1",
+    "ember-cli-htmlbars": "^6.2.0",
+    "ember-cli-inject-live-reload": "^2.1.0",
+    "ember-cli-postcss": "^8.2.0",
+    "ember-cli-sri": "^2.1.1",
+    "ember-cli-terser": "^4.0.2",
+    "ember-composable-helpers": "^5.0.0",
+    "ember-data": "~4.7.3",
+    "ember-event-helpers": "^0.1.1",
+    "ember-fetch": "^8.1.2",
+    "ember-format-json": "^0.0.4",
+    "ember-load-initializers": "^2.1.2",
+    "ember-page-title": "^7.0.0",
+    "ember-qunit": "^6.0.0",
+    "ember-resolver": "^8.1.0",
+    "ember-source": "~4.8.0",
+    "ember-stereo": "workspace:../ember-stereo",
+    "ember-svg-jar": "^2.4.2",
+    "ember-template-lint": "^4.16.1",
+    "ember-useragent": "^0.12.0",
+    "eslint": "^7.32.0",
+    "eslint-config-prettier": "^8.8.0",
+    "eslint-plugin-ember": "^11.1.0",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "eslint-plugin-qunit": "^7.3.4",
+    "loader.js": "^4.7.0",
+    "npm-run-all": "^4.1.5",
+    "postcss": "^8.4.23",
+    "postcss-import": "^14.1.0",
+    "prettier": "^2.8.8",
+    "qunit": "^2.19.4",
+    "qunit-dom": "^2.0.0",
+    "tailwindcss": "^2.2.19",
+    "tailwindcss-theming": "3.0.0-beta.3",
+    "webpack": "^5.81.0"
+  },
+  "engines": {
+    "node": "14.* || 16.* || >= 18"
+  },
+  "ember": {
+    "edition": "octane"
+  },
+  "ember-addon": {
+    "paths": [
+      "../ember-stereo/"
+    ]
+  },
+  "volta": {
+    "extends": "../package.json"
+  }
+}
