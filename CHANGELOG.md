@@ -9,55 +9,47 @@ ember-stereo changelog
 
 # [4.1.0](https://github.com/jkeen/ember-stereo/compare/v4.0.3...v4.1.0) (2023-04-23)
 
-
 ### Features
 
-* Accept multiple identifiers into metadata cache in order to support providing fallback urls into stereo ([7a8226b](https://github.com/jkeen/ember-stereo/commit/7a8226b495a59b673e3cf9692e69d34242d515ba))
+- Accept multiple identifiers into metadata cache in order to support providing fallback urls into stereo ([7a8226b](https://github.com/jkeen/ember-stereo/commit/7a8226b495a59b673e3cf9692e69d34242d515ba))
 
 ## [4.0.3](https://github.com/jkeen/ember-stereo/compare/v4.0.2...v4.0.3) (2023-04-17)
 
-
 ### Bug Fixes
 
-* update slider and progress modifiers to better handle changes when the url changes ([235d563](https://github.com/jkeen/ember-stereo/commit/235d5637419ddf419c07e4ce5897ee4fd27af0cc))
+- update slider and progress modifiers to better handle changes when the url changes ([235d563](https://github.com/jkeen/ember-stereo/commit/235d5637419ddf419c07e4ce5897ee4fd27af0cc))
 
 ## [4.0.2](https://github.com/jkeen/ember-stereo/compare/v4.0.1...v4.0.2) (2022-12-24)
 
-
 ### Bug Fixes
 
-* update ember-modifier, fix invalid super call on sound-position-slider modifier ([f68b01b](https://github.com/jkeen/ember-stereo/commit/f68b01b56f35e02233a58c9739839e7d99bd78b1))
+- update ember-modifier, fix invalid super call on sound-position-slider modifier ([f68b01b](https://github.com/jkeen/ember-stereo/commit/f68b01b56f35e02233a58c9739839e7d99bd78b1))
 
 ## [4.0.1](https://github.com/jkeen/ember-stereo/compare/v4.0.0...v4.0.1) (2022-12-13)
 
-
 ### Bug Fixes
 
-* remove console.log statement in volume modifier ([6ff4940](https://github.com/jkeen/ember-stereo/commit/6ff494048d3c591157adb587a736095de0183872))
+- remove console.log statement in volume modifier ([6ff4940](https://github.com/jkeen/ember-stereo/commit/6ff494048d3c591157adb587a736095de0183872))
 
 # [4.0.0](https://github.com/jkeen/ember-stereo/compare/v3.2.2...v4.0.0) (2022-12-13)
 
-
-* chore!: update to Ember 4.8, modify release settings ([871c7e5](https://github.com/jkeen/ember-stereo/commit/871c7e534aee7a4dbfd46fb1cda3c7192909cd41))
-
+- chore!: update to Ember 4.8, modify release settings ([871c7e5](https://github.com/jkeen/ember-stereo/commit/871c7e534aee7a4dbfd46fb1cda3c7192909cd41))
 
 ### BREAKING CHANGES
 
-* drop support for Ember < 3.28
+- drop support for Ember < 3.28
 
 ## [3.2.2](https://github.com/jkeen/ember-stereo/compare/v3.2.1...v3.2.2) (2022-09-02)
 
-
 ### Bug Fixes
 
-* update import statement in setupStereoTest for Ember 4.x ([f53bd70](https://github.com/jkeen/ember-stereo/commit/f53bd7053e0d79b8a1242ec38bd9ec6833e2caa1))
+- update import statement in setupStereoTest for Ember 4.x ([f53bd70](https://github.com/jkeen/ember-stereo/commit/f53bd7053e0d79b8a1242ec38bd9ec6833e2caa1))
 
 ## [3.2.1](https://github.com/jkeen/ember-stereo/compare/v3.2.0...v3.2.1) (2022-08-21)
 
-
 ### Bug Fixes
 
-* Set cross-origin to anonymous on elements to allow for audio analysis using web audio api ([34022a4](https://github.com/jkeen/ember-stereo/commit/34022a45a8aa7510783d6cbcac8a0fbd9733f46b))
+- Set cross-origin to anonymous on elements to allow for audio analysis using web audio api ([34022a4](https://github.com/jkeen/ember-stereo/commit/34022a45a8aa7510783d6cbcac8a0fbd9733f46b))
 
 # [3.2.0](https://github.com/jkeen/ember-stereo/compare/v3.1.2...v3.2.0) (2022-07-14)
 

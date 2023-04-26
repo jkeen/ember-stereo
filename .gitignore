@@ -4,6 +4,11 @@
 /dist/
 /tmp/
 
+/dist*
+ember-stereo/dist
+docs/dist
+/test-app/dist
+
 # dependencies
 /bower_components/
 /node_modules/
