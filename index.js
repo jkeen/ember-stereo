@@ -14,72 +14,11 @@ module.exports = {
     babel: {
       plugins: [require.resolve('ember-auto-import/babel-plugin')],
     },
-    autoImport: {
-      webpack: {
-        resolve: {
-          fallback: {
-            'hls.js': require.resolve('hls.js'),
-          },
-        },
-      },
-    },
+    autoImport: {},
   },
   included(app, parentAddon) {
     this._super.included.apply(this, arguments);
-    var target = parentAddon || app;
-
-    while (target.app && !target.bowerDirectory) {
-      target = target.app;
-    }
-
     this.getStereoConnections();
-    if (this.stereoConnections.includes('Howler')) {
-      target.import({
-        development: 'vendor/third-party/howler.js',
-        production: 'vendor/third-party/howler.min.js',
-      });
-
-      target.import('vendor/howler.js');
-    }
-
-    if (this.stereoConnections.includes('HLS')) {
-      target.import({
-        development: 'vendor/third-party/hls.light.js',
-        production: 'vendor/third-party/hls.light.min.js',
-      });
-
-      target.import('vendor/hls.js');
-    }
-  },
-
-  treeForVendor(vendorTree) {
-    var trees = [];
-
-    this.getStereoConnections();
-
-    if (vendorTree) {
-      trees.push(vendorTree);
-    }
-
-    if (this.stereoConnections.includes('Howler')) {
-      trees.push(
-        new Funnel(path.dirname(require.resolve('howler')), {
-          files: ['howler.js', 'howler.min.js'],
-          destDir: 'third-party',
-        })
-      );
-    }
-
-    if (this.stereoConnections.includes('HLS')) {
-      trees.push(
-        new Funnel(path.dirname(require.resolve('hls.js')), {
-          files: ['hls.light.js', 'hls.light.min.js', 'hls.light.js.map'],
-          destDir: 'third-party',
-        })
-      );
-    }
-
-    return mergeTrees(trees);
   },
 
   getStereoConnections: function () {
