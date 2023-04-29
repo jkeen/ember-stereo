@@ -20,7 +20,7 @@
     "semantic-release": "semantic-release",
     "format": "prettier --write \"**/*.{js,hbs,ts,tsx,md}\""
   },
-  "packageManager": "pnpm@7.31.0",
+  "packageManager": "pnpm@8.3.1",
   "volta": {
     "node": "16.14.0",
     "yarn": "1.22.17",
@@ -28,12 +28,6 @@
   },
   "engines": {
     "node": "14.* || 16.* || >= 18"
-  },
-  "ember": {
-    "edition": "octane"
-  },
-  "ember-addon": {
-    "configPath": "tests/dummy/config"
   },
   "homepage": "https://ember-stereo.com"
 }
