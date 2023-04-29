@@ -32,7 +32,7 @@ jobs:
           restore-keys: ${{ runner.os }}-
       - uses: pnpm/action-setup@v2.2.4
         with:
-          version: 7.1.2
+          version: 8.3.1
       - name: Install Dependencies
         run: pnpm install
 
@@ -60,7 +60,7 @@ jobs:
           restore-keys: ${{ runner.os }}-
       - uses: pnpm/action-setup@v2.2.4
         with:
-          version: 7.1.2
+          version: 8.3.1
       - name: Install Dependencies
         run: pnpm install
       - name: ESLint
@@ -85,7 +85,7 @@ jobs:
           restore-keys: ${{ runner.os }}-
       - uses: pnpm/action-setup@v2.2.4
         with:
-          version: 7.1.2
+          version: 8.3.1
       - name: Install Dependencies
         run: pnpm install
       - name: Build and Assert Output
@@ -106,7 +106,7 @@ jobs:
           name: dist
           path: ${{ env.dist }}
 
-  tests:
+  test:
     if: "! contains(toJSON(github.event.commits.*.message), '[skip ci]')"
     name: Default Tests
     timeout-minutes: 5
@@ -124,7 +124,7 @@ jobs:
           restore-keys: ${{ runner.os }}-
       - uses: pnpm/action-setup@v2.2.4
         with:
-          version: 7.1.2
+          version: 8.3.1
       - name: Install Dependencies
         run: pnpm install
       - name: Download built package from cache
@@ -152,7 +152,7 @@ jobs:
           restore-keys: ${{ runner.os }}-
       - uses: pnpm/action-setup@v2.2.4
         with:
-          version: 7.1.2
+          version: 8.3.1
       - name: Install Dependencies (without lockfile)
         run: rm pnpm-lock.yaml && pnpm install
       - name: Download built package from cache
@@ -192,7 +192,7 @@ jobs:
           restore-keys: ${{ runner.os }}-
       - uses: pnpm/action-setup@v2.2.4
         with:
-          version: 7.1.2
+          version: 8.3.1
       - name: Install Dependencies (without lockfile)
         run: rm pnpm-lock.yaml && pnpm install
       - name: Download built package from cache
@@ -232,7 +232,7 @@ jobs:
           restore-keys: ${{ runner.os }}-
       - uses: pnpm/action-setup@v2.2.4
         with:
-          version: 7.1.2
+          version: 8.3.1
       - name: Install Dependencies (without lockfile)
         run: rm pnpm-lock.yaml && pnpm install
       - name: Download built package from cache
