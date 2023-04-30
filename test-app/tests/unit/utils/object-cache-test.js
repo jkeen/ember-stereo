@@ -12,8 +12,8 @@ module('Unit | Utility | object-cache', function () {
 
     assert.false(objectCache.has(key1));
     assert.false(objectCache.has(key2));
-    assert.equal(objectCache.find(key1), null);
-    assert.equal(objectCache.find(key2), null);
+    assert.strictEqual(objectCache.find(key1), undefined);
+    assert.strictEqual(objectCache.find(key2), undefined);
 
     objectCache.store(key1, val1);
     objectCache.store(key2, val2);
@@ -28,8 +28,8 @@ module('Unit | Utility | object-cache', function () {
 
     assert.false(objectCache.has(key1));
     assert.false(objectCache.has(key2));
-    assert.equal(objectCache.find(key1), null);
-    assert.equal(objectCache.find(key2), null);
+    assert.strictEqual(objectCache.find(key1), undefined);
+    assert.strictEqual(objectCache.find(key2), undefined);
   });
 
   test('stores values for string identifiers', function (assert) {
@@ -42,8 +42,8 @@ module('Unit | Utility | object-cache', function () {
 
     assert.false(objectCache.has(key1));
     assert.false(objectCache.has(key2));
-    assert.equal(objectCache.find(key1), null);
-    assert.equal(objectCache.find(key2), null);
+    assert.strictEqual(objectCache.find(key1), undefined);
+    assert.strictEqual(objectCache.find(key2), undefined);
 
     objectCache.store(key1, val1);
     objectCache.store(key2, val2);
@@ -58,8 +58,8 @@ module('Unit | Utility | object-cache', function () {
 
     assert.false(objectCache.has(key1));
     assert.false(objectCache.has(key2));
-    assert.equal(objectCache.find(key1), null);
-    assert.equal(objectCache.find(key2), null);
+    assert.strictEqual(objectCache.find(key1), undefined);
+    assert.strictEqual(objectCache.find(key2), undefined);
   });
 
   test('stores both at the same time', function (assert) {
@@ -72,8 +72,8 @@ module('Unit | Utility | object-cache', function () {
 
     assert.false(objectCache.has(key1));
     assert.false(objectCache.has(key2));
-    assert.equal(objectCache.find(key1), null);
-    assert.equal(objectCache.find(key2), null);
+    assert.strictEqual(objectCache.find(key1), undefined);
+    assert.strictEqual(objectCache.find(key2), undefined);
 
     objectCache.store(key1, val1);
     objectCache.store(key2, val2);
@@ -88,7 +88,7 @@ module('Unit | Utility | object-cache', function () {
 
     assert.false(objectCache.has(key1));
     assert.false(objectCache.has(key2));
-    assert.equal(objectCache.find(key1), null);
-    assert.equal(objectCache.find(key2), null);
+    assert.strictEqual(objectCache.find(key1), undefined);
+    assert.strictEqual(objectCache.find(key2), undefined);
   });
 });

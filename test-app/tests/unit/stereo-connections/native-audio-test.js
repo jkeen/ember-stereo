@@ -103,9 +103,9 @@ module('Unit | Connection | Native Audio', function (hooks) {
 
     sound.pause();
 
-    assert.equal(
+    assert.strictEqual(
       sound.audioElement.src,
-      undefined,
+      null,
       'audio src attribute is not set'
     );
     assert.ok(loadSpy.callCount > 0, 'load was called');

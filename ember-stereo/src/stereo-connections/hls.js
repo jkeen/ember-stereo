@@ -1,6 +1,6 @@
 import BaseSound from './base';
 import { tracked } from '@glimmer/tracking';
-
+import { waitFor } from '@ember/test-waiters';
 /**
  * This is the connection class that uses HLS.js to play sounds.
  *
@@ -52,8 +52,9 @@ export default class HLSSound extends BaseSound {
   @tracked mediaRecoveryAttempts = 0;
   @tracked _currentTime = null;
 
-  setup() {
-    this.loadHLS().then(({ HLS }) => {
+  @waitFor
+  async setup() {
+    await this.loadHLS().then(({ HLS }) => {
       let video = document.createElement('video');
       video.setAttribute('crossorigin', 'anonymous');
       this.video = video;
@@ -385,6 +386,7 @@ export default class HLSSound extends BaseSound {
     this.hls.destroy();
   }
 
+  @waitFor
   async loadHLS() {
     return import('hls.js')
       .then((module) => module.default)

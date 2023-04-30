@@ -1,8 +1,5 @@
-
 <%= importStatement %>
-const {
-  assert
-} = Ember;
+import { assert } from '@ember/debug';
 
 let Sound = class Sounds extends <%= baseClass %> {
 

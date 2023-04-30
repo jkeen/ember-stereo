@@ -23,24 +23,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: volta-cli/action@v3
-      - name: Cache pnpm modules
-        uses: actions/cache@v3
-        with:
-          path: ~/.pnpm-store
-          key: ${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: ${{ runner.os }}-
-      - uses: pnpm/action-setup@v2.2.4
-        with:
-          version: 8.3.1
-      - name: Install Dependencies
-        run: pnpm install
+      - uses: ./.github/actions/pnpm
 
   lint:
     if: "! contains(toJSON(github.event.commits.*.message), '[skip ci]')"
     name: Lint
-    needs:
-      - install_dependencies
+    needs: [install_dependencies]
     timeout-minutes: 5
     runs-on: ubuntu-latest
     strategy:
@@ -51,18 +39,7 @@ jobs:
           - ./test-app
     steps:
       - uses: actions/checkout@v3
-      - uses: volta-cli/action@v3
-      - name: Cache pnpm modules
-        uses: actions/cache@v3
-        with:
-          path: ~/.pnpm-store
-          key: ${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: ${{ runner.os }}-
-      - uses: pnpm/action-setup@v2.2.4
-        with:
-          version: 8.3.1
-      - name: Install Dependencies
-        run: pnpm install
+      - uses: ./.github/actions/pnpm
       - name: ESLint
         run: cd ${{ matrix.path }} && pnpm run lint:js
       - name: Template Lint
@@ -70,97 +47,39 @@ jobs:
 
   build:
     name: Build Tests
-    needs:
-      - install_dependencies
+    needs: [install_dependencies]
     timeout-minutes: 5
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: volta-cli/action@v3
-      - name: Cache pnpm modules
-        uses: actions/cache@v3
-        with:
-          path: ~/.pnpm-store
-          key: ${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: ${{ runner.os }}-
-      - uses: pnpm/action-setup@v2.2.4
-        with:
-          version: 8.3.1
-      - name: Install Dependencies
-        run: pnpm install
-      - name: Build and Assert Output
-        run: |-
-          echo 'target: ember-stereo/dist
-          setup:
-            run: pnpm build:js
-            cwd: ./ember-stereo
-          expect: |
-            index.js
-            index.js.map
-            index.d.ts
-            index.d.ts.map
-          ' >> assert-contents.config.yml
-                        npx assert-folder-contents
-      - uses: actions/upload-artifact@v3
-        with:
-          name: dist
-          path: ${{ env.dist }}
+      - uses: ./.github/actions/pnpm
+      - uses: ./.github/actions/assert-build
 
-  test:
+  default-tests:
     if: "! contains(toJSON(github.event.commits.*.message), '[skip ci]')"
     name: Default Tests
     timeout-minutes: 5
     runs-on: ubuntu-latest
-    needs:
-      - build
+    needs: [build]
     steps:
       - uses: actions/checkout@v3
-      - uses: volta-cli/action@v3
-      - name: Cache pnpm modules
-        uses: actions/cache@v3
-        with:
-          path: ~/.pnpm-store
-          key: ${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: ${{ runner.os }}-
-      - uses: pnpm/action-setup@v2.2.4
-        with:
-          version: 8.3.1
-      - name: Install Dependencies
-        run: pnpm install
-      - name: Download built package from cache
-        uses: actions/download-artifact@v3
-        with:
-          name: dist
-          path: ${{ env.dist }}
-      - run: pnpm --filter test-app run test:ember
+      - uses: ./.github/actions/pnpm
+      - uses: ./.github/actions/download-built-package
+      - run: pnpm --filter test-app test:ember
 
   floating-dependencies:
     if: "! contains(toJSON(github.event.commits.*.message), '[skip ci]')"
     name: Floating Deps Test
     timeout-minutes: 5
     runs-on: ubuntu-latest
-    needs:
-      - build
+    needs: [build]
     steps:
       - uses: actions/checkout@v3
-      - uses: volta-cli/action@v3
-      - name: Cache pnpm modules
-        uses: actions/cache@v3
-        with:
-          path: ~/.pnpm-store
-          key: ${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: ${{ runner.os }}-
-      - uses: pnpm/action-setup@v2.2.4
-        with:
-          version: 8.3.1
+      - uses: ./.github/actions/pnpm
       - name: Install Dependencies (without lockfile)
         run: rm pnpm-lock.yaml && pnpm install
-      - name: Download built package from cache
-        uses: actions/download-artifact@v3
-        with:
-          name: dist
-          path: ${{ env.dist }}
-      - run: pnpm --filter test-app run test:ember
+      - uses: ./.github/actions/download-built-package
+      - run: pnpm --filter test-app test:ember
 
   ember-try-required:
     if: "! contains(toJSON(github.event.commits.*.message), '[skip ci]')"
@@ -183,36 +102,25 @@ jobs:
         allow-failure: [false]
     steps:
       - uses: actions/checkout@v3
-      - uses: volta-cli/action@v3
-      - name: Cache pnpm modules
-        uses: actions/cache@v3
-        with:
-          path: ~/.pnpm-store
-          key: ${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: ${{ runner.os }}-
-      - uses: pnpm/action-setup@v2.2.4
-        with:
-          version: 8.3.1
-      - name: Install Dependencies (without lockfile)
-        run: rm pnpm-lock.yaml && pnpm install
-      - name: Download built package from cache
-        uses: actions/download-artifact@v3
-        with:
-          name: dist
-          path: ${{ env.dist }}
-      - name: test
+      - uses: ./.github/actions/pnpm
+      - uses: ./.github/actions/download-built-package
+      - name: Run Tests
         working-directory: ./test-app
-        run: >-
-          node_modules/.bin/ember try:one ${{ matrix.ember-try-scenario }}
-          --skip-cleanup
+        run: |
+          if [[ "${{matrix.ember-try-scenario}}" == "'ember-lts-4.8 + embroider-optimized'" ]]; then
+            echo 'Running custom try scenario due to peer deps resolving incorrectly (due to installation issues)'
+            pnpm add --save-dev ember-source@~4.8.0
+            pnpm add --save-dev @embroider/core @embroider/webpack @embroider/compat
+            pnpm test:ember
+          else
+            pnpm test:ember-try:one ${{ matrix.ember-try-scenario }} --skip-cleanup
+          fi
 
   ember-try-optional:
     name: Tests - ${{ matrix.ember-try-scenario }}
     runs-on: ubuntu-latest
     continue-on-error: ${{ matrix.allow-failure }}
-    needs:
-      - build
-      - lint
+    needs: [build, lint]
     strategy:
       fail-fast: true
       max-parallel: 1
@@ -223,55 +131,45 @@ jobs:
           - ember-canary
     steps:
       - uses: actions/checkout@v3
-      - uses: volta-cli/action@v3
-      - name: Cache pnpm modules
-        uses: actions/cache@v3
-        with:
-          path: ~/.pnpm-store
-          key: ${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: ${{ runner.os }}-
-      - uses: pnpm/action-setup@v2.2.4
-        with:
-          version: 8.3.1
-      - name: Install Dependencies (without lockfile)
-        run: rm pnpm-lock.yaml && pnpm install
-      - name: Download built package from cache
-        uses: actions/download-artifact@v3
-        with:
-          name: dist
-          path: ${{ env.dist }}
-      - name: test
+      - uses: ./.github/actions/pnpm
+      - uses: ./.github/actions/download-built-package
+      - name: Run Tests
         working-directory: ./test-app
-        run: >-
-          node_modules/.bin/ember try:one ${{ matrix.ember-try-scenario }}
-          --skip-cleanup
+        run: |
+          if [[ "${{matrix.ember-try-scenario}}" == "'ember-lts-4.8 + embroider-optimized'" ]]; then
+            echo 'Running custom try scenario due to peer deps resolving incorrectly (due to installation issues)'
+            pnpm add --save-dev ember-source@~4.8.0
+            pnpm add --save-dev @embroider/core @embroider/webpack @embroider/compat
+            pnpm test:ember
+          else
+            pnpm test:ember-try:one ${{ matrix.ember-try-scenario }} --skip-cleanup
+          fi
 
   deploy:
     name: Deploy
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
-    needs: [test, floating-dependencies, ember-try-required]
+    if: >
+      contains('
+        refs/heads/main
+        refs/heads/beta
+      ', github.ref)
+    needs: [default-tests, floating-dependencies, ember-try-required]
     steps:
-      - uses: actions/checkout@v2
-      - uses: volta-cli/action@v1
-
-      - run: echo "ADDON_DOCS_VERSION_PATH=${GITHUB_REF##*/}" >> $GITHUB_ENV
-
-      - run: echo "ADDON_DOCS_UPDATE_LATEST=true" >> $GITHUB_ENV
-        if: contains(github.ref , 'main') == true
-
-      - run: pnpm install
-
-      - name: Deploy
-        env:
-          DEPLOY_KEY: ${{ secrets.DEPLOY_KEY }}
-        run: pnpm ember deploy production --verbose --activate
+      - name: Dispatch Release
+        uses: benc-uk/workflow-dispatch@v1
+        with:
+          workflow: Deploy Docs
+          token: ${{ secrets.GH_TOKEN }}
 
   publish:
     name: Release
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
-    needs: [test, floating-dependencies, ember-try-required]
+    if: >
+      contains('
+        refs/heads/main
+        refs/heads/beta
+      ', github.ref)
+    needs: [default-tests, floating-dependencies, ember-try-required]
     steps:
       - name: Dispatch Release
         uses: benc-uk/workflow-dispatch@v1

@@ -15,9 +15,9 @@ module('Unit | Utility | mime types', function () {
     let m3u8Mime = getMimeType(hlsUrl);
     let unknownMime = getMimeType(unknownUrl);
 
-    assert.equal(mp3Mime, 'audio/mpeg');
-    assert.equal(mp3MimeWithParams, 'audio/mpeg');
-    assert.equal(m3u8Mime, 'application/vnd.apple.mpegurl');
+    assert.strictEqual(mp3Mime, 'audio/mpeg');
+    assert.strictEqual(mp3MimeWithParams, 'audio/mpeg');
+    assert.strictEqual(m3u8Mime, 'application/vnd.apple.mpegurl');
     assert.false(unknownMime);
   });
 });
