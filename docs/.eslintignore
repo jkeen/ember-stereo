@@ -1,10 +1,11 @@
 # unconventional js
-/blueprints/*/files/
+blueprints/**/*.js
 /vendor/
 
 # compiled output
 /dist/
 /tmp/
+
 
 # dependencies
 /bower_components/

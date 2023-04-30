@@ -11,7 +11,7 @@ module('Integration | Helper | load-sound', function (hooks) {
   test('it can load as an action', async function (assert) {
     let service = this.owner.lookup('service:stereo');
     this.url = '/good/1000/load.mp3';
-    assert.equal(service.currentSound, undefined, 'not loaded');
+    assert.strictEqual(service.currentSound, null, 'not loaded');
     await render(
       hbs`<button type="button" {{on 'click' (load-sound this.url)}}>load</button>`
     );
@@ -19,6 +19,6 @@ module('Integration | Helper | load-sound', function (hooks) {
     await render(
       hbs`{{#if (sound-is-loaded this.url)}}sound-is-loaded{{else}}is-not-loaded{{/if}}`
     );
-    assert.equal(this.element.textContent.trim(), 'sound-is-loaded');
+    assert.strictEqual(this.element.textContent.trim(), 'sound-is-loaded');
   });
 });

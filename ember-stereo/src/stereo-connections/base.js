@@ -301,7 +301,6 @@ export default class Sound extends Evented {
 
   constructor(args = {}) {
     super(...arguments);
-
     this.url = args.url;
     this.connectionName = args.connectionName;
     this.connectionKey = args.connectionKey;

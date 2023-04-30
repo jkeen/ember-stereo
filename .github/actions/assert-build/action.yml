@@ -1,0 +1,55 @@
+name: Build and Assert Assets Exists
+description: Build the package and assert that file contents exist as we expect
+runs:
+  using: 'composite'
+  steps:
+    - name: Build and Assert Output
+      shell: bash
+      run: |-
+        echo '
+          target: ${{ env.dist }}
+          setup:
+            run: pnpm build
+            cwd: ./ember-stereo
+          expect: |
+            helpers/autoplay-allowed.js
+            helpers/current-sound.js
+            helpers/fastforward-sound.js
+            helpers/find-sound.js
+            helpers/load-sound.js
+            helpers/numeric-duration.js
+            helpers/pause-sound.js
+            helpers/play-sound.js
+            helpers/rewind-sound.js
+            helpers/seek-sound.js
+            helpers/sound-duration.js
+            helpers/sound-error-details.js
+            helpers/sound-is-blocked.js
+            helpers/sound-is-errored.js
+            helpers/sound-is-fastforwardable.js
+            helpers/sound-is-loaded.js
+            helpers/sound-is-loading.js
+            helpers/sound-is-playing.js
+            helpers/sound-is-rewindable.js
+            helpers/sound-is-seekable.js
+            helpers/sound-metadata.js
+            helpers/sound-position.js
+            helpers/stereo-volume.js
+            helpers/stereo-volume-is-adjustable.js
+            helpers/toggle-play-sound.js
+            helpers/toggle-stereo-mute.js
+            modifiers/sound-position-progress.js
+            modifiers/sound-position-slider.js
+            modifiers/stereo-volume.js
+            services/stereo.js
+            stereo-connections/base.js
+            test-support/stereo-setup.js
+
+        ' >> assert-contents.config.yml
+        npx assert-folder-contents
+
+    - name: Upload dist assets to cache
+      uses: actions/upload-artifact@v3
+      with:
+        name: dist
+        path: ${{ env.dist }}

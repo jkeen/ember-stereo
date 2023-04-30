@@ -1,5 +1,6 @@
 import { makeArray } from '@ember/array';
 import BaseSound from './base';
+import { waitFor } from '@ember/test-waiters';
 
 /**
 * This is the connection class that uses Howler to play sounds.
@@ -152,6 +153,7 @@ export default class Howler extends BaseSound {
     this.howl.stop();
   }
 
+  @waitFor
   loadHowler() {
     return import('howler')
       .then((module) => module.default)

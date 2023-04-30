@@ -11,9 +11,9 @@ module('Integration | Helper | stereo-volume', function (hooks) {
     let service = this.owner.lookup('service:stereo');
     service.volume = 73;
     await render(hbs`{{stereo-volume}}`);
-    assert.equal(
+    assert.strictEqual(
       this.element.textContent.trim(),
-      service.volume,
+      service.volume.toString(),
       'stereo volume reports service volume'
     );
   });

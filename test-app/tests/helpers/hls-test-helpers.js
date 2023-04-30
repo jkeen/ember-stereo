@@ -1,8 +1,17 @@
-function setupHLSSpies(hls, sandbox) {
+import { waitUntil } from '@ember/test-helpers';
+
+async function setupHLSSpies(sound, sandbox) {
+  await waitUntil(
+    () => {
+      return !!sound.hls;
+    },
+    { timeout: 3000 }
+  );
+
   return {
-    recoverSpy: sandbox.spy(hls, 'recoverMediaError'),
-    switchSpy: sandbox.spy(hls, 'swapAudioCodec'),
-    destroySpy: sandbox.spy(hls, 'destroy'),
+    recoverSpy: sandbox.spy(sound.hls, 'recoverMediaError'),
+    switchSpy: sandbox.spy(sound.hls, 'swapAudioCodec'),
+    destroySpy: sandbox.spy(sound.hls, 'destroy'),
   };
 }
 

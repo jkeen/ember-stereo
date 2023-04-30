@@ -767,9 +767,9 @@ module('Unit | Service | stereo', function (hooks) {
     let s2url = '/good/1000/silence2.mp3';
 
     service.one('current-sound-changed', ({ sound, previousSound }) => {
-      assert.equal(
+      assert.strictEqual(
         previousSound,
-        undefined,
+        null,
         'there should not a previous sound'
       );
       assert.equalUrls(

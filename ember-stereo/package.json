@@ -33,6 +33,8 @@
     "lint:fix": "concurrently 'npm:lint:js:fix'",
     "lint:js": "eslint . --cache",
     "lint:js:fix": "eslint . --fix",
+    "lint:hbs": "ember-template-lint .",
+    "lint:hbs:fix": "ember-template-lint . --fix",
     "test": "echo 'Addon does not have tests, run tests in test-app'",
     "prepare": "pnpm run build",
     "prepublishOnly": "pnpm run build",
@@ -51,30 +53,33 @@
     "ember-get-config": "^2.0",
     "ember-modal-dialog": "^4.0.0",
     "ember-modifier": "^4.0.0",
+    "ember-sinon": "^5.0.0",
     "hls.js": "^1.4.0",
     "howler": "^2.2.3",
     "tracked-built-ins": "^3.1.0",
     "tracked-toolbox": "^2.0.0"
   },
   "devDependencies": {
-    "@glimmer/tracking": "^1.1.2",
     "@babel/plugin-proposal-class-properties": "7.16.7",
     "@babel/plugin-proposal-decorators": "7.17.9",
     "@babel/plugin-syntax-decorators": "7.17.0",
     "@embroider/addon-dev": "3.0.0",
+    "@glimmer/tracking": "^1.1.2",
     "@nullvoxpopuli/eslint-configs": "2.2.14",
     "@rollup/plugin-babel": "5.3.1",
     "@semantic-release/changelog": "^6.0.1",
     "@semantic-release/git": "^10.0.1",
+    "semantic-release": "^19.0.3",
     "babel-eslint": "10.1.0",
     "concurrently": "7.1.0",
     "ember-resources": "^4.7.1",
     "eslint": "^7.0.0",
-    "ember-sinon": "^5.0.0",
     "eslint-config-prettier": "8.5.0",
     "eslint-plugin-decorator-position": "4.0.1",
     "eslint-plugin-ember": "10.6.0",
+    "eslint-plugin-ember-concurrency": "^0.5.1",
     "eslint-plugin-import": "2.26.0",
+    "ember-template-lint": "^3.16.0",
     "eslint-plugin-json": "3.1.0",
     "eslint-plugin-node": "11.1.0",
     "eslint-plugin-prettier": "4.0.0",
@@ -82,7 +87,8 @@
     "rollup": "2.71.1"
   },
   "peerDependencies": {
-    "@babel/core": "^7.17.10"
+    "@babel/core": "^7.17.10",
+    "@ember/test-waiters": "^3.0.2"
   },
   "publishConfig": {
     "registry": "https://registry.npmjs.org"

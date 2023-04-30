@@ -2,6 +2,7 @@ import { A } from '@ember/array';
 import { setupTest } from 'ember-qunit';
 import sinon from 'sinon';
 import { module, test, skip } from 'qunit';
+import { settled } from '@ember/test-helpers';
 import HLSConnection from 'ember-stereo/stereo-connections/hls';
 import { setupHLSSpies, throwMediaError } from '../../helpers/hls-test-helpers';
 import StereoUrl from 'ember-stereo/-private/utils/stereo-url';
@@ -92,12 +93,13 @@ module('Unit | Connection | HLS', function (hooks) {
     });
   });
 
-  test('On first media error stream will attempt a retry', function (assert) {
+  test('On first media error stream will attempt a retry', async function (assert) {
     let sound = new HLSConnection({ url: goodUrl, timeout: false });
 
-    let recoverSpy = sandbox.stub(sound.hls, 'recoverMediaError');
-    let switchSpy = sandbox.stub(sound.hls, 'swapAudioCodec');
-    let destroySpy = sandbox.stub(sound.hls, 'destroy');
+    let { recoverSpy, switchSpy, destroySpy } = await setupHLSSpies(
+      sound,
+      sandbox
+    );
 
     throwMediaError(sound);
 
@@ -110,7 +112,7 @@ module('Unit | Connection | HLS', function (hooks) {
     assert.strictEqual(destroySpy.callCount, 0, 'should not destroy');
   });
 
-  test('On second media error stream will try switching codecs', function (assert) {
+  test('On second media error stream will try switching codecs', async function (assert) {
     let sound = new (this.owner.factoryFor(
       'ember-stereo@stereo-connection:hls',
       {}
@@ -119,8 +121,10 @@ module('Unit | Connection | HLS', function (hooks) {
       timeout: false,
     });
 
-    let { destroySpy, switchSpy, recoverSpy } = setupHLSSpies(
-      sound.hls,
+    await settled();
+
+    let { destroySpy, switchSpy, recoverSpy } = await setupHLSSpies(
+      sound,
       sandbox
     );
 
@@ -132,7 +136,7 @@ module('Unit | Connection | HLS', function (hooks) {
     assert.strictEqual(destroySpy.callCount, 0, 'should not destroy');
   });
 
-  test('On third media error we will give up', function (assert) {
+  test('On third media error we will give up', async function (assert) {
     let done = assert.async();
     let sound = new (this.owner.factoryFor(
       'ember-stereo@stereo-connection:hls',
@@ -141,6 +145,9 @@ module('Unit | Connection | HLS', function (hooks) {
       url: goodUrl,
       timeout: false,
     });
+
+    await settled();
+
     let loadErrorFired = false;
 
     sound.on('audio-load-error', function () {
@@ -148,8 +155,8 @@ module('Unit | Connection | HLS', function (hooks) {
       done();
     });
 
-    let { destroySpy, switchSpy, recoverSpy } = setupHLSSpies(
-      sound.hls,
+    let { destroySpy, switchSpy, recoverSpy } = await setupHLSSpies(
+      sound,
       sandbox
     );
 
