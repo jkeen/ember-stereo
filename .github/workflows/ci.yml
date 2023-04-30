@@ -117,6 +117,7 @@ jobs:
           fi
 
   ember-try-optional:
+    if: "! contains(toJSON(github.event.commits.*.message), '[skip ci]')"
     name: Tests - ${{ matrix.ember-try-scenario }}
     runs-on: ubuntu-latest
     continue-on-error: ${{ matrix.allow-failure }}
@@ -148,11 +149,7 @@ jobs:
   deploy:
     name: Deploy
     runs-on: ubuntu-latest
-    if: >
-      contains('
-        refs/heads/main
-        refs/heads/beta
-      ', github.ref)
+    if: contains('refs/heads/main', github.ref) ||  contains('refs/heads/beta', github.ref)
     needs: [default-tests, floating-dependencies, ember-try-required]
     steps:
       - name: Dispatch Release
@@ -164,11 +161,7 @@ jobs:
   publish:
     name: Release
     runs-on: ubuntu-latest
-    if: >
-      contains('
-        refs/heads/main
-        refs/heads/beta
-      ', github.ref)
+    if: contains('refs/heads/main', github.ref) ||  contains('refs/heads/beta', github.ref)
     needs: [default-tests, floating-dependencies, ember-try-required]
     steps:
       - name: Dispatch Release

@@ -5,8 +5,8 @@ on:
   workflow_dispatch:
 
 jobs:
-  deploy_docs:
-    name: Deploy Docs
+  deploy:
+    name: Deploy ember-cli-addon-docs git github pages
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
