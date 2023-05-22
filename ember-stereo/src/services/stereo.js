@@ -106,6 +106,8 @@ export default class Stereo extends Service.extend(EmberEvented) {
     );
 
     if (macroCondition(isTesting())) {
+      // no checks for autoplay as it messes with the fake media element
+    } else {
       this._determineAutoplayPermissions();
     }
     this.isReady = true;
