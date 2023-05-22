@@ -9,7 +9,7 @@
   "scripts": {
     "build": "pnpm --filter ember-stereo run build",
     "lint": "pnpm run lint",
-    "lint:fix": "pnpm run lint:fix",
+    "lint:fix": "pnpm lint:fix",
     "prepare": "pnpm build",
     "start": "concurrently 'npm:start:*' --restart-after 5000 --prefix-colors cyan,white,yellow",
     "start:addon": "pnpm --filter ember-stereo run start",

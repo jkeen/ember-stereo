@@ -8,7 +8,6 @@ import Evented from '../-private/utils/evented';
 import hasEqualUrls from '../-private/utils/has-equal-urls';
 import { getOwner } from '@ember/application';
 import { registerDestructor } from '@ember/destroyable';
-import { isTesting } from '@embroider/macros';
 
 /**
  * This is the base sound object from which other sound objects are derived.

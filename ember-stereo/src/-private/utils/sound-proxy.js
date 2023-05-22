@@ -4,13 +4,7 @@ import { isTesting, macroCondition } from '@embroider/macros';
 import debug from 'debug';
 import Evented from './evented';
 import hasEqualUrls from './has-equal-urls';
-import {
-  task,
-  waitForProperty,
-  waitForEvent,
-  timeout,
-  didCancel,
-} from 'ember-concurrency';
+import { task, waitForProperty, timeout, didCancel } from 'ember-concurrency';
 import { cached } from '@glimmer/tracking';
 /**
 * This class lazy loads sounds based on identifiers
