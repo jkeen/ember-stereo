@@ -1,4 +1,5 @@
 import StereoBaseActionHelper from '../-private/helpers/action-helper';
+import { didCancel } from 'ember-concurrency';
 
 /**
   A helper to toggle play/pause a sound
@@ -24,7 +25,11 @@ export default class togglePlaySound extends StereoBaseActionHelper {
     if (sound) {
       sound.togglePause();
     } else {
-      this.stereo.play(this.identifier, this.options);
+      this.stereo.playTask.perform(this.identifier, this.options).catch((e) => {
+        if (!didCancel(e)) {
+          throw e;
+        }
+      });
     }
   }
 }

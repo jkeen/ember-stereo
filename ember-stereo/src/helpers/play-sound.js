@@ -1,5 +1,5 @@
 import StereoBaseActionHelper from '../-private/helpers/action-helper';
-
+import { didCancel } from 'ember-concurrency';
 /**
   A helper to load a sound
   ```hbs
@@ -22,7 +22,13 @@ import StereoBaseActionHelper from '../-private/helpers/action-helper';
   @return {Function}
 */
 export default class playSound extends StereoBaseActionHelper {
-  async performAction() {
-    return await this.stereo.play(this.identifier, this.options);
+  performAction() {
+    return this.stereo.playTask
+      .perform(this.identifier, this.options)
+      .catch((e) => {
+        if (!didCancel(e)) {
+          throw e;
+        }
+      });
   }
 }

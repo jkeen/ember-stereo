@@ -1,6 +1,7 @@
 import { inject as service } from '@ember/service';
 import Helper from '@ember/component/helper';
 import prepareOptions from '../-private/utils/prepare-options';
+import { didCancel } from 'ember-concurrency';
 /**
   A helper to load a sound
   ```hbs
@@ -26,7 +27,13 @@ export default class LoadSound extends Helper {
     options = prepareOptions(options);
 
     return () => {
-      return this.stereo.load(urls, options).then((result) => result.sound);
+      try {
+        return this.stereo.load(urls, options).then((result) => result.sound);
+      } catch (e) {
+        if (!didCancel(e)) {
+          throw e;
+        }
+      }
     };
   }
 }
