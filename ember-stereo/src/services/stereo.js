@@ -802,11 +802,17 @@ export default class Stereo extends Service.extend(EmberEvented) {
       return; // should use ember-concurrency to cancel any pending promises in willDestroy
     }
     this._unregisterEvents(this._currentSound);
-    this._registerEvents(sound);
-    this._updateNowPlaying(sound);
-    sound._setVolume(this.volume);
+
+    if (sound) {
+      this._registerEvents(sound);
+      this._updateNowPlaying(sound);
+      sound._setVolume(this.volume);
+      debug('ember-stereo')(`setting current sound -> ${sound.url}`);
+    } else {
+      debug('ember-stereo')(`setting current sound -> null`);
+    }
+
     this._currentSound = sound;
-    debug('ember-stereo')(`setting current sound -> ${sound.url}`);
   }
 
   /**
@@ -916,7 +922,6 @@ export default class Stereo extends Service.extend(EmberEvented) {
     this.metadataCache.remove(url);
 
     if (this.currentSound?.url === url) {
-      this._unregisterEvents(this.currentSound);
       this.currentSound = null;
     }
   }
@@ -1048,8 +1053,12 @@ export default class Stereo extends Service.extend(EmberEvented) {
 
     let service = this;
     EVENT_MAP.forEach((item) => {
-      if (sound.has(item.event)) {
-        sound.off(item.event, service, service[item.handler]);
+      try {
+        if (sound.has(item.event)) {
+          sound.off(item.event, service, service[item.handler]);
+        }
+      } catch (e) {
+        // unregistering errors are not super important
       }
     });
   }
