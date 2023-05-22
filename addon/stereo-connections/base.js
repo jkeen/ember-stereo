@@ -367,12 +367,17 @@ export default class Sound extends Evented {
         this.isLoading = false;
         this.isPlaying = false;
       }
-      this.isErrored = true;
-      this.error = error;
-      if (audioLoadError) {
-        audioLoadError(this);
-      }
+
       this.debug('audio-load-error');
+      if (this.shouldRetry && this.retry) {
+        this.retry();
+      } else {
+        this.isErrored = true;
+        this.error = error;
+        if (audioLoadError) {
+          audioLoadError(this);
+        }
+      }
     });
 
     this.on('audio-loaded', () => {

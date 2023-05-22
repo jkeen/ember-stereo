@@ -8,6 +8,7 @@ export default class Strategy {
 
   sharedAudioAccess = null;
   error = null;
+  erroredSound = null;
   success = false;
   tried = false;
 

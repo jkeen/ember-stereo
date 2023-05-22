@@ -383,4 +383,35 @@ module('Unit | Connection | Native Audio', function (hooks) {
     await sound1.play(); // sound 1 has control
     await sound2.play(); // sound 2 has control
   });
+
+  test('automatically retries upon CORS failure', async function (assert) {
+    assert.expect(4);
+    let stereo = this.owner.lookup('service:stereo');
+    let url1 = '/good/5000/silence.mp3';
+
+    let { sound: sound1 } = await stereo.load(url1, {
+      silenceErrors: true,
+      useConnections: ['NativeAudio'],
+    });
+
+    assert.strictEqual(sound1.retryCount, 0);
+    assert.strictEqual(
+      sound1.audioElement.getAttribute('crossorigin'),
+      'anonymous',
+      'first try should be anonymous'
+    );
+
+    let { failures } = await stereo.load('/bad/http-301/silence.mp3', {
+      useConnections: ['NativeAudio'],
+      silenceErrors: true,
+    });
+
+    let erroredSound = failures[0].erroredSound;
+    assert.strictEqual(erroredSound.retryCount, 1);
+    assert.strictEqual(
+      erroredSound.audioElement.getAttribute('crossorigin'),
+      null,
+      'second try should be null'
+    );
+  });
 });
