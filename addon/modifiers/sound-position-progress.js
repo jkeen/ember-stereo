@@ -9,35 +9,33 @@
   @type Modifier
 */
 
-import { action } from '@ember/object';
 import { inject as service } from '@ember/service';
+import { cached } from '@glimmer/tracking';
 import Modifier from 'ember-modifier';
-import { registerDestructor } from '@ember/destroyable';
+import { macroCondition, isTesting } from '@embroider/macros';
+
+import {
+  task,
+  waitForProperty,
+  waitForEvent,
+  timeout,
+  race,
+} from 'ember-concurrency';
 
 export default class SoundPositionProgressModifier extends Modifier {
   @service stereo;
   element = null;
 
-  constructor() {
-    super(...arguments);
-    registerDestructor(this, this.unregisterListeners.bind(this));
-  }
-
+  @cached
   get loadedSound() {
     return this.stereo.findLoadedSound(this.url);
   }
 
-  @action
-  onPositionChange({ sound }) {
-    if (sound.hasUrl(this.url)) {
-      this.modifyPosition(...arguments);
-    }
-  }
-
   modifyPosition({ sound }) {
-    this.element.style.width = `${
-      ((sound.position || 0) / sound.duration) * 100
-    }%`;
+    let position = sound?.position ?? 0;
+    let duration = sound?.duration ?? 1;
+
+    this.element.style.width = `${(position / duration) * 100}%`;
     this.element.style.pointerEvents = 'none';
   }
 
@@ -48,30 +46,39 @@ export default class SoundPositionProgressModifier extends Modifier {
     if (!this.element) {
       this.element = element;
       this.element.setAttribute('data-sound-position-progress', true);
-
-      this.stereo.on(
-        'audio-position-will-change',
-        this.onPositionChange.bind(this)
-      );
-      this.stereo.on(
-        'audio-position-changed',
-        this.onPositionChange.bind(this)
-      );
+      this.modifyPosition({ sound: this.loadedSound });
     }
+    this.watchPositionTask.perform().catch(() => {
+      /* noop */
+    });
   }
 
-  unregisterListeners() {
-    try {
-      this.stereo.off(
-        'audio-position-changed',
-        this.onPositionChange.bind(this)
-      );
-      this.stereo.off(
-        'audio-position-will-change',
-        this.onPositionChange.bind(this)
-      );
-    } catch (e) {
-      /* geez, relax */
+  @task({ drop: true })
+  *watchPositionTask() {
+    while (true) {
+      let position = this.loadedSound?.position;
+      yield timeout(100);
+
+      let result = yield race([
+        waitForEvent(this.stereo, 'audio-position-will-change'),
+        waitForEvent(this.stereo, 'audio-position-changed'),
+        waitForProperty(
+          this,
+          'loadedSound',
+          (sound) => sound?.position != position
+        ),
+        timeout(500),
+      ]);
+
+      if (result?.sound) {
+        this.modifyPosition({ sound: result.sound });
+      } else if (this.loadedSound) {
+        this.modifyPosition({ sound: this.loadedSound });
+      }
+
+      if (macroCondition(isTesting())) {
+        break;
+      }
     }
   }
 }
