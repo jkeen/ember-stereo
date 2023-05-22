@@ -220,7 +220,6 @@ export default class HLSSound extends BaseSound {
   _onHLSError(error, data) {
     if (data.fatal) {
       this.debug(data);
-      console.log(data);
       switch (data.type) {
         case HLS.ErrorTypes.NETWORK_ERROR:
           this._giveUpAndDie(`${data.details}`);
@@ -349,5 +348,6 @@ export default class HLSSound extends BaseSound {
 
   teardown() {
     this.hls.destroy();
+    super.teardown();
   }
 }

@@ -7,6 +7,8 @@ import { tracked } from '@glimmer/tracking';
 import Evented from 'ember-stereo/-private/utils/evented';
 import hasEqualUrls from 'ember-stereo/-private/utils/has-equal-urls';
 import { getOwner } from '@ember/application';
+import { registerDestructor } from '@ember/destroyable';
+import { isTesting } from '@embroider/macros';
 
 /**
  * This is the base sound object from which other sound objects are derived.
@@ -166,6 +168,7 @@ export default class Sound extends Evented {
 
   get metadata() {
     let owner = getOwner(this);
+
     if (owner) {
       let stereo = owner.lookup('service:stereo');
       return stereo?.metadataCache?.find(this.url);
@@ -301,7 +304,7 @@ export default class Sound extends Evented {
 
   constructor(args = {}) {
     super(...arguments);
-
+    registerDestructor(this, this.teardown.bind(this));
     this.url = args.url;
     this.connectionName = args.connectionName;
     this.connectionKey = args.connectionKey;
@@ -538,6 +541,7 @@ export default class Sound extends Evented {
 
   teardown() {
     // optionally implemented in subclasses
+    this.isDestroyed = true;
   }
 
   hasUrl(url) {
