@@ -421,6 +421,7 @@ export default class Stereo extends Service.extend(EmberEvented) {
             });
           if (result.error) {
             strategy.error = result.error;
+            strategy.erroredSound = result.erroredSound;
             failures.push(strategy);
           }
           if (result.sound) {
@@ -956,7 +957,7 @@ export default class Stereo extends Service.extend(EmberEvented) {
     );
     this._unregisterEvents(sound);
     strategy.error = sound.error;
-    let result = { error: sound.error };
+    let result = { error: sound.error, erroredSound: sound };
 
     return result;
   }

@@ -56,6 +56,7 @@ export default class NativeAudio extends BaseSound {
     let audio = this.requestControl();
     audio.src = this.url;
     this._registerEvents(audio);
+    this.retryCount = 0;
 
     if (macroCondition(isTesting())) {
       audio.muted = true;
@@ -400,9 +401,8 @@ export default class NativeAudio extends BaseSound {
   }
 
   @task({ restartable: true })
-  *playTask({ position /*, retryCount */ }) {
+  *playTask({ position }) {
     this.isLoading = true;
-    // retryCount = retryCount || 0
     let audio = this.requestControl();
 
     // since we clear the `src` attr on pause for streams, restore it here
@@ -419,30 +419,27 @@ export default class NativeAudio extends BaseSound {
         throw e;
       });
     } catch (e) {
-      // if (retryCount < 2) {
-      //   try {
-      //     yield this.playTask.perform({ position, retryCount: retryCount + 1 })
-      //   }
-      //   catch (e) {
-      //     if (!didCancel(e)) {
-      //       throw e;
-      //     }
-      //   }
-      // }
       this._onAudioError(e);
     } finally {
       this.isLoading = false;
     }
   }
 
+  get shouldRetry() {
+    return this.retryCount < 1;
+  }
+
+  retry() {
+    this.debug(`retrying load with crossorigin not set`);
+    this.audioElement.removeAttribute('crossorigin');
+
+    this.retryCount = this.retryCount + 1;
+    this.audioElement.src = this.url;
+    this.audioElement.load();
+  }
+
   play({ position } = {}) {
-    try {
-      return this.playTask.perform({ position });
-    } catch (e) {
-      if (!didCancel(e)) {
-        throw e;
-      }
-    }
+    return this.playTask.perform({ position });
   }
 
   pause() {

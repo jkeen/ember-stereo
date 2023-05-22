@@ -490,7 +490,7 @@ module('Unit | Service | stereo', function (hooks) {
       sandbox
     );
 
-    await service.load('/first/test.mp3', {
+    await service.load('/good/1000/test.mp3', {
       silenceErrors: true,
       useConnections: ['NativeAudio', 'LocalDummyConnection'],
     });
@@ -509,7 +509,7 @@ module('Unit | Service | stereo', function (hooks) {
       'native audio should have been tried before local'
     );
 
-    await service.play('/second/test.mp3', {
+    await service.play('/good/1000/test-2.mp3', {
       silenceErrors: true,
       useConnections: ['NativeAudio'],
     });
@@ -1116,7 +1116,6 @@ module('Unit | Service | stereo', function (hooks) {
     let findSpy = sandbox.spy(soundCache, 'find');
 
     service.one('pre-load', (urls) => {
-      console.log('running preload hook');
       urls.forEach((url) => {
         url.href = `${url.href}?foo=bar`;
       });

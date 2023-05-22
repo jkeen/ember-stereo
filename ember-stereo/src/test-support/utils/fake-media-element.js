@@ -20,12 +20,13 @@ export default class FakeMediaElement extends Evented {
   @tracked played = false;
   @tracked loaded = false;
   @tracked readyState;
+  @tracked crossOrigin;
 
   constructor() {
     super(...arguments);
 
     debug('ember-stereo:fake-element')(
-      `initializing fake ${arguments[0]} element`
+      `initializing fake ${arguments[0] ?? ''} element`
     );
     this.setInitialState();
   }
@@ -43,6 +44,7 @@ export default class FakeMediaElement extends Evented {
     this.duration = NaN;
     this._currentTime = 0;
     this.loaded = false;
+    this.crossorigin = 'anonymous';
   }
 
   async load() {
