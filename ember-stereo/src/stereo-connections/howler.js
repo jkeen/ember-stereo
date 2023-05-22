@@ -100,6 +100,7 @@ export default class Howler extends BaseSound {
     if (this.howl) {
       this.howl.unload();
     }
+    super.teardown();
   }
 
   get audioElement() {

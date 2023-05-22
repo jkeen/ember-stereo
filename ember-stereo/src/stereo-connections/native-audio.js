@@ -505,5 +505,6 @@ export default class NativeAudio extends BaseSound {
     this.durationWorkaroundTask.cancelAll();
     this.trigger('_will_destroy', { sound: this });
     this._unregisterEvents(audio);
+    super.teardown();
   }
 }
