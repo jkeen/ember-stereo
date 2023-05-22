@@ -209,7 +209,7 @@ importers:
         specifier: ^6.1.1
         version: 6.2.0
       ember-concurrency:
-        specifier: ^2.1.2
+        specifier: ^2.3.4
         version: 2.3.7(@babel/core@7.17.10)
       ember-gesture-modifiers:
         specifier: ^4.0.1
@@ -338,6 +338,9 @@ importers:
       broccoli-asset-rev:
         specifier: ^3.0.0
         version: 3.0.0
+      debug:
+        specifier: 4.3.2
+        version: 4.3.2
       ember-auto-import:
         specifier: ^2.6.3
         version: 2.6.3(webpack@5.81.0)
@@ -546,7 +549,7 @@ packages:
     resolution: {integrity: sha512-NieM3pVIYW2SwGzKoqfPrQsf4xGs9M9AIG3ThppsSRmO+m7eQhmI6amajKMUeIO37wFfsvnvcxQFx6x6iqxDnA==}
     engines: {node: '>=6.9.0'}
     dependencies:
-      '@babel/types': 7.21.4
+      '@babel/types': 7.21.5
       '@jridgewell/gen-mapping': 0.3.3
       '@jridgewell/trace-mapping': 0.3.18
       jsesc: 2.5.2
@@ -723,13 +726,13 @@ packages:
     engines: {node: '>=6.9.0'}
     dependencies:
       '@babel/template': 7.20.7
-      '@babel/types': 7.21.4
+      '@babel/types': 7.21.5
 
   /@babel/helper-hoist-variables@7.18.6:
     resolution: {integrity: sha512-UlJQPkFqFULIcyW5sbzgbkxn2FKRgwWiRexcuaR8RNJRy8+LLveqPjwZV/bwrLZCN0eUHD/x8D0heK1ozuoo6Q==}
     engines: {node: '>=6.9.0'}
     dependencies:
-      '@babel/types': 7.21.4
+      '@babel/types': 7.21.5
 
   /@babel/helper-member-expression-to-functions@7.21.0:
     resolution: {integrity: sha512-Muu8cdZwNN6mRRNG6lAYErJ5X3bRevgYR2O8wN0yn7jJSnGDu6eG59RfT29JHxGUovyfrh6Pj0XzmR7drNVL3Q==}
@@ -4780,7 +4783,7 @@ packages:
     resolution: {integrity: sha512-jDLlxI8QnfKd7PtieH6pl4tZJzymzfCDCPGdTq/grgbiYAikwDPp/oL0IlFJn0HQjLpcLkyYhPKkUVneRESw5w==}
     engines: {node: '>=8'}
     dependencies:
-      '@babel/types': 7.21.4
+      '@babel/types': 7.21.5
       lodash: 4.17.21
 
   /babel-plugin-htmlbars-inline-precompile@3.2.0:
@@ -7833,7 +7836,7 @@ packages:
       '@babel/core': 7.21.4
       '@babel/preset-env': 7.21.4(@babel/core@7.21.4)
       '@babel/traverse': 7.21.4
-      '@babel/types': 7.21.4
+      '@babel/types': 7.21.5
       '@embroider/shared-internals': 1.8.3
       babel-core: 6.26.3
       babel-loader: 8.3.0(@babel/core@7.21.4)(webpack@4.46.0)
@@ -8773,7 +8776,7 @@ packages:
     engines: {node: 10.* || 12.* || 14.* || >= 16}
     dependencies:
       '@babel/helper-plugin-utils': 7.20.2
-      '@babel/types': 7.21.4
+      '@babel/types': 7.21.5
       '@glimmer/tracking': 1.1.2
       ember-cli-babel: 7.26.11
       ember-cli-babel-plugin-helpers: 1.1.1

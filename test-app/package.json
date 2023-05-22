@@ -50,6 +50,7 @@
     "ember-sinon": "^5.0.0",
     "ember-sinon-qunit": "7.1.4",
     "ember-source": "~4.8.0",
+    "debug": "4.3.2",
     "ember-source-channel-url": "^3.0.0",
     "ember-stereo": "workspace:../ember-stereo",
     "ember-template-lint": "^4.16.1",

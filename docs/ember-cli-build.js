@@ -10,6 +10,9 @@ module.exports = function (defaults) {
     'ember-cli-addon-docs': {
       documentingAddonAt: '../ember-stereo/',
     },
+    sourcemaps: {
+      enabled: true,
+    },
     svgJar: {
       sourceDirs: ['public'],
     },
