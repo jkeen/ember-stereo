@@ -8,9 +8,10 @@ import {
   task,
   waitForProperty,
   waitForEvent,
+  timeout,
   didCancel,
 } from 'ember-concurrency';
-
+import { cached } from '@glimmer/tracking';
 /**
 * This class lazy loads sounds based on identifiers
   @private
@@ -19,7 +20,6 @@ import {
 export default class SoundProxy extends Evented {
   @tracked isLoading = false;
   @tracked url;
-  @tracked value;
 
   constructor(identifier, stereo) {
     super(...arguments);
@@ -41,20 +41,17 @@ export default class SoundProxy extends Evented {
     });
   }
 
+  @cached
+  get value() {
+    return this.stereo.findLoadedSound(this.url);
+  }
+
   @task({ debug: true })
   *waitForLoadTask() {
     yield waitForProperty(this, 'url', (v) => !!v);
     debug('ember-stereo:sound-proxy')(`waiting for ${this.url} to load`);
     while (!this.value) {
-      let alreadyLoaded = this.stereo.findLoadedSound(this.url);
-      if (alreadyLoaded) {
-        this.value = alreadyLoaded;
-      } else {
-        let { sound } = yield waitForEvent(this.stereo, 'sound-ready');
-        if (hasEqualUrls(sound.url, this.url)) {
-          this.value = sound;
-        }
-      }
+      yield timeout(200);
 
       if (this.value) {
         break;

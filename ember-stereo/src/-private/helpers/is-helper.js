@@ -29,7 +29,7 @@ export default class StereoBaseIsHelper extends Helper {
   get sound() {
     if (this._sound) {
       return this._sound;
-    } else if (this.soundProxy && this.soundProxy.isResolved) {
+    } else if (this.soundProxy && this.soundProxy.value) {
       return this.soundProxy.value;
     }
 
