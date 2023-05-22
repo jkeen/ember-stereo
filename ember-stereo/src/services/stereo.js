@@ -1085,6 +1085,7 @@ export default class Stereo extends Service.extend(EmberEvented) {
     this._relayEvent('audio-played', info);
   }
   _relayPausedEvent(info) {
+    this._updateNowPlaying(this.currentSound);
     this._relayEvent('audio-paused', info);
   }
   _relayEndedEvent(info) {
@@ -1125,7 +1126,20 @@ export default class Stereo extends Service.extend(EmberEvented) {
 
   _updateNowPlaying(sound) {
     if (!sound) return;
-    if ('mediaSession' in navigator && 'MediaMetadata' in window) {
+    if (sound.isDestroyed) return;
+
+    if (
+      window &&
+      navigator &&
+      'mediaSession' in navigator &&
+      'MediaMetadata' in window
+    ) {
+      if (sound.isPlaying) {
+        navigator.mediaSession.playbackState = 'playing';
+      } else {
+        navigator.mediaSession.playbackState = 'paused';
+      }
+
       let { title, artist, album, artwork } = sound.metadata;
 
       let mediaAttributes = {
@@ -1138,9 +1152,45 @@ export default class Stereo extends Service.extend(EmberEvented) {
         mediaAttributes.artwork = makeArray(artwork);
       }
 
-      navigator.mediaSession.metadata = new window.MediaMetadata(
-        mediaAttributes
-      );
+      navigator.mediaSession.metadata = new MediaMetadata(mediaAttributes);
+
+      navigator.mediaSession.setActionHandler('play', () => {
+        if (!sound.isPlaying) {
+          sound.play();
+        }
+      });
+      navigator.mediaSession.setActionHandler('pause', () => {
+        if (sound.isPlaying) {
+          sound.pause();
+        }
+      });
+      navigator.mediaSession.setActionHandler('stop', () => {
+        sound.stop();
+      });
+      navigator.mediaSession.setActionHandler('seekbackward', () => {
+        if (sound.isRewindable) {
+          sound.rewind(15000);
+        }
+      });
+      navigator.mediaSession.setActionHandler('seekforward', () => {
+        if (sound.isFastForwardable) {
+          sound.fastForward(15000);
+        }
+      });
+      navigator.mediaSession.setActionHandler('seekto', (seekInfo) => {
+        if (sound.isSeekable) {
+          sound.position = seekInfo.seekTime * 1000;
+        }
+      });
+      // navigator.mediaSession.setActionHandler('previoustrack', () => {
+      //   /* Code excerpted. */
+      // });
+      // navigator.mediaSession.setActionHandler('nexttrack', () => {
+      //   /* Code excerpted. */
+      // });
+      // navigator.mediaSession.setActionHandler('skipad', () => {
+      //   /* Code excerpted. */
+      // });
     }
   }
 
