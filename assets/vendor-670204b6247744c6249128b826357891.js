@@ -33,7 +33,7 @@ if(!r||"new"===r.state)return(r=new s(e,[],o,null)).module.exports=t,r.state="fi
  *            Portions Copyright 2008-2011 Apple Inc. All rights reserved.
  * @license   Licensed under MIT license
  *            See https://raw.github.com/emberjs/ember.js/master/LICENSE
- * @version   4.8.4
+ * @version   4.8.5
  */
 var e,t;(function(){var r="undefined"!=typeof globalThis?globalThis:"undefined"!=typeof self?self:"undefined"!=typeof window?window:"undefined"!=typeof global?global:null
 if(null===r)throw new Error("unable to locate global object")
@@ -1062,7 +1062,7 @@ e.MutableArray=O
 var x=n.default.create(O,c.default,{objectAt(e){return this[e]},replace(e,r,i){return void 0===i&&(i=d),(0,t.replaceInNativeArray)(this,e,r,i),this}})
 e.NativeArray=x
 var P,A=["length"]
-x.keys().forEach((e=>{Array.prototype[e]&&A.push(e)})),e.NativeArray=x=x.without(...A),e.A=P,u.ENV.EXTEND_PROTOTYPES.Array?(x.apply(Array.prototype,!0),e.A=P=function(e){return e||[]}):e.A=P=function(e){return(0,r.isEmberArray)(e)?e:x.apply(null!=e?e:[])}
+x.keys().forEach((e=>{Reflect.has(Array.prototype,e)&&A.push(e)})),e.NativeArray=x=x.without(...A),e.A=P,u.ENV.EXTEND_PROTOTYPES.Array?(x.apply(Array.prototype,!0),e.A=P=function(e){return e||[]}):e.A=P=function(e){return(0,r.isEmberArray)(e)?e:x.apply(null!=e?e:[])}
 var R=S
 e.default=R})),e("@ember/array/mutable",["exports","@ember/array"],(function(e,t){"use strict"
 Object.defineProperty(e,"__esModule",{value:!0}),Object.defineProperty(e,"default",{enumerable:!0,get:function(){return t.MutableArray}})})),e("@ember/array/proxy",["exports","@ember/-internals/metal","@ember/object","@ember/-internals/utils","@ember/array","@ember/array/mutable","@ember/debug","@glimmer/manager","@glimmer/validator"],(function(e,t,r,i,n,a,s,o,l){"use strict"
@@ -1376,7 +1376,7 @@ return o}(e,c)},e.sum=function(e){return o(e,((e,t)=>e+t),0,"sum")},e.union=void
 return s(r)?(0,a.uniqBy)(r,t):(0,a.A)()})).readOnly()}
 var f=h
 e.union=f})),e("@ember/object/mixin",["exports","@ember/-internals/container","@ember/-internals/meta","@ember/-internals/utils","@ember/debug","@glimmer/util","@ember/-internals/metal","@ember/object/events"],(function(e,t,r,i,n,a,s,o){"use strict"
-Object.defineProperty(e,"__esModule",{value:!0}),e.applyMixin=b,e.default=void 0,e.mixin=function(e){for(var t=arguments.length,r=new Array(t>1?t-1:0),i=1;i<t;i++)r[i-1]=arguments[i]
+Object.defineProperty(e,"__esModule",{value:!0}),e.Mixin=void 0,e.applyMixin=b,e.default=void 0,e.mixin=function(e){for(var t=arguments.length,r=new Array(t>1?t-1:0),i=1;i<t;i++)r[i-1]=arguments[i]
 return b(e,r),e}
 var l=Array.prototype.concat,{isArray:u}=Array
 function c(e,t,r,i){var n=r[e]||i[e]
@@ -1403,8 +1403,8 @@ void 0!==u?g(t,u,r,i,n,a,s):void 0!==c&&(m(c,t,r,i,n,a,s),o instanceof _&&void 0
 for(var g of m){var b=t[g]
 if(void 0!==b){if(-1===a.indexOf(g)){a.push(g)
 var y=e.peekDescriptors(g)
-if(void 0===y){var _=i[g]=n[g]
-"function"==typeof _&&v(n,g,_,!1)}else r[g]=y,o.push(g),y.teardown(n,g,e)}var w="function"==typeof b
+if(void 0===y){if(!(0,s.isClassicDecorator)(b)){var _=i[g]=n[g]
+"function"==typeof _&&v(n,g,_,!1)}}else r[g]=y,o.push(g),y.teardown(n,g,e)}var w="function"==typeof b
 if(w){var E=(0,s.descriptorForDecorator)(b)
 if(void 0!==E){r[g]=d(g,b,E,r),i[g]=void 0
 continue}}l&&l.indexOf(g)>=0||"concatenatedProperties"===g||"mergedProperties"===g?b=f(g,b,i):u&&u.indexOf(g)>-1?b=p(g,b,i):w&&(b=h(g,b,i,r)),i[g]=b,r[g]=void 0}}}function v(e,t,r,n){var a=(0,i.observerListenerMetaFor)(r)
@@ -1433,9 +1433,9 @@ for(var i=0;i<t;i++){var n=e[i]
 y.has(n)?r[i]=n:r[i]=new _(void 0,n)}}return r}function E(e,t,r){if(void 0===r&&(r=new Set),r.has(e))return!1
 if(r.add(e),e===t)return!0
 var i=e.mixins
-return!!i&&i.some((e=>E(e,t,r)))}function T(e,t,r){if(void 0===t&&(t=new Set),void 0===r&&(r=new Set),!r.has(e)){if(r.add(e),e.properties){var i=Object.keys(e.properties)
-for(var n of i)t.add(n)}else e.mixins&&e.mixins.forEach((e=>T(e,t,r)))
-return t}}e.default=_})),e("@ember/object/observable",["exports","@ember/-internals/meta","@ember/-internals/metal","@ember/object","@ember/object/mixin","@ember/debug"],(function(e,t,r,i,n,a){"use strict"
+return!!i&&i.some((e=>E(e,t,r)))}function T(e,t,r){if(void 0===t&&(t=new Set),void 0===r&&(r=new Set),!r.has(e)){if(r.add(e),e.properties)for(var i of Object.keys(e.properties))t.add(i)
+else e.mixins&&e.mixins.forEach((e=>T(e,t,r)))
+return t}}e.Mixin=e.default=_})),e("@ember/object/observable",["exports","@ember/-internals/meta","@ember/-internals/metal","@ember/object","@ember/object/mixin","@ember/debug"],(function(e,t,r,i,n,a){"use strict"
 Object.defineProperty(e,"__esModule",{value:!0}),e.default=void 0
 var s=n.default.create({get(e){return(0,i.get)(this,e)},getProperties(){for(var e=arguments.length,t=new Array(e),r=0;r<e;r++)t[r]=arguments[r]
 return(0,i.getProperties)(this,...t)},set(e,t){return(0,i.set)(this,e,t)},setProperties(e){return(0,i.setProperties)(this,e)},beginPropertyChanges(){return(0,r.beginPropertyChanges)(),this},endPropertyChanges(){return(0,r.endPropertyChanges)(),this},notifyPropertyChange(e){return(0,r.notifyPropertyChange)(this,e),this},addObserver(e,t,i,n){return(0,r.addObserver)(this,e,t,i,n),this},removeObserver(e,t,i,n){return(0,r.removeObserver)(this,e,t,i,n),this},hasObserverFor(e){return(0,r.hasListeners)(this,`${e}:change`)},incrementProperty(e,t){return void 0===t&&(t=1),(0,i.set)(this,e,(parseFloat((0,i.get)(this,e))||0)+t)},decrementProperty(e,t){return void 0===t&&(t=1),(0,i.set)(this,e,((0,i.get)(this,e)||0)-t)},toggleProperty(e){return(0,i.set)(this,e,!(0,i.get)(this,e))},cacheFor(e){var r=(0,t.peekMeta)(this)
@@ -3103,106 +3103,106 @@ var t=setTimeout,r=()=>{}
 function i(e){if("function"==typeof Promise){var r=Promise.resolve()
 return()=>r.then(e)}if("function"==typeof MutationObserver){var i=0,n=new MutationObserver(e),a=document.createTextNode("")
 return n.observe(a,{characterData:!0}),()=>(i=++i%2,a.data=""+i,i)}return()=>t(e,0)}function n(e){var t=r
-return{setTimeout:(e,t)=>setTimeout(e,t),clearTimeout:e=>clearTimeout(e),now:()=>Date.now(),next:i(e),clearNext:t}}var a=/\d+/,s=6
-function o(e){var t=typeof e
-return"number"===t&&e==e||"string"===t&&a.test(e)}function l(e){return e.onError||e.onErrorTarget&&e.onErrorTarget[e.onErrorMethod]}function u(e,t,r){for(var i=-1,n=0,a=r.length;n<a;n+=4)if(r[n]===e&&r[n+1]===t){i=n
-break}return i}function c(e,t,r){for(var i=-1,n=2,a=r.length;n<a;n+=6)if(r[n]===e&&r[n+1]===t){i=n-2
-break}return i}function d(e,t,r){void 0===r&&(r=0)
+return{setTimeout:(e,t)=>setTimeout(e,t),clearTimeout:e=>clearTimeout(e),now:()=>Date.now(),next:i(e),clearNext:t}}var a=/\d+/
+function s(e){var t=typeof e
+return"number"===t&&e==e||"string"===t&&a.test(e)}function o(e){return e.onError||e.onErrorTarget&&e.onErrorTarget[e.onErrorMethod]}function l(e,t,r){for(var i=-1,n=0,a=r.length;n<a;n+=4)if(r[n]===e&&r[n+1]===t){i=n
+break}return i}function u(e,t,r){for(var i=-1,n=2,a=r.length;n<a;n+=6)if(r[n]===e&&r[n+1]===t){i=n-2
+break}return i}function c(e,t,r){void 0===r&&(r=0)
 for(var i=[],n=0;n<e.length;n+=t){var a=e[n+3+r],s={target:e[n+0+r],method:e[n+1+r],args:e[n+2+r],stack:void 0!==a&&"stack"in a?a.stack:""}
-i.push(s)}return i}function h(e,t){for(var r,i,n=0,a=t.length-s;n<a;)e>=t[r=n+(i=(a-n)/s)-i%s]?n=r+s:a=r
-return e>=t[n]?n+s:n}class f{constructor(e,t,r){void 0===t&&(t={}),void 0===r&&(r={}),this._queueBeingFlushed=[],this.targetQueues=new Map,this.index=0,this._queue=[],this.name=e,this.options=t,this.globalOptions=r}stackFor(e){if(e<this._queue.length){var t=this._queue[3*e+4]
+i.push(s)}return i}function d(e,t){for(var r,i,n=0,a=t.length-6;n<a;)e>=t[r=n+(i=(a-n)/6)-i%6]?n=r+6:a=r
+return e>=t[n]?n+6:n}class h{constructor(e,t,r){void 0===t&&(t={}),void 0===r&&(r={}),this._queueBeingFlushed=[],this.targetQueues=new Map,this.index=0,this._queue=[],this.name=e,this.options=t,this.globalOptions=r}stackFor(e){if(e<this._queue.length){var t=this._queue[3*e+4]
 return t?t.stack:null}}flush(e){var t,r,{before:i,after:n}=this.options
 this.targetQueues.clear(),0===this._queueBeingFlushed.length&&(this._queueBeingFlushed=this._queue,this._queue=[]),void 0!==i&&i()
 var a=this._queueBeingFlushed
-if(a.length>0){var s=l(this.globalOptions)
+if(a.length>0){var s=o(this.globalOptions)
 r=s?this.invokeWithOnError:this.invoke
-for(var o=this.index;o<a.length;o+=4)if(this.index+=4,null!==(t=a[o+1])&&r(a[o],t,a[o+2],s,a[o+3]),this.index!==this._queueBeingFlushed.length&&this.globalOptions.mustYield&&this.globalOptions.mustYield())return 1}void 0!==n&&n(),this._queueBeingFlushed.length=0,this.index=0,!1!==e&&this._queue.length>0&&this.flush(!0)}hasWork(){return this._queueBeingFlushed.length>0||this._queue.length>0}cancel(e){var{target:t,method:r}=e,i=this._queue,n=this.targetQueues.get(t)
+for(var l=this.index;l<a.length;l+=4)if(this.index+=4,null!==(t=a[l+1])&&r(a[l],t,a[l+2],s,a[l+3]),this.index!==this._queueBeingFlushed.length&&this.globalOptions.mustYield&&this.globalOptions.mustYield())return 1}void 0!==n&&n(),this._queueBeingFlushed.length=0,this.index=0,!1!==e&&this._queue.length>0&&this.flush(!0)}hasWork(){return this._queueBeingFlushed.length>0||this._queue.length>0}cancel(e){var{target:t,method:r}=e,i=this._queue,n=this.targetQueues.get(t)
 void 0!==n&&n.delete(r)
-var a=u(t,r,i)
-return a>-1?(i.splice(a,4),!0):(a=u(t,r,i=this._queueBeingFlushed))>-1&&(i[a+1]=null,!0)}push(e,t,r,i){return this._queue.push(e,t,r,i),{queue:this,target:e,method:t}}pushUnique(e,t,r,i){var n=this.targetQueues.get(e)
+var a=l(t,r,i)
+return a>-1?(i.splice(a,4),!0):(a=l(t,r,i=this._queueBeingFlushed))>-1&&(i[a+1]=null,!0)}push(e,t,r,i){return this._queue.push(e,t,r,i),{queue:this,target:e,method:t}}pushUnique(e,t,r,i){var n=this.targetQueues.get(e)
 void 0===n&&(n=new Map,this.targetQueues.set(e,n))
 var a=n.get(t)
 if(void 0===a){var s=this._queue.push(e,t,r,i)-4
 n.set(t,s)}else{var o=this._queue
-o[a+2]=r,o[a+3]=i}return{queue:this,target:e,method:t}}_getDebugInfo(e){if(e)return d(this._queue,4)}invoke(e,t,r){void 0===r?t.call(e):t.apply(e,r)}invokeWithOnError(e,t,r,i,n){try{void 0===r?t.call(e):t.apply(e,r)}catch(a){i(a,n)}}}class p{constructor(e,t){void 0===e&&(e=[]),this.queues={},this.queueNameIndex=0,this.queueNames=e,e.reduce((function(e,r){return e[r]=new f(r,t[r],t),e}),this.queues)}schedule(e,t,r,i,n,a){var s=this.queues[e]
+o[a+2]=r,o[a+3]=i}return{queue:this,target:e,method:t}}_getDebugInfo(e){if(e)return c(this._queue,4)}invoke(e,t,r){void 0===r?t.call(e):t.apply(e,r)}invokeWithOnError(e,t,r,i,n){try{void 0===r?t.call(e):t.apply(e,r)}catch(a){i(a,n)}}}class f{constructor(e,t){void 0===e&&(e=[]),this.queues={},this.queueNameIndex=0,this.queueNames=e,e.reduce((function(e,r){return e[r]=new h(r,t[r],t),e}),this.queues)}schedule(e,t,r,i,n,a){var s=this.queues[e]
 if(void 0===s)throw new Error(`You attempted to schedule an action in a queue (${e}) that doesn't exist`)
 if(null==r)throw new Error(`You attempted to schedule an action in a queue (${e}) for a method that doesn't exist`)
 return this.queueNameIndex=0,n?s.pushUnique(t,r,i,a):s.push(t,r,i,a)}flush(e){var t,r
 void 0===e&&(e=!1)
 for(var i=this.queueNames.length;this.queueNameIndex<i;)if(r=this.queueNames[this.queueNameIndex],!1===(t=this.queues[r]).hasWork()){if(this.queueNameIndex++,e&&this.queueNameIndex<i)return 1}else if(1===t.flush(!1))return 1}_getDebugInfo(e){if(e){for(var t,r,i={},n=this.queueNames.length,a=0;a<n;)r=this.queueNames[a],t=this.queues[r],i[r]=t._getDebugInfo(e),a++
-return i}}}function m(e){for(var t=e(),r=t.next();!1===r.done;)r.value(),r=t.next()}var g=function(){},v=Object.freeze([])
-function b(){var e,t,r,i=arguments.length
+return i}}}function p(e){for(var t=e(),r=t.next();!1===r.done;)r.value(),r=t.next()}var m=function(){},g=Object.freeze([])
+function v(){var e,t,r,i=arguments.length
 if(0===i);else if(1===i)r=null,t=arguments[0]
 else{var n=2,a=arguments[0],s=arguments[1],o=typeof s
 if("function"===o?(r=a,t=s):null!==a&&"string"===o&&s in a?t=(r=a)[s]:"function"==typeof a&&(n=1,r=null,t=a),i>n){var l=i-n
 e=new Array(l)
-for(var u=0;u<l;u++)e[u]=arguments[u+n]}}return[r,t,e]}function y(){var e,t,r,i,n
-return 2===arguments.length?(t=arguments[0],n=arguments[1],e=null):([e,t,i]=b(...arguments),void 0===i?n=0:o(n=i.pop())||(r=!0===n,n=i.pop())),[e,t,i,n=parseInt(n,10),r]}var _=0,w=0,E=0,T=0,k=0,S=0,O=0,x=0,P=0,A=0,R=0,C=0,D=0,M=0,I=0,L=0,j=0,F=0,N=0,z=0,U=0
-class B{constructor(e,t){this.DEBUG=!1,this.currentInstance=null,this.instanceStack=[],this._eventCallbacks={end:[],begin:[]},this._timerTimeoutId=null,this._timers=[],this._autorun=!1,this._autorunStack=null,this.queueNames=e,this.options=t||{},"string"==typeof this.options.defaultQueue?this._defaultQueue=this.options.defaultQueue:this._defaultQueue=this.queueNames[0],this._onBegin=this.options.onBegin||g,this._onEnd=this.options.onEnd||g,this._boundRunExpiredTimers=this._runExpiredTimers.bind(this),this._boundAutorunEnd=()=>{N++,!1!==this._autorun&&(this._autorun=!1,this._autorunStack=null,this._end(!0))}
+for(var u=0;u<l;u++)e[u]=arguments[u+n]}}return[r,t,e]}function b(){var e,t,r,i,n
+return 2===arguments.length?(t=arguments[0],n=arguments[1],e=null):([e,t,i]=v(...arguments),void 0===i?n=0:s(n=i.pop())||(r=!0===n,n=i.pop())),[e,t,i,n=parseInt(n,10),r]}var y=0,_=0,w=0,E=0,T=0,k=0,S=0,O=0,x=0,P=0,A=0,R=0,C=0,D=0,M=0,I=0,L=0,j=0,F=0,N=0,z=0
+class U{constructor(e,t){this.DEBUG=!1,this.currentInstance=null,this.instanceStack=[],this._eventCallbacks={end:[],begin:[]},this._timerTimeoutId=null,this._timers=[],this._autorun=!1,this._autorunStack=null,this.queueNames=e,this.options=t||{},"string"==typeof this.options.defaultQueue?this._defaultQueue=this.options.defaultQueue:this._defaultQueue=this.queueNames[0],this._onBegin=this.options.onBegin||m,this._onEnd=this.options.onEnd||m,this._boundRunExpiredTimers=this._runExpiredTimers.bind(this),this._boundAutorunEnd=()=>{F++,!1!==this._autorun&&(this._autorun=!1,this._autorunStack=null,this._end(!0))}
 var r=this.options._buildPlatform||n
-this._platform=r(this._boundAutorunEnd)}get counters(){return{begin:w,end:E,events:{begin:T,end:0},autoruns:{created:F,completed:N},run:k,join:S,defer:O,schedule:x,scheduleIterable:P,deferOnce:A,scheduleOnce:R,setTimeout:C,later:D,throttle:M,debounce:I,cancelTimers:L,cancel:j,loops:{total:z,nested:U}}}get defaultQueue(){return this._defaultQueue}begin(){w++
+this._platform=r(this._boundAutorunEnd)}get counters(){return{begin:_,end:w,events:{begin:E,end:0},autoruns:{created:j,completed:F},run:T,join:k,defer:S,schedule:O,scheduleIterable:x,deferOnce:P,scheduleOnce:A,setTimeout:R,later:C,throttle:D,debounce:M,cancelTimers:I,cancel:L,loops:{total:N,nested:z}}}get defaultQueue(){return this._defaultQueue}begin(){_++
 var e,t=this.options,r=this.currentInstance
-return!1!==this._autorun?(e=r,this._cancelAutorun()):(null!==r&&(U++,this.instanceStack.push(r)),z++,e=this.currentInstance=new p(this.queueNames,t),T++,this._trigger("begin",e,r)),this._onBegin(e,r),e}end(){E++,this._end(!1)}on(e,t){if("function"!=typeof t)throw new TypeError("Callback must be a function")
+return!1!==this._autorun?(e=r,this._cancelAutorun()):(null!==r&&(z++,this.instanceStack.push(r)),N++,e=this.currentInstance=new f(this.queueNames,t),E++,this._trigger("begin",e,r)),this._onBegin(e,r),e}end(){w++,this._end(!1)}on(e,t){if("function"!=typeof t)throw new TypeError("Callback must be a function")
 var r=this._eventCallbacks[e]
 if(void 0===r)throw new TypeError(`Cannot on() event ${e} because it does not exist`)
 r.push(t)}off(e,t){var r=this._eventCallbacks[e]
 if(!e||void 0===r)throw new TypeError(`Cannot off() event ${e} because it does not exist`)
 var i=!1
 if(t)for(var n=0;n<r.length;n++)r[n]===t&&(i=!0,r.splice(n,1),n--)
-if(!i)throw new TypeError("Cannot off() callback that does not exist")}run(){k++
-var[e,t,r]=b(...arguments)
-return this._run(e,t,r)}join(){S++
-var[e,t,r]=b(...arguments)
-return this._join(e,t,r)}defer(e,t,r){O++
+if(!i)throw new TypeError("Cannot off() callback that does not exist")}run(){T++
+var[e,t,r]=v(...arguments)
+return this._run(e,t,r)}join(){k++
+var[e,t,r]=v(...arguments)
+return this._join(e,t,r)}defer(e,t,r){S++
 for(var i=arguments.length,n=new Array(i>3?i-3:0),a=3;a<i;a++)n[a-3]=arguments[a]
-return this.schedule(e,t,r,...n)}schedule(e){x++
+return this.schedule(e,t,r,...n)}schedule(e){O++
 for(var t=arguments.length,r=new Array(t>1?t-1:0),i=1;i<t;i++)r[i-1]=arguments[i]
-var[n,a,s]=b(...r),o=this.DEBUG?new Error:void 0
-return this._ensureInstance().schedule(e,n,a,s,!1,o)}scheduleIterable(e,t){P++
+var[n,a,s]=v(...r),o=this.DEBUG?new Error:void 0
+return this._ensureInstance().schedule(e,n,a,s,!1,o)}scheduleIterable(e,t){x++
 var r=this.DEBUG?new Error:void 0
-return this._ensureInstance().schedule(e,null,m,[t],!1,r)}deferOnce(e,t,r){A++
+return this._ensureInstance().schedule(e,null,p,[t],!1,r)}deferOnce(e,t,r){P++
 for(var i=arguments.length,n=new Array(i>3?i-3:0),a=3;a<i;a++)n[a-3]=arguments[a]
-return this.scheduleOnce(e,t,r,...n)}scheduleOnce(e){R++
+return this.scheduleOnce(e,t,r,...n)}scheduleOnce(e){A++
 for(var t=arguments.length,r=new Array(t>1?t-1:0),i=1;i<t;i++)r[i-1]=arguments[i]
-var[n,a,s]=b(...r),o=this.DEBUG?new Error:void 0
-return this._ensureInstance().schedule(e,n,a,s,!0,o)}setTimeout(){return C++,this.later(...arguments)}later(){D++
-var[e,t,r,i]=function(){var[e,t,r]=b(...arguments),i=0,n=void 0!==r?r.length:0
-return n>0&&o(r[n-1])&&(i=parseInt(r.pop(),10)),[e,t,r,i]}(...arguments)
-return this._later(e,t,r,i)}throttle(){M++
-var e,[t,r,i,n,a=!0]=y(...arguments),s=c(t,r,this._timers)
-if(-1===s)e=this._later(t,r,a?v:i,n),a&&this._join(t,r,i)
+var[n,a,s]=v(...r),o=this.DEBUG?new Error:void 0
+return this._ensureInstance().schedule(e,n,a,s,!0,o)}setTimeout(){return R++,this.later(...arguments)}later(){C++
+var[e,t,r,i]=function(){var[e,t,r]=v(...arguments),i=0,n=void 0!==r?r.length:0
+return n>0&&s(r[n-1])&&(i=parseInt(r.pop(),10)),[e,t,r,i]}(...arguments)
+return this._later(e,t,r,i)}throttle(){D++
+var e,[t,r,i,n,a=!0]=b(...arguments),s=u(t,r,this._timers)
+if(-1===s)e=this._later(t,r,a?g:i,n),a&&this._join(t,r,i)
 else{e=this._timers[s+1]
 var o=s+4
-this._timers[o]!==v&&(this._timers[o]=i)}return e}debounce(){I++
-var e,[t,r,i,n,a=!1]=y(...arguments),o=this._timers,l=c(t,r,o)
-if(-1===l)e=this._later(t,r,a?v:i,n),a&&this._join(t,r,i)
-else{var u=this._platform.now()+n,d=l+4
-o[d]===v&&(i=v),e=o[l+1]
-var f=h(u,o)
-if(l+s===f)o[l]=u,o[d]=i
-else{var p=this._timers[l+5]
-this._timers.splice(f,0,u,e,t,r,i,p),this._timers.splice(l,s)}0===l&&this._reinstallTimerTimeout()}return e}cancelTimers(){L++,this._clearTimerTimeout(),this._timers=[],this._cancelAutorun()}hasTimers(){return this._timers.length>0||this._autorun}cancel(e){if(j++,null==e)return!1
+this._timers[o]!==g&&(this._timers[o]=i)}return e}debounce(){M++
+var e,[t,r,i,n,a=!1]=b(...arguments),s=this._timers,o=u(t,r,s)
+if(-1===o)e=this._later(t,r,a?g:i,n),a&&this._join(t,r,i)
+else{var l=this._platform.now()+n,c=o+4
+s[c]===g&&(i=g),e=s[o+1]
+var h=d(l,s)
+if(o+6===h)s[o]=l,s[c]=i
+else{var f=this._timers[o+5]
+this._timers.splice(h,0,l,e,t,r,i,f),this._timers.splice(o,6)}0===o&&this._reinstallTimerTimeout()}return e}cancelTimers(){I++,this._clearTimerTimeout(),this._timers=[],this._cancelAutorun()}hasTimers(){return this._timers.length>0||this._autorun}cancel(e){if(L++,null==e)return!1
 var t=typeof e
-return"number"===t?this._cancelLaterTimer(e):!("object"!==t||!e.queue||!e.method)&&e.queue.cancel(e)}ensureInstance(){this._ensureInstance()}getDebugInfo(){if(this.DEBUG)return{autorun:this._autorunStack,counters:this.counters,timers:d(this._timers,s,2),instanceStack:[this.currentInstance,...this.instanceStack].map((e=>e&&e._getDebugInfo(this.DEBUG)))}}_end(e){var t=this.currentInstance,r=null
+return"number"===t?this._cancelLaterTimer(e):!("object"!==t||!e.queue||!e.method)&&e.queue.cancel(e)}ensureInstance(){this._ensureInstance()}getDebugInfo(){if(this.DEBUG)return{autorun:this._autorunStack,counters:this.counters,timers:c(this._timers,6,2),instanceStack:[this.currentInstance,...this.instanceStack].map((e=>e&&e._getDebugInfo(this.DEBUG)))}}_end(e){var t=this.currentInstance,r=null
 if(null===t)throw new Error("end called without begin")
 var i,n=!1
 try{i=t.flush(e)}finally{if(!n)if(n=!0,1===i){var a=this.queueNames[t.queueNameIndex]
-this._scheduleAutorun(a)}else this.currentInstance=null,this.instanceStack.length>0&&(r=this.instanceStack.pop(),this.currentInstance=r),this._trigger("end",t,r),this._onEnd(t,r)}}_join(e,t,r){return null===this.currentInstance?this._run(e,t,r):void 0===e&&void 0===r?t():t.apply(e,r)}_run(e,t,r){var i=l(this.options)
-if(this.begin(),i)try{return t.apply(e,r)}catch(n){i(n)}finally{this.end()}else try{return t.apply(e,r)}finally{this.end()}}_cancelAutorun(){this._autorun&&(this._platform.clearNext(),this._autorun=!1,this._autorunStack=null)}_later(e,t,r,i){var n=this.DEBUG?new Error:void 0,a=this._platform.now()+i,s=_++
+this._scheduleAutorun(a)}else this.currentInstance=null,this.instanceStack.length>0&&(r=this.instanceStack.pop(),this.currentInstance=r),this._trigger("end",t,r),this._onEnd(t,r)}}_join(e,t,r){return null===this.currentInstance?this._run(e,t,r):void 0===e&&void 0===r?t():t.apply(e,r)}_run(e,t,r){var i=o(this.options)
+if(this.begin(),i)try{return t.apply(e,r)}catch(n){i(n)}finally{this.end()}else try{return t.apply(e,r)}finally{this.end()}}_cancelAutorun(){this._autorun&&(this._platform.clearNext(),this._autorun=!1,this._autorunStack=null)}_later(e,t,r,i){var n=this.DEBUG?new Error:void 0,a=this._platform.now()+i,s=y++
 if(0===this._timers.length)this._timers.push(a,s,e,t,r,n),this._installTimerTimeout()
-else{var o=h(a,this._timers)
-this._timers.splice(o,0,a,s,e,t,r,n),this._reinstallTimerTimeout()}return s}_cancelLaterTimer(e){for(var t=1;t<this._timers.length;t+=s)if(this._timers[t]===e)return this._timers.splice(t-1,s),1===t&&this._reinstallTimerTimeout(),!0
+else{var o=d(a,this._timers)
+this._timers.splice(o,0,a,s,e,t,r,n),this._reinstallTimerTimeout()}return s}_cancelLaterTimer(e){for(var t=1;t<this._timers.length;t+=6)if(this._timers[t]===e)return this._timers.splice(t-1,6),1===t&&this._reinstallTimerTimeout(),!0
 return!1}_trigger(e,t,r){var i=this._eventCallbacks[e]
-if(void 0!==i)for(var n=0;n<i.length;n++)i[n](t,r)}_runExpiredTimers(){this._timerTimeoutId=null,this._timers.length>0&&(this.begin(),this._scheduleExpiredTimers(),this.end())}_scheduleExpiredTimers(){for(var e=this._timers,t=0,r=e.length,i=this._defaultQueue,n=this._platform.now();t<r;t+=s){if(e[t]>n)break
+if(void 0!==i)for(var n=0;n<i.length;n++)i[n](t,r)}_runExpiredTimers(){this._timerTimeoutId=null,this._timers.length>0&&(this.begin(),this._scheduleExpiredTimers(),this.end())}_scheduleExpiredTimers(){for(var e=this._timers,t=0,r=e.length,i=this._defaultQueue,n=this._platform.now();t<r;t+=6){if(e[t]>n)break
 var a=e[t+4]
-if(a!==v){var o=e[t+2],l=e[t+3],u=e[t+5]
-this.currentInstance.schedule(i,o,l,a,!1,u)}}e.splice(0,t),this._installTimerTimeout()}_reinstallTimerTimeout(){this._clearTimerTimeout(),this._installTimerTimeout()}_clearTimerTimeout(){null!==this._timerTimeoutId&&(this._platform.clearTimeout(this._timerTimeoutId),this._timerTimeoutId=null)}_installTimerTimeout(){if(0!==this._timers.length){var e=this._timers[0],t=this._platform.now(),r=Math.max(0,e-t)
+if(a!==g){var s=e[t+2],o=e[t+3],l=e[t+5]
+this.currentInstance.schedule(i,s,o,a,!1,l)}}e.splice(0,t),this._installTimerTimeout()}_reinstallTimerTimeout(){this._clearTimerTimeout(),this._installTimerTimeout()}_clearTimerTimeout(){null!==this._timerTimeoutId&&(this._platform.clearTimeout(this._timerTimeoutId),this._timerTimeoutId=null)}_installTimerTimeout(){if(0!==this._timers.length){var e=this._timers[0],t=this._platform.now(),r=Math.max(0,e-t)
 this._timerTimeoutId=this._platform.setTimeout(this._boundRunExpiredTimers,r)}}_ensureInstance(){var e=this.currentInstance
-return null===e&&(this._autorunStack=this.DEBUG?new Error:void 0,e=this.begin(),this._scheduleAutorun(this.queueNames[0])),e}_scheduleAutorun(e){F++
+return null===e&&(this._autorunStack=this.DEBUG?new Error:void 0,e=this.begin(),this._scheduleAutorun(this.queueNames[0])),e}_scheduleAutorun(e){j++
 var t=this._platform.next,r=this.options.flush
-r?r(e,t):t(),this._autorun=!0}}B.Queue=f,B.buildPlatform=n,B.buildNext=i
-var H=B
-e.default=H})),e("dag-map",["exports"],(function(e){"use strict"
+r?r(e,t):t(),this._autorun=!0}}U.Queue=h,U.buildPlatform=n,U.buildNext=i
+var B=U
+e.default=B})),e("dag-map",["exports"],(function(e){"use strict"
 Object.defineProperty(e,"__esModule",{value:!0}),e.default=void 0
 var t=function(){function e(){this._vertices=new r}return e.prototype.add=function(e,t,r,i){if(!e)throw new Error("argument `key` is required")
 var n=this._vertices,a=n.add(e)
@@ -3264,7 +3264,7 @@ return i.Adapter=n,i.QUnitAdapter=a,Object.defineProperty(re,"Test",{configurabl
 var le=re
 t.default=le})),e("ember/version",["exports"],(function(e){"use strict"
 Object.defineProperty(e,"__esModule",{value:!0}),e.default=void 0
-e.default="4.8.4"})),e("route-recognizer",["exports"],(function(e){"use strict"
+e.default="4.8.5"})),e("route-recognizer",["exports"],(function(e){"use strict"
 Object.defineProperty(e,"__esModule",{value:!0}),e.default=void 0
 var t=Object.create
 function r(){var e=t(null)
@@ -3885,7 +3885,7 @@ var r=e[Symbol.toPrimitive]
 if(void 0!==r){var i=r.call(e,"string")
 if("object"!=typeof i)return i
 throw new TypeError("@@toPrimitive must return a primitive value.")}return String(e)}(e)
-return"symbol"==typeof t?t:String(t)}var g={}
+return"symbol"==typeof t?t:String(t)}var g={exports:{}}
 !function(e,t){var r,i,n,a,s
 r=/^(?=((?:[a-zA-Z0-9+\-.]+:)?))\1(?=((?:\/\/[^\/?#]*)?))\2(?=((?:(?:[^?#\/]*\/)*[^;?#\/]*)?))\3((?:;[^?#]*)?)(\?[^#]*)?(#[^]*)?$/,i=/^(?=([^\/?#]*))\1([^]*)$/,n=/(?:\/|^)\.(?=\/)/g,a=/(?:\/|^)\.\.\/(?!\.\.\/)[^\/]*(?=\/)/g,s={buildAbsoluteURL:function(e,t,r){if(r=r||{},e=e.trim(),!(t=t.trim())){if(!r.alwaysNormalize)return e
 var n=s.parseURL(e)
@@ -3901,87 +3901,87 @@ var u={scheme:o.scheme,netLoc:a.netLoc,path:null,params:a.params,query:a.query,f
 if(!a.netLoc&&(u.netLoc=o.netLoc,"/"!==a.path[0]))if(a.path){var c=o.path,d=c.substring(0,c.lastIndexOf("/")+1)+a.path
 u.path=s.normalizePath(d)}else u.path=o.path,a.params||(u.params=o.params,a.query||(u.query=o.query))
 return null===u.path&&(u.path=r.alwaysNormalize?s.normalizePath(a.path):a.path),s.buildURLFromParts(u)},parseURL:function(e){var t=r.exec(e)
-return t?{scheme:t[1]||"",netLoc:t[2]||"",path:t[3]||"",params:t[4]||"",query:t[5]||"",fragment:t[6]||""}:null},normalizePath:function(e){for(e=e.split("").reverse().join("").replace(n,"");e.length!==(e=e.replace(a,"")).length;);return e.split("").reverse().join("")},buildURLFromParts:function(e){return e.scheme+e.netLoc+e.path+e.params+e.query+e.fragment}},e.exports=s}({get exports(){return g},set exports(e){g=e}})
-var v=Number.isFinite||function(e){return"number"==typeof e&&isFinite(e)},b=function(e){return e.MEDIA_ATTACHING="hlsMediaAttaching",e.MEDIA_ATTACHED="hlsMediaAttached",e.MEDIA_DETACHING="hlsMediaDetaching",e.MEDIA_DETACHED="hlsMediaDetached",e.BUFFER_RESET="hlsBufferReset",e.BUFFER_CODECS="hlsBufferCodecs",e.BUFFER_CREATED="hlsBufferCreated",e.BUFFER_APPENDING="hlsBufferAppending",e.BUFFER_APPENDED="hlsBufferAppended",e.BUFFER_EOS="hlsBufferEos",e.BUFFER_FLUSHING="hlsBufferFlushing",e.BUFFER_FLUSHED="hlsBufferFlushed",e.MANIFEST_LOADING="hlsManifestLoading",e.MANIFEST_LOADED="hlsManifestLoaded",e.MANIFEST_PARSED="hlsManifestParsed",e.LEVEL_SWITCHING="hlsLevelSwitching",e.LEVEL_SWITCHED="hlsLevelSwitched",e.LEVEL_LOADING="hlsLevelLoading",e.LEVEL_LOADED="hlsLevelLoaded",e.LEVEL_UPDATED="hlsLevelUpdated",e.LEVEL_PTS_UPDATED="hlsLevelPtsUpdated",e.LEVELS_UPDATED="hlsLevelsUpdated",e.AUDIO_TRACKS_UPDATED="hlsAudioTracksUpdated",e.AUDIO_TRACK_SWITCHING="hlsAudioTrackSwitching",e.AUDIO_TRACK_SWITCHED="hlsAudioTrackSwitched",e.AUDIO_TRACK_LOADING="hlsAudioTrackLoading",e.AUDIO_TRACK_LOADED="hlsAudioTrackLoaded",e.SUBTITLE_TRACKS_UPDATED="hlsSubtitleTracksUpdated",e.SUBTITLE_TRACKS_CLEARED="hlsSubtitleTracksCleared",e.SUBTITLE_TRACK_SWITCH="hlsSubtitleTrackSwitch",e.SUBTITLE_TRACK_LOADING="hlsSubtitleTrackLoading",e.SUBTITLE_TRACK_LOADED="hlsSubtitleTrackLoaded",e.SUBTITLE_FRAG_PROCESSED="hlsSubtitleFragProcessed",e.CUES_PARSED="hlsCuesParsed",e.NON_NATIVE_TEXT_TRACKS_FOUND="hlsNonNativeTextTracksFound",e.INIT_PTS_FOUND="hlsInitPtsFound",e.FRAG_LOADING="hlsFragLoading",e.FRAG_LOAD_EMERGENCY_ABORTED="hlsFragLoadEmergencyAborted",e.FRAG_LOADED="hlsFragLoaded",e.FRAG_DECRYPTED="hlsFragDecrypted",e.FRAG_PARSING_INIT_SEGMENT="hlsFragParsingInitSegment",e.FRAG_PARSING_USERDATA="hlsFragParsingUserdata",e.FRAG_PARSING_METADATA="hlsFragParsingMetadata",e.FRAG_PARSED="hlsFragParsed",e.FRAG_BUFFERED="hlsFragBuffered",e.FRAG_CHANGED="hlsFragChanged",e.FPS_DROP="hlsFpsDrop",e.FPS_DROP_LEVEL_CAPPING="hlsFpsDropLevelCapping",e.ERROR="hlsError",e.DESTROYING="hlsDestroying",e.KEY_LOADING="hlsKeyLoading",e.KEY_LOADED="hlsKeyLoaded",e.LIVE_BACK_BUFFER_REACHED="hlsLiveBackBufferReached",e.BACK_BUFFER_REACHED="hlsBackBufferReached",e}({}),y=function(e){return e.NETWORK_ERROR="networkError",e.MEDIA_ERROR="mediaError",e.KEY_SYSTEM_ERROR="keySystemError",e.MUX_ERROR="muxError",e.OTHER_ERROR="otherError",e}({}),_=function(e){return e.KEY_SYSTEM_NO_KEYS="keySystemNoKeys",e.KEY_SYSTEM_NO_ACCESS="keySystemNoAccess",e.KEY_SYSTEM_NO_SESSION="keySystemNoSession",e.KEY_SYSTEM_NO_CONFIGURED_LICENSE="keySystemNoConfiguredLicense",e.KEY_SYSTEM_LICENSE_REQUEST_FAILED="keySystemLicenseRequestFailed",e.KEY_SYSTEM_SERVER_CERTIFICATE_REQUEST_FAILED="keySystemServerCertificateRequestFailed",e.KEY_SYSTEM_SERVER_CERTIFICATE_UPDATE_FAILED="keySystemServerCertificateUpdateFailed",e.KEY_SYSTEM_SESSION_UPDATE_FAILED="keySystemSessionUpdateFailed",e.KEY_SYSTEM_STATUS_OUTPUT_RESTRICTED="keySystemStatusOutputRestricted",e.KEY_SYSTEM_STATUS_INTERNAL_ERROR="keySystemStatusInternalError",e.MANIFEST_LOAD_ERROR="manifestLoadError",e.MANIFEST_LOAD_TIMEOUT="manifestLoadTimeOut",e.MANIFEST_PARSING_ERROR="manifestParsingError",e.MANIFEST_INCOMPATIBLE_CODECS_ERROR="manifestIncompatibleCodecsError",e.LEVEL_EMPTY_ERROR="levelEmptyError",e.LEVEL_LOAD_ERROR="levelLoadError",e.LEVEL_LOAD_TIMEOUT="levelLoadTimeOut",e.LEVEL_PARSING_ERROR="levelParsingError",e.LEVEL_SWITCH_ERROR="levelSwitchError",e.AUDIO_TRACK_LOAD_ERROR="audioTrackLoadError",e.AUDIO_TRACK_LOAD_TIMEOUT="audioTrackLoadTimeOut",e.SUBTITLE_LOAD_ERROR="subtitleTrackLoadError",e.SUBTITLE_TRACK_LOAD_TIMEOUT="subtitleTrackLoadTimeOut",e.FRAG_LOAD_ERROR="fragLoadError",e.FRAG_LOAD_TIMEOUT="fragLoadTimeOut",e.FRAG_DECRYPT_ERROR="fragDecryptError",e.FRAG_PARSING_ERROR="fragParsingError",e.FRAG_GAP="fragGap",e.REMUX_ALLOC_ERROR="remuxAllocError",e.KEY_LOAD_ERROR="keyLoadError",e.KEY_LOAD_TIMEOUT="keyLoadTimeOut",e.BUFFER_ADD_CODEC_ERROR="bufferAddCodecError",e.BUFFER_INCOMPATIBLE_CODECS_ERROR="bufferIncompatibleCodecsError",e.BUFFER_APPEND_ERROR="bufferAppendError",e.BUFFER_APPENDING_ERROR="bufferAppendingError",e.BUFFER_STALLED_ERROR="bufferStalledError",e.BUFFER_FULL_ERROR="bufferFullError",e.BUFFER_SEEK_OVER_HOLE="bufferSeekOverHole",e.BUFFER_NUDGE_ON_STALL="bufferNudgeOnStall",e.INTERNAL_EXCEPTION="internalException",e.INTERNAL_ABORTED="aborted",e.UNKNOWN="unknown",e}({}),w=function(){},E={trace:w,debug:w,log:w,warn:w,info:w,error:w},T=E
-function k(e,t){if(self.console&&!0===e||"object"==typeof e){!function(e){for(var t=arguments.length,r=new Array(t>1?t-1:0),i=1;i<t;i++)r[i-1]=arguments[i]
-r.forEach((function(t){T[t]=e[t]?e[t].bind(e):function(e){var t=self.console[e]
-return t?t.bind(self.console,"["+e+"] >"):w}(t)}))}(e,"debug","log","info","warn","error")
-try{T.log('Debug logs enabled for "'+t+'" in hls.js version 1.4.0')}catch(e){T=E}}else T=E}var S=T,O=/^(\d+)x(\d+)$/,x=/(.+?)=(".*?"|.*?)(?:,|$)/g,P=function(){function e(t){for(var r in"string"==typeof t&&(t=e.parseAttrList(t)),t)t.hasOwnProperty(r)&&("X-"===r.substring(0,2)&&(this.clientAttrs=this.clientAttrs||[],this.clientAttrs.push(r)),this[r]=t[r])}var t=e.prototype
+return t?{scheme:t[1]||"",netLoc:t[2]||"",path:t[3]||"",params:t[4]||"",query:t[5]||"",fragment:t[6]||""}:null},normalizePath:function(e){for(e=e.split("").reverse().join("").replace(n,"");e.length!==(e=e.replace(a,"")).length;);return e.split("").reverse().join("")},buildURLFromParts:function(e){return e.scheme+e.netLoc+e.path+e.params+e.query+e.fragment}},e.exports=s}(g)
+var v=g.exports,b=Number.isFinite||function(e){return"number"==typeof e&&isFinite(e)},y=function(e){return e.MEDIA_ATTACHING="hlsMediaAttaching",e.MEDIA_ATTACHED="hlsMediaAttached",e.MEDIA_DETACHING="hlsMediaDetaching",e.MEDIA_DETACHED="hlsMediaDetached",e.BUFFER_RESET="hlsBufferReset",e.BUFFER_CODECS="hlsBufferCodecs",e.BUFFER_CREATED="hlsBufferCreated",e.BUFFER_APPENDING="hlsBufferAppending",e.BUFFER_APPENDED="hlsBufferAppended",e.BUFFER_EOS="hlsBufferEos",e.BUFFER_FLUSHING="hlsBufferFlushing",e.BUFFER_FLUSHED="hlsBufferFlushed",e.MANIFEST_LOADING="hlsManifestLoading",e.MANIFEST_LOADED="hlsManifestLoaded",e.MANIFEST_PARSED="hlsManifestParsed",e.LEVEL_SWITCHING="hlsLevelSwitching",e.LEVEL_SWITCHED="hlsLevelSwitched",e.LEVEL_LOADING="hlsLevelLoading",e.LEVEL_LOADED="hlsLevelLoaded",e.LEVEL_UPDATED="hlsLevelUpdated",e.LEVEL_PTS_UPDATED="hlsLevelPtsUpdated",e.LEVELS_UPDATED="hlsLevelsUpdated",e.AUDIO_TRACKS_UPDATED="hlsAudioTracksUpdated",e.AUDIO_TRACK_SWITCHING="hlsAudioTrackSwitching",e.AUDIO_TRACK_SWITCHED="hlsAudioTrackSwitched",e.AUDIO_TRACK_LOADING="hlsAudioTrackLoading",e.AUDIO_TRACK_LOADED="hlsAudioTrackLoaded",e.SUBTITLE_TRACKS_UPDATED="hlsSubtitleTracksUpdated",e.SUBTITLE_TRACKS_CLEARED="hlsSubtitleTracksCleared",e.SUBTITLE_TRACK_SWITCH="hlsSubtitleTrackSwitch",e.SUBTITLE_TRACK_LOADING="hlsSubtitleTrackLoading",e.SUBTITLE_TRACK_LOADED="hlsSubtitleTrackLoaded",e.SUBTITLE_FRAG_PROCESSED="hlsSubtitleFragProcessed",e.CUES_PARSED="hlsCuesParsed",e.NON_NATIVE_TEXT_TRACKS_FOUND="hlsNonNativeTextTracksFound",e.INIT_PTS_FOUND="hlsInitPtsFound",e.FRAG_LOADING="hlsFragLoading",e.FRAG_LOAD_EMERGENCY_ABORTED="hlsFragLoadEmergencyAborted",e.FRAG_LOADED="hlsFragLoaded",e.FRAG_DECRYPTED="hlsFragDecrypted",e.FRAG_PARSING_INIT_SEGMENT="hlsFragParsingInitSegment",e.FRAG_PARSING_USERDATA="hlsFragParsingUserdata",e.FRAG_PARSING_METADATA="hlsFragParsingMetadata",e.FRAG_PARSED="hlsFragParsed",e.FRAG_BUFFERED="hlsFragBuffered",e.FRAG_CHANGED="hlsFragChanged",e.FPS_DROP="hlsFpsDrop",e.FPS_DROP_LEVEL_CAPPING="hlsFpsDropLevelCapping",e.ERROR="hlsError",e.DESTROYING="hlsDestroying",e.KEY_LOADING="hlsKeyLoading",e.KEY_LOADED="hlsKeyLoaded",e.LIVE_BACK_BUFFER_REACHED="hlsLiveBackBufferReached",e.BACK_BUFFER_REACHED="hlsBackBufferReached",e}({}),_=function(e){return e.NETWORK_ERROR="networkError",e.MEDIA_ERROR="mediaError",e.KEY_SYSTEM_ERROR="keySystemError",e.MUX_ERROR="muxError",e.OTHER_ERROR="otherError",e}({}),w=function(e){return e.KEY_SYSTEM_NO_KEYS="keySystemNoKeys",e.KEY_SYSTEM_NO_ACCESS="keySystemNoAccess",e.KEY_SYSTEM_NO_SESSION="keySystemNoSession",e.KEY_SYSTEM_NO_CONFIGURED_LICENSE="keySystemNoConfiguredLicense",e.KEY_SYSTEM_LICENSE_REQUEST_FAILED="keySystemLicenseRequestFailed",e.KEY_SYSTEM_SERVER_CERTIFICATE_REQUEST_FAILED="keySystemServerCertificateRequestFailed",e.KEY_SYSTEM_SERVER_CERTIFICATE_UPDATE_FAILED="keySystemServerCertificateUpdateFailed",e.KEY_SYSTEM_SESSION_UPDATE_FAILED="keySystemSessionUpdateFailed",e.KEY_SYSTEM_STATUS_OUTPUT_RESTRICTED="keySystemStatusOutputRestricted",e.KEY_SYSTEM_STATUS_INTERNAL_ERROR="keySystemStatusInternalError",e.MANIFEST_LOAD_ERROR="manifestLoadError",e.MANIFEST_LOAD_TIMEOUT="manifestLoadTimeOut",e.MANIFEST_PARSING_ERROR="manifestParsingError",e.MANIFEST_INCOMPATIBLE_CODECS_ERROR="manifestIncompatibleCodecsError",e.LEVEL_EMPTY_ERROR="levelEmptyError",e.LEVEL_LOAD_ERROR="levelLoadError",e.LEVEL_LOAD_TIMEOUT="levelLoadTimeOut",e.LEVEL_PARSING_ERROR="levelParsingError",e.LEVEL_SWITCH_ERROR="levelSwitchError",e.AUDIO_TRACK_LOAD_ERROR="audioTrackLoadError",e.AUDIO_TRACK_LOAD_TIMEOUT="audioTrackLoadTimeOut",e.SUBTITLE_LOAD_ERROR="subtitleTrackLoadError",e.SUBTITLE_TRACK_LOAD_TIMEOUT="subtitleTrackLoadTimeOut",e.FRAG_LOAD_ERROR="fragLoadError",e.FRAG_LOAD_TIMEOUT="fragLoadTimeOut",e.FRAG_DECRYPT_ERROR="fragDecryptError",e.FRAG_PARSING_ERROR="fragParsingError",e.FRAG_GAP="fragGap",e.REMUX_ALLOC_ERROR="remuxAllocError",e.KEY_LOAD_ERROR="keyLoadError",e.KEY_LOAD_TIMEOUT="keyLoadTimeOut",e.BUFFER_ADD_CODEC_ERROR="bufferAddCodecError",e.BUFFER_INCOMPATIBLE_CODECS_ERROR="bufferIncompatibleCodecsError",e.BUFFER_APPEND_ERROR="bufferAppendError",e.BUFFER_APPENDING_ERROR="bufferAppendingError",e.BUFFER_STALLED_ERROR="bufferStalledError",e.BUFFER_FULL_ERROR="bufferFullError",e.BUFFER_SEEK_OVER_HOLE="bufferSeekOverHole",e.BUFFER_NUDGE_ON_STALL="bufferNudgeOnStall",e.INTERNAL_EXCEPTION="internalException",e.INTERNAL_ABORTED="aborted",e.UNKNOWN="unknown",e}({}),E=function(){},T={trace:E,debug:E,log:E,warn:E,info:E,error:E},k=T
+function S(e,t){if(self.console&&!0===e||"object"==typeof e){!function(e){for(var t=arguments.length,r=new Array(t>1?t-1:0),i=1;i<t;i++)r[i-1]=arguments[i]
+r.forEach((function(t){k[t]=e[t]?e[t].bind(e):function(e){var t=self.console[e]
+return t?t.bind(self.console,"["+e+"] >"):E}(t)}))}(e,"debug","log","info","warn","error")
+try{k.log('Debug logs enabled for "'+t+'" in hls.js version 1.4.3')}catch(e){k=T}}else k=T}var O=k,x=/^(\d+)x(\d+)$/,P=/(.+?)=(".*?"|.*?)(?:,|$)/g,A=function(){function e(t){for(var r in"string"==typeof t&&(t=e.parseAttrList(t)),t)t.hasOwnProperty(r)&&("X-"===r.substring(0,2)&&(this.clientAttrs=this.clientAttrs||[],this.clientAttrs.push(r)),this[r]=t[r])}var t=e.prototype
 return t.decimalInteger=function(e){var t=parseInt(this[e],10)
 return t>Number.MAX_SAFE_INTEGER?1/0:t},t.hexadecimalInteger=function(e){if(this[e]){var t=(this[e]||"0x").slice(2)
 t=(1&t.length?"0":"")+t
 for(var r=new Uint8Array(t.length/2),i=0;i<t.length/2;i++)r[i]=parseInt(t.slice(2*i,2*i+2),16)
 return r}return null},t.hexadecimalIntegerAsNumber=function(e){var t=parseInt(this[e],16)
 return t>Number.MAX_SAFE_INTEGER?1/0:t},t.decimalFloatingPoint=function(e){return parseFloat(this[e])},t.optionalFloat=function(e,t){var r=this[e]
-return r?parseFloat(r):t},t.enumeratedString=function(e){return this[e]},t.bool=function(e){return"YES"===this[e]},t.decimalResolution=function(e){var t=O.exec(this[e])
+return r?parseFloat(r):t},t.enumeratedString=function(e){return this[e]},t.bool=function(e){return"YES"===this[e]},t.decimalResolution=function(e){var t=x.exec(this[e])
 if(null!==t)return{width:parseInt(t[1],10),height:parseInt(t[2],10)}},e.parseAttrList=function(e){var t,r={}
-for(x.lastIndex=0;null!==(t=x.exec(e));){var i=t[2]
+for(P.lastIndex=0;null!==(t=P.exec(e));){var i=t[2]
 0===i.indexOf('"')&&i.lastIndexOf('"')===i.length-1&&(i=i.slice(1,-1)),r[t[1].trim()]=i}return r},e}()
-function A(e){return"SCTE35-OUT"===e||"SCTE35-IN"===e}var R=function(){function e(e,t){if(this.attr=void 0,this._startDate=void 0,this._endDate=void 0,this._badValueForSameId=void 0,t){var r=t.attr
-for(var i in r)if(Object.prototype.hasOwnProperty.call(e,i)&&e[i]!==r[i]){S.warn('DATERANGE tag attribute: "'+i+'" does not match for tags with ID: "'+e.ID+'"'),this._badValueForSameId=i
-break}e=o(new P({}),r,e)}if(this.attr=e,this._startDate=new Date(e["START-DATE"]),"END-DATE"in this.attr){var n=new Date(this.attr["END-DATE"])
-v(n.getTime())&&(this._endDate=n)}}return a(e,[{key:"id",get:function(){return this.attr.ID}},{key:"class",get:function(){return this.attr.CLASS}},{key:"startDate",get:function(){return this._startDate}},{key:"endDate",get:function(){if(this._endDate)return this._endDate
+function R(e){return"SCTE35-OUT"===e||"SCTE35-IN"===e}var C=function(){function e(e,t){if(this.attr=void 0,this._startDate=void 0,this._endDate=void 0,this._badValueForSameId=void 0,t){var r=t.attr
+for(var i in r)if(Object.prototype.hasOwnProperty.call(e,i)&&e[i]!==r[i]){O.warn('DATERANGE tag attribute: "'+i+'" does not match for tags with ID: "'+e.ID+'"'),this._badValueForSameId=i
+break}e=o(new A({}),r,e)}if(this.attr=e,this._startDate=new Date(e["START-DATE"]),"END-DATE"in this.attr){var n=new Date(this.attr["END-DATE"])
+b(n.getTime())&&(this._endDate=n)}}return a(e,[{key:"id",get:function(){return this.attr.ID}},{key:"class",get:function(){return this.attr.CLASS}},{key:"startDate",get:function(){return this._startDate}},{key:"endDate",get:function(){if(this._endDate)return this._endDate
 var e=this.duration
 return null!==e?new Date(this._startDate.getTime()+1e3*e):null}},{key:"duration",get:function(){if("DURATION"in this.attr){var e=this.attr.decimalFloatingPoint("DURATION")
-if(v(e))return e}else if(this._endDate)return(this._endDate.getTime()-this._startDate.getTime())/1e3
-return null}},{key:"plannedDuration",get:function(){return"PLANNED-DURATION"in this.attr?this.attr.decimalFloatingPoint("PLANNED-DURATION"):null}},{key:"endOnNext",get:function(){return this.attr.bool("END-ON-NEXT")}},{key:"isValid",get:function(){return!!this.id&&!this._badValueForSameId&&v(this.startDate.getTime())&&(null===this.duration||this.duration>=0)&&(!this.endOnNext||!!this.class)}}]),e}(),C=function(){this.aborted=!1,this.loaded=0,this.retry=0,this.total=0,this.chunkCount=0,this.bwEstimate=0,this.loading={start:0,first:0,end:0},this.parsing={start:0,end:0},this.buffering={start:0,first:0,end:0}},D="audio",M="video",I="audiovideo",L=function(){function e(e){var t
-this._byteRange=null,this._url=null,this.baseurl=void 0,this.relurl=void 0,this.elementaryStreams=((t={})[D]=null,t[M]=null,t[I]=null,t),this.baseurl=e}return e.prototype.setByteRange=function(e,t){var r=e.split("@",2),i=[]
-1===r.length?i[0]=t?t.byteRangeEndOffset:0:i[0]=parseInt(r[1]),i[1]=parseInt(r[0])+i[0],this._byteRange=i},a(e,[{key:"byteRange",get:function(){return this._byteRange?this._byteRange:[]}},{key:"byteRangeStartOffset",get:function(){return this.byteRange[0]}},{key:"byteRangeEndOffset",get:function(){return this.byteRange[1]}},{key:"url",get:function(){return!this._url&&this.baseurl&&this.relurl&&(this._url=g.buildAbsoluteURL(this.baseurl,this.relurl,{alwaysNormalize:!0})),this._url||""},set:function(e){this._url=e}}]),e}(),j=function(e){function t(t,r){var i
-return(i=e.call(this,r)||this)._decryptdata=null,i.rawProgramDateTime=null,i.programDateTime=null,i.tagList=[],i.duration=0,i.sn=0,i.levelkeys=void 0,i.type=void 0,i.loader=null,i.keyLoader=null,i.level=-1,i.cc=0,i.startPTS=void 0,i.endPTS=void 0,i.startDTS=void 0,i.endDTS=void 0,i.start=0,i.deltaPTS=void 0,i.maxStartPTS=void 0,i.minEndPTS=void 0,i.stats=new C,i.urlId=0,i.data=void 0,i.bitrateTest=!1,i.title=null,i.initSegment=null,i.endList=void 0,i.gap=void 0,i.type=t,i}l(t,e)
+if(b(e))return e}else if(this._endDate)return(this._endDate.getTime()-this._startDate.getTime())/1e3
+return null}},{key:"plannedDuration",get:function(){return"PLANNED-DURATION"in this.attr?this.attr.decimalFloatingPoint("PLANNED-DURATION"):null}},{key:"endOnNext",get:function(){return this.attr.bool("END-ON-NEXT")}},{key:"isValid",get:function(){return!!this.id&&!this._badValueForSameId&&b(this.startDate.getTime())&&(null===this.duration||this.duration>=0)&&(!this.endOnNext||!!this.class)}}]),e}(),D=function(){this.aborted=!1,this.loaded=0,this.retry=0,this.total=0,this.chunkCount=0,this.bwEstimate=0,this.loading={start:0,first:0,end:0},this.parsing={start:0,end:0},this.buffering={start:0,first:0,end:0}},M="audio",I="video",L="audiovideo",j=function(){function e(e){var t
+this._byteRange=null,this._url=null,this.baseurl=void 0,this.relurl=void 0,this.elementaryStreams=((t={})[M]=null,t[I]=null,t[L]=null,t),this.baseurl=e}return e.prototype.setByteRange=function(e,t){var r=e.split("@",2),i=[]
+1===r.length?i[0]=t?t.byteRangeEndOffset:0:i[0]=parseInt(r[1]),i[1]=parseInt(r[0])+i[0],this._byteRange=i},a(e,[{key:"byteRange",get:function(){return this._byteRange?this._byteRange:[]}},{key:"byteRangeStartOffset",get:function(){return this.byteRange[0]}},{key:"byteRangeEndOffset",get:function(){return this.byteRange[1]}},{key:"url",get:function(){return!this._url&&this.baseurl&&this.relurl&&(this._url=v.buildAbsoluteURL(this.baseurl,this.relurl,{alwaysNormalize:!0})),this._url||""},set:function(e){this._url=e}}]),e}(),F=function(e){function t(t,r){var i
+return(i=e.call(this,r)||this)._decryptdata=null,i.rawProgramDateTime=null,i.programDateTime=null,i.tagList=[],i.duration=0,i.sn=0,i.levelkeys=void 0,i.type=void 0,i.loader=null,i.keyLoader=null,i.level=-1,i.cc=0,i.startPTS=void 0,i.endPTS=void 0,i.startDTS=void 0,i.endDTS=void 0,i.start=0,i.deltaPTS=void 0,i.maxStartPTS=void 0,i.minEndPTS=void 0,i.stats=new D,i.urlId=0,i.data=void 0,i.bitrateTest=!1,i.title=null,i.initSegment=null,i.endList=void 0,i.gap=void 0,i.type=t,i}l(t,e)
 var r=t.prototype
 return r.setKeyFormat=function(e){if(this.levelkeys){var t=this.levelkeys[e]
 t&&!this._decryptdata&&(this._decryptdata=t.getDecryptData(this.sn))}},r.abortRequests=function(){var e,t
 null==(e=this.loader)||e.abort(),null==(t=this.keyLoader)||t.abort()},r.setElementaryStreamInfo=function(e,t,r,i,n,a){void 0===a&&(a=!1)
 var s=this.elementaryStreams,o=s[e]
 o?(o.startPTS=Math.min(o.startPTS,t),o.endPTS=Math.max(o.endPTS,r),o.startDTS=Math.min(o.startDTS,i),o.endDTS=Math.max(o.endDTS,n)):s[e]={startPTS:t,endPTS:r,startDTS:i,endDTS:n,partial:a}},r.clearElementaryStreamInfo=function(){var e=this.elementaryStreams
-e[D]=null,e[M]=null,e[I]=null},a(t,[{key:"decryptdata",get:function(){if(!this.levelkeys&&!this._decryptdata)return null
+e[M]=null,e[I]=null,e[L]=null},a(t,[{key:"decryptdata",get:function(){if(!this.levelkeys&&!this._decryptdata)return null
 if(!this._decryptdata&&this.levelkeys&&!this.levelkeys.NONE){var e=this.levelkeys.identity
 if(e)this._decryptdata=e.getDecryptData(this.sn)
 else{var t=Object.keys(this.levelkeys)
 if(1===t.length)return this._decryptdata=this.levelkeys[t[0]].getDecryptData(this.sn)}}return this._decryptdata}},{key:"end",get:function(){return this.start+this.duration}},{key:"endProgramDateTime",get:function(){if(null===this.programDateTime)return null
-if(!v(this.programDateTime))return null
-var e=v(this.duration)?this.duration:0
+if(!b(this.programDateTime))return null
+var e=b(this.duration)?this.duration:0
 return this.programDateTime+1e3*e}},{key:"encrypted",get:function(){var e
 if(null!=(e=this._decryptdata)&&e.encrypted)return!0
 if(this.levelkeys){var t=Object.keys(this.levelkeys),r=t.length
-if(r>1||1===r&&this.levelkeys[t[0]].encrypted)return!0}return!1}}]),t}(L),F=function(e){function t(t,r,i,n,a){var s;(s=e.call(this,i)||this).fragOffset=0,s.duration=0,s.gap=!1,s.independent=!1,s.relurl=void 0,s.fragment=void 0,s.index=void 0,s.stats=new C,s.duration=t.decimalFloatingPoint("DURATION"),s.gap=t.bool("GAP"),s.independent=t.bool("INDEPENDENT"),s.relurl=t.enumeratedString("URI"),s.fragment=r,s.index=n
+if(r>1||1===r&&this.levelkeys[t[0]].encrypted)return!0}return!1}}]),t}(j),N=function(e){function t(t,r,i,n,a){var s;(s=e.call(this,i)||this).fragOffset=0,s.duration=0,s.gap=!1,s.independent=!1,s.relurl=void 0,s.fragment=void 0,s.index=void 0,s.stats=new D,s.duration=t.decimalFloatingPoint("DURATION"),s.gap=t.bool("GAP"),s.independent=t.bool("INDEPENDENT"),s.relurl=t.enumeratedString("URI"),s.fragment=r,s.index=n
 var o=t.enumeratedString("BYTERANGE")
 return o&&s.setByteRange(o,a),a&&(s.fragOffset=a.fragOffset+a.duration),s}return l(t,e),a(t,[{key:"start",get:function(){return this.fragment.start+this.fragOffset}},{key:"end",get:function(){return this.start+this.duration}},{key:"loaded",get:function(){var e=this.elementaryStreams
-return!!(e.audio||e.video||e.audiovideo)}}]),t}(L),N=function(){function e(e){this.PTSKnown=!1,this.alignedSliding=!1,this.averagetargetduration=void 0,this.endCC=0,this.endSN=0,this.fragments=void 0,this.fragmentHint=void 0,this.partList=null,this.dateRanges=void 0,this.live=!0,this.ageHeader=0,this.advancedDateTime=void 0,this.updated=!0,this.advanced=!0,this.availabilityDelay=void 0,this.misses=0,this.startCC=0,this.startSN=0,this.startTimeOffset=null,this.targetduration=0,this.totalduration=0,this.type=null,this.url=void 0,this.m3u8="",this.version=null,this.canBlockReload=!1,this.canSkipUntil=0,this.canSkipDateRanges=!1,this.skippedSegments=0,this.recentlyRemovedDateranges=void 0,this.partHoldBack=0,this.holdBack=0,this.partTarget=0,this.preloadHint=void 0,this.renditionReports=void 0,this.tuneInGoal=0,this.deltaUpdateFailed=void 0,this.driftStartTime=0,this.driftEndTime=0,this.driftStart=0,this.driftEnd=0,this.encryptedFragments=void 0,this.playlistParsingError=null,this.variableList=null,this.hasVariableRefs=!1,this.fragments=[],this.encryptedFragments=[],this.dateRanges={},this.url=e}return e.prototype.reloaded=function(e){if(!e)return this.advanced=!0,void(this.updated=!0)
+return!!(e.audio||e.video||e.audiovideo)}}]),t}(j),z=function(){function e(e){this.PTSKnown=!1,this.alignedSliding=!1,this.averagetargetduration=void 0,this.endCC=0,this.endSN=0,this.fragments=void 0,this.fragmentHint=void 0,this.partList=null,this.dateRanges=void 0,this.live=!0,this.ageHeader=0,this.advancedDateTime=void 0,this.updated=!0,this.advanced=!0,this.availabilityDelay=void 0,this.misses=0,this.startCC=0,this.startSN=0,this.startTimeOffset=null,this.targetduration=0,this.totalduration=0,this.type=null,this.url=void 0,this.m3u8="",this.version=null,this.canBlockReload=!1,this.canSkipUntil=0,this.canSkipDateRanges=!1,this.skippedSegments=0,this.recentlyRemovedDateranges=void 0,this.partHoldBack=0,this.holdBack=0,this.partTarget=0,this.preloadHint=void 0,this.renditionReports=void 0,this.tuneInGoal=0,this.deltaUpdateFailed=void 0,this.driftStartTime=0,this.driftEndTime=0,this.driftStart=0,this.driftEnd=0,this.encryptedFragments=void 0,this.playlistParsingError=null,this.variableList=null,this.hasVariableRefs=!1,this.fragments=[],this.encryptedFragments=[],this.dateRanges={},this.url=e}return e.prototype.reloaded=function(e){if(!e)return this.advanced=!0,void(this.updated=!0)
 var t=this.lastPartSn-e.lastPartSn,r=this.lastPartIndex-e.lastPartIndex
-this.updated=this.endSN!==e.endSN||!!r||!!t,this.advanced=this.endSN>e.endSN||t>0||0===t&&r>0,this.updated||this.advanced?this.misses=Math.floor(.6*e.misses):this.misses=e.misses+1,this.availabilityDelay=e.availabilityDelay},a(e,[{key:"hasProgramDateTime",get:function(){return!!this.fragments.length&&v(this.fragments[this.fragments.length-1].programDateTime)}},{key:"levelTargetDuration",get:function(){return this.averagetargetduration||this.targetduration||10}},{key:"drift",get:function(){var e=this.driftEndTime-this.driftStartTime
+this.updated=this.endSN!==e.endSN||!!r||!!t,this.advanced=this.endSN>e.endSN||t>0||0===t&&r>0,this.updated||this.advanced?this.misses=Math.floor(.6*e.misses):this.misses=e.misses+1,this.availabilityDelay=e.availabilityDelay},a(e,[{key:"hasProgramDateTime",get:function(){return!!this.fragments.length&&b(this.fragments[this.fragments.length-1].programDateTime)}},{key:"levelTargetDuration",get:function(){return this.averagetargetduration||this.targetduration||10}},{key:"drift",get:function(){var e=this.driftEndTime-this.driftStartTime
 return e>0?1e3*(this.driftEnd-this.driftStart)/e:1}},{key:"edge",get:function(){return this.partEnd||this.fragmentEnd}},{key:"partEnd",get:function(){var e
 return null!=(e=this.partList)&&e.length?this.partList[this.partList.length-1].end:this.fragmentEnd}},{key:"fragmentEnd",get:function(){var e
 return null!=(e=this.fragments)&&e.length?this.fragments[this.fragments.length-1].end:0}},{key:"age",get:function(){return this.advancedDateTime?Math.max(Date.now()-this.advancedDateTime,0)/1e3:0}},{key:"lastPartIndex",get:function(){var e
 return null!=(e=this.partList)&&e.length?this.partList[this.partList.length-1].index:-1}},{key:"lastPartSn",get:function(){var e
 return null!=(e=this.partList)&&e.length?this.partList[this.partList.length-1].fragment.sn:this.endSN}}]),e}()
-function z(e){return Uint8Array.from(atob(e),(function(e){return e.charCodeAt(0)}))}function U(e){return Uint8Array.from(unescape(encodeURIComponent(e)),(function(e){return e.charCodeAt(0)}))}var B={CLEARKEY:"org.w3.clearkey",FAIRPLAY:"com.apple.fps",PLAYREADY:"com.microsoft.playready",WIDEVINE:"com.widevine.alpha"},H="org.w3.clearkey",V="com.apple.streamingkeydelivery",$="com.microsoft.playready",q="urn:uuid:edef8ba9-79d6-4ace-a3c8-27dcd51d21ed"
-function G(e){switch(e){case V:return B.FAIRPLAY
-case $:return B.PLAYREADY
-case q:return B.WIDEVINE
-case H:return B.CLEARKEY}}var K="edef8ba979d64acea3c827dcd51d21ed"
-function W(e){switch(e){case B.FAIRPLAY:return V
-case B.PLAYREADY:return $
-case B.WIDEVINE:return q
-case B.CLEARKEY:return H}}function Y(e){var t=e.drmSystems,r=e.widevineLicenseUrl,i=t?[B.FAIRPLAY,B.WIDEVINE,B.PLAYREADY,B.CLEARKEY].filter((function(e){return!!t[e]})):[]
-return!i[B.WIDEVINE]&&r&&i.push(B.WIDEVINE),i}var Q="undefined"!=typeof self&&self.navigator&&self.navigator.requestMediaKeySystemAccess?self.navigator.requestMediaKeySystemAccess.bind(self.navigator):null
-function X(e,t,r){return Uint8Array.prototype.slice?e.slice(t,r):new Uint8Array(Array.prototype.slice.call(e,t,r))}var J,Z=function(e,t){return t+10<=e.length&&73===e[t]&&68===e[t+1]&&51===e[t+2]&&e[t+3]<255&&e[t+4]<255&&e[t+6]<128&&e[t+7]<128&&e[t+8]<128&&e[t+9]<128},ee=function(e,t){return t+10<=e.length&&51===e[t]&&68===e[t+1]&&73===e[t+2]&&e[t+3]<255&&e[t+4]<255&&e[t+6]<128&&e[t+7]<128&&e[t+8]<128&&e[t+9]<128},te=function(e,t){for(var r=t,i=0;Z(e,t);)i+=10,i+=re(e,t+6),ee(e,t+10)&&(i+=10),t+=i
-if(i>0)return e.subarray(r,r+i)},re=function(e,t){var r=0
-return r=(127&e[t])<<21,r|=(127&e[t+1])<<14,(r|=(127&e[t+2])<<7)|127&e[t+3]},ie=function(e,t){return Z(e,t)&&re(e,t+6)+10<=e.length-t},ne=function(e){return e&&"PRIV"===e.key&&"com.apple.streaming.transportStreamTimestamp"===e.info},ae=function(e){var t=String.fromCharCode(e[0],e[1],e[2],e[3]),r=re(e,4)
-return{type:t,size:r,data:e.subarray(10,10+r)}},se=function(e){for(var t=0,r=[];Z(e,t);){for(var i=re(e,t+6),n=(t+=10)+i;t+8<n;){var a=ae(e.subarray(t)),s=oe(a)
-s&&r.push(s),t+=a.size+10}ee(e,t)&&(t+=10)}return r},oe=function(e){return"PRIV"===e.type?le(e):"W"===e.type[0]?ce(e):ue(e)},le=function(e){if(!(e.size<2)){var t=he(e.data,!0),r=new Uint8Array(e.data.subarray(t.length+1))
-return{key:e.type,info:t,data:r.buffer}}},ue=function(e){if(!(e.size<2)){if("TXXX"===e.type){var t=1,r=he(e.data.subarray(t),!0)
+function U(e){return Uint8Array.from(atob(e),(function(e){return e.charCodeAt(0)}))}function B(e){return Uint8Array.from(unescape(encodeURIComponent(e)),(function(e){return e.charCodeAt(0)}))}var H={CLEARKEY:"org.w3.clearkey",FAIRPLAY:"com.apple.fps",PLAYREADY:"com.microsoft.playready",WIDEVINE:"com.widevine.alpha"},V="org.w3.clearkey",$="com.apple.streamingkeydelivery",q="com.microsoft.playready",G="urn:uuid:edef8ba9-79d6-4ace-a3c8-27dcd51d21ed"
+function K(e){switch(e){case $:return H.FAIRPLAY
+case q:return H.PLAYREADY
+case G:return H.WIDEVINE
+case V:return H.CLEARKEY}}var W="edef8ba979d64acea3c827dcd51d21ed"
+function Y(e){switch(e){case H.FAIRPLAY:return $
+case H.PLAYREADY:return q
+case H.WIDEVINE:return G
+case H.CLEARKEY:return V}}function Q(e){var t=e.drmSystems,r=e.widevineLicenseUrl,i=t?[H.FAIRPLAY,H.WIDEVINE,H.PLAYREADY,H.CLEARKEY].filter((function(e){return!!t[e]})):[]
+return!i[H.WIDEVINE]&&r&&i.push(H.WIDEVINE),i}var X="undefined"!=typeof self&&self.navigator&&self.navigator.requestMediaKeySystemAccess?self.navigator.requestMediaKeySystemAccess.bind(self.navigator):null
+function J(e,t,r){return Uint8Array.prototype.slice?e.slice(t,r):new Uint8Array(Array.prototype.slice.call(e,t,r))}var Z,ee=function(e,t){return t+10<=e.length&&73===e[t]&&68===e[t+1]&&51===e[t+2]&&e[t+3]<255&&e[t+4]<255&&e[t+6]<128&&e[t+7]<128&&e[t+8]<128&&e[t+9]<128},te=function(e,t){return t+10<=e.length&&51===e[t]&&68===e[t+1]&&73===e[t+2]&&e[t+3]<255&&e[t+4]<255&&e[t+6]<128&&e[t+7]<128&&e[t+8]<128&&e[t+9]<128},re=function(e,t){for(var r=t,i=0;ee(e,t);)i+=10,i+=ie(e,t+6),te(e,t+10)&&(i+=10),t+=i
+if(i>0)return e.subarray(r,r+i)},ie=function(e,t){var r=0
+return r=(127&e[t])<<21,r|=(127&e[t+1])<<14,(r|=(127&e[t+2])<<7)|127&e[t+3]},ne=function(e,t){return ee(e,t)&&ie(e,t+6)+10<=e.length-t},ae=function(e){return e&&"PRIV"===e.key&&"com.apple.streaming.transportStreamTimestamp"===e.info},se=function(e){var t=String.fromCharCode(e[0],e[1],e[2],e[3]),r=ie(e,4)
+return{type:t,size:r,data:e.subarray(10,10+r)}},oe=function(e){for(var t=0,r=[];ee(e,t);){for(var i=ie(e,t+6),n=(t+=10)+i;t+8<n;){var a=se(e.subarray(t)),s=le(a)
+s&&r.push(s),t+=a.size+10}te(e,t)&&(t+=10)}return r},le=function(e){return"PRIV"===e.type?ue(e):"W"===e.type[0]?de(e):ce(e)},ue=function(e){if(!(e.size<2)){var t=fe(e.data,!0),r=new Uint8Array(e.data.subarray(t.length+1))
+return{key:e.type,info:t,data:r.buffer}}},ce=function(e){if(!(e.size<2)){if("TXXX"===e.type){var t=1,r=fe(e.data.subarray(t),!0)
 t+=r.length+1
-var i=he(e.data.subarray(t))
-return{key:e.type,info:r,data:i}}var n=he(e.data.subarray(1))
-return{key:e.type,data:n}}},ce=function(e){if("WXXX"===e.type){if(e.size<2)return
-var t=1,r=he(e.data.subarray(t),!0)
+var i=fe(e.data.subarray(t))
+return{key:e.type,info:r,data:i}}var n=fe(e.data.subarray(1))
+return{key:e.type,data:n}}},de=function(e){if("WXXX"===e.type){if(e.size<2)return
+var t=1,r=fe(e.data.subarray(t),!0)
 t+=r.length+1
-var i=he(e.data.subarray(t))
-return{key:e.type,info:r,data:i}}var n=he(e.data)
-return{key:e.type,data:n}},de=function(e){if(8===e.data.byteLength){var t=new Uint8Array(e.data),r=1&t[3],i=(t[4]<<23)+(t[5]<<15)+(t[6]<<7)+t[7]
-return i/=45,r&&(i+=47721858.84),Math.round(i)}},he=function(e,t){void 0===t&&(t=!1)
-var r=(J||void 0===self.TextDecoder||(J=new self.TextDecoder("utf-8")),J)
+var i=fe(e.data.subarray(t))
+return{key:e.type,info:r,data:i}}var n=fe(e.data)
+return{key:e.type,data:n}},he=function(e){if(8===e.data.byteLength){var t=new Uint8Array(e.data),r=1&t[3],i=(t[4]<<23)+(t[5]<<15)+(t[6]<<7)+t[7]
+return i/=45,r&&(i+=47721858.84),Math.round(i)}},fe=function(e,t){void 0===t&&(t=!1)
+var r=(Z||void 0===self.TextDecoder||(Z=new self.TextDecoder("utf-8")),Z)
 if(r){var i=r.decode(e)
 if(t){var n=i.indexOf("\0")
 return-1!==n?i.substring(0,n):i}return i.replace(/\0/g,"")}for(var a,s,o,l=e.length,u="",c=0;c<l;){if(0===(a=e[c++])&&t)return u
@@ -3990,48 +3990,48 @@ break
 case 12:case 13:s=e[c++],u+=String.fromCharCode((31&a)<<6|63&s)
 break
 case 14:s=e[c++],o=e[c++],u+=String.fromCharCode((15&a)<<12|(63&s)<<6|(63&o)<<0)}}return u}
-var fe=function(e){for(var t="",r=0;r<e.length;r++){var i=e[r].toString(16)
-i.length<2&&(i="0"+i),t+=i}return t},pe=Math.pow(2,32)-1,me=[].push,ge={video:1,audio:2,id3:3,text:4}
-function ve(e){return String.fromCharCode.apply(null,e)}function be(e,t){var r=e[t]<<8|e[t+1]
-return r<0?65536+r:r}function ye(e,t){var r=_e(e,t)
-return r<0?4294967296+r:r}function _e(e,t){return e[t]<<24|e[t+1]<<16|e[t+2]<<8|e[t+3]}function we(e,t,r){e[t]=r>>24,e[t+1]=r>>16&255,e[t+2]=r>>8&255,e[t+3]=255&r}function Ee(e,t){var r=[]
+var pe=function(e){for(var t="",r=0;r<e.length;r++){var i=e[r].toString(16)
+i.length<2&&(i="0"+i),t+=i}return t},me=Math.pow(2,32)-1,ge=[].push,ve={video:1,audio:2,id3:3,text:4}
+function be(e){return String.fromCharCode.apply(null,e)}function ye(e,t){var r=e[t]<<8|e[t+1]
+return r<0?65536+r:r}function _e(e,t){var r=we(e,t)
+return r<0?4294967296+r:r}function we(e,t){return e[t]<<24|e[t+1]<<16|e[t+2]<<8|e[t+3]}function Ee(e,t,r){e[t]=r>>24,e[t+1]=r>>16&255,e[t+2]=r>>8&255,e[t+3]=255&r}function Te(e,t){var r=[]
 if(!t.length)return r
-for(var i=e.byteLength,n=0;n<i;){var a=ye(e,n),s=a>1?n+a:i
-if(ve(e.subarray(n+4,n+8))===t[0])if(1===t.length)r.push(e.subarray(n+8,s))
-else{var o=Ee(e.subarray(n+8,s),t.slice(1))
-o.length&&me.apply(r,o)}n=s}return r}function Te(e){var t=[],r=e[0],i=8,n=ye(e,i)
+for(var i=e.byteLength,n=0;n<i;){var a=_e(e,n),s=a>1?n+a:i
+if(be(e.subarray(n+4,n+8))===t[0])if(1===t.length)r.push(e.subarray(n+8,s))
+else{var o=Te(e.subarray(n+8,s),t.slice(1))
+o.length&&ge.apply(r,o)}n=s}return r}function ke(e){var t=[],r=e[0],i=8,n=_e(e,i)
 i+=4,i+=0===r?8:16,i+=2
-var a=e.length+0,s=be(e,i)
+var a=e.length+0,s=ye(e,i)
 i+=2
-for(var o=0;o<s;o++){var l=i,u=ye(e,l)
+for(var o=0;o<s;o++){var l=i,u=_e(e,l)
 l+=4
 var c=2147483647&u
-if(1==(2147483648&u)>>>31)return S.warn("SIDX has hierarchical references (not supported)"),null
-var d=ye(e,l)
-l+=4,t.push({referenceSize:c,subsegmentDuration:d,info:{duration:d/n,start:a,end:a+c-1}}),a+=c,i=l+=4}return{earliestPresentationTime:0,timescale:n,version:r,referencesCount:s,references:t}}function ke(e){for(var t=[],r=Ee(e,["moov","trak"]),i=0;i<r.length;i++){var n=r[i],a=Ee(n,["tkhd"])[0]
-if(a){var s=a[0],o=0===s?12:20,l=ye(a,o),u=Ee(n,["mdia","mdhd"])[0]
-if(u){var c=ye(u,o=0===(s=u[0])?12:20),d=Ee(n,["mdia","hdlr"])[0]
-if(d){var h=ve(d.subarray(8,12)),f={soun:D,vide:M}[h]
-if(f){var p=Ee(n,["mdia","minf","stbl","stsd"])[0],m=void 0
-p&&(m=ve(p.subarray(12,16))),t[l]={timescale:c,type:f},t[f]={timescale:c,id:l,codec:m}}}}}}return Ee(e,["moov","mvex","trex"]).forEach((function(e){var r=ye(e,4),i=t[r]
-i&&(i.default={duration:ye(e,12),flags:ye(e,20)})})),t}function Se(e){var t=Ee(e,["schm"])[0]
-if(t){var r=ve(t.subarray(4,8))
-if("cbcs"===r||"cenc"===r)return Ee(e,["schi","tenc"])[0]}return S.error("[eme] missing 'schm' box"),null}function Oe(e){var t=ye(e,0),r=8
+if(1==(2147483648&u)>>>31)return O.warn("SIDX has hierarchical references (not supported)"),null
+var d=_e(e,l)
+l+=4,t.push({referenceSize:c,subsegmentDuration:d,info:{duration:d/n,start:a,end:a+c-1}}),a+=c,i=l+=4}return{earliestPresentationTime:0,timescale:n,version:r,referencesCount:s,references:t}}function Se(e){for(var t=[],r=Te(e,["moov","trak"]),i=0;i<r.length;i++){var n=r[i],a=Te(n,["tkhd"])[0]
+if(a){var s=a[0],o=0===s?12:20,l=_e(a,o),u=Te(n,["mdia","mdhd"])[0]
+if(u){var c=_e(u,o=0===(s=u[0])?12:20),d=Te(n,["mdia","hdlr"])[0]
+if(d){var h=be(d.subarray(8,12)),f={soun:M,vide:I}[h]
+if(f){var p=Te(n,["mdia","minf","stbl","stsd"])[0],m=void 0
+p&&(m=be(p.subarray(12,16))),t[l]={timescale:c,type:f},t[f]={timescale:c,id:l,codec:m}}}}}}return Te(e,["moov","mvex","trex"]).forEach((function(e){var r=_e(e,4),i=t[r]
+i&&(i.default={duration:_e(e,12),flags:_e(e,20)})})),t}function Oe(e){var t=Te(e,["schm"])[0]
+if(t){var r=be(t.subarray(4,8))
+if("cbcs"===r||"cenc"===r)return Te(e,["schi","tenc"])[0]}return O.error("[eme] missing 'schm' box"),null}function xe(e){var t=_e(e,0),r=8
 1&t&&(r+=4),4&t&&(r+=4)
-for(var i=0,n=ye(e,4),a=0;a<n;a++)256&t&&(i+=ye(e,r),r+=4),512&t&&(r+=4),1024&t&&(r+=4),2048&t&&(r+=4)
-return i}function xe(e,t){var r=new Uint8Array(e.length+t.length)
-return r.set(e),r.set(t,e.length),r}function Pe(e,t){var r=[],i=t.samples,n=t.timescale,a=t.id,s=!1
-return Ee(i,["moof"]).map((function(o){var l=o.byteOffset-8
-Ee(o,["traf"]).map((function(o){var u=Ee(o,["tfdt"]).map((function(e){var t=e[0],r=ye(e,4)
-return 1===t&&(r*=Math.pow(2,32),r+=ye(e,8)),r/n}))[0]
-return void 0!==u&&(e=u),Ee(o,["tfhd"]).map((function(u){var c=ye(u,4),d=16777215&ye(u,0),h=0,f=0!=(16&d),p=0,m=0!=(32&d),g=8
-c===a&&(0!=(1&d)&&(g+=8),0!=(2&d)&&(g+=4),0!=(8&d)&&(h=ye(u,g),g+=4),f&&(p=ye(u,g),g+=4),m&&(g+=4),"video"===t.type&&(s=function(e){if(!e)return!1
+for(var i=0,n=_e(e,4),a=0;a<n;a++)256&t&&(i+=_e(e,r),r+=4),512&t&&(r+=4),1024&t&&(r+=4),2048&t&&(r+=4)
+return i}function Pe(e,t){var r=new Uint8Array(e.length+t.length)
+return r.set(e),r.set(t,e.length),r}function Ae(e,t){var r=[],i=t.samples,n=t.timescale,a=t.id,s=!1
+return Te(i,["moof"]).map((function(o){var l=o.byteOffset-8
+Te(o,["traf"]).map((function(o){var u=Te(o,["tfdt"]).map((function(e){var t=e[0],r=_e(e,4)
+return 1===t&&(r*=Math.pow(2,32),r+=_e(e,8)),r/n}))[0]
+return void 0!==u&&(e=u),Te(o,["tfhd"]).map((function(u){var c=_e(u,4),d=16777215&_e(u,0),h=0,f=0!=(16&d),p=0,m=0!=(32&d),g=8
+c===a&&(0!=(1&d)&&(g+=8),0!=(2&d)&&(g+=4),0!=(8&d)&&(h=_e(u,g),g+=4),f&&(p=_e(u,g),g+=4),m&&(g+=4),"video"===t.type&&(s=function(e){if(!e)return!1
 var t=e.indexOf("."),r=t<0?e:e.substring(0,t)
-return"hvc1"===r||"hev1"===r||"dvh1"===r||"dvhe"===r}(t.codec)),Ee(o,["trun"]).map((function(a){var o=a[0],u=16777215&ye(a,0),c=0!=(1&u),d=0,f=0!=(4&u),m=0!=(256&u),g=0,v=0!=(512&u),b=0,y=0!=(1024&u),_=0!=(2048&u),w=0,E=ye(a,4),T=8
-c&&(d=ye(a,T),T+=4),f&&(T+=4)
-for(var k=d+l,S=0;S<E;S++){if(m?(g=ye(a,T),T+=4):g=h,v?(b=ye(a,T),T+=4):b=p,y&&(T+=4),_&&(w=0===o?ye(a,T):_e(a,T),T+=4),t.type===M)for(var O=0;O<b;){var x=ye(i,k)
-Ae(s,i[k+=4])&&Re(i.subarray(k,k+x),s?2:1,e+w/n,r),k+=x,O+=x+4}e+=g/n}})))}))}))})),r}function Ae(e,t){if(e){var r=t>>1&63
-return 39===r||40===r}return 6==(31&t)}function Re(e,t,r,i){var n=Ce(e),a=0
+return"hvc1"===r||"hev1"===r||"dvh1"===r||"dvhe"===r}(t.codec)),Te(o,["trun"]).map((function(a){var o=a[0],u=16777215&_e(a,0),c=0!=(1&u),d=0,f=0!=(4&u),m=0!=(256&u),g=0,v=0!=(512&u),b=0,y=0!=(1024&u),_=0!=(2048&u),w=0,E=_e(a,4),T=8
+c&&(d=_e(a,T),T+=4),f&&(T+=4)
+for(var k=d+l,S=0;S<E;S++){if(m?(g=_e(a,T),T+=4):g=h,v?(b=_e(a,T),T+=4):b=p,y&&(T+=4),_&&(w=0===o?_e(a,T):we(a,T),T+=4),t.type===I)for(var O=0;O<b;){var x=_e(i,k)
+Re(s,i[k+=4])&&Ce(i.subarray(k,k+x),s?2:1,e+w/n,r),k+=x,O+=x+4}e+=g/n}})))}))}))})),r}function Re(e,t){if(e){var r=t>>1&63
+return 39===r||40===r}return 6==(31&t)}function Ce(e,t,r,i){var n=De(e),a=0
 a+=t
 for(var s=0,o=0,l=!1,u=0;a<n.length;){s=0
 do{if(a>=n.length)break
@@ -4040,33 +4040,33 @@ o=0
 do{if(a>=n.length)break
 o+=u=n[a++]}while(255===u)
 var c=n.length-a
-if(!l&&4===s&&a<n.length){if(l=!0,181===n[a++]){var d=be(n,a)
-if(a+=2,49===d){var h=ye(n,a)
+if(!l&&4===s&&a<n.length){if(l=!0,181===n[a++]){var d=ye(n,a)
+if(a+=2,49===d){var h=_e(n,a)
 if(a+=4,1195456820===h){var f=n[a++]
 if(3===f){var p=n[a++],m=64&p,g=m?2+3*(31&p):0,v=new Uint8Array(g)
 if(m){v[0]=p
 for(var b=1;b<g;b++)v[b]=n[a++]}i.push({type:f,payloadType:s,pts:r,bytes:v})}}}}}else if(5===s&&o<c){if(l=!0,o>16){for(var y=[],_=0;_<16;_++){var w=n[a++].toString(16)
 y.push(1==w.length?"0"+w:w),3!==_&&5!==_&&7!==_&&9!==_||y.push("-")}for(var E=o-16,T=new Uint8Array(E),k=0;k<E;k++)T[k]=n[a++]
-i.push({payloadType:s,pts:r,uuid:y.join(""),userData:he(T),userDataBytes:T})}}else if(o<c)a+=o
-else if(o>c)break}}function Ce(e){for(var t=e.byteLength,r=[],i=1;i<t-2;)0===e[i]&&0===e[i+1]&&3===e[i+2]?(r.push(i+2),i+=2):i++
+i.push({payloadType:s,pts:r,uuid:y.join(""),userData:fe(T),userDataBytes:T})}}else if(o<c)a+=o
+else if(o>c)break}}function De(e){for(var t=e.byteLength,r=[],i=1;i<t-2;)0===e[i]&&0===e[i+1]&&3===e[i+2]?(r.push(i+2),i+=2):i++
 if(0===r.length)return e
 var n=t-r.length,a=new Uint8Array(n),s=0
 for(i=0;i<n;s++,i++)s===r[0]&&(s++,r.shift()),a[i]=e[s]
-return a}var De={},Me=function(){function e(e,t,r,i,n){void 0===i&&(i=[1]),void 0===n&&(n=null),this.uri=void 0,this.method=void 0,this.keyFormat=void 0,this.keyFormatVersions=void 0,this.encrypted=void 0,this.isCommonEncryption=void 0,this.iv=null,this.key=null,this.keyId=null,this.pssh=null,this.method=e,this.uri=t,this.keyFormat=r,this.keyFormatVersions=i,this.iv=n,this.encrypted=!!e&&"NONE"!==e,this.isCommonEncryption=this.encrypted&&"AES-128"!==e}e.clearKeyUriToKeyIdMap=function(){De={}}
+return a}var Me={},Ie=function(){function e(e,t,r,i,n){void 0===i&&(i=[1]),void 0===n&&(n=null),this.uri=void 0,this.method=void 0,this.keyFormat=void 0,this.keyFormatVersions=void 0,this.encrypted=void 0,this.isCommonEncryption=void 0,this.iv=null,this.key=null,this.keyId=null,this.pssh=null,this.method=e,this.uri=t,this.keyFormat=r,this.keyFormatVersions=i,this.iv=n,this.encrypted=!!e&&"NONE"!==e,this.isCommonEncryption=this.encrypted&&"AES-128"!==e}e.clearKeyUriToKeyIdMap=function(){Me={}}
 var t=e.prototype
 return t.isSupported=function(){if(this.method){if("AES-128"===this.method||"NONE"===this.method)return!0
 if("identity"===this.keyFormat)return"SAMPLE-AES"===this.method
-switch(this.keyFormat){case V:case q:case $:case H:return-1!==["ISO-23001-7","SAMPLE-AES","SAMPLE-AES-CENC","SAMPLE-AES-CTR"].indexOf(this.method)}}return!1},t.getDecryptData=function(t){if(!this.encrypted||!this.uri)return null
-if("AES-128"===this.method&&this.uri&&!this.iv){"number"!=typeof t&&("AES-128"!==this.method||this.iv||S.warn('missing IV for initialization segment with method="'+this.method+'" - compliance issue'),t=0)
+switch(this.keyFormat){case $:case G:case q:case V:return-1!==["ISO-23001-7","SAMPLE-AES","SAMPLE-AES-CENC","SAMPLE-AES-CTR"].indexOf(this.method)}}return!1},t.getDecryptData=function(t){if(!this.encrypted||!this.uri)return null
+if("AES-128"===this.method&&this.uri&&!this.iv){"number"!=typeof t&&("AES-128"!==this.method||this.iv||O.warn('missing IV for initialization segment with method="'+this.method+'" - compliance issue'),t=0)
 var r=function(e){for(var t=new Uint8Array(16),r=12;r<16;r++)t[r]=e>>8*(15-r)&255
 return t}(t)
 return new e(this.method,this.uri,"identity",this.keyFormatVersions,r)}var i=function(e){var t,r,i=e.split(":"),n=null
 if("data"===i[0]&&2===i.length){var a=i[1].split(";"),s=a[a.length-1].split(",")
 if(2===s.length){var o="base64"===s[0],l=s[1]
-o?(a.splice(-1,1),n=z(l)):(t=U(l).subarray(0,16),(r=new Uint8Array(16)).set(t,16-t.length),n=r)}}return n}(this.uri)
-if(i)switch(this.keyFormat){case q:this.pssh=i,i.length>=22&&(this.keyId=i.subarray(i.length-22,i.length-6))
+o?(a.splice(-1,1),n=U(l)):(t=B(l).subarray(0,16),(r=new Uint8Array(16)).set(t,16-t.length),n=r)}}return n}(this.uri)
+if(i)switch(this.keyFormat){case G:this.pssh=i,i.length>=22&&(this.keyId=i.subarray(i.length-22,i.length-6))
 break
-case $:var n=new Uint8Array([154,4,240,121,152,64,66,134,171,146,230,91,224,136,95,149])
+case q:var n=new Uint8Array([154,4,240,121,152,64,66,134,171,146,230,91,224,136,95,149])
 this.pssh=function(e,t,r){if(16!==e.byteLength)throw new RangeError("Invalid system id")
 var i,n,a
 if(t){i=1,n=new Uint8Array(16*t.length)
@@ -4082,133 +4082,134 @@ for(o[0]=a>>24&255,o[1]=a>>16&255,o[2]=a>>8&255,o[3]=255&a,o.set(e,4),s=0,a=8;s<
 return o}([112,115,115,104],new Uint8Array([i,0,0,0]),e,a,n,l,r||new Uint8Array)}(n,null,i)
 var a=new Uint16Array(i.buffer,i.byteOffset,i.byteLength/2),s=String.fromCharCode.apply(null,Array.from(a)),o=s.substring(s.indexOf("<"),s.length),l=(new DOMParser).parseFromString(o,"text/xml").getElementsByTagName("KID")[0]
 if(l){var u=l.childNodes[0]?l.childNodes[0].nodeValue:l.getAttribute("VALUE")
-if(u){var c=z(u).subarray(0,16)
+if(u){var c=U(u).subarray(0,16)
 !function(e){var t=function(e,t,r){var i=e[t]
 e[t]=e[r],e[r]=i}
 t(e,0,3),t(e,1,2),t(e,4,5),t(e,6,7)}(c),this.keyId=c}}break
 default:var d=i.subarray(0,16)
 if(16!==d.length){var h=new Uint8Array(16)
-h.set(d,16-d.length),d=h}this.keyId=d}if(!this.keyId||16!==this.keyId.byteLength){var f=De[this.uri]
-if(!f){var p=Object.keys(De).length%Number.MAX_SAFE_INTEGER
-f=new Uint8Array(16),new DataView(f.buffer,12,4).setUint32(0,p),De[this.uri]=f}this.keyId=f}return this},e}(),Ie=/\{\$([a-zA-Z0-9-_]+)\}/g
-function Le(e){return Ie.test(e)}function je(e,t,r){if(null!==e.variableList||e.hasVariableRefs)for(var i=r.length;i--;){var n=r[i],a=t[n]
-a&&(t[n]=Fe(e,a))}}function Fe(e,t){if(null!==e.variableList||e.hasVariableRefs){var r=e.variableList
-return t.replace(Ie,(function(t){var i=t.substring(2,t.length-1),n=null==r?void 0:r[i]
-return void 0===n?(e.playlistParsingError||(e.playlistParsingError=new Error('Missing preceding EXT-X-DEFINE tag for Variable Reference: "'+i+'"')),t):n}))}return t}function Ne(e,t,r){var i,n,a=e.variableList
+h.set(d,16-d.length),d=h}this.keyId=d}if(!this.keyId||16!==this.keyId.byteLength){var f=Me[this.uri]
+if(!f){var p=Object.keys(Me).length%Number.MAX_SAFE_INTEGER
+f=new Uint8Array(16),new DataView(f.buffer,12,4).setUint32(0,p),Me[this.uri]=f}this.keyId=f}return this},e}(),Le=/\{\$([a-zA-Z0-9-_]+)\}/g
+function je(e){return Le.test(e)}function Fe(e,t,r){if(null!==e.variableList||e.hasVariableRefs)for(var i=r.length;i--;){var n=r[i],a=t[n]
+a&&(t[n]=Ne(e,a))}}function Ne(e,t){if(null!==e.variableList||e.hasVariableRefs){var r=e.variableList
+return t.replace(Le,(function(t){var i=t.substring(2,t.length-1),n=null==r?void 0:r[i]
+return void 0===n?(e.playlistParsingError||(e.playlistParsingError=new Error('Missing preceding EXT-X-DEFINE tag for Variable Reference: "'+i+'"')),t):n}))}return t}function ze(e,t,r){var i,n,a=e.variableList
 if(a||(e.variableList=a={}),"QUERYPARAM"in t){i=t.QUERYPARAM
 try{var s=new self.URL(r).searchParams
 if(!s.has(i))throw new Error('"'+i+'" does not match any query parameter in URI: "'+r+'"')
 n=s.get(i)}catch(t){e.playlistParsingError||(e.playlistParsingError=new Error("EXT-X-DEFINE QUERYPARAM: "+t.message))}}else i=t.NAME,n=t.VALUE
-i in a?e.playlistParsingError||(e.playlistParsingError=new Error('EXT-X-DEFINE duplicate Variable Name declarations: "'+i+'"')):a[i]=n||""}function ze(e,t,r){var i=t.IMPORT
+i in a?e.playlistParsingError||(e.playlistParsingError=new Error('EXT-X-DEFINE duplicate Variable Name declarations: "'+i+'"')):a[i]=n||""}function Ue(e,t,r){var i=t.IMPORT
 if(r&&i in r){var n=e.variableList
-n||(e.variableList=n={}),n[i]=r[i]}else e.playlistParsingError||(e.playlistParsingError=new Error('EXT-X-DEFINE IMPORT attribute not found in Multivariant Playlist: "'+i+'"'))}var Ue={audio:{a3ds:!0,"ac-3":!0,"ac-4":!0,alac:!0,alaw:!0,dra1:!0,"dts+":!0,"dts-":!0,dtsc:!0,dtse:!0,dtsh:!0,"ec-3":!0,enca:!0,g719:!0,g726:!0,m4ae:!0,mha1:!0,mha2:!0,mhm1:!0,mhm2:!0,mlpa:!0,mp4a:!0,"raw ":!0,Opus:!0,opus:!0,samr:!0,sawb:!0,sawp:!0,sevc:!0,sqcp:!0,ssmv:!0,twos:!0,ulaw:!0},video:{avc1:!0,avc2:!0,avc3:!0,avc4:!0,avcp:!0,av01:!0,drac:!0,dva1:!0,dvav:!0,dvh1:!0,dvhe:!0,encv:!0,hev1:!0,hvc1:!0,mjp2:!0,mp4v:!0,mvc1:!0,mvc2:!0,mvc3:!0,mvc4:!0,resv:!0,rv60:!0,s263:!0,svc1:!0,svc2:!0,"vc-1":!0,vp08:!0,vp09:!0},text:{stpp:!0,wvtt:!0}}
-function Be(e,t){return MediaSource.isTypeSupported((t||"video")+'/mp4;codecs="'+e+'"')}var He=/#EXT-X-STREAM-INF:([^\r\n]*)(?:[\r\n](?:#[^\r\n]*)?)*([^\r\n]+)|#EXT-X-(SESSION-DATA|SESSION-KEY|DEFINE|CONTENT-STEERING|START):([^\r\n]*)[\r\n]+/g,Ve=/#EXT-X-MEDIA:(.*)/g,$e=/^#EXT(?:INF|-X-TARGETDURATION):/m,qe=new RegExp([/#EXTINF:\s*(\d*(?:\.\d+)?)(?:,(.*)\s+)?/.source,/(?!#) *(\S[\S ]*)/.source,/#EXT-X-BYTERANGE:*(.+)/.source,/#EXT-X-PROGRAM-DATE-TIME:(.+)/.source,/#.*/.source].join("|"),"g"),Ge=new RegExp([/#(EXTM3U)/.source,/#EXT-X-(DATERANGE|DEFINE|KEY|MAP|PART|PART-INF|PLAYLIST-TYPE|PRELOAD-HINT|RENDITION-REPORT|SERVER-CONTROL|SKIP|START):(.+)/.source,/#EXT-X-(BITRATE|DISCONTINUITY-SEQUENCE|MEDIA-SEQUENCE|TARGETDURATION|VERSION): *(\d+)/.source,/#EXT-X-(DISCONTINUITY|ENDLIST|GAP)/.source,/(#)([^:]*):(.*)/.source,/(#)(.*)(?:.*)\r?\n?/.source].join("|")),Ke=function(){function e(){}return e.findGroup=function(e,t){for(var r=0;r<e.length;r++){var i=e[r]
+n||(e.variableList=n={}),n[i]=r[i]}else e.playlistParsingError||(e.playlistParsingError=new Error('EXT-X-DEFINE IMPORT attribute not found in Multivariant Playlist: "'+i+'"'))}function Be(){if("undefined"!=typeof self)return self.MediaSource||self.WebKitMediaSource}var He={audio:{a3ds:!0,"ac-3":!0,"ac-4":!0,alac:!0,alaw:!0,dra1:!0,"dts+":!0,"dts-":!0,dtsc:!0,dtse:!0,dtsh:!0,"ec-3":!0,enca:!0,g719:!0,g726:!0,m4ae:!0,mha1:!0,mha2:!0,mhm1:!0,mhm2:!0,mlpa:!0,mp4a:!0,"raw ":!0,Opus:!0,opus:!0,samr:!0,sawb:!0,sawp:!0,sevc:!0,sqcp:!0,ssmv:!0,twos:!0,ulaw:!0},video:{avc1:!0,avc2:!0,avc3:!0,avc4:!0,avcp:!0,av01:!0,drac:!0,dva1:!0,dvav:!0,dvh1:!0,dvhe:!0,encv:!0,hev1:!0,hvc1:!0,mjp2:!0,mp4v:!0,mvc1:!0,mvc2:!0,mvc3:!0,mvc4:!0,resv:!0,rv60:!0,s263:!0,svc1:!0,svc2:!0,"vc-1":!0,vp08:!0,vp09:!0},text:{stpp:!0,wvtt:!0}},Ve=Be()
+function $e(e,t){var r
+return null!=(r=null==Ve?void 0:Ve.isTypeSupported((t||"video")+'/mp4;codecs="'+e+'"'))&&r}var qe=/#EXT-X-STREAM-INF:([^\r\n]*)(?:[\r\n](?:#[^\r\n]*)?)*([^\r\n]+)|#EXT-X-(SESSION-DATA|SESSION-KEY|DEFINE|CONTENT-STEERING|START):([^\r\n]*)[\r\n]+/g,Ge=/#EXT-X-MEDIA:(.*)/g,Ke=/^#EXT(?:INF|-X-TARGETDURATION):/m,We=new RegExp([/#EXTINF:\s*(\d*(?:\.\d+)?)(?:,(.*)\s+)?/.source,/(?!#) *(\S[\S ]*)/.source,/#EXT-X-BYTERANGE:*(.+)/.source,/#EXT-X-PROGRAM-DATE-TIME:(.+)/.source,/#.*/.source].join("|"),"g"),Ye=new RegExp([/#(EXTM3U)/.source,/#EXT-X-(DATERANGE|DEFINE|KEY|MAP|PART|PART-INF|PLAYLIST-TYPE|PRELOAD-HINT|RENDITION-REPORT|SERVER-CONTROL|SKIP|START):(.+)/.source,/#EXT-X-(BITRATE|DISCONTINUITY-SEQUENCE|MEDIA-SEQUENCE|TARGETDURATION|VERSION): *(\d+)/.source,/#EXT-X-(DISCONTINUITY|ENDLIST|GAP)/.source,/(#)([^:]*):(.*)/.source,/(#)(.*)(?:.*)\r?\n?/.source].join("|")),Qe=function(){function e(){}return e.findGroup=function(e,t){for(var r=0;r<e.length;r++){var i=e[r]
 if(i.id===t)return i}},e.convertAVC1ToAVCOTI=function(e){var t=e.split(".")
 if(t.length>2){var r=t.shift()+"."
-return(r+=parseInt(t.shift()).toString(16))+("000"+parseInt(t.shift()).toString(16)).slice(-4)}return e},e.resolve=function(e,t){return g.buildAbsoluteURL(t,e,{alwaysNormalize:!0})},e.isMediaPlaylist=function(e){return $e.test(e)},e.parseMasterPlaylist=function(t,r){var i,n={contentSteering:null,levels:[],playlistParsingError:null,sessionData:null,sessionKeys:null,startTimeOffset:null,variableList:null,hasVariableRefs:Le(t)},a=[]
-for(He.lastIndex=0;null!=(i=He.exec(t));)if(i[1]){var s,o=new P(i[1])
-je(n,o,["CODECS","SUPPLEMENTAL-CODECS","ALLOWED-CPC","PATHWAY-ID","STABLE-VARIANT-ID","AUDIO","VIDEO","SUBTITLES","CLOSED-CAPTIONS","NAME"])
-var l=Fe(n,i[2]),u={attrs:o,bitrate:o.decimalInteger("AVERAGE-BANDWIDTH")||o.decimalInteger("BANDWIDTH"),name:o.NAME,url:e.resolve(l,r)},c=o.decimalResolution("RESOLUTION")
-c&&(u.width=c.width,u.height=c.height),Qe((o.CODECS||"").split(/[ ,]+/).filter((function(e){return e})),u),u.videoCodec&&-1!==u.videoCodec.indexOf("avc1")&&(u.videoCodec=e.convertAVC1ToAVCOTI(u.videoCodec)),null!=(s=u.unknownCodecs)&&s.length||a.push(u),n.levels.push(u)}else if(i[3]){var d=i[3],h=i[4]
-switch(d){case"SESSION-DATA":var f=new P(h)
-je(n,f,["DATA-ID","LANGUAGE","VALUE","URI"])
+return(r+=parseInt(t.shift()).toString(16))+("000"+parseInt(t.shift()).toString(16)).slice(-4)}return e},e.resolve=function(e,t){return v.buildAbsoluteURL(t,e,{alwaysNormalize:!0})},e.isMediaPlaylist=function(e){return Ke.test(e)},e.parseMasterPlaylist=function(t,r){var i,n={contentSteering:null,levels:[],playlistParsingError:null,sessionData:null,sessionKeys:null,startTimeOffset:null,variableList:null,hasVariableRefs:je(t)},a=[]
+for(qe.lastIndex=0;null!=(i=qe.exec(t));)if(i[1]){var s,o=new A(i[1])
+Fe(n,o,["CODECS","SUPPLEMENTAL-CODECS","ALLOWED-CPC","PATHWAY-ID","STABLE-VARIANT-ID","AUDIO","VIDEO","SUBTITLES","CLOSED-CAPTIONS","NAME"])
+var l=Ne(n,i[2]),u={attrs:o,bitrate:o.decimalInteger("AVERAGE-BANDWIDTH")||o.decimalInteger("BANDWIDTH"),name:o.NAME,url:e.resolve(l,r)},c=o.decimalResolution("RESOLUTION")
+c&&(u.width=c.width,u.height=c.height),Ze((o.CODECS||"").split(/[ ,]+/).filter((function(e){return e})),u),u.videoCodec&&-1!==u.videoCodec.indexOf("avc1")&&(u.videoCodec=e.convertAVC1ToAVCOTI(u.videoCodec)),null!=(s=u.unknownCodecs)&&s.length||a.push(u),n.levels.push(u)}else if(i[3]){var d=i[3],h=i[4]
+switch(d){case"SESSION-DATA":var f=new A(h)
+Fe(n,f,["DATA-ID","LANGUAGE","VALUE","URI"])
 var p=f["DATA-ID"]
 p&&(null===n.sessionData&&(n.sessionData={}),n.sessionData[p]=f)
 break
-case"SESSION-KEY":var m=We(h,r,n)
-m.encrypted&&m.isSupported()?(null===n.sessionKeys&&(n.sessionKeys=[]),n.sessionKeys.push(m)):S.warn('[Keys] Ignoring invalid EXT-X-SESSION-KEY tag: "'+h+'"')
+case"SESSION-KEY":var m=Xe(h,r,n)
+m.encrypted&&m.isSupported()?(null===n.sessionKeys&&(n.sessionKeys=[]),n.sessionKeys.push(m)):O.warn('[Keys] Ignoring invalid EXT-X-SESSION-KEY tag: "'+h+'"')
 break
-case"DEFINE":var g=new P(h)
-je(n,g,["NAME","VALUE","QUERYPARAM"]),Ne(n,g,r)
+case"DEFINE":var g=new A(h)
+Fe(n,g,["NAME","VALUE","QUERYPARAM"]),ze(n,g,r)
 break
-case"CONTENT-STEERING":var v=new P(h)
-je(n,v,["SERVER-URI","PATHWAY-ID"]),n.contentSteering={uri:e.resolve(v["SERVER-URI"],r),pathwayId:v["PATHWAY-ID"]||"."}
+case"CONTENT-STEERING":var v=new A(h)
+Fe(n,v,["SERVER-URI","PATHWAY-ID"]),n.contentSteering={uri:e.resolve(v["SERVER-URI"],r),pathwayId:v["PATHWAY-ID"]||"."}
 break
-case"START":n.startTimeOffset=Ye(h)}}var b=a.length>0&&a.length<n.levels.length
+case"START":n.startTimeOffset=Je(h)}}var b=a.length>0&&a.length<n.levels.length
 return n.levels=b?a:n.levels,0===n.levels.length&&(n.playlistParsingError=new Error("no levels found in manifest")),n},e.parseMasterPlaylistMedia=function(t,r,i){var n,a={},s=i.levels,o={AUDIO:s.map((function(e){return{id:e.attrs.AUDIO,audioCodec:e.audioCodec}})),SUBTITLES:s.map((function(e){return{id:e.attrs.SUBTITLES,textCodec:e.textCodec}})),"CLOSED-CAPTIONS":[]},l=0
-for(Ve.lastIndex=0;null!==(n=Ve.exec(t));){var u=new P(n[1]),c=u.TYPE
+for(Ge.lastIndex=0;null!==(n=Ge.exec(t));){var u=new A(n[1]),c=u.TYPE
 if(c){var d=o[c],h=a[c]||[]
-a[c]=h,je(i,u,["URI","GROUP-ID","LANGUAGE","ASSOC-LANGUAGE","STABLE-RENDITION-ID","NAME","INSTREAM-ID","CHARACTERISTICS","CHANNELS"])
+a[c]=h,Fe(i,u,["URI","GROUP-ID","LANGUAGE","ASSOC-LANGUAGE","STABLE-RENDITION-ID","NAME","INSTREAM-ID","CHARACTERISTICS","CHANNELS"])
 var f={attrs:u,bitrate:0,id:l++,groupId:u["GROUP-ID"]||"",instreamId:u["INSTREAM-ID"],name:u.NAME||u.LANGUAGE||"",type:c,default:u.bool("DEFAULT"),autoselect:u.bool("AUTOSELECT"),forced:u.bool("FORCED"),lang:u.LANGUAGE,url:u.URI?e.resolve(u.URI,r):""}
 if(null!=d&&d.length){var p=e.findGroup(d,f.groupId)||d[0]
-Xe(f,p,"audioCodec"),Xe(f,p,"textCodec")}h.push(f)}}return a},e.parseLevelPlaylist=function(e,t,r,i,n,a){var s,l,u,c=new N(t),d=c.fragments,h=null,f=0,p=0,m=0,g=0,b=null,y=new j(i,t),_=-1,w=!1
-for(qe.lastIndex=0,c.m3u8=e,c.hasVariableRefs=Le(e);null!==(s=qe.exec(e));){w&&(w=!1,(y=new j(i,t)).start=m,y.sn=f,y.cc=g,y.level=r,h&&(y.initSegment=h,y.rawProgramDateTime=h.rawProgramDateTime,h.rawProgramDateTime=null))
+et(f,p,"audioCodec"),et(f,p,"textCodec")}h.push(f)}}return a},e.parseLevelPlaylist=function(e,t,r,i,n,a){var s,l,u,c=new z(t),d=c.fragments,h=null,f=0,p=0,m=0,g=0,v=null,y=new F(i,t),_=-1,w=!1
+for(We.lastIndex=0,c.m3u8=e,c.hasVariableRefs=je(e);null!==(s=We.exec(e));){w&&(w=!1,(y=new F(i,t)).start=m,y.sn=f,y.cc=g,y.level=r,h&&(y.initSegment=h,y.rawProgramDateTime=h.rawProgramDateTime,h.rawProgramDateTime=null))
 var E=s[1]
 if(E){y.duration=parseFloat(E)
 var T=(" "+s[2]).slice(1)
-y.title=T||null,y.tagList.push(T?["INF",E,T]:["INF",E])}else if(s[3]){if(v(y.duration)){y.start=m,u&&et(y,u,c),y.sn=f,y.level=r,y.cc=g,y.urlId=n,d.push(y)
+y.title=T||null,y.tagList.push(T?["INF",E,T]:["INF",E])}else if(s[3]){if(b(y.duration)){y.start=m,u&&it(y,u,c),y.sn=f,y.level=r,y.cc=g,y.urlId=n,d.push(y)
 var k=(" "+s[3]).slice(1)
-y.relurl=Fe(c,k),Je(y,b),b=y,m+=y.duration,f++,p=0,w=!0}}else if(s[4]){var O=(" "+s[4]).slice(1)
-b?y.setByteRange(O,b):y.setByteRange(O)}else if(s[5])y.rawProgramDateTime=(" "+s[5]).slice(1),y.tagList.push(["PROGRAM-DATE-TIME",y.rawProgramDateTime]),-1===_&&(_=d.length)
-else{if(!(s=s[0].match(Ge))){S.warn("No matches on slow regex match for level playlist!")
-continue}for(l=1;l<s.length&&void 0===s[l];l++);var x=(" "+s[l]).slice(1),A=(" "+s[l+1]).slice(1),C=s[l+2]?(" "+s[l+2]).slice(1):""
-switch(x){case"PLAYLIST-TYPE":c.type=A.toUpperCase()
+y.relurl=Ne(c,k),tt(y,v),v=y,m+=y.duration,f++,p=0,w=!0}}else if(s[4]){var S=(" "+s[4]).slice(1)
+v?y.setByteRange(S,v):y.setByteRange(S)}else if(s[5])y.rawProgramDateTime=(" "+s[5]).slice(1),y.tagList.push(["PROGRAM-DATE-TIME",y.rawProgramDateTime]),-1===_&&(_=d.length)
+else{if(!(s=s[0].match(Ye))){O.warn("No matches on slow regex match for level playlist!")
+continue}for(l=1;l<s.length&&void 0===s[l];l++);var x=(" "+s[l]).slice(1),P=(" "+s[l+1]).slice(1),R=s[l+2]?(" "+s[l+2]).slice(1):""
+switch(x){case"PLAYLIST-TYPE":c.type=P.toUpperCase()
 break
-case"MEDIA-SEQUENCE":f=c.startSN=parseInt(A)
+case"MEDIA-SEQUENCE":f=c.startSN=parseInt(P)
 break
-case"SKIP":var D=new P(A)
-je(c,D,["RECENTLY-REMOVED-DATERANGES"])
+case"SKIP":var D=new A(P)
+Fe(c,D,["RECENTLY-REMOVED-DATERANGES"])
 var M=D.decimalInteger("SKIPPED-SEGMENTS")
-if(v(M)){c.skippedSegments=M
+if(b(M)){c.skippedSegments=M
 for(var I=M;I--;)d.unshift(null)
 f+=M}var L=D.enumeratedString("RECENTLY-REMOVED-DATERANGES")
 L&&(c.recentlyRemovedDateranges=L.split("\t"))
 break
-case"TARGETDURATION":c.targetduration=Math.max(parseInt(A),1)
+case"TARGETDURATION":c.targetduration=Math.max(parseInt(P),1)
 break
-case"VERSION":c.version=parseInt(A)
+case"VERSION":c.version=parseInt(P)
 break
 case"EXTM3U":break
 case"ENDLIST":c.live=!1
 break
-case"#":(A||C)&&y.tagList.push(C?[A,C]:[A])
+case"#":(P||R)&&y.tagList.push(R?[P,R]:[P])
 break
 case"DISCONTINUITY":g++,y.tagList.push(["DIS"])
 break
 case"GAP":y.gap=!0,y.tagList.push([x])
 break
-case"BITRATE":y.tagList.push([x,A])
+case"BITRATE":y.tagList.push([x,P])
 break
-case"DATERANGE":var z=new P(A)
-je(c,z,["ID","CLASS","START-DATE","END-DATE","SCTE35-CMD","SCTE35-OUT","SCTE35-IN"]),je(c,z,z.clientAttrs)
-var U=new R(z,c.dateRanges[z.ID])
-U.isValid||c.skippedSegments?c.dateRanges[U.id]=U:S.warn('Ignoring invalid DATERANGE tag: "'+A+'"'),y.tagList.push(["EXT-X-DATERANGE",A])
+case"DATERANGE":var j=new A(P)
+Fe(c,j,["ID","CLASS","START-DATE","END-DATE","SCTE35-CMD","SCTE35-OUT","SCTE35-IN"]),Fe(c,j,j.clientAttrs)
+var U=new C(j,c.dateRanges[j.ID])
+U.isValid||c.skippedSegments?c.dateRanges[U.id]=U:O.warn('Ignoring invalid DATERANGE tag: "'+P+'"'),y.tagList.push(["EXT-X-DATERANGE",P])
 break
-case"DEFINE":var B=new P(A)
-je(c,B,["NAME","VALUE","IMPORT","QUERYPARAM"]),"IMPORT"in B?ze(c,B,a):Ne(c,B,t)
+case"DEFINE":var B=new A(P)
+Fe(c,B,["NAME","VALUE","IMPORT","QUERYPARAM"]),"IMPORT"in B?Ue(c,B,a):ze(c,B,t)
 break
-case"DISCONTINUITY-SEQUENCE":g=parseInt(A)
+case"DISCONTINUITY-SEQUENCE":g=parseInt(P)
 break
-case"KEY":var H=We(A,t,c)
+case"KEY":var H=Xe(P,t,c)
 if(H.isSupported()){if("NONE"===H.method){u=void 0
-break}u||(u={}),u[H.keyFormat]&&(u=o({},u)),u[H.keyFormat]=H}else S.warn('[Keys] Ignoring invalid EXT-X-KEY tag: "'+A+'"')
+break}u||(u={}),u[H.keyFormat]&&(u=o({},u)),u[H.keyFormat]=H}else O.warn('[Keys] Ignoring invalid EXT-X-KEY tag: "'+P+'"')
 break
-case"START":c.startTimeOffset=Ye(A)
+case"START":c.startTimeOffset=Je(P)
 break
-case"MAP":var V=new P(A)
-if(je(c,V,["BYTERANGE","URI"]),y.duration){var $=new j(i,t)
-Ze($,V,r,u),h=$,y.initSegment=h,h.rawProgramDateTime&&!y.rawProgramDateTime&&(y.rawProgramDateTime=h.rawProgramDateTime)}else Ze(y,V,r,u),h=y,w=!0
+case"MAP":var V=new A(P)
+if(Fe(c,V,["BYTERANGE","URI"]),y.duration){var $=new F(i,t)
+rt($,V,r,u),h=$,y.initSegment=h,h.rawProgramDateTime&&!y.rawProgramDateTime&&(y.rawProgramDateTime=h.rawProgramDateTime)}else rt(y,V,r,u),h=y,w=!0
 break
-case"SERVER-CONTROL":var q=new P(A)
+case"SERVER-CONTROL":var q=new A(P)
 c.canBlockReload=q.bool("CAN-BLOCK-RELOAD"),c.canSkipUntil=q.optionalFloat("CAN-SKIP-UNTIL",0),c.canSkipDateRanges=c.canSkipUntil>0&&q.bool("CAN-SKIP-DATERANGES"),c.partHoldBack=q.optionalFloat("PART-HOLD-BACK",0),c.holdBack=q.optionalFloat("HOLD-BACK",0)
 break
-case"PART-INF":var G=new P(A)
+case"PART-INF":var G=new A(P)
 c.partTarget=G.decimalFloatingPoint("PART-TARGET")
 break
 case"PART":var K=c.partList
 K||(K=c.partList=[])
-var W=p>0?K[K.length-1]:void 0,Y=p++,Q=new P(A)
-je(c,Q,["BYTERANGE","URI"])
-var X=new F(Q,y,t,Y,W)
+var W=p>0?K[K.length-1]:void 0,Y=p++,Q=new A(P)
+Fe(c,Q,["BYTERANGE","URI"])
+var X=new N(Q,y,t,Y,W)
 K.push(X),y.duration+=X.duration
 break
-case"PRELOAD-HINT":var J=new P(A)
-je(c,J,["URI"]),c.preloadHint=J
+case"PRELOAD-HINT":var J=new A(P)
+Fe(c,J,["URI"]),c.preloadHint=J
 break
-case"RENDITION-REPORT":var Z=new P(A)
-je(c,Z,["URI"]),c.renditionReports=c.renditionReports||[],c.renditionReports.push(Z)
+case"RENDITION-REPORT":var Z=new A(P)
+Fe(c,Z,["URI"]),c.renditionReports=c.renditionReports||[],c.renditionReports.push(Z)
 break
-default:S.warn("line parsed but not handled: "+s)}}}b&&!b.relurl?(d.pop(),m-=b.duration,c.partList&&(c.fragmentHint=b)):c.partList&&(Je(y,b),y.cc=g,c.fragmentHint=y,u&&et(y,u,c))
+default:O.warn("line parsed but not handled: "+s)}}}v&&!v.relurl?(d.pop(),m-=v.duration,c.partList&&(c.fragmentHint=v)):c.partList&&(tt(y,v),y.cc=g,c.fragmentHint=y,u&&it(y,u,c))
 var ee=d.length,te=d[0],re=d[ee-1]
 if((m+=c.skippedSegments*c.targetduration)>0&&ee&&re){c.averagetargetduration=m/ee
 var ie=re.sn
@@ -4216,79 +4217,79 @@ c.endSN="initSegment"!==ie?ie:0,c.live||(re.endList=!0),te&&(c.startCC=te.cc)}el
 return c.fragmentHint&&(m+=c.fragmentHint.duration),c.totalduration=m,c.endCC=g,_>0&&function(e,t){for(var r=e[t],i=t;i--;){var n=e[i]
 if(!n)return
 n.programDateTime=r.programDateTime-1e3*n.duration,r=n}}(d,_),c},e}()
-function We(e,t,r){var i,n,a=new P(e)
-je(r,a,["KEYFORMAT","KEYFORMATVERSIONS","URI","IV","URI"])
+function Xe(e,t,r){var i,n,a=new A(e)
+Fe(r,a,["KEYFORMAT","KEYFORMATVERSIONS","URI","IV","URI"])
 var s=null!=(i=a.METHOD)?i:"",o=a.URI,l=a.hexadecimalInteger("IV"),u=a.KEYFORMATVERSIONS,c=null!=(n=a.KEYFORMAT)?n:"identity"
-o&&a.IV&&!l&&S.error("Invalid IV: "+a.IV)
-var d=o?Ke.resolve(o,t):"",h=(u||"1").split("/").map(Number).filter(Number.isFinite)
-return new Me(s,d,c,h,l)}function Ye(e){var t=new P(e).decimalFloatingPoint("TIME-OFFSET")
-return v(t)?t:null}function Qe(e,t){["video","audio","text"].forEach((function(r){var i=e.filter((function(e){return function(e,t){var r=Ue[t]
+o&&a.IV&&!l&&O.error("Invalid IV: "+a.IV)
+var d=o?Qe.resolve(o,t):"",h=(u||"1").split("/").map(Number).filter(Number.isFinite)
+return new Ie(s,d,c,h,l)}function Je(e){var t=new A(e).decimalFloatingPoint("TIME-OFFSET")
+return b(t)?t:null}function Ze(e,t){["video","audio","text"].forEach((function(r){var i=e.filter((function(e){return function(e,t){var r=He[t]
 return!!r&&!0===r[e.slice(0,4)]}(e,r)}))
 if(i.length){var n=i.filter((function(e){return 0===e.lastIndexOf("avc1",0)||0===e.lastIndexOf("mp4a",0)}))
-t[r+"Codec"]=n.length>0?n[0]:i[0],e=e.filter((function(e){return-1===i.indexOf(e)}))}})),t.unknownCodecs=e}function Xe(e,t,r){var i=t[r]
-i&&(e[r]=i)}function Je(e,t){e.rawProgramDateTime?e.programDateTime=Date.parse(e.rawProgramDateTime):null!=t&&t.programDateTime&&(e.programDateTime=t.endProgramDateTime),v(e.programDateTime)||(e.programDateTime=null,e.rawProgramDateTime=null)}function Ze(e,t,r,i){e.relurl=t.URI,t.BYTERANGE&&e.setByteRange(t.BYTERANGE),e.level=r,e.sn="initSegment",i&&(e.levelkeys=i),e.initSegment=null}function et(e,t,r){e.levelkeys=t
+t[r+"Codec"]=n.length>0?n[0]:i[0],e=e.filter((function(e){return-1===i.indexOf(e)}))}})),t.unknownCodecs=e}function et(e,t,r){var i=t[r]
+i&&(e[r]=i)}function tt(e,t){e.rawProgramDateTime?e.programDateTime=Date.parse(e.rawProgramDateTime):null!=t&&t.programDateTime&&(e.programDateTime=t.endProgramDateTime),b(e.programDateTime)||(e.programDateTime=null,e.rawProgramDateTime=null)}function rt(e,t,r,i){e.relurl=t.URI,t.BYTERANGE&&e.setByteRange(t.BYTERANGE),e.level=r,e.sn="initSegment",i&&(e.levelkeys=i),e.initSegment=null}function it(e,t,r){e.levelkeys=t
 var i=r.encryptedFragments
-i.length&&i[i.length-1].levelkeys===t||!Object.keys(t).some((function(e){return t[e].isCommonEncryption}))||i.push(e)}var tt="manifest",rt="level",it="audioTrack",nt="subtitleTrack",at="main",st="audio",ot="subtitle"
-function lt(e){switch(e.type){case it:return st
-case nt:return ot
-default:return at}}function ut(e,t){var r=e.url
-return void 0!==r&&0!==r.indexOf("data:")||(r=t.url),r}var ct=function(){function e(e){this.hls=void 0,this.loaders=Object.create(null),this.variableList=null,this.hls=e,this.registerListeners()}var t=e.prototype
+i.length&&i[i.length-1].levelkeys===t||!Object.keys(t).some((function(e){return t[e].isCommonEncryption}))||i.push(e)}var nt="manifest",at="level",st="audioTrack",ot="subtitleTrack",lt="main",ut="audio",ct="subtitle"
+function dt(e){switch(e.type){case st:return ut
+case ot:return ct
+default:return lt}}function ht(e,t){var r=e.url
+return void 0!==r&&0!==r.indexOf("data:")||(r=t.url),r}var ft=function(){function e(e){this.hls=void 0,this.loaders=Object.create(null),this.variableList=null,this.hls=e,this.registerListeners()}var t=e.prototype
 return t.startLoad=function(e){},t.stopLoad=function(){this.destroyInternalLoaders()},t.registerListeners=function(){var e=this.hls
-e.on(b.MANIFEST_LOADING,this.onManifestLoading,this),e.on(b.LEVEL_LOADING,this.onLevelLoading,this),e.on(b.AUDIO_TRACK_LOADING,this.onAudioTrackLoading,this),e.on(b.SUBTITLE_TRACK_LOADING,this.onSubtitleTrackLoading,this)},t.unregisterListeners=function(){var e=this.hls
-e.off(b.MANIFEST_LOADING,this.onManifestLoading,this),e.off(b.LEVEL_LOADING,this.onLevelLoading,this),e.off(b.AUDIO_TRACK_LOADING,this.onAudioTrackLoading,this),e.off(b.SUBTITLE_TRACK_LOADING,this.onSubtitleTrackLoading,this)},t.createInternalLoader=function(e){var t=this.hls.config,r=t.pLoader,i=t.loader,n=new(r||i)(t)
+e.on(y.MANIFEST_LOADING,this.onManifestLoading,this),e.on(y.LEVEL_LOADING,this.onLevelLoading,this),e.on(y.AUDIO_TRACK_LOADING,this.onAudioTrackLoading,this),e.on(y.SUBTITLE_TRACK_LOADING,this.onSubtitleTrackLoading,this)},t.unregisterListeners=function(){var e=this.hls
+e.off(y.MANIFEST_LOADING,this.onManifestLoading,this),e.off(y.LEVEL_LOADING,this.onLevelLoading,this),e.off(y.AUDIO_TRACK_LOADING,this.onAudioTrackLoading,this),e.off(y.SUBTITLE_TRACK_LOADING,this.onSubtitleTrackLoading,this)},t.createInternalLoader=function(e){var t=this.hls.config,r=t.pLoader,i=t.loader,n=new(r||i)(t)
 return this.loaders[e.type]=n,n},t.getInternalLoader=function(e){return this.loaders[e.type]},t.resetInternalLoader=function(e){this.loaders[e]&&delete this.loaders[e]},t.destroyInternalLoaders=function(){for(var e in this.loaders){var t=this.loaders[e]
 t&&t.destroy(),this.resetInternalLoader(e)}},t.destroy=function(){this.variableList=null,this.unregisterListeners(),this.destroyInternalLoaders()},t.onManifestLoading=function(e,t){var r=t.url
-this.variableList=null,this.load({id:null,level:0,responseType:"text",type:tt,url:r,deliveryDirectives:null})},t.onLevelLoading=function(e,t){var r=t.id,i=t.level,n=t.url,a=t.deliveryDirectives
-this.load({id:r,level:i,responseType:"text",type:rt,url:n,deliveryDirectives:a})},t.onAudioTrackLoading=function(e,t){var r=t.id,i=t.groupId,n=t.url,a=t.deliveryDirectives
-this.load({id:r,groupId:i,level:null,responseType:"text",type:it,url:n,deliveryDirectives:a})},t.onSubtitleTrackLoading=function(e,t){var r=t.id,i=t.groupId,n=t.url,a=t.deliveryDirectives
-this.load({id:r,groupId:i,level:null,responseType:"text",type:nt,url:n,deliveryDirectives:a})},t.load=function(e){var t,r,i,n=this,a=this.hls.config,s=this.getInternalLoader(e)
+this.variableList=null,this.load({id:null,level:0,responseType:"text",type:nt,url:r,deliveryDirectives:null})},t.onLevelLoading=function(e,t){var r=t.id,i=t.level,n=t.url,a=t.deliveryDirectives
+this.load({id:r,level:i,responseType:"text",type:at,url:n,deliveryDirectives:a})},t.onAudioTrackLoading=function(e,t){var r=t.id,i=t.groupId,n=t.url,a=t.deliveryDirectives
+this.load({id:r,groupId:i,level:null,responseType:"text",type:st,url:n,deliveryDirectives:a})},t.onSubtitleTrackLoading=function(e,t){var r=t.id,i=t.groupId,n=t.url,a=t.deliveryDirectives
+this.load({id:r,groupId:i,level:null,responseType:"text",type:ot,url:n,deliveryDirectives:a})},t.load=function(e){var t,r,i,n=this,a=this.hls.config,s=this.getInternalLoader(e)
 if(s){var l=s.context
-if(l&&l.url===e.url)return void S.trace("[playlist-loader]: playlist request ongoing")
-S.log("[playlist-loader]: aborting previous loader for type: "+e.type),s.abort()}if(r=e.type===tt?a.manifestLoadPolicy.default:o({},a.playlistLoadPolicy.default,{timeoutRetry:null,errorRetry:null}),s=this.createInternalLoader(e),null!=(t=e.deliveryDirectives)&&t.part&&(e.type===rt&&null!==e.level?i=this.hls.levels[e.level].details:e.type===it&&null!==e.id?i=this.hls.audioTracks[e.id].details:e.type===nt&&null!==e.id&&(i=this.hls.subtitleTracks[e.id].details),i)){var u=i.partTarget,c=i.targetduration
+if(l&&l.url===e.url)return void O.trace("[playlist-loader]: playlist request ongoing")
+O.log("[playlist-loader]: aborting previous loader for type: "+e.type),s.abort()}if(r=e.type===nt?a.manifestLoadPolicy.default:o({},a.playlistLoadPolicy.default,{timeoutRetry:null,errorRetry:null}),s=this.createInternalLoader(e),null!=(t=e.deliveryDirectives)&&t.part&&(e.type===at&&null!==e.level?i=this.hls.levels[e.level].details:e.type===st&&null!==e.id?i=this.hls.audioTracks[e.id].details:e.type===ot&&null!==e.id&&(i=this.hls.subtitleTracks[e.id].details),i)){var u=i.partTarget,c=i.targetduration
 if(u&&c){var d=1e3*Math.max(3*u,.8*c)
 r=o({},r,{maxTimeToFirstByteMs:Math.min(d,r.maxTimeToFirstByteMs),maxLoadTimeMs:Math.min(d,r.maxTimeToFirstByteMs)})}}var h=r.errorRetry||r.timeoutRetry||{},f={loadPolicy:r,timeout:r.maxLoadTimeMs,maxRetry:h.maxNumRetry||0,retryDelay:h.retryDelayMs||0,maxRetryDelay:h.maxRetryDelayMs||0},p={onSuccess:function(e,t,r,i){var a=n.getInternalLoader(r)
 n.resetInternalLoader(r.type)
 var s=e.data
-0===s.indexOf("#EXTM3U")?(t.parsing.start=performance.now(),Ke.isMediaPlaylist(s)?n.handleTrackOrLevelPlaylist(e,t,r,i||null,a):n.handleMasterPlaylist(e,t,r,i)):n.handleManifestParsingError(e,r,new Error("no EXTM3U delimiter"),i||null,t)},onError:function(e,t,r,i){n.handleNetworkError(t,r,!1,e,i)},onTimeout:function(e,t,r){n.handleNetworkError(t,r,!0,void 0,e)}}
-s.load(e,f,p)},t.handleMasterPlaylist=function(e,t,r,i){var n=this.hls,a=e.data,s=ut(e,r),o=Ke.parseMasterPlaylist(a,s)
+0===s.indexOf("#EXTM3U")?(t.parsing.start=performance.now(),Qe.isMediaPlaylist(s)?n.handleTrackOrLevelPlaylist(e,t,r,i||null,a):n.handleMasterPlaylist(e,t,r,i)):n.handleManifestParsingError(e,r,new Error("no EXTM3U delimiter"),i||null,t)},onError:function(e,t,r,i){n.handleNetworkError(t,r,!1,e,i)},onTimeout:function(e,t,r){n.handleNetworkError(t,r,!0,void 0,e)}}
+s.load(e,f,p)},t.handleMasterPlaylist=function(e,t,r,i){var n=this.hls,a=e.data,s=ht(e,r),o=Qe.parseMasterPlaylist(a,s)
 if(o.playlistParsingError)this.handleManifestParsingError(e,r,o.playlistParsingError,i,t)
 else{var l=o.contentSteering,u=o.levels,c=o.sessionData,d=o.sessionKeys,h=o.startTimeOffset,f=o.variableList
 this.variableList=f
-var p=Ke.parseMasterPlaylistMedia(a,s,o),m=p.AUDIO,g=void 0===m?[]:m,v=p.SUBTITLES,y=p["CLOSED-CAPTIONS"]
-g.length&&(g.some((function(e){return!e.url}))||!u[0].audioCodec||u[0].attrs.AUDIO||(S.log("[playlist-loader]: audio codec signaled in quality level, but no embedded audio track signaled, create one"),g.unshift({type:"main",name:"main",groupId:"main",default:!1,autoselect:!1,forced:!1,id:-1,attrs:new P({}),bitrate:0,url:""}))),n.trigger(b.MANIFEST_LOADED,{levels:u,audioTracks:g,subtitles:v,captions:y,contentSteering:l,url:s,stats:t,networkDetails:i,sessionData:c,sessionKeys:d,startTimeOffset:h,variableList:f})}},t.handleTrackOrLevelPlaylist=function(e,t,r,i,n){var a=this.hls,s=r.id,o=r.level,l=r.type,u=ut(e,r),c=v(s)?s:0,d=v(o)?o:c,h=lt(r),f=Ke.parseLevelPlaylist(e.data,u,d,h,c,this.variableList)
-if(l===tt){var p={attrs:new P({}),bitrate:0,details:f,name:"",url:u}
-a.trigger(b.MANIFEST_LOADED,{levels:[p],audioTracks:[],url:u,stats:t,networkDetails:i,sessionData:null,sessionKeys:null,contentSteering:null,startTimeOffset:null,variableList:null})}t.parsing.end=performance.now(),r.levelDetails=f,this.handlePlaylistLoaded(f,e,t,r,i,n)},t.handleManifestParsingError=function(e,t,r,i,n){this.hls.trigger(b.ERROR,{type:y.NETWORK_ERROR,details:_.MANIFEST_PARSING_ERROR,fatal:t.type===tt,url:e.url,err:r,error:r,reason:r.message,response:e,context:t,networkDetails:i,stats:n})},t.handleNetworkError=function(e,t,r,n,a){void 0===r&&(r=!1)
+var p=Qe.parseMasterPlaylistMedia(a,s,o),m=p.AUDIO,g=void 0===m?[]:m,v=p.SUBTITLES,b=p["CLOSED-CAPTIONS"]
+g.length&&(g.some((function(e){return!e.url}))||!u[0].audioCodec||u[0].attrs.AUDIO||(O.log("[playlist-loader]: audio codec signaled in quality level, but no embedded audio track signaled, create one"),g.unshift({type:"main",name:"main",groupId:"main",default:!1,autoselect:!1,forced:!1,id:-1,attrs:new A({}),bitrate:0,url:""}))),n.trigger(y.MANIFEST_LOADED,{levels:u,audioTracks:g,subtitles:v,captions:b,contentSteering:l,url:s,stats:t,networkDetails:i,sessionData:c,sessionKeys:d,startTimeOffset:h,variableList:f})}},t.handleTrackOrLevelPlaylist=function(e,t,r,i,n){var a=this.hls,s=r.id,o=r.level,l=r.type,u=ht(e,r),c=b(s)?s:0,d=b(o)?o:c,h=dt(r),f=Qe.parseLevelPlaylist(e.data,u,d,h,c,this.variableList)
+if(l===nt){var p={attrs:new A({}),bitrate:0,details:f,name:"",url:u}
+a.trigger(y.MANIFEST_LOADED,{levels:[p],audioTracks:[],url:u,stats:t,networkDetails:i,sessionData:null,sessionKeys:null,contentSteering:null,startTimeOffset:null,variableList:null})}t.parsing.end=performance.now(),r.levelDetails=f,this.handlePlaylistLoaded(f,e,t,r,i,n)},t.handleManifestParsingError=function(e,t,r,i,n){this.hls.trigger(y.ERROR,{type:_.NETWORK_ERROR,details:w.MANIFEST_PARSING_ERROR,fatal:t.type===nt,url:e.url,err:r,error:r,reason:r.message,response:e,context:t,networkDetails:i,stats:n})},t.handleNetworkError=function(e,t,r,n,a){void 0===r&&(r=!1)
 var s="A network "+(r?"timeout":"error"+(n?" (status "+n.code+")":""))+" occurred while loading "+e.type
-e.type===rt?s+=": "+e.level+" id: "+e.id:e.type!==it&&e.type!==nt||(s+=" id: "+e.id+' group-id: "'+e.groupId+'"')
+e.type===at?s+=": "+e.level+" id: "+e.id:e.type!==st&&e.type!==ot||(s+=" id: "+e.id+' group-id: "'+e.groupId+'"')
 var o=new Error(s)
-S.warn("[playlist-loader]: "+s)
-var l=_.UNKNOWN,u=!1,c=this.getInternalLoader(e)
-switch(e.type){case tt:l=r?_.MANIFEST_LOAD_TIMEOUT:_.MANIFEST_LOAD_ERROR,u=!0
+O.warn("[playlist-loader]: "+s)
+var l=w.UNKNOWN,u=!1,c=this.getInternalLoader(e)
+switch(e.type){case nt:l=r?w.MANIFEST_LOAD_TIMEOUT:w.MANIFEST_LOAD_ERROR,u=!0
 break
-case rt:l=r?_.LEVEL_LOAD_TIMEOUT:_.LEVEL_LOAD_ERROR,u=!1
+case at:l=r?w.LEVEL_LOAD_TIMEOUT:w.LEVEL_LOAD_ERROR,u=!1
 break
-case it:l=r?_.AUDIO_TRACK_LOAD_TIMEOUT:_.AUDIO_TRACK_LOAD_ERROR,u=!1
+case st:l=r?w.AUDIO_TRACK_LOAD_TIMEOUT:w.AUDIO_TRACK_LOAD_ERROR,u=!1
 break
-case nt:l=r?_.SUBTITLE_TRACK_LOAD_TIMEOUT:_.SUBTITLE_LOAD_ERROR,u=!1}c&&this.resetInternalLoader(e.type)
-var d={type:y.NETWORK_ERROR,details:l,fatal:u,url:e.url,loader:c,context:e,error:o,networkDetails:t,stats:a}
+case ot:l=r?w.SUBTITLE_TRACK_LOAD_TIMEOUT:w.SUBTITLE_LOAD_ERROR,u=!1}c&&this.resetInternalLoader(e.type)
+var d={type:_.NETWORK_ERROR,details:l,fatal:u,url:e.url,loader:c,context:e,error:o,networkDetails:t,stats:a}
 if(n){var h=(null==t?void 0:t.url)||e.url
-d.response=i({url:h,data:void 0},n)}this.hls.trigger(b.ERROR,d)},t.handlePlaylistLoaded=function(e,t,r,i,n,a){var s=this.hls,o=i.type,l=i.level,u=i.id,c=i.groupId,d=i.deliveryDirectives,h=ut(t,i),f=lt(i),p="number"==typeof i.level&&f===at?l:void 0
+d.response=i({url:h,data:void 0},n)}this.hls.trigger(y.ERROR,d)},t.handlePlaylistLoaded=function(e,t,r,i,n,a){var s=this.hls,o=i.type,l=i.level,u=i.id,c=i.groupId,d=i.deliveryDirectives,h=ht(t,i),f=dt(i),p="number"==typeof i.level&&f===lt?l:void 0
 if(e.fragments.length){e.targetduration||(e.playlistParsingError=new Error("Missing Target Duration"))
 var m=e.playlistParsingError
-if(m)s.trigger(b.ERROR,{type:y.NETWORK_ERROR,details:_.LEVEL_PARSING_ERROR,fatal:!1,url:h,error:m,reason:m.message,response:t,context:i,level:p,parent:f,networkDetails:n,stats:r})
-else switch(e.live&&a&&(a.getCacheAge&&(e.ageHeader=a.getCacheAge()||0),a.getCacheAge&&!isNaN(e.ageHeader)||(e.ageHeader=0)),o){case tt:case rt:s.trigger(b.LEVEL_LOADED,{details:e,level:p||0,id:u||0,stats:r,networkDetails:n,deliveryDirectives:d})
+if(m)s.trigger(y.ERROR,{type:_.NETWORK_ERROR,details:w.LEVEL_PARSING_ERROR,fatal:!1,url:h,error:m,reason:m.message,response:t,context:i,level:p,parent:f,networkDetails:n,stats:r})
+else switch(e.live&&a&&(a.getCacheAge&&(e.ageHeader=a.getCacheAge()||0),a.getCacheAge&&!isNaN(e.ageHeader)||(e.ageHeader=0)),o){case nt:case at:s.trigger(y.LEVEL_LOADED,{details:e,level:p||0,id:u||0,stats:r,networkDetails:n,deliveryDirectives:d})
 break
-case it:s.trigger(b.AUDIO_TRACK_LOADED,{details:e,id:u||0,groupId:c||"",stats:r,networkDetails:n,deliveryDirectives:d})
+case st:s.trigger(y.AUDIO_TRACK_LOADED,{details:e,id:u||0,groupId:c||"",stats:r,networkDetails:n,deliveryDirectives:d})
 break
-case nt:s.trigger(b.SUBTITLE_TRACK_LOADED,{details:e,id:u||0,groupId:c||"",stats:r,networkDetails:n,deliveryDirectives:d})}}else{var g=new Error("No Segments found in Playlist")
-s.trigger(b.ERROR,{type:y.NETWORK_ERROR,details:_.LEVEL_EMPTY_ERROR,fatal:!1,url:h,error:g,reason:g.message,response:t,context:i,level:p,parent:f,networkDetails:n,stats:r})}},e}()
-function dt(e,t){var r
-try{r=new Event("addtrack")}catch(e){(r=document.createEvent("Event")).initEvent("addtrack",!1,!1)}r.track=e,t.dispatchEvent(r)}function ht(e,t){var r=e.mode
-if("disabled"===r&&(e.mode="hidden"),e.cues&&!e.cues.getCueById(t.id))try{if(e.addCue(t),!e.cues.getCueById(t.id))throw new Error("addCue is failed for: "+t)}catch(r){S.debug("[texttrack-utils]: "+r)
+case ot:s.trigger(y.SUBTITLE_TRACK_LOADED,{details:e,id:u||0,groupId:c||"",stats:r,networkDetails:n,deliveryDirectives:d})}}else{var g=new Error("No Segments found in Playlist")
+s.trigger(y.ERROR,{type:_.NETWORK_ERROR,details:w.LEVEL_EMPTY_ERROR,fatal:!1,url:h,error:g,reason:g.message,response:t,context:i,level:p,parent:f,networkDetails:n,stats:r})}},e}()
+function pt(e,t){var r
+try{r=new Event("addtrack")}catch(e){(r=document.createEvent("Event")).initEvent("addtrack",!1,!1)}r.track=e,t.dispatchEvent(r)}function mt(e,t){var r=e.mode
+if("disabled"===r&&(e.mode="hidden"),e.cues&&!e.cues.getCueById(t.id))try{if(e.addCue(t),!e.cues.getCueById(t.id))throw new Error("addCue is failed for: "+t)}catch(r){O.debug("[texttrack-utils]: "+r)
 var i=new self.TextTrackCue(t.startTime,t.endTime,t.text)
-i.id=t.id,e.addCue(i)}"disabled"===r&&(e.mode=r)}function ft(e){var t=e.mode
+i.id=t.id,e.addCue(i)}"disabled"===r&&(e.mode=r)}function gt(e){var t=e.mode
 if("disabled"===t&&(e.mode="hidden"),e.cues)for(var r=e.cues.length;r--;)e.removeCue(e.cues[r])
-"disabled"===t&&(e.mode=t)}function pt(e,t,r,i){var n=e.mode
+"disabled"===t&&(e.mode=t)}function vt(e,t,r,i){var n=e.mode
 if("disabled"===n&&(e.mode="hidden"),e.cues&&e.cues.length>0)for(var a=function(e,t,r){var i=[],n=function(e,t){if(t<e[0].startTime)return 0
 var r=e.length-1
 if(t>e[r].endTime)return-1
@@ -4299,47 +4300,47 @@ i=a+1}}return e[i].startTime-t<t-e[n].startTime?i:n}(e,t)
 if(n>-1)for(var a=n,s=e.length;a<s;a++){var o=e[a]
 if(o.startTime>=t&&o.endTime<=r)i.push(o)
 else if(o.startTime>r)return i}return i}(e.cues,t,r),s=0;s<a.length;s++)i&&!i(a[s])||e.removeCue(a[s])
-"disabled"===n&&(e.mode=n)}var mt="org.id3",gt="https://aomedia.org/emsg/ID3"
-function vt(){if("undefined"!=typeof self)return self.WebKitDataCue||self.VTTCue||self.TextTrackCue}var bt=function(){var e=vt()
+"disabled"===n&&(e.mode=n)}var bt="org.id3",yt="https://aomedia.org/emsg/ID3"
+function _t(){if("undefined"!=typeof self)return self.WebKitDataCue||self.VTTCue||self.TextTrackCue}var wt=function(){var e=_t()
 try{new e(0,Number.POSITIVE_INFINITY,"")}catch(e){return Number.MAX_VALUE}return Number.POSITIVE_INFINITY}()
-function yt(e,t){return e.getTime()/1e3-t}var _t=function(){function e(e){this.hls=void 0,this.id3Track=null,this.media=null,this.dateRangeCuesAppended={},this.hls=e,this._registerListeners()}var t=e.prototype
+function Et(e,t){return e.getTime()/1e3-t}var Tt=function(){function e(e){this.hls=void 0,this.id3Track=null,this.media=null,this.dateRangeCuesAppended={},this.hls=e,this._registerListeners()}var t=e.prototype
 return t.destroy=function(){this._unregisterListeners(),this.id3Track=null,this.media=null,this.dateRangeCuesAppended={},this.hls=null},t._registerListeners=function(){var e=this.hls
-e.on(b.MEDIA_ATTACHED,this.onMediaAttached,this),e.on(b.MEDIA_DETACHING,this.onMediaDetaching,this),e.on(b.MANIFEST_LOADING,this.onManifestLoading,this),e.on(b.FRAG_PARSING_METADATA,this.onFragParsingMetadata,this),e.on(b.BUFFER_FLUSHING,this.onBufferFlushing,this),e.on(b.LEVEL_UPDATED,this.onLevelUpdated,this)},t._unregisterListeners=function(){var e=this.hls
-e.off(b.MEDIA_ATTACHED,this.onMediaAttached,this),e.off(b.MEDIA_DETACHING,this.onMediaDetaching,this),e.off(b.MANIFEST_LOADING,this.onManifestLoading,this),e.off(b.FRAG_PARSING_METADATA,this.onFragParsingMetadata,this),e.off(b.BUFFER_FLUSHING,this.onBufferFlushing,this),e.off(b.LEVEL_UPDATED,this.onLevelUpdated,this)},t.onMediaAttached=function(e,t){this.media=t.media},t.onMediaDetaching=function(){this.id3Track&&(ft(this.id3Track),this.id3Track=null,this.media=null,this.dateRangeCuesAppended={})},t.onManifestLoading=function(){this.dateRangeCuesAppended={}},t.createTrack=function(e){var t=this.getID3Track(e.textTracks)
+e.on(y.MEDIA_ATTACHED,this.onMediaAttached,this),e.on(y.MEDIA_DETACHING,this.onMediaDetaching,this),e.on(y.MANIFEST_LOADING,this.onManifestLoading,this),e.on(y.FRAG_PARSING_METADATA,this.onFragParsingMetadata,this),e.on(y.BUFFER_FLUSHING,this.onBufferFlushing,this),e.on(y.LEVEL_UPDATED,this.onLevelUpdated,this)},t._unregisterListeners=function(){var e=this.hls
+e.off(y.MEDIA_ATTACHED,this.onMediaAttached,this),e.off(y.MEDIA_DETACHING,this.onMediaDetaching,this),e.off(y.MANIFEST_LOADING,this.onManifestLoading,this),e.off(y.FRAG_PARSING_METADATA,this.onFragParsingMetadata,this),e.off(y.BUFFER_FLUSHING,this.onBufferFlushing,this),e.off(y.LEVEL_UPDATED,this.onLevelUpdated,this)},t.onMediaAttached=function(e,t){this.media=t.media},t.onMediaDetaching=function(){this.id3Track&&(gt(this.id3Track),this.id3Track=null,this.media=null,this.dateRangeCuesAppended={})},t.onManifestLoading=function(){this.dateRangeCuesAppended={}},t.createTrack=function(e){var t=this.getID3Track(e.textTracks)
 return t.mode="hidden",t},t.getID3Track=function(e){if(this.media){for(var t=0;t<e.length;t++){var r=e[t]
-if("metadata"===r.kind&&"id3"===r.label)return dt(r,this.media),r}return this.media.addTextTrack("metadata","id3")}},t.onFragParsingMetadata=function(e,t){if(this.media){var r=this.hls.config,i=r.enableEmsgMetadataCues,n=r.enableID3MetadataCues
+if("metadata"===r.kind&&"id3"===r.label)return pt(r,this.media),r}return this.media.addTextTrack("metadata","id3")}},t.onFragParsingMetadata=function(e,t){if(this.media){var r=this.hls.config,i=r.enableEmsgMetadataCues,n=r.enableID3MetadataCues
 if(i||n){var a=t.samples
 this.id3Track||(this.id3Track=this.createTrack(this.media))
-for(var s=vt(),o=0;o<a.length;o++){var l=a[o].type
-if((l!==gt||i)&&n){var u=se(a[o].data)
+for(var s=_t(),o=0;o<a.length;o++){var l=a[o].type
+if((l!==yt||i)&&n){var u=oe(a[o].data)
 if(u){var c=a[o].pts,d=c+a[o].duration
-d>bt&&(d=bt),d-c<=0&&(d=c+.25)
+d>wt&&(d=wt),d-c<=0&&(d=c+.25)
 for(var h=0;h<u.length;h++){var f=u[h]
-if(!ne(f)){this.updateId3CueEnds(c)
+if(!ae(f)){this.updateId3CueEnds(c)
 var p=new s(c,d,"")
 p.value=f,l&&(p.type=l),this.id3Track.addCue(p)}}}}}}}},t.updateId3CueEnds=function(e){var t,r=null==(t=this.id3Track)?void 0:t.cues
 if(r)for(var i=r.length;i--;){var n=r[i]
-n.startTime<e&&n.endTime===bt&&(n.endTime=e)}},t.onBufferFlushing=function(e,t){var r=t.startOffset,i=t.endOffset,n=t.type,a=this.id3Track,s=this.hls
+n.startTime<e&&n.endTime===wt&&(n.endTime=e)}},t.onBufferFlushing=function(e,t){var r=t.startOffset,i=t.endOffset,n=t.type,a=this.id3Track,s=this.hls
 if(s){var o=s.config,l=o.enableEmsgMetadataCues,u=o.enableID3MetadataCues
-a&&(l||u)&&pt(a,r,i,"audio"===n?function(e){return e.type===mt&&u}:"video"===n?function(e){return e.type===gt&&l}:function(e){return e.type===mt&&u||e.type===gt&&l})}},t.onLevelUpdated=function(e,t){var r=this,i=t.details
+a&&(l||u)&&vt(a,r,i,"audio"===n?function(e){return e.type===bt&&u}:"video"===n?function(e){return e.type===yt&&l}:function(e){return e.type===bt&&u||e.type===yt&&l})}},t.onLevelUpdated=function(e,t){var r=this,i=t.details
 if(this.media&&i.hasProgramDateTime&&this.hls.config.enableDateRangeMetadataCues){var n=this.dateRangeCuesAppended,a=this.id3Track,s=i.dateRanges,o=Object.keys(s)
 if(a)for(var l=Object.keys(n).filter((function(e){return!o.includes(e)})),u=function(){var e=l[c]
 Object.keys(n[e].cues).forEach((function(t){a.removeCue(n[e].cues[t])})),delete n[e]},c=l.length;c--;)u()
 var d=i.fragments[i.fragments.length-1]
-if(0!==o.length&&v(null==d?void 0:d.programDateTime)){this.id3Track||(this.id3Track=this.createTrack(this.media))
-for(var h=d.programDateTime/1e3-d.start,f=vt(),p=function(){var e=o[m],t=s[e],i=n[e],a=(null==i?void 0:i.cues)||{},l=(null==i?void 0:i.durationKnown)||!1,u=yt(t.startDate,h),c=bt,d=t.endDate
-if(d)c=yt(d,h),l=!0
+if(0!==o.length&&b(null==d?void 0:d.programDateTime)){this.id3Track||(this.id3Track=this.createTrack(this.media))
+for(var h=d.programDateTime/1e3-d.start,f=_t(),p=function(){var e=o[m],t=s[e],i=n[e],a=(null==i?void 0:i.cues)||{},l=(null==i?void 0:i.durationKnown)||!1,u=Et(t.startDate,h),c=wt,d=t.endDate
+if(d)c=Et(d,h),l=!0
 else if(t.endOnNext&&!l){var p=o.reduce((function(e,r){var i=s[r]
 return i.class===t.class&&i.id!==r&&i.startDate>t.startDate&&e.push(i),e}),[]).sort((function(e,t){return e.startDate.getTime()-t.startDate.getTime()}))[0]
-p&&(c=yt(p.startDate,h),l=!0)}for(var g,v,b=Object.keys(t.attr),y=0;y<b.length;y++){var _=b[y]
+p&&(c=Et(p.startDate,h),l=!0)}for(var g,v,b=Object.keys(t.attr),y=0;y<b.length;y++){var _=b[y]
 if("ID"!==(v=_)&&"CLASS"!==v&&"START-DATE"!==v&&"DURATION"!==v&&"END-DATE"!==v&&"END-ON-NEXT"!==v){var w=a[_]
 if(w)l&&!i.durationKnown&&(w.endTime=c)
 else{var E=t.attr[_]
-w=new f(u,c,""),A(_)&&(g=E,E=Uint8Array.from(g.replace(/^0x/,"").replace(/([\da-fA-F]{2}) ?/g,"0x$1 ").replace(/ +$/,"").split(" ")).buffer),w.value={key:_,data:E},w.type="com.apple.quicktime.HLS",w.id=e,r.id3Track.addCue(w),a[_]=w}}}n[e]={cues:a,dateRange:t,durationKnown:l}},m=0;m<o.length;m++)p()}}},e}(),wt=function(){function e(e){var t=this
+w=new f(u,c,""),R(_)&&(g=E,E=Uint8Array.from(g.replace(/^0x/,"").replace(/([\da-fA-F]{2}) ?/g,"0x$1 ").replace(/ +$/,"").split(" ")).buffer),w.value={key:_,data:E},w.type="com.apple.quicktime.HLS",w.id=e,r.id3Track.addCue(w),a[_]=w}}}n[e]={cues:a,dateRange:t,durationKnown:l}},m=0;m<o.length;m++)p()}}},e}(),kt=function(){function e(e){var t=this
 this.hls=void 0,this.config=void 0,this.media=null,this.levelDetails=null,this.currentTime=0,this.stallCount=0,this._latency=null,this.timeupdateHandler=function(){return t.timeupdate()},this.hls=e,this.config=e.config,this.registerListeners()}var t=e.prototype
-return t.destroy=function(){this.unregisterListeners(),this.onMediaDetaching(),this.levelDetails=null,this.hls=this.timeupdateHandler=null},t.registerListeners=function(){this.hls.on(b.MEDIA_ATTACHED,this.onMediaAttached,this),this.hls.on(b.MEDIA_DETACHING,this.onMediaDetaching,this),this.hls.on(b.MANIFEST_LOADING,this.onManifestLoading,this),this.hls.on(b.LEVEL_UPDATED,this.onLevelUpdated,this),this.hls.on(b.ERROR,this.onError,this)},t.unregisterListeners=function(){this.hls.off(b.MEDIA_ATTACHED,this.onMediaAttached,this),this.hls.off(b.MEDIA_DETACHING,this.onMediaDetaching,this),this.hls.off(b.MANIFEST_LOADING,this.onManifestLoading,this),this.hls.off(b.LEVEL_UPDATED,this.onLevelUpdated,this),this.hls.off(b.ERROR,this.onError,this)},t.onMediaAttached=function(e,t){this.media=t.media,this.media.addEventListener("timeupdate",this.timeupdateHandler)},t.onMediaDetaching=function(){this.media&&(this.media.removeEventListener("timeupdate",this.timeupdateHandler),this.media=null)},t.onManifestLoading=function(){this.levelDetails=null,this._latency=null,this.stallCount=0},t.onLevelUpdated=function(e,t){var r=t.details
+return t.destroy=function(){this.unregisterListeners(),this.onMediaDetaching(),this.levelDetails=null,this.hls=this.timeupdateHandler=null},t.registerListeners=function(){this.hls.on(y.MEDIA_ATTACHED,this.onMediaAttached,this),this.hls.on(y.MEDIA_DETACHING,this.onMediaDetaching,this),this.hls.on(y.MANIFEST_LOADING,this.onManifestLoading,this),this.hls.on(y.LEVEL_UPDATED,this.onLevelUpdated,this),this.hls.on(y.ERROR,this.onError,this)},t.unregisterListeners=function(){this.hls.off(y.MEDIA_ATTACHED,this.onMediaAttached,this),this.hls.off(y.MEDIA_DETACHING,this.onMediaDetaching,this),this.hls.off(y.MANIFEST_LOADING,this.onManifestLoading,this),this.hls.off(y.LEVEL_UPDATED,this.onLevelUpdated,this),this.hls.off(y.ERROR,this.onError,this)},t.onMediaAttached=function(e,t){this.media=t.media,this.media.addEventListener("timeupdate",this.timeupdateHandler)},t.onMediaDetaching=function(){this.media&&(this.media.removeEventListener("timeupdate",this.timeupdateHandler),this.media=null)},t.onManifestLoading=function(){this.levelDetails=null,this._latency=null,this.stallCount=0},t.onLevelUpdated=function(e,t){var r=t.details
 this.levelDetails=r,r.advanced&&this.timeupdate(),!r.live&&this.media&&this.media.removeEventListener("timeupdate",this.timeupdateHandler)},t.onError=function(e,t){var r
-t.details===_.BUFFER_STALLED_ERROR&&(this.stallCount++,null!=(r=this.levelDetails)&&r.live&&S.warn("[playback-rate-controller]: Stall detected, adjusting target latency"))},t.timeupdate=function(){var e=this.media,t=this.levelDetails
+t.details===w.BUFFER_STALLED_ERROR&&(this.stallCount++,null!=(r=this.levelDetails)&&r.live&&O.warn("[playback-rate-controller]: Stall detected, adjusting target latency"))},t.timeupdate=function(){var e=this.media,t=this.levelDetails
 if(e&&t){this.currentTime=e.currentTime
 var r=this.computeLatency()
 if(null!==r){this._latency=r
@@ -4364,112 +4365,114 @@ var t=3*(this.config.lowLatencyMode&&e.partTarget||e.targetduration)
 return Math.max(e.age-t,0)}},{key:"forwardBufferLength",get:function(){var e=this.media,t=this.levelDetails
 if(!e||!t)return 0
 var r=e.buffered.length
-return(r?e.buffered.end(r-1):t.edge)-this.currentTime}}]),e}(),Et=["NONE","TYPE-0","TYPE-1",null],Tt=function(){function e(e,t,r){this.msn=void 0,this.part=void 0,this.skip=void 0,this.msn=e,this.part=t,this.skip=r}return e.prototype.addDirectives=function(e){var t=new self.URL(e)
-return void 0!==this.msn&&t.searchParams.set("_HLS_msn",this.msn.toString()),void 0!==this.part&&t.searchParams.set("_HLS_part",this.part.toString()),this.skip&&t.searchParams.set("_HLS_skip",this.skip),t.href},e}(),kt=function(){function e(e){this._attrs=void 0,this.audioCodec=void 0,this.bitrate=void 0,this.codecSet=void 0,this.height=void 0,this.id=void 0,this.name=void 0,this.videoCodec=void 0,this.width=void 0,this.unknownCodecs=void 0,this.audioGroupIds=void 0,this.details=void 0,this.fragmentError=0,this.loadError=0,this.loaded=void 0,this.realBitrate=0,this.textGroupIds=void 0,this.url=void 0,this._urlId=0,this.url=[e.url],this._attrs=[e.attrs],this.bitrate=e.bitrate,e.details&&(this.details=e.details),this.id=e.id||0,this.name=e.name,this.width=e.width||0,this.height=e.height||0,this.audioCodec=e.audioCodec,this.videoCodec=e.videoCodec,this.unknownCodecs=e.unknownCodecs,this.codecSet=[e.videoCodec,e.audioCodec].filter((function(e){return e})).join(",").replace(/\.[^.,]+/g,"")}return e.prototype.addFallback=function(e){this.url.push(e.url),this._attrs.push(e.attrs)},a(e,[{key:"maxBitrate",get:function(){return Math.max(this.realBitrate,this.bitrate)}},{key:"attrs",get:function(){return this._attrs[this._urlId]}},{key:"pathwayId",get:function(){return this.attrs["PATHWAY-ID"]||"."}},{key:"uri",get:function(){return this.url[this._urlId]||""}},{key:"urlId",get:function(){return this._urlId},set:function(e){var t=e%this.url.length
+return(r?e.buffered.end(r-1):t.edge)-this.currentTime}}]),e}(),St=["NONE","TYPE-0","TYPE-1",null],Ot=function(){function e(e,t,r){this.msn=void 0,this.part=void 0,this.skip=void 0,this.msn=e,this.part=t,this.skip=r}return e.prototype.addDirectives=function(e){var t=new self.URL(e)
+return void 0!==this.msn&&t.searchParams.set("_HLS_msn",this.msn.toString()),void 0!==this.part&&t.searchParams.set("_HLS_part",this.part.toString()),this.skip&&t.searchParams.set("_HLS_skip",this.skip),t.href},e}(),xt=function(){function e(e){this._attrs=void 0,this.audioCodec=void 0,this.bitrate=void 0,this.codecSet=void 0,this.height=void 0,this.id=void 0,this.name=void 0,this.videoCodec=void 0,this.width=void 0,this.unknownCodecs=void 0,this.audioGroupIds=void 0,this.details=void 0,this.fragmentError=0,this.loadError=0,this.loaded=void 0,this.realBitrate=0,this.textGroupIds=void 0,this.url=void 0,this._urlId=0,this.url=[e.url],this._attrs=[e.attrs],this.bitrate=e.bitrate,e.details&&(this.details=e.details),this.id=e.id||0,this.name=e.name,this.width=e.width||0,this.height=e.height||0,this.audioCodec=e.audioCodec,this.videoCodec=e.videoCodec,this.unknownCodecs=e.unknownCodecs,this.codecSet=[e.videoCodec,e.audioCodec].filter((function(e){return e})).join(",").replace(/\.[^.,]+/g,"")}return e.prototype.addFallback=function(e){this.url.push(e.url),this._attrs.push(e.attrs)},a(e,[{key:"maxBitrate",get:function(){return Math.max(this.realBitrate,this.bitrate)}},{key:"attrs",get:function(){return this._attrs[this._urlId]}},{key:"pathwayId",get:function(){return this.attrs["PATHWAY-ID"]||"."}},{key:"uri",get:function(){return this.url[this._urlId]||""}},{key:"urlId",get:function(){return this._urlId},set:function(e){var t=e%this.url.length
 this._urlId!==t&&(this.fragmentError=0,this.loadError=0,this.details=void 0,this._urlId=t)}},{key:"audioGroupId",get:function(){var e
 return null==(e=this.audioGroupIds)?void 0:e[this.urlId]}},{key:"textGroupId",get:function(){var e
 return null==(e=this.textGroupIds)?void 0:e[this.urlId]}}]),e}()
-function St(e,t){var r=t.startPTS
-if(v(r)){var i,n=0
-t.sn>e.sn?(n=r-e.start,i=e):(n=e.start-r,i=t),i.duration!==n&&(i.duration=n)}else t.sn>e.sn?e.cc===t.cc&&e.minEndPTS?t.start=e.start+(e.minEndPTS-e.start):t.start=e.start+e.duration:t.start=Math.max(e.start-t.duration,0)}function Ot(e,t,r,i,n,a){i-r<=0&&(S.warn("Fragment should have a positive duration",t),i=r+t.duration,a=n+t.duration)
+function Pt(e,t){var r=t.startPTS
+if(b(r)){var i,n=0
+t.sn>e.sn?(n=r-e.start,i=e):(n=e.start-r,i=t),i.duration!==n&&(i.duration=n)}else t.sn>e.sn?e.cc===t.cc&&e.minEndPTS?t.start=e.start+(e.minEndPTS-e.start):t.start=e.start+e.duration:t.start=Math.max(e.start-t.duration,0)}function At(e,t,r,i,n,a){i-r<=0&&(O.warn("Fragment should have a positive duration",t),i=r+t.duration,a=n+t.duration)
 var s=r,o=i,l=t.startPTS,u=t.endPTS
-if(v(l)){var c=Math.abs(l-r)
-v(t.deltaPTS)?t.deltaPTS=Math.max(c,t.deltaPTS):t.deltaPTS=c,s=Math.max(r,l),r=Math.min(r,l),n=Math.min(n,t.startDTS),o=Math.min(i,u),i=Math.max(i,u),a=Math.max(a,t.endDTS)}var d=r-t.start
+if(b(l)){var c=Math.abs(l-r)
+b(t.deltaPTS)?t.deltaPTS=Math.max(c,t.deltaPTS):t.deltaPTS=c,s=Math.max(r,l),r=Math.min(r,l),n=Math.min(n,t.startDTS),o=Math.min(i,u),i=Math.max(i,u),a=Math.max(a,t.endDTS)}var d=r-t.start
 0!==t.start&&(t.start=r),t.duration=i-t.start,t.startPTS=r,t.maxStartPTS=s,t.startDTS=n,t.endPTS=i,t.minEndPTS=o,t.endDTS=a
 var h,f=t.sn
 if(!e||f<e.startSN||f>e.endSN)return 0
 var p=f-e.startSN,m=e.fragments
-for(m[p]=t,h=p;h>0;h--)St(m[h],m[h-1])
-for(h=p;h<m.length-1;h++)St(m[h],m[h+1])
-return e.fragmentHint&&St(m[m.length-1],e.fragmentHint),e.PTSKnown=e.alignedSliding=!0,d}function xt(e,t){for(var r=null,i=e.fragments,n=i.length-1;n>=0;n--){var a=i[n].initSegment
+for(m[p]=t,h=p;h>0;h--)Pt(m[h],m[h-1])
+for(h=p;h<m.length-1;h++)Pt(m[h],m[h+1])
+return e.fragmentHint&&Pt(m[m.length-1],e.fragmentHint),e.PTSKnown=e.alignedSliding=!0,d}function Rt(e,t){for(var r=null,i=e.fragments,n=i.length-1;n>=0;n--){var a=i[n].initSegment
 if(a){r=a
 break}}e.fragmentHint&&delete e.fragmentHint.endPTS
 var s,l,u,c,d,h=0
 if(function(e,t,r){for(var i=t.skippedSegments,n=Math.max(e.startSN,t.startSN)-t.startSN,a=(e.fragmentHint?1:0)+(i?t.endSN:Math.min(e.endSN,t.endSN))-t.startSN,s=t.startSN-e.startSN,o=t.fragmentHint?t.fragments.concat(t.fragmentHint):t.fragments,l=e.fragmentHint?e.fragments.concat(e.fragmentHint):e.fragments,u=n;u<=a;u++){var c=l[s+u],d=o[u]
-i&&!d&&u<i&&(d=t.fragments[u]=c),c&&d&&r(c,d)}}(e,t,(function(e,i){e.relurl&&(h=e.cc-i.cc),v(e.startPTS)&&v(e.endPTS)&&(i.start=i.startPTS=e.startPTS,i.startDTS=e.startDTS,i.maxStartPTS=e.maxStartPTS,i.endPTS=e.endPTS,i.endDTS=e.endDTS,i.minEndPTS=e.minEndPTS,i.duration=e.endPTS-e.startPTS,i.duration&&(s=i),t.PTSKnown=t.alignedSliding=!0),i.elementaryStreams=e.elementaryStreams,i.loader=e.loader,i.stats=e.stats,i.urlId=e.urlId,e.initSegment&&(i.initSegment=e.initSegment,r=e.initSegment)})),r&&(t.fragmentHint?t.fragments.concat(t.fragmentHint):t.fragments).forEach((function(e){var t
-e.initSegment&&e.initSegment.relurl!==(null==(t=r)?void 0:t.relurl)||(e.initSegment=r)})),t.skippedSegments)if(t.deltaUpdateFailed=t.fragments.some((function(e){return!e})),t.deltaUpdateFailed){S.warn("[level-helper] Previous playlist missing segments skipped in delta playlist")
+i&&!d&&u<i&&(d=t.fragments[u]=c),c&&d&&r(c,d)}}(e,t,(function(e,i){e.relurl&&(h=e.cc-i.cc),b(e.startPTS)&&b(e.endPTS)&&(i.start=i.startPTS=e.startPTS,i.startDTS=e.startDTS,i.maxStartPTS=e.maxStartPTS,i.endPTS=e.endPTS,i.endDTS=e.endDTS,i.minEndPTS=e.minEndPTS,i.duration=e.endPTS-e.startPTS,i.duration&&(s=i),t.PTSKnown=t.alignedSliding=!0),i.elementaryStreams=e.elementaryStreams,i.loader=e.loader,i.stats=e.stats,i.urlId=e.urlId,e.initSegment&&(i.initSegment=e.initSegment,r=e.initSegment)})),r&&(t.fragmentHint?t.fragments.concat(t.fragmentHint):t.fragments).forEach((function(e){var t
+e.initSegment&&e.initSegment.relurl!==(null==(t=r)?void 0:t.relurl)||(e.initSegment=r)})),t.skippedSegments)if(t.deltaUpdateFailed=t.fragments.some((function(e){return!e})),t.deltaUpdateFailed){O.warn("[level-helper] Previous playlist missing segments skipped in delta playlist")
 for(var f=t.skippedSegments;f--;)t.fragments.shift()
-t.startSN=t.fragments[0].sn,t.startCC=t.fragments[0].cc}else t.canSkipDateRanges&&(t.dateRanges=(l=e.dateRanges,u=t.dateRanges,c=t.recentlyRemovedDateranges,d=o({},l),c&&c.forEach((function(e){delete d[e]})),Object.keys(u).forEach((function(e){var t=new R(u[e].attr,d[e])
-t.isValid?d[e]=t:S.warn('Ignoring invalid Playlist Delta Update DATERANGE tag: "'+JSON.stringify(u[e].attr)+'"')})),d))
+t.startSN=t.fragments[0].sn,t.startCC=t.fragments[0].cc}else t.canSkipDateRanges&&(t.dateRanges=(l=e.dateRanges,u=t.dateRanges,c=t.recentlyRemovedDateranges,d=o({},l),c&&c.forEach((function(e){delete d[e]})),Object.keys(u).forEach((function(e){var t=new C(u[e].attr,d[e])
+t.isValid?d[e]=t:O.warn('Ignoring invalid Playlist Delta Update DATERANGE tag: "'+JSON.stringify(u[e].attr)+'"')})),d))
 var p=t.fragments
-if(h){S.warn("discontinuity sliding from playlist, take drift into account")
+if(h){O.warn("discontinuity sliding from playlist, take drift into account")
 for(var m=0;m<p.length;m++)p[m].cc+=h}t.skippedSegments&&(t.startCC=t.fragments[0].cc),function(e,t,r){if(e&&t)for(var i=0,n=0,a=e.length;n<=a;n++){var s=e[n],o=t[n+i]
-s&&o&&s.index===o.index&&s.fragment.sn===o.fragment.sn?r(s,o):i--}}(e.partList,t.partList,(function(e,t){t.elementaryStreams=e.elementaryStreams,t.stats=e.stats})),s?Ot(t,s,s.startPTS,s.endPTS,s.startDTS,s.endDTS):Pt(e,t),p.length&&(t.totalduration=t.edge-p[0].start),t.driftStartTime=e.driftStartTime,t.driftStart=e.driftStart
+s&&o&&s.index===o.index&&s.fragment.sn===o.fragment.sn?r(s,o):i--}}(e.partList,t.partList,(function(e,t){t.elementaryStreams=e.elementaryStreams,t.stats=e.stats})),s?At(t,s,s.startPTS,s.endPTS,s.startDTS,s.endDTS):Ct(e,t),p.length&&(t.totalduration=t.edge-p[0].start),t.driftStartTime=e.driftStartTime,t.driftStart=e.driftStart
 var g=t.advancedDateTime
-if(t.advanced&&g){var b=t.edge
-t.driftStart||(t.driftStartTime=g,t.driftStart=b),t.driftEndTime=g,t.driftEnd=b}else t.driftEndTime=e.driftEndTime,t.driftEnd=e.driftEnd,t.advancedDateTime=e.advancedDateTime}function Pt(e,t){var r=t.startSN+t.skippedSegments-e.startSN,i=e.fragments
-r<0||r>=i.length||At(t,i[r].start)}function At(e,t){if(t){for(var r=e.fragments,i=e.skippedSegments;i<r.length;i++)r[i].start+=t
-e.fragmentHint&&(e.fragmentHint.start+=t)}}function Rt(e,t,r){var i
-return null!=e&&e.details?Ct(null==(i=e.details)?void 0:i.partList,t,r):null}function Ct(e,t,r){if(e)for(var i=e.length;i--;){var n=e[i]
-if(n.index===r&&n.fragment.sn===t)return n}return null}function Dt(e){switch(e.details){case _.FRAG_LOAD_TIMEOUT:case _.KEY_LOAD_TIMEOUT:case _.LEVEL_LOAD_TIMEOUT:case _.MANIFEST_LOAD_TIMEOUT:return!0}return!1}function Mt(e,t){var r=Dt(t)
-return e.default[(r?"timeout":"error")+"Retry"]}function It(e,t){var r="linear"===e.backoff?1:Math.pow(2,t)
-return Math.min(r*e.retryDelayMs,e.maxRetryDelayMs)}function Lt(e){return i(i({},e),{errorRetry:null,timeoutRetry:null})}function jt(e,t,r,i){return!!e&&t<e.maxNumRetry&&(function(e){return 0===e&&!1===navigator.onLine||!!e&&(e<400||e>499)}(i)||!!r)}var Ft=function(e,t){for(var r=0,i=e.length-1,n=null,a=null;r<=i;){var s=t(a=e[n=(r+i)/2|0])
+if(t.advanced&&g){var v=t.edge
+t.driftStart||(t.driftStartTime=g,t.driftStart=v),t.driftEndTime=g,t.driftEnd=v}else t.driftEndTime=e.driftEndTime,t.driftEnd=e.driftEnd,t.advancedDateTime=e.advancedDateTime}function Ct(e,t){var r=t.startSN+t.skippedSegments-e.startSN,i=e.fragments
+r<0||r>=i.length||Dt(t,i[r].start)}function Dt(e,t){if(t){for(var r=e.fragments,i=e.skippedSegments;i<r.length;i++)r[i].start+=t
+e.fragmentHint&&(e.fragmentHint.start+=t)}}function Mt(e,t,r){var i
+return null!=e&&e.details?It(null==(i=e.details)?void 0:i.partList,t,r):null}function It(e,t,r){if(e)for(var i=e.length;i--;){var n=e[i]
+if(n.index===r&&n.fragment.sn===t)return n}return null}function Lt(e){switch(e.details){case w.FRAG_LOAD_TIMEOUT:case w.KEY_LOAD_TIMEOUT:case w.LEVEL_LOAD_TIMEOUT:case w.MANIFEST_LOAD_TIMEOUT:return!0}return!1}function jt(e,t){var r=Lt(t)
+return e.default[(r?"timeout":"error")+"Retry"]}function Ft(e,t){var r="linear"===e.backoff?1:Math.pow(2,t)
+return Math.min(r*e.retryDelayMs,e.maxRetryDelayMs)}function Nt(e){return i(i({},e),{errorRetry:null,timeoutRetry:null})}function zt(e,t,r,i){return!!e&&t<e.maxNumRetry&&(function(e){return 0===e&&!1===navigator.onLine||!!e&&(e<400||e>499)}(i)||!!r)}var Ut=function(e,t){for(var r=0,i=e.length-1,n=null,a=null;r<=i;){var s=t(a=e[n=(r+i)/2|0])
 if(s>0)r=n+1
 else{if(!(s<0))return a
 i=n-1}}return null}
-function Nt(e,t,r,i){void 0===r&&(r=0),void 0===i&&(i=0)
+function Bt(e,t,r,i){void 0===r&&(r=0),void 0===i&&(i=0)
 var n=null
-if(e?n=t[e.sn-t[0].sn+1]||null:0===r&&0===t[0].start&&(n=t[0]),n&&0===zt(r,i,n))return n
-var a=Ft(t,zt.bind(null,r,i))
-return!a||a===e&&n?n:a}function zt(e,t,r){if(void 0===e&&(e=0),void 0===t&&(t=0),r.start<=e&&r.start+r.duration>e)return 0
+if(e?n=t[e.sn-t[0].sn+1]||null:0===r&&0===t[0].start&&(n=t[0]),n&&0===Ht(r,i,n))return n
+var a=Ut(t,Ht.bind(null,r,i))
+return!a||a===e&&n?n:a}function Ht(e,t,r){if(void 0===e&&(e=0),void 0===t&&(t=0),r.start<=e&&r.start+r.duration>e)return 0
 var i=Math.min(t,r.duration+(r.deltaPTS?r.deltaPTS:0))
-return r.start+r.duration-i<=e?1:r.start-i>e&&r.start?-1:0}function Ut(e,t,r){var i=1e3*Math.min(t,r.duration+(r.deltaPTS?r.deltaPTS:0))
-return(r.endProgramDateTime||0)-i>e}var Bt,Ht=function(){function e(e){this.hls=void 0,this.playlistError=0,this.penalizedRenditions={},this.log=void 0,this.warn=void 0,this.error=void 0,this.hls=e,this.log=S.log.bind(S,"[info]:"),this.warn=S.warn.bind(S,"[warning]:"),this.error=S.error.bind(S,"[error]:"),this.registerListeners()}var t=e.prototype
+return r.start+r.duration-i<=e?1:r.start-i>e&&r.start?-1:0}function Vt(e,t,r){var i=1e3*Math.min(t,r.duration+(r.deltaPTS?r.deltaPTS:0))
+return(r.endProgramDateTime||0)-i>e}var $t,qt=function(){function e(e){this.hls=void 0,this.playlistError=0,this.penalizedRenditions={},this.log=void 0,this.warn=void 0,this.error=void 0,this.hls=e,this.log=O.log.bind(O,"[info]:"),this.warn=O.warn.bind(O,"[warning]:"),this.error=O.error.bind(O,"[error]:"),this.registerListeners()}var t=e.prototype
 return t.registerListeners=function(){var e=this.hls
-e.on(b.ERROR,this.onError,this),e.on(b.MANIFEST_LOADING,this.onManifestLoading,this)},t.unregisterListeners=function(){var e=this.hls
-e&&(e.off(b.ERROR,this.onError,this),e.off(b.ERROR,this.onErrorOut,this),e.off(b.MANIFEST_LOADING,this.onManifestLoading,this))},t.destroy=function(){this.unregisterListeners(),this.hls=null,this.penalizedRenditions={}},t.startLoad=function(e){this.playlistError=0},t.stopLoad=function(){},t.getVariantLevelIndex=function(e){return(null==e?void 0:e.type)===at?e.level:this.hls.loadLevel},t.onManifestLoading=function(){this.playlistError=0,this.penalizedRenditions={}},t.onError=function(e,t){var r
+e.on(y.ERROR,this.onError,this),e.on(y.MANIFEST_LOADING,this.onManifestLoading,this)},t.unregisterListeners=function(){var e=this.hls
+e&&(e.off(y.ERROR,this.onError,this),e.off(y.ERROR,this.onErrorOut,this),e.off(y.MANIFEST_LOADING,this.onManifestLoading,this))},t.destroy=function(){this.unregisterListeners(),this.hls=null,this.penalizedRenditions={}},t.startLoad=function(e){this.playlistError=0},t.stopLoad=function(){},t.getVariantLevelIndex=function(e){return(null==e?void 0:e.type)===lt?e.level:this.hls.loadLevel},t.onManifestLoading=function(){this.playlistError=0,this.penalizedRenditions={}},t.onError=function(e,t){var r
 if(!t.fatal){var i=this.hls,n=t.context
-switch(t.details){case _.FRAG_LOAD_ERROR:case _.FRAG_LOAD_TIMEOUT:case _.KEY_LOAD_ERROR:case _.KEY_LOAD_TIMEOUT:return void(t.errorAction=this.getFragRetryOrSwitchAction(t))
-case _.FRAG_GAP:case _.FRAG_PARSING_ERROR:case _.FRAG_DECRYPT_ERROR:return t.errorAction=this.getFragRetryOrSwitchAction(t),void(t.errorAction.action=2)
-case _.LEVEL_EMPTY_ERROR:case _.LEVEL_PARSING_ERROR:var a,s,o=t.parent===at?t.level:i.loadLevel
-return void(t.details===_.LEVEL_EMPTY_ERROR&&null!=(a=t.context)&&null!=(s=a.levelDetails)&&s.live?t.errorAction=this.getPlaylistRetryOrSwitchAction(t,o):(t.levelRetry=!1,t.errorAction=this.getLevelSwitchAction(t,o)))
-case _.LEVEL_LOAD_ERROR:case _.LEVEL_LOAD_TIMEOUT:return void("number"==typeof(null==n?void 0:n.level)&&(t.errorAction=this.getPlaylistRetryOrSwitchAction(t,n.level)))
-case _.AUDIO_TRACK_LOAD_ERROR:case _.AUDIO_TRACK_LOAD_TIMEOUT:case _.SUBTITLE_LOAD_ERROR:case _.SUBTITLE_TRACK_LOAD_TIMEOUT:if(n){var l=i.levels[i.loadLevel]
-if(l&&(n.type===it&&n.groupId===l.audioGroupId||n.type===nt&&n.groupId===l.textGroupId))return t.errorAction=this.getPlaylistRetryOrSwitchAction(t,i.loadLevel),t.errorAction.action=2,void(t.errorAction.flags=1)}return
-case _.KEY_SYSTEM_STATUS_OUTPUT_RESTRICTED:var u=i.levels[i.loadLevel],c=null==u?void 0:u.attrs["HDCP-LEVEL"]
+switch(t.details){case w.FRAG_LOAD_ERROR:case w.FRAG_LOAD_TIMEOUT:case w.KEY_LOAD_ERROR:case w.KEY_LOAD_TIMEOUT:return void(t.errorAction=this.getFragRetryOrSwitchAction(t))
+case w.FRAG_GAP:case w.FRAG_PARSING_ERROR:case w.FRAG_DECRYPT_ERROR:return t.errorAction=this.getFragRetryOrSwitchAction(t),void(t.errorAction.action=2)
+case w.LEVEL_EMPTY_ERROR:case w.LEVEL_PARSING_ERROR:var a,s,o=t.parent===lt?t.level:i.loadLevel
+return void(t.details===w.LEVEL_EMPTY_ERROR&&null!=(a=t.context)&&null!=(s=a.levelDetails)&&s.live?t.errorAction=this.getPlaylistRetryOrSwitchAction(t,o):(t.levelRetry=!1,t.errorAction=this.getLevelSwitchAction(t,o)))
+case w.LEVEL_LOAD_ERROR:case w.LEVEL_LOAD_TIMEOUT:return void("number"==typeof(null==n?void 0:n.level)&&(t.errorAction=this.getPlaylistRetryOrSwitchAction(t,n.level)))
+case w.AUDIO_TRACK_LOAD_ERROR:case w.AUDIO_TRACK_LOAD_TIMEOUT:case w.SUBTITLE_LOAD_ERROR:case w.SUBTITLE_TRACK_LOAD_TIMEOUT:if(n){var l=i.levels[i.loadLevel]
+if(l&&(n.type===st&&n.groupId===l.audioGroupId||n.type===ot&&n.groupId===l.textGroupId))return t.errorAction=this.getPlaylistRetryOrSwitchAction(t,i.loadLevel),t.errorAction.action=2,void(t.errorAction.flags=1)}return
+case w.KEY_SYSTEM_STATUS_OUTPUT_RESTRICTED:var u=i.levels[i.loadLevel],c=null==u?void 0:u.attrs["HDCP-LEVEL"]
 return void(c&&(t.errorAction={action:2,flags:2,hdcpLevel:c}))
-case _.BUFFER_ADD_CODEC_ERROR:case _.REMUX_ALLOC_ERROR:return void(t.errorAction=this.getLevelSwitchAction(t,null!=(r=t.level)?r:i.loadLevel))
-case _.INTERNAL_EXCEPTION:case _.BUFFER_APPENDING_ERROR:case _.BUFFER_APPEND_ERROR:case _.BUFFER_FULL_ERROR:case _.LEVEL_SWITCH_ERROR:case _.BUFFER_STALLED_ERROR:case _.BUFFER_SEEK_OVER_HOLE:case _.BUFFER_NUDGE_ON_STALL:return void(t.errorAction={action:0,flags:0})}if(t.type===y.KEY_SYSTEM_ERROR){var d=this.getVariantLevelIndex(t.frag)
-return t.levelRetry=!1,void(t.errorAction=this.getLevelSwitchAction(t,d))}}},t.getPlaylistRetryOrSwitchAction=function(e,t){var r,i,n=Mt(this.hls.config.playlistLoadPolicy,e),a=this.playlistError++,s=null==(r=e.response)?void 0:r.code
-return jt(n,a,Dt(e),s)?{action:5,flags:0,retryConfig:n,retryCount:a}:null!=(i=e.context)&&i.deliveryDirectives?{action:0,flags:0,retryConfig:n||{maxNumRetry:0,retryDelayMs:0,maxRetryDelayMs:0},retryCount:a}:this.getLevelSwitchAction(e,t)},t.getFragRetryOrSwitchAction=function(e){var t=this.hls,r=this.getVariantLevelIndex(e.frag),i=t.levels[r],n=t.config,a=n.fragLoadPolicy,s=n.keyLoadPolicy,o=Mt(e.details.startsWith("key")?s:a,e),l=t.levels.reduce((function(e,t){return e+t.fragmentError}),0)
+case w.BUFFER_ADD_CODEC_ERROR:case w.REMUX_ALLOC_ERROR:return void(t.errorAction=this.getLevelSwitchAction(t,null!=(r=t.level)?r:i.loadLevel))
+case w.INTERNAL_EXCEPTION:case w.BUFFER_APPENDING_ERROR:case w.BUFFER_APPEND_ERROR:case w.BUFFER_FULL_ERROR:case w.LEVEL_SWITCH_ERROR:case w.BUFFER_STALLED_ERROR:case w.BUFFER_SEEK_OVER_HOLE:case w.BUFFER_NUDGE_ON_STALL:return void(t.errorAction={action:0,flags:0})}if(t.type===_.KEY_SYSTEM_ERROR){var d=this.getVariantLevelIndex(t.frag)
+return t.levelRetry=!1,void(t.errorAction=this.getLevelSwitchAction(t,d))}}},t.getPlaylistRetryOrSwitchAction=function(e,t){var r,i=jt(this.hls.config.playlistLoadPolicy,e),n=this.playlistError++,a=null==(r=e.response)?void 0:r.code
+if(zt(i,n,Lt(e),a))return{action:5,flags:0,retryConfig:i,retryCount:n}
+var s=this.getLevelSwitchAction(e,t)
+return i&&(s.retryConfig=i,s.retryCount=n),s},t.getFragRetryOrSwitchAction=function(e){var t=this.hls,r=this.getVariantLevelIndex(e.frag),i=t.levels[r],n=t.config,a=n.fragLoadPolicy,s=n.keyLoadPolicy,o=jt(e.details.startsWith("key")?s:a,e),l=t.levels.reduce((function(e,t){return e+t.fragmentError}),0)
 if(i){var u
-e.details!==_.FRAG_GAP&&i.fragmentError++
+e.details!==w.FRAG_GAP&&i.fragmentError++
 var c=null==(u=e.response)?void 0:u.code
-if(jt(o,l,Dt(e),c))return{action:5,flags:0,retryConfig:o,retryCount:l}}var d=this.getLevelSwitchAction(e,r)
+if(zt(o,l,Lt(e),c))return{action:5,flags:0,retryConfig:o,retryCount:l}}var d=this.getLevelSwitchAction(e,r)
 return o&&(d.retryConfig=o,d.retryCount=l),d},t.getLevelSwitchAction=function(e,t){var r=this.hls
 null==t&&(t=r.loadLevel)
 var i=this.hls.levels[t]
 if(i&&(i.loadError++,r.autoLevelEnabled)){for(var n,a,s=-1,o=r.levels,l=null==(n=e.frag)?void 0:n.type,u=null!=(a=e.context)?a:{},c=u.type,d=u.groupId,h=o.length;h--;){var f=(h+r.loadLevel)%o.length
 if(f!==r.loadLevel&&0===o[f].loadError){var p=o[f]
-if(e.details===_.FRAG_GAP&&e.frag){var m=o[f].details
-if(m){var g=Nt(e.frag,m.fragments,e.frag.start)
-if(null!=g&&g.gap)continue}}else{if(c===it&&d===p.audioGroupId||c===nt&&d===p.textGroupId)continue
-if(l===st&&i.audioGroupId===p.audioGroupId||l===ot&&i.textGroupId===p.textGroupId)continue}s=f
+if(e.details===w.FRAG_GAP&&e.frag){var m=o[f].details
+if(m){var g=Bt(e.frag,m.fragments,e.frag.start)
+if(null!=g&&g.gap)continue}}else{if(c===st&&d===p.audioGroupId||c===ot&&d===p.textGroupId)continue
+if(l===ut&&i.audioGroupId===p.audioGroupId||l===ct&&i.textGroupId===p.textGroupId)continue}s=f
 break}}if(s>-1&&r.loadLevel!==s)return e.levelRetry=!0,{action:2,flags:0,nextAutoLevel:s}}return{action:2,flags:1}},t.onErrorOut=function(e,t){var r
 switch(null==(r=t.errorAction)?void 0:r.action){case 0:break
-case 2:this.sendAlternateToPenaltyBox(t),t.errorAction.resolved||t.details===_.FRAG_GAP||(t.fatal=!0)}t.fatal&&this.hls.stopLoad()},t.sendAlternateToPenaltyBox=function(e){var t=this.hls,r=e.errorAction
+case 2:this.sendAlternateToPenaltyBox(t),t.errorAction.resolved||t.details===w.FRAG_GAP||(t.fatal=!0)}t.fatal&&this.hls.stopLoad()},t.sendAlternateToPenaltyBox=function(e){var t=this.hls,r=e.errorAction
 if(r){var i=r.flags,n=r.hdcpLevel,a=r.nextAutoLevel
 switch(i){case 0:this.switchLevel(e,a)
 break
 case 1:r.resolved||(r.resolved=this.redundantFailover(e))
 break
-case 2:n&&(t.maxHdcpLevel=Et[Et.indexOf(n)-1],r.resolved=!0),this.warn('Restricting playback to HDCP-LEVEL of "'+t.maxHdcpLevel+'" or lower')}r.resolved||this.switchLevel(e,a)}},t.switchLevel=function(e,t){void 0!==t&&e.errorAction&&(this.warn("switching to level "+t+" after "+e.details),this.hls.nextAutoLevel=t,e.errorAction.resolved=!0,this.hls.nextLoadLevel=this.hls.nextAutoLevel)},t.redundantFailover=function(e){var t=this,r=this.hls,i=this.penalizedRenditions,n=e.parent===at?e.level:r.loadLevel,a=r.levels[n],s=a.url.length,o=e.frag?e.frag.urlId:a.urlId
+case 2:n&&(t.maxHdcpLevel=St[St.indexOf(n)-1],r.resolved=!0),this.warn('Restricting playback to HDCP-LEVEL of "'+t.maxHdcpLevel+'" or lower')}r.resolved||this.switchLevel(e,a)}},t.switchLevel=function(e,t){void 0!==t&&e.errorAction&&(this.warn("switching to level "+t+" after "+e.details),this.hls.nextAutoLevel=t,e.errorAction.resolved=!0,this.hls.nextLoadLevel=this.hls.nextAutoLevel)},t.redundantFailover=function(e){var t=this,r=this.hls,i=this.penalizedRenditions,n=e.parent===lt?e.level:r.loadLevel,a=r.levels[n],s=a.url.length,o=e.frag?e.frag.urlId:a.urlId
 a.urlId!==o||e.frag&&!a.details||this.penalizeRendition(a,e)
 for(var l=function(){var l=(o+u)%s,c=i[l]
 if(!c||function(e,t,r){if(performance.now()-e.lastErrorPerfMs>3e5)return!0
 var i=e.details
-if(t.details===_.FRAG_GAP&&i&&t.frag){var n=t.frag.start,a=Nt(null,i.fragments,n)
+if(t.details===w.FRAG_GAP&&i&&t.frag){var n=t.frag.start,a=Bt(null,i.fragments,n)
 if(a&&!a.gap)return!0}if(r&&e.errors.length<r.errors.length){var s=e.errors[e.errors.length-1]
 if(i&&s.frag&&t.frag&&Math.abs(s.frag.start-t.frag.start)>3*i.targetduration)return!0}return!1}(c,e,i[o]))return t.warn("Switching to Redundant Stream "+(l+1)+"/"+s+': "'+a.url[l]+'" after '+e.details),t.playlistError=0,r.levels.forEach((function(e){e.urlId=l})),r.nextLoadLevel=n,{v:!0}},u=1;u<s;u++){var c=l()
 if("object"==typeof c)return c.v}return!1},t.penalizeRendition=function(e,t){var r=this.penalizedRenditions,i=r[e.urlId]||{lastErrorPerfMs:0,errors:[],details:void 0}
-i.lastErrorPerfMs=performance.now(),i.errors.push(t),i.details=e.details,r[e.urlId]=i},e}(),Vt=function(){function e(e,t){this.hls=void 0,this.timer=-1,this.requestScheduled=-1,this.canLoad=!1,this.log=void 0,this.warn=void 0,this.log=S.log.bind(S,t+":"),this.warn=S.warn.bind(S,t+":"),this.hls=e}var t=e.prototype
+i.lastErrorPerfMs=performance.now(),i.errors.push(t),i.details=e.details,r[e.urlId]=i},e}(),Gt=function(){function e(e,t){this.hls=void 0,this.timer=-1,this.requestScheduled=-1,this.canLoad=!1,this.log=void 0,this.warn=void 0,this.log=O.log.bind(O,t+":"),this.warn=O.warn.bind(O,t+":"),this.hls=e}var t=e.prototype
 return t.destroy=function(){this.clearTimer(),this.hls=this.log=this.warn=null},t.clearTimer=function(){clearTimeout(this.timer),this.timer=-1},t.startLoad=function(){this.canLoad=!0,this.requestScheduled=-1,this.loadPlaylist()},t.stopLoad=function(){this.canLoad=!1,this.clearTimer()},t.switchParams=function(e,t){var r=null==t?void 0:t.renditionReports
 if(r){for(var i=-1,n=0;n<r.length;n++){var a=r[n],s=void 0
-try{s=new self.URL(a.URI,t.url).href}catch(e){S.warn("Could not construct new URL for Rendition Report: "+e),s=a.URI||""}if(s===e){i=n
+try{s=new self.URL(a.URI,t.url).href}catch(e){O.warn("Could not construct new URL for Rendition Report: "+e),s=a.URI||""}if(s===e){i=n
 break}s===e.substring(0,s.length)&&(i=n)}if(-1!==i){var o=r[i],l=parseInt(o["LAST-MSN"])||(null==t?void 0:t.lastPartSn),u=parseInt(o["LAST-PART"])||(null==t?void 0:t.lastPartIndex)
 if(this.hls.config.lowLatencyMode){var c=Math.min(t.age-t.partTarget,t.targetduration)
-u>=0&&c>t.partTarget&&(u+=1)}return new Tt(l,u>=0?u:void 0,"")}}},t.loadPlaylist=function(e){-1===this.requestScheduled&&(this.requestScheduled=self.performance.now())},t.shouldLoadPlaylist=function(e){return this.canLoad&&!!e&&!!e.url&&(!e.details||e.details.live)},t.shouldReloadPlaylist=function(e){return-1===this.timer&&-1===this.requestScheduled&&this.shouldLoadPlaylist(e)},t.playlistLoaded=function(e,t,r){var i=this,n=t.details,a=t.stats,s=self.performance.now(),o=a.loading.first?Math.max(0,s-a.loading.first):0
-if(n.advancedDateTime=Date.now()-o,n.live||null!=r&&r.live){if(n.reloaded(r),r&&this.log("live playlist "+e+" "+(n.advanced?"REFRESHED "+n.lastPartSn+"-"+n.lastPartIndex:"MISSED")),r&&n.fragments.length>0&&xt(r,n),!this.canLoad||!n.live)return
+u>=0&&c>t.partTarget&&(u+=1)}return new Ot(l,u>=0?u:void 0,"")}}},t.loadPlaylist=function(e){-1===this.requestScheduled&&(this.requestScheduled=self.performance.now())},t.shouldLoadPlaylist=function(e){return this.canLoad&&!!e&&!!e.url&&(!e.details||e.details.live)},t.shouldReloadPlaylist=function(e){return-1===this.timer&&-1===this.requestScheduled&&this.shouldLoadPlaylist(e)},t.playlistLoaded=function(e,t,r){var i=this,n=t.details,a=t.stats,s=self.performance.now(),o=a.loading.first?Math.max(0,s-a.loading.first):0
+if(n.advancedDateTime=Date.now()-o,n.live||null!=r&&r.live){if(n.reloaded(r),r&&this.log("live playlist "+e+" "+(n.advanced?"REFRESHED "+n.lastPartSn+"-"+n.lastPartIndex:"MISSED")),r&&n.fragments.length>0&&Rt(r,n),!this.canLoad||!n.live)return
 var l,u=void 0,c=void 0
 if(n.canBlockReload&&n.endSN&&n.advanced){var d=this.hls.config.lowLatencyMode,h=n.lastPartSn,f=n.endSN,p=n.lastPartIndex,m=h===f;-1!==p?(u=m?f+1:h,c=m?d?0:p:p+1):u=f+1
 var g=n.age,v=g+n.ageHeader,b=Math.min(v-n.partTarget,1.5*n.targetduration)
@@ -4486,21 +4489,21 @@ n.updated&&s>this.requestScheduled+E&&(this.requestScheduled=a.loading.start),vo
 var T=this.requestScheduled-s
 T=Math.max(0,T),this.log("reload live playlist "+e+" in "+Math.round(T)+" ms"),this.timer=self.setTimeout((function(){return i.loadPlaylist(l)}),T)}else this.clearTimer()},t.getDeliveryDirectives=function(e,t,r,i){var n=function(e,t){var r=e.canSkipUntil,i=e.canSkipDateRanges,n=e.endSN
 return r&&(void 0!==t?t-n:0)<r?i?"v2":"YES":""}(e,r)
-return null!=t&&t.skip&&e.deltaUpdateFailed&&(r=t.msn,i=t.part,n=""),new Tt(r,i,n)},t.checkRetry=function(e){var t=this,r=e.details,i=Dt(e),n=e.errorAction,a=n||{},s=a.action,o=a.retryCount,l=void 0===o?0:o,u=a.retryConfig,c=5===s&&!!n&&!!u
+return null!=t&&t.skip&&e.deltaUpdateFailed&&(r=t.msn,i=t.part,n=""),new Ot(r,i,n)},t.checkRetry=function(e){var t=this,r=e.details,i=Lt(e),n=e.errorAction,a=n||{},s=a.action,o=a.retryCount,l=void 0===o?0:o,u=a.retryConfig,c=!!n&&!!u&&(5===s||!n.resolved&&2===s)
 if(c){var d
 if(this.requestScheduled=-1,i&&null!=(d=e.context)&&d.deliveryDirectives)this.warn("Retrying playlist loading "+(l+1)+"/"+u.maxNumRetry+' after "'+r+'" without delivery-directives'),this.loadPlaylist()
-else{var h=It(u,l)
-this.timer=self.setTimeout((function(){return t.loadPlaylist()}),h),this.warn("Retrying playlist loading "+(l+1)+"/"+u.maxNumRetry+' after "'+r+'" in '+h+"ms")}e.levelRetry=!0,n.resolved=!0}return c},e}(),$t=function(e){function t(t,r){var i
+else{var h=Ft(u,l)
+this.timer=self.setTimeout((function(){return t.loadPlaylist()}),h),this.warn("Retrying playlist loading "+(l+1)+"/"+u.maxNumRetry+' after "'+r+'" in '+h+"ms")}e.levelRetry=!0,n.resolved=!0}return c},e}(),Kt=function(e){function t(t,r){var i
 return(i=e.call(this,t,"[level-controller]")||this)._levels=[],i._firstLevel=-1,i._startLevel=void 0,i.currentLevel=null,i.currentLevelIndex=-1,i.manualLevelIndex=-1,i.steering=void 0,i.onParsedComplete=void 0,i.steering=r,i._registerListeners(),i}l(t,e)
 var r=t.prototype
 return r._registerListeners=function(){var e=this.hls
-e.on(b.MANIFEST_LOADING,this.onManifestLoading,this),e.on(b.MANIFEST_LOADED,this.onManifestLoaded,this),e.on(b.LEVEL_LOADED,this.onLevelLoaded,this),e.on(b.LEVELS_UPDATED,this.onLevelsUpdated,this),e.on(b.AUDIO_TRACK_SWITCHED,this.onAudioTrackSwitched,this),e.on(b.FRAG_LOADED,this.onFragLoaded,this),e.on(b.ERROR,this.onError,this)},r._unregisterListeners=function(){var e=this.hls
-e.off(b.MANIFEST_LOADING,this.onManifestLoading,this),e.off(b.MANIFEST_LOADED,this.onManifestLoaded,this),e.off(b.LEVEL_LOADED,this.onLevelLoaded,this),e.off(b.LEVELS_UPDATED,this.onLevelsUpdated,this),e.off(b.AUDIO_TRACK_SWITCHED,this.onAudioTrackSwitched,this),e.off(b.FRAG_LOADED,this.onFragLoaded,this),e.off(b.ERROR,this.onError,this)},r.destroy=function(){this._unregisterListeners(),this.steering=null,this.resetLevels(),e.prototype.destroy.call(this)},r.startLoad=function(){this._levels.forEach((function(e){e.loadError=0,e.fragmentError=0})),e.prototype.startLoad.call(this)},r.resetLevels=function(){this._startLevel=void 0,this.manualLevelIndex=-1,this.currentLevelIndex=-1,this.currentLevel=null,this._levels=[]},r.onManifestLoading=function(e,t){this.resetLevels()},r.onManifestLoaded=function(e,t){var r,i=[],n={}
-t.levels.forEach((function(e){var t,a=e.attrs;-1!==(null==(t=e.audioCodec)?void 0:t.indexOf("mp4a.40.34"))&&(Bt||(Bt=/chrome|firefox/i.test(navigator.userAgent)),Bt&&(e.audioCodec=void 0))
-var s=a.AUDIO,o=a.CODECS,l=a["FRAME-RATE"],u=a["PATHWAY-ID"],c=a.RESOLUTION,d=a.SUBTITLES,h=(u||".")+"-"+e.bitrate+"-"+c+"-"+l+"-"+o;(r=n[h])?r.addFallback(e):(r=new kt(e),n[h]=r,i.push(r)),qt(r,"audio",s),qt(r,"text",d)})),this.filterAndSortMediaOptions(i,t)},r.filterAndSortMediaOptions=function(e,t){var r=this,i=[],n=[],a=!1,s=!1,o=!1,l=e.filter((function(e){var t=e.audioCodec,r=e.videoCodec,i=e.width,n=e.height,l=e.unknownCodecs
-return a||(a=!(!i||!n)),s||(s=!!r),o||(o=!!t),!(null!=l&&l.length)&&(!t||Be(t,"audio"))&&(!r||Be(r,"video"))}))
+e.on(y.MANIFEST_LOADING,this.onManifestLoading,this),e.on(y.MANIFEST_LOADED,this.onManifestLoaded,this),e.on(y.LEVEL_LOADED,this.onLevelLoaded,this),e.on(y.LEVELS_UPDATED,this.onLevelsUpdated,this),e.on(y.AUDIO_TRACK_SWITCHED,this.onAudioTrackSwitched,this),e.on(y.FRAG_LOADED,this.onFragLoaded,this),e.on(y.ERROR,this.onError,this)},r._unregisterListeners=function(){var e=this.hls
+e.off(y.MANIFEST_LOADING,this.onManifestLoading,this),e.off(y.MANIFEST_LOADED,this.onManifestLoaded,this),e.off(y.LEVEL_LOADED,this.onLevelLoaded,this),e.off(y.LEVELS_UPDATED,this.onLevelsUpdated,this),e.off(y.AUDIO_TRACK_SWITCHED,this.onAudioTrackSwitched,this),e.off(y.FRAG_LOADED,this.onFragLoaded,this),e.off(y.ERROR,this.onError,this)},r.destroy=function(){this._unregisterListeners(),this.steering=null,this.resetLevels(),e.prototype.destroy.call(this)},r.startLoad=function(){this._levels.forEach((function(e){e.loadError=0,e.fragmentError=0})),e.prototype.startLoad.call(this)},r.resetLevels=function(){this._startLevel=void 0,this.manualLevelIndex=-1,this.currentLevelIndex=-1,this.currentLevel=null,this._levels=[]},r.onManifestLoading=function(e,t){this.resetLevels()},r.onManifestLoaded=function(e,t){var r,i=[],n={}
+t.levels.forEach((function(e){var t,a=e.attrs;-1!==(null==(t=e.audioCodec)?void 0:t.indexOf("mp4a.40.34"))&&($t||($t=/chrome|firefox/i.test(navigator.userAgent)),$t&&(e.audioCodec=void 0))
+var s=a.AUDIO,o=a.CODECS,l=a["FRAME-RATE"],u=a["PATHWAY-ID"],c=a.RESOLUTION,d=a.SUBTITLES,h=(u||".")+"-"+e.bitrate+"-"+c+"-"+l+"-"+o;(r=n[h])?r.addFallback(e):(r=new xt(e),n[h]=r,i.push(r)),Wt(r,"audio",s),Wt(r,"text",d)})),this.filterAndSortMediaOptions(i,t)},r.filterAndSortMediaOptions=function(e,t){var r=this,i=[],n=[],a=!1,s=!1,o=!1,l=e.filter((function(e){var t=e.audioCodec,r=e.videoCodec,i=e.width,n=e.height,l=e.unknownCodecs
+return a||(a=!(!i||!n)),s||(s=!!r),o||(o=!!t),!(null!=l&&l.length)&&(!t||$e(t,"audio"))&&(!r||$e(r,"video"))}))
 if((a||s)&&o&&(l=l.filter((function(e){var t=e.videoCodec,r=e.width,i=e.height
-return!!t||!(!r||!i)}))),0!==l.length){t.audioTracks&&Gt(i=t.audioTracks.filter((function(e){return!e.audioCodec||Be(e.audioCodec,"audio")}))),t.subtitles&&Gt(n=t.subtitles)
+return!!t||!(!r||!i)}))),0!==l.length){t.audioTracks&&Yt(i=t.audioTracks.filter((function(e){return!e.audioCodec||$e(e.audioCodec,"audio")}))),t.subtitles&&Yt(n=t.subtitles)
 var u=l.slice(0)
 l.sort((function(e,t){return e.attrs["HDCP-LEVEL"]!==t.attrs["HDCP-LEVEL"]?(e.attrs["HDCP-LEVEL"]||"")>(t.attrs["HDCP-LEVEL"]||"")?1:-1:e.bitrate!==t.bitrate?e.bitrate-t.bitrate:e.attrs["FRAME-RATE"]!==t.attrs["FRAME-RATE"]?e.attrs.decimalFloatingPoint("FRAME-RATE")-t.attrs.decimalFloatingPoint("FRAME-RATE"):e.attrs.SCORE!==t.attrs.SCORE?e.attrs.decimalFloatingPoint("SCORE")-t.attrs.decimalFloatingPoint("SCORE"):a&&e.height!==t.height?e.height-t.height:0}))
 var c=u[0]
@@ -4508,9 +4511,9 @@ if(this.steering&&(l=this.steering.filterParsedLevels(l)).length!==u.length)for(
 break}this._levels=l
 for(var h=0;h<l.length;h++)if(l[h]===c){this._firstLevel=h,this.log("manifest loaded, "+l.length+" level(s) found, first bitrate: "+c.bitrate)
 break}var f=o&&!s,p={levels:l,audioTracks:i,subtitleTracks:n,sessionData:t.sessionData,sessionKeys:t.sessionKeys,firstLevel:this._firstLevel,stats:t.stats,audio:o,video:s,altAudio:!f&&i.some((function(e){return!!e.url}))}
-this.hls.trigger(b.MANIFEST_PARSED,p),(this.hls.config.autoStartLoad||this.hls.forceStartLoad)&&this.hls.startLoad(this.hls.config.startPosition)}else Promise.resolve().then((function(){if(r.hls){var e=new Error("no level with compatible codecs found in manifest")
-r.hls.trigger(b.ERROR,{type:y.MEDIA_ERROR,details:_.MANIFEST_INCOMPATIBLE_CODECS_ERROR,fatal:!0,url:t.url,error:e,reason:e.message})}}))},r.onError=function(e,t){!t.fatal&&t.context&&t.context.type===rt&&t.context.level===this.level&&this.checkRetry(t)},r.onFragLoaded=function(e,t){var r=t.frag
-if(void 0!==r&&r.type===at){var i=this._levels[r.level]
+this.hls.trigger(y.MANIFEST_PARSED,p),(this.hls.config.autoStartLoad||this.hls.forceStartLoad)&&this.hls.startLoad(this.hls.config.startPosition)}else Promise.resolve().then((function(){if(r.hls){var e=new Error("no level with compatible codecs found in manifest")
+r.hls.trigger(y.ERROR,{type:_.MEDIA_ERROR,details:w.MANIFEST_INCOMPATIBLE_CODECS_ERROR,fatal:!0,url:t.url,error:e,reason:e.message})}}))},r.onError=function(e,t){!t.fatal&&t.context&&t.context.type===at&&t.context.level===this.level&&this.checkRetry(t)},r.onFragLoaded=function(e,t){var r=t.frag
+if(void 0!==r&&r.type===lt){var i=this._levels[r.level]
 void 0!==i&&(i.loadError=0)}},r.onLevelLoaded=function(e,t){var r,i,n=t.level,a=t.details,s=this._levels[n]
 if(!s)return this.warn("Invalid level index "+n),void(null!=(i=t.deliveryDirectives)&&i.skip&&(a.deltaUpdateFailed=!0))
 n===this.currentLevelIndex?(0===s.fragmentError&&(s.loadError=0),this.playlistLoaded(n,t,s.details)):null!=(r=t.deliveryDirectives)&&r.skip&&(a.deltaUpdateFailed=!0)},r.onAudioTrackSwitched=function(e,t){var r=this.currentLevel
@@ -4520,116 +4523,122 @@ break}-1!==n&&n!==r.urlId&&(r.urlId=n,this.canLoad&&this.startLoad())}}},r.loadP
 var r=this.currentLevelIndex,i=this.currentLevel
 if(i&&this.shouldLoadPlaylist(i)){var n=i.urlId,a=i.uri
 if(t)try{a=t.addDirectives(a)}catch(e){this.warn("Could not construct new URL with HLS Delivery Directives: "+e)}var s=i.attrs["PATHWAY-ID"]
-this.log("Loading level index "+r+(void 0!==(null==t?void 0:t.msn)?" at sn "+t.msn+" part "+t.part:"")+" with"+(s?" Pathway "+s:"")+" URI "+(n+1)+"/"+i.url.length+" "+a),this.clearTimer(),this.hls.trigger(b.LEVEL_LOADING,{url:a,level:r,id:n,deliveryDirectives:t||null})}},r.removeLevel=function(e,t){var r=this,i=function(e,r){return r!==t},n=this._levels.filter((function(n,a){return a!==e||(n.url.length>1&&void 0!==t?(n.url=n.url.filter(i),n.audioGroupIds&&(n.audioGroupIds=n.audioGroupIds.filter(i)),n.textGroupIds&&(n.textGroupIds=n.textGroupIds.filter(i)),n.urlId=0,!0):(r.steering&&r.steering.removeLevel(n),!1))}))
-this.hls.trigger(b.LEVELS_UPDATED,{levels:n})},r.onLevelsUpdated=function(e,t){var r=t.levels
+this.log("Loading level index "+r+(void 0!==(null==t?void 0:t.msn)?" at sn "+t.msn+" part "+t.part:"")+" with"+(s?" Pathway "+s:"")+" URI "+(n+1)+"/"+i.url.length+" "+a),this.clearTimer(),this.hls.trigger(y.LEVEL_LOADING,{url:a,level:r,id:n,deliveryDirectives:t||null})}},r.removeLevel=function(e,t){var r=this,i=function(e,r){return r!==t},n=this._levels.filter((function(n,a){return a!==e||(n.url.length>1&&void 0!==t?(n.url=n.url.filter(i),n.audioGroupIds&&(n.audioGroupIds=n.audioGroupIds.filter(i)),n.textGroupIds&&(n.textGroupIds=n.textGroupIds.filter(i)),n.urlId=0,!0):(r.steering&&r.steering.removeLevel(n),!1))}))
+this.hls.trigger(y.LEVELS_UPDATED,{levels:n})},r.onLevelsUpdated=function(e,t){var r=t.levels
 r.forEach((function(e,t){var r=e.details
 null!=r&&r.fragments&&r.fragments.forEach((function(e){e.level=t}))})),this._levels=r},a(t,[{key:"levels",get:function(){return 0===this._levels.length?null:this._levels}},{key:"level",get:function(){return this.currentLevelIndex},set:function(e){var t=this._levels
 if(0!==t.length){if(e<0||e>=t.length){var r=new Error("invalid level idx"),i=e<0
-if(this.hls.trigger(b.ERROR,{type:y.OTHER_ERROR,details:_.LEVEL_SWITCH_ERROR,level:e,fatal:i,error:r,reason:r.message}),i)return
+if(this.hls.trigger(y.ERROR,{type:_.OTHER_ERROR,details:w.LEVEL_SWITCH_ERROR,level:e,fatal:i,error:r,reason:r.message}),i)return
 e=Math.min(e,t.length-1)}var n=this.currentLevelIndex,a=this.currentLevel,s=a?a.attrs["PATHWAY-ID"]:void 0,l=t[e],u=l.attrs["PATHWAY-ID"]
 if(this.currentLevelIndex=e,this.currentLevel=l,n!==e||!l.details||!a||s!==u){this.log("Switching to level "+e+(u?" with Pathway "+u:"")+" from level "+n+(s?" with Pathway "+s:""))
 var c=o({},l,{level:e,maxBitrate:l.maxBitrate,attrs:l.attrs,uri:l.uri,urlId:l.urlId})
-delete c._attrs,delete c._urlId,this.hls.trigger(b.LEVEL_SWITCHING,c)
+delete c._attrs,delete c._urlId,this.hls.trigger(y.LEVEL_SWITCHING,c)
 var d=l.details
 if(!d||d.live){var h=this.switchParams(l.uri,null==a?void 0:a.details)
 this.loadPlaylist(h)}}}}},{key:"manualLevel",get:function(){return this.manualLevelIndex},set:function(e){this.manualLevelIndex=e,void 0===this._startLevel&&(this._startLevel=e),-1!==e&&(this.level=e)}},{key:"firstLevel",get:function(){return this._firstLevel},set:function(e){this._firstLevel=e}},{key:"startLevel",get:function(){if(void 0===this._startLevel){var e=this.hls.config.startLevel
-return void 0!==e?e:this._firstLevel}return this._startLevel},set:function(e){this._startLevel=e}},{key:"nextLoadLevel",get:function(){return-1!==this.manualLevelIndex?this.manualLevelIndex:this.hls.nextAutoLevel},set:function(e){this.level=e,-1===this.manualLevelIndex&&(this.hls.nextAutoLevel=e)}}]),t}(Vt)
-function qt(e,t,r){r&&("audio"===t?(e.audioGroupIds||(e.audioGroupIds=[]),e.audioGroupIds[e.url.length-1]=r):"text"===t&&(e.textGroupIds||(e.textGroupIds=[]),e.textGroupIds[e.url.length-1]=r))}function Gt(e){var t={}
+return void 0!==e?e:this._firstLevel}return this._startLevel},set:function(e){this._startLevel=e}},{key:"nextLoadLevel",get:function(){return-1!==this.manualLevelIndex?this.manualLevelIndex:this.hls.nextAutoLevel},set:function(e){this.level=e,-1===this.manualLevelIndex&&(this.hls.nextAutoLevel=e)}}]),t}(Gt)
+function Wt(e,t,r){r&&("audio"===t?(e.audioGroupIds||(e.audioGroupIds=[]),e.audioGroupIds[e.url.length-1]=r):"text"===t&&(e.textGroupIds||(e.textGroupIds=[]),e.textGroupIds[e.url.length-1]=r))}function Yt(e){var t={}
 e.forEach((function(e){var r=e.groupId||""
-e.id=t[r]=t[r]||0,t[r]++}))}var Kt="NOT_LOADED",Wt="APPENDING",Yt="PARTIAL",Qt="OK",Xt=function(){function e(e){this.mainFragEntity=null,this.activeParts=null,this.endListFragments=Object.create(null),this.fragments=Object.create(null),this.timeRanges=Object.create(null),this.bufferPadding=.2,this.hls=void 0,this.hasGaps=!1,this.hls=e,this._registerListeners()}var t=e.prototype
+e.id=t[r]=t[r]||0,t[r]++}))}var Qt="NOT_LOADED",Xt="APPENDING",Jt="PARTIAL",Zt="OK",er=function(){function e(e){this.activePartLists=Object.create(null),this.endListFragments=Object.create(null),this.fragments=Object.create(null),this.timeRanges=Object.create(null),this.bufferPadding=.2,this.hls=void 0,this.hasGaps=!1,this.hls=e,this._registerListeners()}var t=e.prototype
 return t._registerListeners=function(){var e=this.hls
-e.on(b.BUFFER_APPENDED,this.onBufferAppended,this),e.on(b.FRAG_BUFFERED,this.onFragBuffered,this),e.on(b.FRAG_LOADED,this.onFragLoaded,this)},t._unregisterListeners=function(){var e=this.hls
-e.off(b.BUFFER_APPENDED,this.onBufferAppended,this),e.off(b.FRAG_BUFFERED,this.onFragBuffered,this),e.off(b.FRAG_LOADED,this.onFragLoaded,this)},t.destroy=function(){this._unregisterListeners(),this.fragments=this.endListFragments=this.timeRanges=this.mainFragEntity=this.activeParts=null},t.getAppendedFrag=function(e,t){if(t===at){var r=this.mainFragEntity,i=this.activeParts
-if(r)if(r&&i)for(var n=i.length;n--;){var a=i[n],s=a?a.end:r.appendedPTS
-if(a.start<=e&&null!==s&&e<=s)return n>9&&(this.activeParts=i.slice(n-9)),a}else if(r.body.start<=e&&null!==r.appendedPTS&&e<=r.appendedPTS)return r.body}return this.getBufferedFrag(e,t)},t.getBufferedFrag=function(e,t){for(var r=this.fragments,i=Object.keys(r),n=i.length;n--;){var a=r[i[n]]
+e.on(y.BUFFER_APPENDED,this.onBufferAppended,this),e.on(y.FRAG_BUFFERED,this.onFragBuffered,this),e.on(y.FRAG_LOADED,this.onFragLoaded,this)},t._unregisterListeners=function(){var e=this.hls
+e.off(y.BUFFER_APPENDED,this.onBufferAppended,this),e.off(y.FRAG_BUFFERED,this.onFragBuffered,this),e.off(y.FRAG_LOADED,this.onFragLoaded,this)},t.destroy=function(){this._unregisterListeners(),this.fragments=this.activePartLists=this.endListFragments=this.timeRanges=null},t.getAppendedFrag=function(e,t){var r=this.activePartLists[t]
+if(r)for(var i=r.length;i--;){var n=r[i]
+if(!n)break
+var a=n.end
+if(n.start<=e&&null!==a&&e<=a)return n}return this.getBufferedFrag(e,t)},t.getBufferedFrag=function(e,t){for(var r=this.fragments,i=Object.keys(r),n=i.length;n--;){var a=r[i[n]]
 if((null==a?void 0:a.body.type)===t&&a.buffered){var s=a.body
-if(s.start<=e&&e<=s.end)return s}}return null},t.detectEvictedFragments=function(e,t,r){var i=this
-this.timeRanges&&(this.timeRanges[e]=t),Object.keys(this.fragments).forEach((function(n){var a=i.fragments[n]
-if(a)if(a.buffered||a.loaded){var s=a.range[e]
-s&&s.time.some((function(e){var r=!i.isTimeBuffered(e.startPTS,e.endPTS,t)
-return r&&i.removeFragment(a.body),r}))}else a.body.type===r&&i.removeFragment(a.body)}))},t.detectPartialFragments=function(e){var t=this,r=this.timeRanges,i=e.frag,n=e.part
-if(r&&"initSegment"!==i.sn){var a=Zt(i),s=this.fragments[a]
-s&&(Object.keys(r).forEach((function(e){var a=i.elementaryStreams[e]
-if(a){var o=r[e],l=null!==n||!0===a.partial
-s.range[e]=t.getBufferedTimes(i,n,l,o)}})),s.loaded=null,Object.keys(s.range).length?(s.buffered=!0,s.body.endList&&(this.endListFragments[s.body.type]=s)):this.removeFragment(s.body))}},t.fragBuffered=function(e,t){var r=Zt(e),i=this.fragments[r]
-!i&&t&&(i=this.fragments[r]={body:e,appendedPTS:null,loaded:null,buffered:!1,range:Object.create(null)},e.gap&&(this.hasGaps=!0)),i&&(i.loaded=null,i.buffered=!0)},t.getBufferedTimes=function(e,t,r,i){for(var n={time:[],partial:r},a=t?t.start:e.start,s=t?t.end:e.end,o=e.minEndPTS||s,l=e.maxStartPTS||a,u=0;u<i.length;u++){var c=i.start(u)-this.bufferPadding,d=i.end(u)+this.bufferPadding
+if(s.start<=e&&e<=s.end)return s}}return null},t.detectEvictedFragments=function(e,t,r,i){var n=this
+this.timeRanges&&(this.timeRanges[e]=t)
+var a=(null==i?void 0:i.fragment.sn)||-1
+Object.keys(this.fragments).forEach((function(i){var s=n.fragments[i]
+if(s&&!(a>=s.body.sn))if(s.buffered||s.loaded){var o=s.range[e]
+o&&o.time.some((function(e){var r=!n.isTimeBuffered(e.startPTS,e.endPTS,t)
+return r&&n.removeFragment(s.body),r}))}else s.body.type===r&&n.removeFragment(s.body)}))},t.detectPartialFragments=function(e){var t=this,r=this.timeRanges,i=e.frag,n=e.part
+if(r&&"initSegment"!==i.sn){var a=rr(i),s=this.fragments[a]
+if(s){var o=!i.relurl
+Object.keys(r).forEach((function(e){var a=i.elementaryStreams[e]
+if(a){var l=r[e],u=o||!0===a.partial
+s.range[e]=t.getBufferedTimes(i,n,u,l)}})),s.loaded=null,Object.keys(s.range).length?(s.buffered=!0,s.body.endList&&(this.endListFragments[s.body.type]=s),tr(s)||this.removeParts(i.sn-1,i.type)):this.removeFragment(s.body)}}},t.removeParts=function(e,t){var r=this.activePartLists[t]
+r&&(this.activePartLists[t]=r.filter((function(t){return t.fragment.sn>=e})))},t.fragBuffered=function(e,t){var r=rr(e),i=this.fragments[r]
+!i&&t&&(i=this.fragments[r]={body:e,appendedPTS:null,loaded:null,buffered:!1,range:Object.create(null)},e.gap&&(this.hasGaps=!0)),i&&(i.loaded=null,i.buffered=!0)},t.getBufferedTimes=function(e,t,r,i){for(var n={time:[],partial:r},a=e.start,s=e.end,o=e.minEndPTS||s,l=e.maxStartPTS||a,u=0;u<i.length;u++){var c=i.start(u)-this.bufferPadding,d=i.end(u)+this.bufferPadding
 if(l>=c&&o<=d){n.time.push({startPTS:Math.max(a,i.start(u)),endPTS:Math.min(s,i.end(u))})
 break}if(a<d&&s>c)n.partial=!0,n.time.push({startPTS:Math.max(a,i.start(u)),endPTS:Math.min(s,i.end(u))})
 else if(s<=c)break}return n},t.getPartialFragment=function(e){var t,r,i,n=null,a=0,s=this.bufferPadding,o=this.fragments
 return Object.keys(o).forEach((function(l){var u=o[l]
-u&&Jt(u)&&(r=u.body.start-s,i=u.body.end+s,e>=r&&e<=i&&(t=Math.min(e-r,i-e),a<=t&&(n=u.body,a=t)))})),n},t.isEndListAppended=function(e){var t=this.endListFragments[e]
-return void 0!==t&&(t.buffered||Jt(t))},t.getState=function(e){var t=Zt(e),r=this.fragments[t]
-return r?r.buffered?Jt(r)?Yt:Qt:Wt:Kt},t.isTimeBuffered=function(e,t,r){for(var i,n,a=0;a<r.length;a++){if(i=r.start(a)-this.bufferPadding,n=r.end(a)+this.bufferPadding,e>=i&&t<=n)return!0
+u&&tr(u)&&(r=u.body.start-s,i=u.body.end+s,e>=r&&e<=i&&(t=Math.min(e-r,i-e),a<=t&&(n=u.body,a=t)))})),n},t.isEndListAppended=function(e){var t=this.endListFragments[e]
+return void 0!==t&&(t.buffered||tr(t))},t.getState=function(e){var t=rr(e),r=this.fragments[t]
+return r?r.buffered?tr(r)?Jt:Zt:Xt:Qt},t.isTimeBuffered=function(e,t,r){for(var i,n,a=0;a<r.length;a++){if(i=r.start(a)-this.bufferPadding,n=r.end(a)+this.bufferPadding,e>=i&&t<=n)return!0
 if(t<=i)return!1}return!1},t.onFragLoaded=function(e,t){var r=t.frag,i=t.part
-if("initSegment"!==r.sn&&!r.bitrateTest&&!i){var n=Zt(r)
-this.fragments[n]={body:r,appendedPTS:null,loaded:t,buffered:!1,range:Object.create(null)}}},t.onBufferAppended=function(e,t){var r=this,i=t.frag,n=t.part,a=t.timeRanges,s=this.mainFragEntity
-if(i.type===at){var o=s?s.body:null
-if(o!==i){s&&o&&o.sn!==i.sn&&(s.buffered=!0,this.fragments[Zt(o)]=s)
-var l=Zt(i)
-s=this.mainFragEntity=this.fragments[l]||{body:i,appendedPTS:null,loaded:null,buffered:!1,range:Object.create(null)}}if(n){var u=this.activeParts
-u||(this.activeParts=u=[]),u.push(n)}else this.activeParts=null}this.timeRanges=a,Object.keys(a).forEach((function(e){var t=a[e]
-if(r.detectEvictedFragments(e,t),!n&&s){var o=i.elementaryStreams[e]
-if(!o)return
-for(var l=0;l<t.length;l++){var u=t.end(l)
-u<=o.endPTS&&u>o.startPTS?s.appendedPTS=Math.max(u,s.appendedPTS||0):s.appendedPTS=o.endPTS}}}))},t.onFragBuffered=function(e,t){this.detectPartialFragments(t)},t.hasFragment=function(e){var t=Zt(e)
-return!!this.fragments[t]},t.removeFragmentsInRange=function(e,t,r,i,n){var a=this
+if("initSegment"!==r.sn&&!r.bitrateTest){var n=i?null:t,a=rr(r)
+this.fragments[a]={body:r,appendedPTS:null,loaded:n,buffered:!1,range:Object.create(null)}}},t.onBufferAppended=function(e,t){var r=this,i=t.frag,n=t.part,a=t.timeRanges
+if("initSegment"!==i.sn){var s=i.type
+if(n){var o=this.activePartLists[s]
+o||(this.activePartLists[s]=o=[]),o.push(n)}this.timeRanges=a,Object.keys(a).forEach((function(e){var t=a[e]
+r.detectEvictedFragments(e,t,s,n)}))}},t.onFragBuffered=function(e,t){this.detectPartialFragments(t)},t.hasFragment=function(e){var t=rr(e)
+return!!this.fragments[t]},t.hasParts=function(e){var t
+return!(null==(t=this.activePartLists[e])||!t.length)},t.removeFragmentsInRange=function(e,t,r,i,n){var a=this
 i&&!this.hasGaps||Object.keys(this.fragments).forEach((function(s){var o=a.fragments[s]
 if(o){var l=o.body
-l.type!==r||i&&!l.gap||l.start<t&&l.end>e&&(o.buffered||n)&&a.removeFragment(l)}}))},t.removeFragment=function(e){var t=Zt(e)
-e.stats.loaded=0,e.clearElementaryStreamInfo(),this.mainFragEntity===this.fragments[t]&&(this.mainFragEntity=null),delete this.fragments[t],e.endList&&delete this.endListFragments[e.type]},t.removeAllFragments=function(){this.fragments=Object.create(null),this.endListFragments=Object.create(null),this.mainFragEntity=null,this.activeParts=null,this.hasGaps=!1},e}()
-function Jt(e){var t,r
-return e.buffered&&(e.body.gap||(null==(t=e.range.video)?void 0:t.partial)||(null==(r=e.range.audio)?void 0:r.partial))}function Zt(e){return e.type+"_"+e.level+"_"+e.urlId+"_"+e.sn}var er=Math.pow(2,17),tr=function(){function e(e){this.config=void 0,this.loader=null,this.partLoadTimeout=-1,this.config=e}var t=e.prototype
+l.type!==r||i&&!l.gap||l.start<t&&l.end>e&&(o.buffered||n)&&a.removeFragment(l)}}))},t.removeFragment=function(e){var t=rr(e)
+e.stats.loaded=0,e.clearElementaryStreamInfo()
+var r=this.activePartLists[e.type]
+if(r){var i=e.sn
+this.activePartLists[e.type]=r.filter((function(e){return e.fragment.sn!==i}))}delete this.fragments[t],e.endList&&delete this.endListFragments[e.type]},t.removeAllFragments=function(){this.fragments=Object.create(null),this.endListFragments=Object.create(null),this.activePartLists=Object.create(null),this.hasGaps=!1},e}()
+function tr(e){var t,r,i
+return e.buffered&&(e.body.gap||(null==(t=e.range.video)?void 0:t.partial)||(null==(r=e.range.audio)?void 0:r.partial)||(null==(i=e.range.audiovideo)?void 0:i.partial))}function rr(e){return e.type+"_"+e.level+"_"+e.urlId+"_"+e.sn}var ir=Math.pow(2,17),nr=function(){function e(e){this.config=void 0,this.loader=null,this.partLoadTimeout=-1,this.config=e}var t=e.prototype
 return t.destroy=function(){this.loader&&(this.loader.destroy(),this.loader=null)},t.abort=function(){this.loader&&this.loader.abort()},t.load=function(e,t){var r=this,n=e.url
-if(!n)return Promise.reject(new nr({type:y.NETWORK_ERROR,details:_.FRAG_LOAD_ERROR,fatal:!1,frag:e,error:new Error("Fragment does not have a "+(n?"part list":"url")),networkDetails:null}))
+if(!n)return Promise.reject(new or({type:_.NETWORK_ERROR,details:w.FRAG_LOAD_ERROR,fatal:!1,frag:e,error:new Error("Fragment does not have a "+(n?"part list":"url")),networkDetails:null}))
 this.abort()
 var a=this.config,s=a.fLoader,o=a.loader
-return new Promise((function(l,u){if(r.loader&&r.loader.destroy(),e.gap)u(ir(e))
-else{var c=r.loader=e.loader=s?new s(a):new o(a),d=rr(e),h=Lt(a.fragLoadPolicy.default),f={loadPolicy:h,timeout:h.maxLoadTimeMs,maxRetry:0,retryDelay:0,maxRetryDelay:0,highWaterMark:"initSegment"===e.sn?1/0:er}
+return new Promise((function(l,u){if(r.loader&&r.loader.destroy(),e.gap)u(sr(e))
+else{var c=r.loader=e.loader=s?new s(a):new o(a),d=ar(e),h=Nt(a.fragLoadPolicy.default),f={loadPolicy:h,timeout:h.maxLoadTimeMs,maxRetry:0,retryDelay:0,maxRetryDelay:0,highWaterMark:"initSegment"===e.sn?1/0:ir}
 e.stats=c.stats,c.load(d,f,{onSuccess:function(t,i,n,a){r.resetLoader(e,c)
 var s=t.data
-n.resetIV&&e.decryptdata&&(e.decryptdata.iv=new Uint8Array(s.slice(0,16)),s=s.slice(16)),l({frag:e,part:null,payload:s,networkDetails:a})},onError:function(t,a,s,o){r.resetLoader(e,c),u(new nr({type:y.NETWORK_ERROR,details:_.FRAG_LOAD_ERROR,fatal:!1,frag:e,response:i({url:n,data:void 0},t),error:new Error("HTTP Error "+t.code+" "+t.text),networkDetails:s,stats:o}))},onAbort:function(t,i,n){r.resetLoader(e,c),u(new nr({type:y.NETWORK_ERROR,details:_.INTERNAL_ABORTED,fatal:!1,frag:e,error:new Error("Aborted"),networkDetails:n,stats:t}))},onTimeout:function(t,i,n){r.resetLoader(e,c),u(new nr({type:y.NETWORK_ERROR,details:_.FRAG_LOAD_TIMEOUT,fatal:!1,frag:e,error:new Error("Timeout after "+f.timeout+"ms"),networkDetails:n,stats:t}))},onProgress:function(r,i,n,a){t&&t({frag:e,part:null,payload:n,networkDetails:a})}})}}))},t.loadPart=function(e,t,r){var n=this
+n.resetIV&&e.decryptdata&&(e.decryptdata.iv=new Uint8Array(s.slice(0,16)),s=s.slice(16)),l({frag:e,part:null,payload:s,networkDetails:a})},onError:function(t,a,s,o){r.resetLoader(e,c),u(new or({type:_.NETWORK_ERROR,details:w.FRAG_LOAD_ERROR,fatal:!1,frag:e,response:i({url:n,data:void 0},t),error:new Error("HTTP Error "+t.code+" "+t.text),networkDetails:s,stats:o}))},onAbort:function(t,i,n){r.resetLoader(e,c),u(new or({type:_.NETWORK_ERROR,details:w.INTERNAL_ABORTED,fatal:!1,frag:e,error:new Error("Aborted"),networkDetails:n,stats:t}))},onTimeout:function(t,i,n){r.resetLoader(e,c),u(new or({type:_.NETWORK_ERROR,details:w.FRAG_LOAD_TIMEOUT,fatal:!1,frag:e,error:new Error("Timeout after "+f.timeout+"ms"),networkDetails:n,stats:t}))},onProgress:function(r,i,n,a){t&&t({frag:e,part:null,payload:n,networkDetails:a})}})}}))},t.loadPart=function(e,t,r){var n=this
 this.abort()
 var a=this.config,s=a.fLoader,o=a.loader
-return new Promise((function(l,u){if(n.loader&&n.loader.destroy(),e.gap||t.gap)u(ir(e,t))
-else{var c=n.loader=e.loader=s?new s(a):new o(a),d=rr(e,t),h=Lt(a.fragLoadPolicy.default),f={loadPolicy:h,timeout:h.maxLoadTimeMs,maxRetry:0,retryDelay:0,maxRetryDelay:0,highWaterMark:er}
+return new Promise((function(l,u){if(n.loader&&n.loader.destroy(),e.gap||t.gap)u(sr(e,t))
+else{var c=n.loader=e.loader=s?new s(a):new o(a),d=ar(e,t),h=Nt(a.fragLoadPolicy.default),f={loadPolicy:h,timeout:h.maxLoadTimeMs,maxRetry:0,retryDelay:0,maxRetryDelay:0,highWaterMark:ir}
 t.stats=c.stats,c.load(d,f,{onSuccess:function(i,a,s,o){n.resetLoader(e,c),n.updateStatsFromPart(e,t)
 var u={frag:e,part:t,payload:i.data,networkDetails:o}
-r(u),l(u)},onError:function(r,a,s,o){n.resetLoader(e,c),u(new nr({type:y.NETWORK_ERROR,details:_.FRAG_LOAD_ERROR,fatal:!1,frag:e,part:t,response:i({url:d.url,data:void 0},r),error:new Error("HTTP Error "+r.code+" "+r.text),networkDetails:s,stats:o}))},onAbort:function(r,i,a){e.stats.aborted=t.stats.aborted,n.resetLoader(e,c),u(new nr({type:y.NETWORK_ERROR,details:_.INTERNAL_ABORTED,fatal:!1,frag:e,part:t,error:new Error("Aborted"),networkDetails:a,stats:r}))},onTimeout:function(r,i,a){n.resetLoader(e,c),u(new nr({type:y.NETWORK_ERROR,details:_.FRAG_LOAD_TIMEOUT,fatal:!1,frag:e,part:t,error:new Error("Timeout after "+f.timeout+"ms"),networkDetails:a,stats:r}))}})}}))},t.updateStatsFromPart=function(e,t){var r=e.stats,i=t.stats,n=i.total
+r(u),l(u)},onError:function(r,a,s,o){n.resetLoader(e,c),u(new or({type:_.NETWORK_ERROR,details:w.FRAG_LOAD_ERROR,fatal:!1,frag:e,part:t,response:i({url:d.url,data:void 0},r),error:new Error("HTTP Error "+r.code+" "+r.text),networkDetails:s,stats:o}))},onAbort:function(r,i,a){e.stats.aborted=t.stats.aborted,n.resetLoader(e,c),u(new or({type:_.NETWORK_ERROR,details:w.INTERNAL_ABORTED,fatal:!1,frag:e,part:t,error:new Error("Aborted"),networkDetails:a,stats:r}))},onTimeout:function(r,i,a){n.resetLoader(e,c),u(new or({type:_.NETWORK_ERROR,details:w.FRAG_LOAD_TIMEOUT,fatal:!1,frag:e,part:t,error:new Error("Timeout after "+f.timeout+"ms"),networkDetails:a,stats:r}))}})}}))},t.updateStatsFromPart=function(e,t){var r=e.stats,i=t.stats,n=i.total
 if(r.loaded+=i.loaded,n){var a=Math.round(e.duration/t.duration),s=Math.min(Math.round(r.loaded/n),a),o=(a-s)*Math.round(r.loaded/s)
 r.total=r.loaded+o}else r.total=Math.max(r.loaded,r.total)
 var l=r.loading,u=i.loading
 l.start?l.first+=u.first-u.start:(l.start=u.start,l.first=u.first),l.end=u.end},t.resetLoader=function(e,t){e.loader=null,this.loader===t&&(self.clearTimeout(this.partLoadTimeout),this.loader=null),t.destroy()},e}()
-function rr(e,t){void 0===t&&(t=null)
+function ar(e,t){void 0===t&&(t=null)
 var r=t||e,i={frag:e,part:t,responseType:"arraybuffer",url:r.url,headers:{},rangeStart:0,rangeEnd:0},n=r.byteRangeStartOffset,a=r.byteRangeEndOffset
-if(v(n)&&v(a)){var s,o=n,l=a
+if(b(n)&&b(a)){var s,o=n,l=a
 if("initSegment"===e.sn&&"AES-128"===(null==(s=e.decryptdata)?void 0:s.method)){var u=a-n
-u%16&&(l=a+(16-u%16)),0!==n&&(i.resetIV=!0,o=n-16)}i.rangeStart=o,i.rangeEnd=l}return i}function ir(e,t){var r=new Error("GAP "+(e.gap?"tag":"attribute")+" found"),i={type:y.MEDIA_ERROR,details:_.FRAG_GAP,fatal:!1,frag:e,error:r,networkDetails:null}
-return t&&(i.part=t),(t||e).stats.aborted=!0,new nr(i)}var nr=function(e){function t(t){var r
-return(r=e.call(this,t.error.message)||this).data=void 0,r.data=t,r}return l(t,e),t}(h(Error)),ar=function(){function e(e){this.config=void 0,this.keyUriToKeyInfo={},this.emeController=null,this.config=e}var t=e.prototype
-return t.abort=function(){for(var e in this.keyUriToKeyInfo){var t=this.keyUriToKeyInfo[e].loader
-t&&t.abort()}},t.detach=function(){for(var e in this.keyUriToKeyInfo){var t=this.keyUriToKeyInfo[e];(t.mediaKeySessionContext||t.decryptdata.isCommonEncryption)&&delete this.keyUriToKeyInfo[e]}},t.destroy=function(){for(var e in this.detach(),this.keyUriToKeyInfo){var t=this.keyUriToKeyInfo[e].loader
-t&&t.destroy()}this.keyUriToKeyInfo={}},t.createKeyLoadError=function(e,t,r,i,n){return void 0===t&&(t=_.KEY_LOAD_ERROR),new nr({type:y.NETWORK_ERROR,details:t,fatal:!1,frag:e,response:n,error:r,networkDetails:i})},t.loadClear=function(e,t){var r=this
+u%16&&(l=a+(16-u%16)),0!==n&&(i.resetIV=!0,o=n-16)}i.rangeStart=o,i.rangeEnd=l}return i}function sr(e,t){var r=new Error("GAP "+(e.gap?"tag":"attribute")+" found"),i={type:_.MEDIA_ERROR,details:w.FRAG_GAP,fatal:!1,frag:e,error:r,networkDetails:null}
+return t&&(i.part=t),(t||e).stats.aborted=!0,new or(i)}var or=function(e){function t(t){var r
+return(r=e.call(this,t.error.message)||this).data=void 0,r.data=t,r}return l(t,e),t}(h(Error)),lr=function(){function e(e){this.config=void 0,this.keyUriToKeyInfo={},this.emeController=null,this.config=e}var t=e.prototype
+return t.abort=function(e){for(var t in this.keyUriToKeyInfo){var r=this.keyUriToKeyInfo[t].loader
+if(r){if(e&&e!==r.context.frag.type)return
+r.abort()}}},t.detach=function(){for(var e in this.keyUriToKeyInfo){var t=this.keyUriToKeyInfo[e];(t.mediaKeySessionContext||t.decryptdata.isCommonEncryption)&&delete this.keyUriToKeyInfo[e]}},t.destroy=function(){for(var e in this.detach(),this.keyUriToKeyInfo){var t=this.keyUriToKeyInfo[e].loader
+t&&t.destroy()}this.keyUriToKeyInfo={}},t.createKeyLoadError=function(e,t,r,i,n){return void 0===t&&(t=w.KEY_LOAD_ERROR),new or({type:_.NETWORK_ERROR,details:t,fatal:!1,frag:e,response:n,error:r,networkDetails:i})},t.loadClear=function(e,t){var r=this
 if(this.emeController&&this.config.emeEnabled)for(var i=e.sn,n=e.cc,a=function(){var e=t[s]
 if(n<=e.cc&&("initSegment"===i||"initSegment"===e.sn||i<e.sn))return r.emeController.selectKeySystemFormat(e).then((function(t){e.setKeyFormat(t)})),"break"},s=0;s<t.length&&"break"!==a();s++);},t.load=function(e){var t=this
 return!e.decryptdata&&e.encrypted&&this.emeController?this.emeController.selectKeySystemFormat(e).then((function(r){return t.loadInternal(e,r)})):this.loadInternal(e)},t.loadInternal=function(e,t){var r,i
 t&&e.setKeyFormat(t)
 var n=e.decryptdata
 if(!n){var a=new Error(t?"Expected frag.decryptdata to be defined after setting format "+t:"Missing decryption data on fragment in onKeyLoading")
-return Promise.reject(this.createKeyLoadError(e,_.KEY_LOAD_ERROR,a))}var s=n.uri
-if(!s)return Promise.reject(this.createKeyLoadError(e,_.KEY_LOAD_ERROR,new Error('Invalid key URI: "'+s+'"')))
+return Promise.reject(this.createKeyLoadError(e,w.KEY_LOAD_ERROR,a))}var s=n.uri
+if(!s)return Promise.reject(this.createKeyLoadError(e,w.KEY_LOAD_ERROR,new Error('Invalid key URI: "'+s+'"')))
 var o,l=this.keyUriToKeyInfo[s]
 if(null!=(r=l)&&r.decryptdata.key)return n.key=l.decryptdata.key,Promise.resolve({frag:e,keyInfo:l})
 if(null!=(i=l)&&i.keyLoadPromise)switch(null==(o=l.mediaKeySessionContext)?void 0:o.keyStatus){case void 0:case"status-pending":case"usable":case"usable-in-future":return l.keyLoadPromise.then((function(t){return n.key=t.keyInfo.decryptdata.key,{frag:e,keyInfo:l}}))}switch(l=this.keyUriToKeyInfo[s]={decryptdata:n,keyLoadPromise:null,loader:null,mediaKeySessionContext:null},n.method){case"ISO-23001-7":case"SAMPLE-AES":case"SAMPLE-AES-CENC":case"SAMPLE-AES-CTR":return"identity"===n.keyFormat?this.loadKeyHTTP(l,e):this.loadKeyEME(l,e)
 case"AES-128":return this.loadKeyHTTP(l,e)
-default:return Promise.reject(this.createKeyLoadError(e,_.KEY_LOAD_ERROR,new Error('Key supplied with unsupported METHOD: "'+n.method+'"')))}},t.loadKeyEME=function(e,t){var r={frag:t,keyInfo:e}
+default:return Promise.reject(this.createKeyLoadError(e,w.KEY_LOAD_ERROR,new Error('Key supplied with unsupported METHOD: "'+n.method+'"')))}},t.loadKeyEME=function(e,t){var r={frag:t,keyInfo:e}
 if(this.emeController&&this.config.emeEnabled){var i=this.emeController.loadKey(r)
 if(i)return(e.keyLoadPromise=i.then((function(t){return e.mediaKeySessionContext=t,r}))).catch((function(t){throw e.keyLoadPromise=null,t}))}return Promise.resolve(r)},t.loadKeyHTTP=function(e,t){var r=this,n=this.config,a=new(0,n.loader)(n)
 return t.keyLoader=e.loader=a,e.keyLoadPromise=new Promise((function(s,o){var l={keyInfo:e,frag:t,responseType:"arraybuffer",url:e.decryptdata.uri},u=n.keyLoadPolicy.default,c={loadPolicy:u,timeout:u.maxLoadTimeMs,maxRetry:0,retryDelay:0,maxRetryDelay:0},d={onSuccess:function(e,t,i,n){var a=i.frag,l=i.keyInfo,u=i.url
-if(!a.decryptdata||l!==r.keyUriToKeyInfo[u])return o(r.createKeyLoadError(a,_.KEY_LOAD_ERROR,new Error("after key load, decryptdata unset or changed"),n))
-l.decryptdata.key=a.decryptdata.key=new Uint8Array(e.data),a.keyLoader=null,l.loader=null,s({frag:a,keyInfo:l})},onError:function(e,n,a,s){r.resetLoader(n),o(r.createKeyLoadError(t,_.KEY_LOAD_ERROR,new Error("HTTP Error "+e.code+" loading key "+e.text),a,i({url:l.url,data:void 0},e)))},onTimeout:function(e,i,n){r.resetLoader(i),o(r.createKeyLoadError(t,_.KEY_LOAD_TIMEOUT,new Error("key loading timed out"),n))},onAbort:function(e,i,n){r.resetLoader(i),o(r.createKeyLoadError(t,_.INTERNAL_ABORTED,new Error("key loading aborted"),n))}}
+if(!a.decryptdata||l!==r.keyUriToKeyInfo[u])return o(r.createKeyLoadError(a,w.KEY_LOAD_ERROR,new Error("after key load, decryptdata unset or changed"),n))
+l.decryptdata.key=a.decryptdata.key=new Uint8Array(e.data),a.keyLoader=null,l.loader=null,s({frag:a,keyInfo:l})},onError:function(e,n,a,s){r.resetLoader(n),o(r.createKeyLoadError(t,w.KEY_LOAD_ERROR,new Error("HTTP Error "+e.code+" loading key "+e.text),a,i({url:l.url,data:void 0},e)))},onTimeout:function(e,i,n){r.resetLoader(i),o(r.createKeyLoadError(t,w.KEY_LOAD_TIMEOUT,new Error("key loading timed out"),n))},onAbort:function(e,i,n){r.resetLoader(i),o(r.createKeyLoadError(t,w.INTERNAL_ABORTED,new Error("key loading aborted"),n))}}
 a.load(l,c,d)}))},t.resetLoader=function(e){var t=e.frag,r=e.keyInfo,i=e.url,n=r.loader
-t.keyLoader===n&&(t.keyLoader=null,r.loader=null),delete this.keyUriToKeyInfo[i],n&&n.destroy()},e}(),sr=function(){function e(){this._boundTick=void 0,this._tickTimer=null,this._tickInterval=null,this._tickCallCount=0,this._boundTick=this.tick.bind(this)}var t=e.prototype
-return t.destroy=function(){this.onHandlerDestroying(),this.onHandlerDestroyed()},t.onHandlerDestroying=function(){this.clearNextTick(),this.clearInterval()},t.onHandlerDestroyed=function(){},t.hasInterval=function(){return!!this._tickInterval},t.hasNextTick=function(){return!!this._tickTimer},t.setInterval=function(e){return!this._tickInterval&&(this._tickCallCount=0,this._tickInterval=self.setInterval(this._boundTick,e),!0)},t.clearInterval=function(){return!!this._tickInterval&&(self.clearInterval(this._tickInterval),this._tickInterval=null,!0)},t.clearNextTick=function(){return!!this._tickTimer&&(self.clearTimeout(this._tickTimer),this._tickTimer=null,!0)},t.tick=function(){this._tickCallCount++,1===this._tickCallCount&&(this.doTick(),this._tickCallCount>1&&this.tickImmediate(),this._tickCallCount=0)},t.tickImmediate=function(){this.clearNextTick(),this._tickTimer=self.setTimeout(this._boundTick,0)},t.doTick=function(){},e}(),or={length:0,start:function(){return 0},end:function(){return 0}},lr=function(){function e(){}return e.isBuffered=function(t,r){try{if(t)for(var i=e.getBuffered(t),n=0;n<i.length;n++)if(r>=i.start(n)&&r<=i.end(n))return!0}catch(e){}return!1},e.bufferInfo=function(t,r,i){try{if(t){var n,a=e.getBuffered(t),s=[]
+t.keyLoader===n&&(t.keyLoader=null,r.loader=null),delete this.keyUriToKeyInfo[i],n&&n.destroy()},e}(),ur=function(){function e(){this._boundTick=void 0,this._tickTimer=null,this._tickInterval=null,this._tickCallCount=0,this._boundTick=this.tick.bind(this)}var t=e.prototype
+return t.destroy=function(){this.onHandlerDestroying(),this.onHandlerDestroyed()},t.onHandlerDestroying=function(){this.clearNextTick(),this.clearInterval()},t.onHandlerDestroyed=function(){},t.hasInterval=function(){return!!this._tickInterval},t.hasNextTick=function(){return!!this._tickTimer},t.setInterval=function(e){return!this._tickInterval&&(this._tickCallCount=0,this._tickInterval=self.setInterval(this._boundTick,e),!0)},t.clearInterval=function(){return!!this._tickInterval&&(self.clearInterval(this._tickInterval),this._tickInterval=null,!0)},t.clearNextTick=function(){return!!this._tickTimer&&(self.clearTimeout(this._tickTimer),this._tickTimer=null,!0)},t.tick=function(){this._tickCallCount++,1===this._tickCallCount&&(this.doTick(),this._tickCallCount>1&&this.tickImmediate(),this._tickCallCount=0)},t.tickImmediate=function(){this.clearNextTick(),this._tickTimer=self.setTimeout(this._boundTick,0)},t.doTick=function(){},e}(),cr={length:0,start:function(){return 0},end:function(){return 0}},dr=function(){function e(){}return e.isBuffered=function(t,r){try{if(t)for(var i=e.getBuffered(t),n=0;n<i.length;n++)if(r>=i.start(n)&&r<=i.end(n))return!0}catch(e){}return!1},e.bufferInfo=function(t,r,i){try{if(t){var n,a=e.getBuffered(t),s=[]
 for(n=0;n<a.length;n++)s.push({start:a.start(n),end:a.end(n)})
 return this.bufferedInfo(s,r,i)}}catch(e){}return{len:0,start:r,end:r,nextStart:void 0}},e.bufferedInfo=function(e,t,r){t=Math.max(0,t),e.sort((function(e,t){return e.start-t.start||t.end-e.end}))
 var i=[]
@@ -4639,14 +4648,14 @@ e[n].start-s<r?e[n].end>s&&(i[a-1].end=e[n].end):i.push(e[n])}else i.push(e[n])}
 for(var o,l=0,u=t,c=t,d=0;d<i.length;d++){var h=i[d].start,f=i[d].end
 if(t+r>=h&&t<f)u=h,l=(c=f)-t
 else if(t+r<h){o=h
-break}}return{len:l,start:u||0,end:c||0,nextStart:o}},e.getBuffered=function(e){try{return e.buffered}catch(e){return S.log("failed to get media.buffered",e),or}},e}(),ur=function(e,t,r,i,n,a){void 0===i&&(i=0),void 0===n&&(n=-1),void 0===a&&(a=!1),this.level=void 0,this.sn=void 0,this.part=void 0,this.id=void 0,this.size=void 0,this.partial=void 0,this.transmuxing={start:0,executeStart:0,executeEnd:0,end:0},this.buffering={audio:{start:0,executeStart:0,executeEnd:0,end:0},video:{start:0,executeStart:0,executeEnd:0,end:0},audiovideo:{start:0,executeStart:0,executeEnd:0,end:0}},this.level=e,this.sn=t,this.id=r,this.size=i,this.part=n,this.partial=a}
-function cr(e,t){for(var r=null,i=0,n=e.length;i<n;i++){var a=e[i]
+break}}return{len:l,start:u||0,end:c||0,nextStart:o}},e.getBuffered=function(e){try{return e.buffered}catch(e){return O.log("failed to get media.buffered",e),cr}},e}(),hr=function(e,t,r,i,n,a){void 0===i&&(i=0),void 0===n&&(n=-1),void 0===a&&(a=!1),this.level=void 0,this.sn=void 0,this.part=void 0,this.id=void 0,this.size=void 0,this.partial=void 0,this.transmuxing={start:0,executeStart:0,executeEnd:0,end:0},this.buffering={audio:{start:0,executeStart:0,executeEnd:0,end:0},video:{start:0,executeStart:0,executeEnd:0,end:0},audiovideo:{start:0,executeStart:0,executeEnd:0,end:0}},this.level=e,this.sn=t,this.id=r,this.size=i,this.part=n,this.partial=a}
+function fr(e,t){for(var r=null,i=0,n=e.length;i<n;i++){var a=e[i]
 if(a&&a.cc===t){r=a
-break}}return r}function dr(e,t){if(e){var r=e.start+t
-e.start=e.startPTS=r,e.endPTS=r+e.duration}}function hr(e,t){for(var r=t.fragments,i=0,n=r.length;i<n;i++)dr(r[i],e)
-t.fragmentHint&&dr(t.fragmentHint,e),t.alignedSliding=!0}function fr(e,t){if(e.hasProgramDateTime&&t.hasProgramDateTime){var r=e.fragments,i=t.fragments
-if(r.length&&i.length){var n=i[Math.round(i.length/2)-1],a=cr(r,n.cc)||r[Math.round(r.length/2)-1],s=n.programDateTime,o=a.programDateTime
-null!==s&&null!==o&&hr((o-s)/1e3-(a.start-n.start),e)}}}var pr=function(){function e(e,t){this.subtle=void 0,this.aesIV=void 0,this.subtle=e,this.aesIV=t}return e.prototype.decrypt=function(e,t){return this.subtle.decrypt({name:"AES-CBC",iv:this.aesIV},t,e)},e}(),mr=function(){function e(e,t){this.subtle=void 0,this.key=void 0,this.subtle=e,this.key=t}return e.prototype.expandKey=function(){return this.subtle.importKey("raw",this.key,{name:"AES-CBC"},!1,["encrypt","decrypt"])},e}(),gr=function(){function e(){this.rcon=[0,1,2,4,8,16,32,64,128,27,54],this.subMix=[new Uint32Array(256),new Uint32Array(256),new Uint32Array(256),new Uint32Array(256)],this.invSubMix=[new Uint32Array(256),new Uint32Array(256),new Uint32Array(256),new Uint32Array(256)],this.sBox=new Uint32Array(256),this.invSBox=new Uint32Array(256),this.key=new Uint32Array(0),this.ksRows=0,this.keySize=0,this.keySchedule=void 0,this.invKeySchedule=void 0,this.initTable()}var t=e.prototype
+break}}return r}function pr(e,t){if(e){var r=e.start+t
+e.start=e.startPTS=r,e.endPTS=r+e.duration}}function mr(e,t){for(var r=t.fragments,i=0,n=r.length;i<n;i++)pr(r[i],e)
+t.fragmentHint&&pr(t.fragmentHint,e),t.alignedSliding=!0}function gr(e,t){if(e.hasProgramDateTime&&t.hasProgramDateTime){var r=e.fragments,i=t.fragments
+if(r.length&&i.length){var n=i[Math.round(i.length/2)-1],a=fr(r,n.cc)||r[Math.round(r.length/2)-1],s=n.programDateTime,o=a.programDateTime
+null!==s&&null!==o&&mr((o-s)/1e3-(a.start-n.start),e)}}}var vr=function(){function e(e,t){this.subtle=void 0,this.aesIV=void 0,this.subtle=e,this.aesIV=t}return e.prototype.decrypt=function(e,t){return this.subtle.decrypt({name:"AES-CBC",iv:this.aesIV},t,e)},e}(),br=function(){function e(e,t){this.subtle=void 0,this.key=void 0,this.subtle=e,this.key=t}return e.prototype.expandKey=function(){return this.subtle.importKey("raw",this.key,{name:"AES-CBC"},!1,["encrypt","decrypt"])},e}(),yr=function(){function e(){this.rcon=[0,1,2,4,8,16,32,64,128,27,54],this.subMix=[new Uint32Array(256),new Uint32Array(256),new Uint32Array(256),new Uint32Array(256)],this.invSubMix=[new Uint32Array(256),new Uint32Array(256),new Uint32Array(256),new Uint32Array(256)],this.sBox=new Uint32Array(256),this.invSBox=new Uint32Array(256),this.key=new Uint32Array(0),this.ksRows=0,this.keySize=0,this.keySchedule=void 0,this.invKeySchedule=void 0,this.initTable()}var t=e.prototype
 return t.uint8ArrayToUint32Array_=function(e){for(var t=new DataView(e),r=new Uint32Array(4),i=0;i<4;i++)r[i]=t.getUint32(4*i)
 return r},t.initTable=function(){var e=this.sBox,t=this.invSBox,r=this.subMix,i=r[0],n=r[1],a=r[2],s=r[3],o=this.invSubMix,l=o[0],u=o[1],c=o[2],d=o[3],h=new Uint32Array(256),f=0,p=0,m=0
 for(m=0;m<256;m++)h[m]=m<128?m<<1:m<<1^283
@@ -4660,104 +4669,105 @@ if(4!==n&&6!==n&&8!==n)throw new Error("Invalid aes key size="+n)
 var a,s,o,l,u=this.ksRows=4*(n+6+1),c=this.keySchedule=new Uint32Array(u),d=this.invKeySchedule=new Uint32Array(u),h=this.sBox,f=this.rcon,p=this.invSubMix,m=p[0],g=p[1],v=p[2],b=p[3]
 for(a=0;a<u;a++)a<n?o=c[a]=t[a]:(l=o,a%n==0?(l=h[(l=l<<8|l>>>24)>>>24]<<24|h[l>>>16&255]<<16|h[l>>>8&255]<<8|h[255&l],l^=f[a/n|0]<<24):n>6&&a%n==4&&(l=h[l>>>24]<<24|h[l>>>16&255]<<16|h[l>>>8&255]<<8|h[255&l]),c[a]=o=(c[a-n]^l)>>>0)
 for(s=0;s<u;s++)a=u-s,l=3&s?c[a]:c[a-4],d[s]=s<4||a<=4?l:m[h[l>>>24]]^g[h[l>>>16&255]]^v[h[l>>>8&255]]^b[h[255&l]],d[s]=d[s]>>>0}},t.networkToHostOrderSwap=function(e){return e<<24|(65280&e)<<8|(16711680&e)>>8|e>>>24},t.decrypt=function(e,t,r){for(var i,n,a,s,o,l,u,c,d,h,f,p,m,g,v=this.keySize+6,b=this.invKeySchedule,y=this.invSBox,_=this.invSubMix,w=_[0],E=_[1],T=_[2],k=_[3],S=this.uint8ArrayToUint32Array_(r),O=S[0],x=S[1],P=S[2],A=S[3],R=new Int32Array(e),C=new Int32Array(R.length),D=this.networkToHostOrderSwap;t<R.length;){for(d=D(R[t]),h=D(R[t+1]),f=D(R[t+2]),p=D(R[t+3]),o=d^b[0],l=p^b[1],u=f^b[2],c=h^b[3],m=4,g=1;g<v;g++)i=w[o>>>24]^E[l>>16&255]^T[u>>8&255]^k[255&c]^b[m],n=w[l>>>24]^E[u>>16&255]^T[c>>8&255]^k[255&o]^b[m+1],a=w[u>>>24]^E[c>>16&255]^T[o>>8&255]^k[255&l]^b[m+2],s=w[c>>>24]^E[o>>16&255]^T[l>>8&255]^k[255&u]^b[m+3],o=i,l=n,u=a,c=s,m+=4
-i=y[o>>>24]<<24^y[l>>16&255]<<16^y[u>>8&255]<<8^y[255&c]^b[m],n=y[l>>>24]<<24^y[u>>16&255]<<16^y[c>>8&255]<<8^y[255&o]^b[m+1],a=y[u>>>24]<<24^y[c>>16&255]<<16^y[o>>8&255]<<8^y[255&l]^b[m+2],s=y[c>>>24]<<24^y[o>>16&255]<<16^y[l>>8&255]<<8^y[255&u]^b[m+3],C[t]=D(i^O),C[t+1]=D(s^x),C[t+2]=D(a^P),C[t+3]=D(n^A),O=d,x=h,P=f,A=p,t+=4}return C.buffer},e}(),vr=function(){function e(e,t){var r=(void 0===t?{}:t).removePKCS7Padding,i=void 0===r||r
+i=y[o>>>24]<<24^y[l>>16&255]<<16^y[u>>8&255]<<8^y[255&c]^b[m],n=y[l>>>24]<<24^y[u>>16&255]<<16^y[c>>8&255]<<8^y[255&o]^b[m+1],a=y[u>>>24]<<24^y[c>>16&255]<<16^y[o>>8&255]<<8^y[255&l]^b[m+2],s=y[c>>>24]<<24^y[o>>16&255]<<16^y[l>>8&255]<<8^y[255&u]^b[m+3],C[t]=D(i^O),C[t+1]=D(s^x),C[t+2]=D(a^P),C[t+3]=D(n^A),O=d,x=h,P=f,A=p,t+=4}return C.buffer},e}(),_r=function(){function e(e,t){var r=(void 0===t?{}:t).removePKCS7Padding,i=void 0===r||r
 if(this.logEnabled=!0,this.removePKCS7Padding=void 0,this.subtle=null,this.softwareDecrypter=null,this.key=null,this.fastAesKey=null,this.remainderData=null,this.currentIV=null,this.currentResult=null,this.useSoftware=void 0,this.useSoftware=e.enableSoftwareAES,this.removePKCS7Padding=i,i)try{var n=self.crypto
 n&&(this.subtle=n.subtle||n.webkitSubtle)}catch(e){}null===this.subtle&&(this.useSoftware=!0)}var t=e.prototype
 return t.destroy=function(){this.subtle=null,this.softwareDecrypter=null,this.key=null,this.fastAesKey=null,this.remainderData=null,this.currentIV=null,this.currentResult=null},t.isSync=function(){return this.useSoftware},t.flush=function(){var e=this.currentResult,t=this.remainderData
 if(!e||t)return this.reset(),null
 var r,i,n,a=new Uint8Array(e)
-return this.reset(),this.removePKCS7Padding?(n=(i=(r=a).byteLength)&&new DataView(r.buffer).getUint8(i-1))?X(r,0,i-n):r:a},t.reset=function(){this.currentResult=null,this.currentIV=null,this.remainderData=null,this.softwareDecrypter&&(this.softwareDecrypter=null)},t.decrypt=function(e,t,r){var i=this
+return this.reset(),this.removePKCS7Padding?(n=(i=(r=a).byteLength)&&new DataView(r.buffer).getUint8(i-1))?J(r,0,i-n):r:a},t.reset=function(){this.currentResult=null,this.currentIV=null,this.remainderData=null,this.softwareDecrypter&&(this.softwareDecrypter=null)},t.decrypt=function(e,t,r){var i=this
 return this.useSoftware?new Promise((function(n,a){i.softwareDecrypt(new Uint8Array(e),t,r)
 var s=i.flush()
 s?n(s.buffer):a(new Error("[softwareDecrypt] Failed to decrypt data"))})):this.webCryptoDecrypt(new Uint8Array(e),t,r)},t.softwareDecrypt=function(e,t,r){var i=this.currentIV,n=this.currentResult,a=this.remainderData
-this.logOnce("JS AES decrypt"),a&&(e=xe(a,e),this.remainderData=null)
+this.logOnce("JS AES decrypt"),a&&(e=Pe(a,e),this.remainderData=null)
 var s=this.getValidChunk(e)
 if(!s.length)return null
 i&&(r=i)
 var o=this.softwareDecrypter
-o||(o=this.softwareDecrypter=new gr),o.expandKey(t)
+o||(o=this.softwareDecrypter=new yr),o.expandKey(t)
 var l=n
-return this.currentResult=o.decrypt(s.buffer,0,r),this.currentIV=X(s,-16).buffer,l||null},t.webCryptoDecrypt=function(e,t,r){var i=this,n=this.subtle
-return this.key===t&&this.fastAesKey||(this.key=t,this.fastAesKey=new mr(n,t)),this.fastAesKey.expandKey().then((function(t){return n?(i.logOnce("WebCrypto AES decrypt"),new pr(n,new Uint8Array(r)).decrypt(e.buffer,t)):Promise.reject(new Error("web crypto not initialized"))})).catch((function(n){return S.warn("[decrypter]: WebCrypto Error, disable WebCrypto API, "+n.name+": "+n.message),i.onWebCryptoError(e,t,r)}))},t.onWebCryptoError=function(e,t,r){this.useSoftware=!0,this.logEnabled=!0,this.softwareDecrypt(e,t,r)
+return this.currentResult=o.decrypt(s.buffer,0,r),this.currentIV=J(s,-16).buffer,l||null},t.webCryptoDecrypt=function(e,t,r){var i=this,n=this.subtle
+return this.key===t&&this.fastAesKey||(this.key=t,this.fastAesKey=new br(n,t)),this.fastAesKey.expandKey().then((function(t){return n?(i.logOnce("WebCrypto AES decrypt"),new vr(n,new Uint8Array(r)).decrypt(e.buffer,t)):Promise.reject(new Error("web crypto not initialized"))})).catch((function(n){return O.warn("[decrypter]: WebCrypto Error, disable WebCrypto API, "+n.name+": "+n.message),i.onWebCryptoError(e,t,r)}))},t.onWebCryptoError=function(e,t,r){this.useSoftware=!0,this.logEnabled=!0,this.softwareDecrypt(e,t,r)
 var i=this.flush()
 if(i)return i.buffer
 throw new Error("WebCrypto and softwareDecrypt: failed to decrypt data")},t.getValidChunk=function(e){var t=e,r=e.length-e.length%16
-return r!==e.length&&(t=X(e,0,r),this.remainderData=X(e,r)),t},t.logOnce=function(e){this.logEnabled&&(S.log("[decrypter]: "+e),this.logEnabled=!1)},e}(),br="STOPPED",yr="IDLE",_r="KEY_LOADING",wr="FRAG_LOADING",Er="FRAG_LOADING_WAITING_RETRY",Tr="WAITING_TRACK",kr="PARSING",Sr="PARSED",Or="ENDED",xr="ERROR",Pr="WAITING_INIT_PTS",Ar="WAITING_LEVEL",Rr=function(e){function t(t,r,i,n,a){var s
-return(s=e.call(this)||this).hls=void 0,s.fragPrevious=null,s.fragCurrent=null,s.fragmentTracker=void 0,s.transmuxer=null,s._state=br,s.playlistType=void 0,s.media=null,s.mediaBuffer=null,s.config=void 0,s.bitrateTest=!1,s.lastCurrentTime=0,s.nextLoadPosition=0,s.startPosition=0,s.startTimeOffset=null,s.loadedmetadata=!1,s.retryDate=0,s.levels=null,s.fragmentLoader=void 0,s.keyLoader=void 0,s.levelLastLoaded=null,s.startFragRequested=!1,s.decrypter=void 0,s.initPTS=[],s.onvseeking=null,s.onvended=null,s.logPrefix="",s.log=void 0,s.warn=void 0,s.playlistType=a,s.logPrefix=n,s.log=S.log.bind(S,n+":"),s.warn=S.warn.bind(S,n+":"),s.hls=t,s.fragmentLoader=new tr(t.config),s.keyLoader=i,s.fragmentTracker=r,s.config=t.config,s.decrypter=new vr(t.config),t.on(b.MANIFEST_LOADED,s.onManifestLoaded,function(e){if(void 0===e)throw new ReferenceError("this hasn't been initialised - super() hasn't been called")
+return r!==e.length&&(t=J(e,0,r),this.remainderData=J(e,r)),t},t.logOnce=function(e){this.logEnabled&&(O.log("[decrypter]: "+e),this.logEnabled=!1)},e}(),wr="STOPPED",Er="IDLE",Tr="KEY_LOADING",kr="FRAG_LOADING",Sr="FRAG_LOADING_WAITING_RETRY",Or="WAITING_TRACK",xr="PARSING",Pr="PARSED",Ar="ENDED",Rr="ERROR",Cr="WAITING_INIT_PTS",Dr="WAITING_LEVEL",Mr=function(e){function t(t,r,i,n,a){var s
+return(s=e.call(this)||this).hls=void 0,s.fragPrevious=null,s.fragCurrent=null,s.fragmentTracker=void 0,s.transmuxer=null,s._state=wr,s.playlistType=void 0,s.media=null,s.mediaBuffer=null,s.config=void 0,s.bitrateTest=!1,s.lastCurrentTime=0,s.nextLoadPosition=0,s.startPosition=0,s.startTimeOffset=null,s.loadedmetadata=!1,s.retryDate=0,s.levels=null,s.fragmentLoader=void 0,s.keyLoader=void 0,s.levelLastLoaded=null,s.startFragRequested=!1,s.decrypter=void 0,s.initPTS=[],s.onvseeking=null,s.onvended=null,s.logPrefix="",s.log=void 0,s.warn=void 0,s.playlistType=a,s.logPrefix=n,s.log=O.log.bind(O,n+":"),s.warn=O.warn.bind(O,n+":"),s.hls=t,s.fragmentLoader=new nr(t.config),s.keyLoader=i,s.fragmentTracker=r,s.config=t.config,s.decrypter=new _r(t.config),t.on(y.MANIFEST_LOADED,s.onManifestLoaded,function(e){if(void 0===e)throw new ReferenceError("this hasn't been initialised - super() hasn't been called")
 return e}(s)),s}l(t,e)
 var r=t.prototype
-return r.doTick=function(){this.onTickEnd()},r.onTickEnd=function(){},r.startLoad=function(e){},r.stopLoad=function(){this.fragmentLoader.abort(),this.keyLoader.abort()
+return r.doTick=function(){this.onTickEnd()},r.onTickEnd=function(){},r.startLoad=function(e){},r.stopLoad=function(){this.fragmentLoader.abort(),this.keyLoader.abort(this.playlistType)
 var e=this.fragCurrent
-null!=e&&e.loader&&(e.abortRequests(),this.fragmentTracker.removeFragment(e)),this.resetTransmuxer(),this.fragCurrent=null,this.fragPrevious=null,this.clearInterval(),this.clearNextTick(),this.state=br},r._streamEnded=function(e,t){if(t.live||e.nextStart||!e.end||!this.media)return!1
+null!=e&&e.loader&&(e.abortRequests(),this.fragmentTracker.removeFragment(e)),this.resetTransmuxer(),this.fragCurrent=null,this.fragPrevious=null,this.clearInterval(),this.clearNextTick(),this.state=wr},r._streamEnded=function(e,t){if(t.live||e.nextStart||!e.end||!this.media)return!1
 var r=t.partList
 if(null!=r&&r.length){var i=r[r.length-1]
-return lr.isBuffered(this.media,i.start+i.duration/2)}var n=t.fragments[t.fragments.length-1].type
+return dr.isBuffered(this.media,i.start+i.duration/2)}var n=t.fragments[t.fragments.length-1].type
 return this.fragmentTracker.isEndListAppended(n)},r.getLevelDetails=function(){var e
 if(this.levels&&null!==this.levelLastLoaded)return null==(e=this.levels[this.levelLastLoaded])?void 0:e.details},r.onMediaAttached=function(e,t){var r=this.media=this.mediaBuffer=t.media
 this.onvseeking=this.onMediaSeeking.bind(this),this.onvended=this.onMediaEnded.bind(this),r.addEventListener("seeking",this.onvseeking),r.addEventListener("ended",this.onvended)
 var i=this.config
-this.levels&&i.autoStartLoad&&this.state===br&&this.startLoad(i.startPosition)},r.onMediaDetaching=function(){var e=this.media
-null!=e&&e.ended&&(this.log("MSE detaching and video ended, reset startPosition"),this.startPosition=this.lastCurrentTime=0),e&&this.onvseeking&&this.onvended&&(e.removeEventListener("seeking",this.onvseeking),e.removeEventListener("ended",this.onvended),this.onvseeking=this.onvended=null),this.keyLoader&&this.keyLoader.detach(),this.media=this.mediaBuffer=null,this.loadedmetadata=!1,this.fragmentTracker.removeAllFragments(),this.stopLoad()},r.onMediaSeeking=function(){var e=this.config,t=this.fragCurrent,r=this.media,i=this.mediaBuffer,n=this.state,a=r?r.currentTime:0,s=lr.bufferInfo(i||r,a,e.maxBufferHole)
-if(this.log("media seeking to "+(v(a)?a.toFixed(3):a)+", state: "+n),this.state===Or)this.resetLoadingState()
+this.levels&&i.autoStartLoad&&this.state===wr&&this.startLoad(i.startPosition)},r.onMediaDetaching=function(){var e=this.media
+null!=e&&e.ended&&(this.log("MSE detaching and video ended, reset startPosition"),this.startPosition=this.lastCurrentTime=0),e&&this.onvseeking&&this.onvended&&(e.removeEventListener("seeking",this.onvseeking),e.removeEventListener("ended",this.onvended),this.onvseeking=this.onvended=null),this.keyLoader&&this.keyLoader.detach(),this.media=this.mediaBuffer=null,this.loadedmetadata=!1,this.fragmentTracker.removeAllFragments(),this.stopLoad()},r.onMediaSeeking=function(){var e=this.config,t=this.fragCurrent,r=this.media,i=this.mediaBuffer,n=this.state,a=r?r.currentTime:0,s=dr.bufferInfo(i||r,a,e.maxBufferHole)
+if(this.log("media seeking to "+(b(a)?a.toFixed(3):a)+", state: "+n),this.state===Ar)this.resetLoadingState()
 else if(t){var o=e.maxFragLookUpTolerance,l=t.start-o,u=t.start+t.duration+o
-if(!s.len||u<s.start||l>s.end){var c=a>u;(a<l||c)&&(c&&t.loader&&(this.log("seeking outside of buffer while fragment load in progress, cancel fragment load"),t.abortRequests()),this.resetLoadingState())}}r&&(this.fragmentTracker.removeFragmentsInRange(a,1/0,this.playlistType,!0),this.lastCurrentTime=a),this.loadedmetadata||s.len||(this.nextLoadPosition=this.startPosition=a),this.tickImmediate()},r.onMediaEnded=function(){this.startPosition=this.lastCurrentTime=0},r.onManifestLoaded=function(e,t){this.startTimeOffset=t.startTimeOffset,this.initPTS=[]},r.onHandlerDestroying=function(){this.stopLoad(),e.prototype.onHandlerDestroying.call(this)},r.onHandlerDestroyed=function(){this.state=br,this.fragmentLoader&&this.fragmentLoader.destroy(),this.keyLoader&&this.keyLoader.destroy(),this.decrypter&&this.decrypter.destroy(),this.hls=this.log=this.warn=this.decrypter=this.keyLoader=this.fragmentLoader=this.fragmentTracker=null,e.prototype.onHandlerDestroyed.call(this)},r.loadFragment=function(e,t,r){this._loadFragForPlayback(e,t,r)},r._loadFragForPlayback=function(e,t,r){var i=this
+if(!s.len||u<s.start||l>s.end){var c=a>u;(a<l||c)&&(c&&t.loader&&(this.log("seeking outside of buffer while fragment load in progress, cancel fragment load"),t.abortRequests(),this.resetLoadingState()),this.fragPrevious=null)}}r&&(this.fragmentTracker.removeFragmentsInRange(a,1/0,this.playlistType,!0),this.lastCurrentTime=a),this.loadedmetadata||s.len||(this.nextLoadPosition=this.startPosition=a),this.tickImmediate()},r.onMediaEnded=function(){this.startPosition=this.lastCurrentTime=0},r.onManifestLoaded=function(e,t){this.startTimeOffset=t.startTimeOffset,this.initPTS=[]},r.onHandlerDestroying=function(){this.stopLoad(),e.prototype.onHandlerDestroying.call(this)},r.onHandlerDestroyed=function(){this.state=wr,this.fragmentLoader&&this.fragmentLoader.destroy(),this.keyLoader&&this.keyLoader.destroy(),this.decrypter&&this.decrypter.destroy(),this.hls=this.log=this.warn=this.decrypter=this.keyLoader=this.fragmentLoader=this.fragmentTracker=null,e.prototype.onHandlerDestroyed.call(this)},r.loadFragment=function(e,t,r){this._loadFragForPlayback(e,t,r)},r._loadFragForPlayback=function(e,t,r){var i=this
 this._doFragLoad(e,t,r,(function(t){if(i.fragContextChanged(e))return i.warn("Fragment "+e.sn+(t.part?" p: "+t.part.index:"")+" of level "+e.level+" was dropped during download."),void i.fragmentTracker.removeFragment(e)
 e.stats.chunkCount++,i._handleFragmentLoadProgress(t)})).then((function(t){if(t){var r=i.state
-i.fragContextChanged(e)?(r===wr||!i.fragCurrent&&r===kr)&&(i.fragmentTracker.removeFragment(e),i.state=yr):("payload"in t&&(i.log("Loaded fragment "+e.sn+" of level "+e.level),i.hls.trigger(b.FRAG_LOADED,t)),i._handleFragmentLoadComplete(t))}})).catch((function(t){i.state!==br&&i.state!==xr&&(i.warn(t),i.resetFragmentLoading(e))}))},r.clearTrackerIfNeeded=function(e){var t
-if(this.fragmentTracker.getState(e)===Wt){var r=e.type,i=this.getFwdBufferInfo(this.mediaBuffer,r),n=Math.max(e.duration,i?i.len:this.config.maxBufferLength)
-this.reduceMaxBufferLength(n)&&this.fragmentTracker.removeFragment(e)}else 0===(null==(t=this.mediaBuffer)?void 0:t.buffered.length)&&this.fragmentTracker.removeAllFragments()},r.flushMainBuffer=function(e,t,r){if(void 0===r&&(r=null),e-t){var i={startOffset:e,endOffset:t,type:r}
-this.hls.trigger(b.BUFFER_FLUSHING,i)}},r._loadInitSegment=function(e,t){var r=this
+i.fragContextChanged(e)?(r===kr||!i.fragCurrent&&r===xr)&&(i.fragmentTracker.removeFragment(e),i.state=Er):("payload"in t&&(i.log("Loaded fragment "+e.sn+" of level "+e.level),i.hls.trigger(y.FRAG_LOADED,t)),i._handleFragmentLoadComplete(t))}})).catch((function(t){i.state!==wr&&i.state!==Rr&&(i.warn(t),i.resetFragmentLoading(e))}))},r.clearTrackerIfNeeded=function(e){var t,r=this.fragmentTracker
+if(r.getState(e)===Xt){var i=e.type,n=this.getFwdBufferInfo(this.mediaBuffer,i),a=Math.max(e.duration,n?n.len:this.config.maxBufferLength)
+this.reduceMaxBufferLength(a)&&r.removeFragment(e)}else 0===(null==(t=this.mediaBuffer)?void 0:t.buffered.length)?r.removeAllFragments():r.hasParts(e.type)&&(r.detectPartialFragments({frag:e,part:null,stats:e.stats,id:e.type}),r.getState(e)===Jt&&r.removeFragment(e))},r.flushMainBuffer=function(e,t,r){if(void 0===r&&(r=null),e-t){var i={startOffset:e,endOffset:t,type:r}
+this.hls.trigger(y.BUFFER_FLUSHING,i)}},r._loadInitSegment=function(e,t){var r=this
 this._doFragLoad(e,t).then((function(t){if(!t||r.fragContextChanged(e)||!r.levels)throw new Error("init load aborted")
 return t})).then((function(t){var i=r.hls,n=t.payload,a=e.decryptdata
 if(n&&n.byteLength>0&&a&&a.key&&a.iv&&"AES-128"===a.method){var s=self.performance.now()
-return r.decrypter.decrypt(new Uint8Array(n),a.key.buffer,a.iv.buffer).catch((function(t){throw i.trigger(b.ERROR,{type:y.MEDIA_ERROR,details:_.FRAG_DECRYPT_ERROR,fatal:!1,error:t,reason:t.message,frag:e}),t})).then((function(r){var n=self.performance.now()
-return i.trigger(b.FRAG_DECRYPTED,{frag:e,payload:r,stats:{tstart:s,tdecrypt:n}}),t.payload=r,t}))}return t})).then((function(i){var n=r.fragCurrent,a=r.hls
+return r.decrypter.decrypt(new Uint8Array(n),a.key.buffer,a.iv.buffer).catch((function(t){throw i.trigger(y.ERROR,{type:_.MEDIA_ERROR,details:w.FRAG_DECRYPT_ERROR,fatal:!1,error:t,reason:t.message,frag:e}),t})).then((function(r){var n=self.performance.now()
+return i.trigger(y.FRAG_DECRYPTED,{frag:e,payload:r,stats:{tstart:s,tdecrypt:n}}),t.payload=r,t}))}return t})).then((function(i){var n=r.fragCurrent,a=r.hls
 if(!r.levels)throw new Error("init load aborted, missing levels")
 var s=e.stats
-r.state=yr,t.fragmentError=0,e.data=new Uint8Array(i.payload),s.parsing.start=s.buffering.start=self.performance.now(),s.parsing.end=s.buffering.end=self.performance.now(),i.frag===n&&a.trigger(b.FRAG_BUFFERED,{stats:s,frag:n,part:null,id:e.type}),r.tick()})).catch((function(t){r.state!==br&&r.state!==xr&&(r.warn(t),r.resetFragmentLoading(e))}))},r.fragContextChanged=function(e){var t=this.fragCurrent
+r.state=Er,t.fragmentError=0,e.data=new Uint8Array(i.payload),s.parsing.start=s.buffering.start=self.performance.now(),s.parsing.end=s.buffering.end=self.performance.now(),i.frag===n&&a.trigger(y.FRAG_BUFFERED,{stats:s,frag:n,part:null,id:e.type}),r.tick()})).catch((function(t){r.state!==wr&&r.state!==Rr&&(r.warn(t),r.resetFragmentLoading(e))}))},r.fragContextChanged=function(e){var t=this.fragCurrent
 return!e||!t||e.level!==t.level||e.sn!==t.sn||e.urlId!==t.urlId},r.fragBufferedComplete=function(e,t){var r,i,n,a,s=this.mediaBuffer?this.mediaBuffer:this.media
-this.log("Buffered "+e.type+" sn: "+e.sn+(t?" part: "+t.index:"")+" of "+("[stream-controller]"===this.logPrefix?"level":"track")+" "+e.level+" (frag:["+(null!=(r=e.startPTS)?r:NaN).toFixed(3)+"-"+(null!=(i=e.endPTS)?i:NaN).toFixed(3)+"] > buffer:"+(s?function(e){for(var t="",r=e.length,i=0;i<r;i++)t+="["+e.start(i).toFixed(3)+"-"+e.end(i).toFixed(3)+"]"
-return t}(lr.getBuffered(s)):"(detached)")+")"),this.state=yr,s&&(!this.loadedmetadata&&e.type==at&&s.buffered.length&&(null==(n=this.fragCurrent)?void 0:n.sn)===(null==(a=this.fragPrevious)?void 0:a.sn)&&(this.loadedmetadata=!0,this.seekToStartPos()),this.tick())},r.seekToStartPos=function(){},r._handleFragmentLoadComplete=function(e){var t=this.transmuxer
-if(t){var r=e.frag,i=e.part,n=e.partsLoaded,a=!n||0===n.length||n.some((function(e){return!e})),s=new ur(r.level,r.sn,r.stats.chunkCount+1,0,i?i.index:-1,!a)
+this.log("Buffered "+e.type+" sn: "+e.sn+(t?" part: "+t.index:"")+" of "+(this.playlistType===lt?"level":"track")+" "+e.level+" (frag:["+(null!=(r=e.startPTS)?r:NaN).toFixed(3)+"-"+(null!=(i=e.endPTS)?i:NaN).toFixed(3)+"] > buffer:"+(s?function(e){for(var t="",r=e.length,i=0;i<r;i++)t+="["+e.start(i).toFixed(3)+"-"+e.end(i).toFixed(3)+"]"
+return t}(dr.getBuffered(s)):"(detached)")+")"),this.state=Er,s&&(!this.loadedmetadata&&e.type==lt&&s.buffered.length&&(null==(n=this.fragCurrent)?void 0:n.sn)===(null==(a=this.fragPrevious)?void 0:a.sn)&&(this.loadedmetadata=!0,this.seekToStartPos()),this.tick())},r.seekToStartPos=function(){},r._handleFragmentLoadComplete=function(e){var t=this.transmuxer
+if(t){var r=e.frag,i=e.part,n=e.partsLoaded,a=!n||0===n.length||n.some((function(e){return!e})),s=new hr(r.level,r.sn,r.stats.chunkCount+1,0,i?i.index:-1,!a)
 t.flush(s)}},r._handleFragmentLoadProgress=function(e){},r._doFragLoad=function(e,t,r,i){var n,a=this
 void 0===r&&(r=null)
 var s=null==t?void 0:t.details
 if(!this.levels||!s)throw new Error("frag load aborted, missing level"+(s?"":" detail")+"s")
 var o=null
-if(!e.encrypted||null!=(n=e.decryptdata)&&n.key?!e.encrypted&&s.encryptedFragments.length&&this.keyLoader.loadClear(e,s.encryptedFragments):(this.log("Loading key for "+e.sn+" of ["+s.startSN+"-"+s.endSN+"], "+("[stream-controller]"===this.logPrefix?"level":"track")+" "+e.level),this.state=_r,this.fragCurrent=e,o=this.keyLoader.load(e).then((function(e){if(!a.fragContextChanged(e.frag))return a.hls.trigger(b.KEY_LOADED,e),a.state===_r&&(a.state=yr),e})),this.hls.trigger(b.KEY_LOADING,{frag:e}),null===this.fragCurrent&&(o=Promise.reject(new Error("frag load aborted, context changed in KEY_LOADING")))),r=Math.max(e.start,r||0),this.config.lowLatencyMode){var l=s.partList
+if(!e.encrypted||null!=(n=e.decryptdata)&&n.key?!e.encrypted&&s.encryptedFragments.length&&this.keyLoader.loadClear(e,s.encryptedFragments):(this.log("Loading key for "+e.sn+" of ["+s.startSN+"-"+s.endSN+"], "+("[stream-controller]"===this.logPrefix?"level":"track")+" "+e.level),this.state=Tr,this.fragCurrent=e,o=this.keyLoader.load(e).then((function(e){if(!a.fragContextChanged(e.frag))return a.hls.trigger(y.KEY_LOADED,e),a.state===Tr&&(a.state=Er),e})),this.hls.trigger(y.KEY_LOADING,{frag:e}),null===this.fragCurrent&&(o=Promise.reject(new Error("frag load aborted, context changed in KEY_LOADING")))),r=Math.max(e.start,r||0),this.config.lowLatencyMode&&"initSegment"!==e.sn){var l=s.partList
 if(l&&i){r>e.end&&s.fragmentHint&&(e=s.fragmentHint)
 var u=this.getNextPart(l,e,r)
 if(u>-1){var c,d=l[u]
-return this.log("Loading part sn: "+e.sn+" p: "+d.index+" cc: "+e.cc+" of playlist ["+s.startSN+"-"+s.endSN+"] parts [0-"+u+"-"+(l.length-1)+"] "+("[stream-controller]"===this.logPrefix?"level":"track")+": "+e.level+", target: "+parseFloat(r.toFixed(3))),this.nextLoadPosition=d.start+d.duration,this.state=wr,c=o?o.then((function(r){return!r||a.fragContextChanged(r.frag)?null:a.doFragPartsLoad(e,d,t,i)})).catch((function(e){return a.handleFragLoadError(e)})):this.doFragPartsLoad(e,d,t,i).catch((function(e){return a.handleFragLoadError(e)})),this.hls.trigger(b.FRAG_LOADING,{frag:e,part:d,targetBufferTime:r}),null===this.fragCurrent?Promise.reject(new Error("frag load aborted, context changed in FRAG_LOADING parts")):c}if(!e.url||this.loadedEndOfParts(l,r))return Promise.resolve(null)}}this.log("Loading fragment "+e.sn+" cc: "+e.cc+" "+(s?"of ["+s.startSN+"-"+s.endSN+"] ":"")+("[stream-controller]"===this.logPrefix?"level":"track")+": "+e.level+", target: "+parseFloat(r.toFixed(3))),v(e.sn)&&!this.bitrateTest&&(this.nextLoadPosition=e.start+e.duration),this.state=wr
+return this.log("Loading part sn: "+e.sn+" p: "+d.index+" cc: "+e.cc+" of playlist ["+s.startSN+"-"+s.endSN+"] parts [0-"+u+"-"+(l.length-1)+"] "+("[stream-controller]"===this.logPrefix?"level":"track")+": "+e.level+", target: "+parseFloat(r.toFixed(3))),this.nextLoadPosition=d.start+d.duration,this.state=kr,c=o?o.then((function(r){return!r||a.fragContextChanged(r.frag)?null:a.doFragPartsLoad(e,d,t,i)})).catch((function(e){return a.handleFragLoadError(e)})):this.doFragPartsLoad(e,d,t,i).catch((function(e){return a.handleFragLoadError(e)})),this.hls.trigger(y.FRAG_LOADING,{frag:e,part:d,targetBufferTime:r}),null===this.fragCurrent?Promise.reject(new Error("frag load aborted, context changed in FRAG_LOADING parts")):c}if(!e.url||this.loadedEndOfParts(l,r))return Promise.resolve(null)}}this.log("Loading fragment "+e.sn+" cc: "+e.cc+" "+(s?"of ["+s.startSN+"-"+s.endSN+"] ":"")+("[stream-controller]"===this.logPrefix?"level":"track")+": "+e.level+", target: "+parseFloat(r.toFixed(3))),b(e.sn)&&!this.bitrateTest&&(this.nextLoadPosition=e.start+e.duration),this.state=kr
 var h,f=this.config.progressive
 return h=f&&o?o.then((function(t){return!t||a.fragContextChanged(null==t?void 0:t.frag)?null:a.fragmentLoader.load(e,i)})).catch((function(e){return a.handleFragLoadError(e)})):Promise.all([this.fragmentLoader.load(e,f?i:void 0),o]).then((function(e){var t=e[0]
-return!f&&t&&i&&i(t),t})).catch((function(e){return a.handleFragLoadError(e)})),this.hls.trigger(b.FRAG_LOADING,{frag:e,targetBufferTime:r}),null===this.fragCurrent?Promise.reject(new Error("frag load aborted, context changed in FRAG_LOADING")):h},r.doFragPartsLoad=function(e,t,r,i){var n=this
+return!f&&t&&i&&i(t),t})).catch((function(e){return a.handleFragLoadError(e)})),this.hls.trigger(y.FRAG_LOADING,{frag:e,targetBufferTime:r}),null===this.fragCurrent?Promise.reject(new Error("frag load aborted, context changed in FRAG_LOADING")):h},r.doFragPartsLoad=function(e,t,r,i){var n=this
 return new Promise((function(a,s){var o,l=[],u=null==(o=r.details)?void 0:o.partList
 !function t(o){n.fragmentLoader.loadPart(e,o,i).then((function(i){l[o.index]=i
 var s=i.part
-n.hls.trigger(b.FRAG_LOADED,i)
-var c=Rt(r,e.sn,o.index+1)||Ct(u,e.sn,o.index+1)
+n.hls.trigger(y.FRAG_LOADED,i)
+var c=Mt(r,e.sn,o.index+1)||It(u,e.sn,o.index+1)
 if(!c)return a({frag:e,part:s,partsLoaded:l})
 t(c)})).catch(s)}(t)}))},r.handleFragLoadError=function(e){if("data"in e){var t=e.data
-e.data&&t.details===_.INTERNAL_ABORTED?this.handleFragLoadAborted(t.frag,t.part):this.hls.trigger(b.ERROR,t)}else this.hls.trigger(b.ERROR,{type:y.OTHER_ERROR,details:_.INTERNAL_EXCEPTION,err:e,error:e,fatal:!0})
+e.data&&t.details===w.INTERNAL_ABORTED?this.handleFragLoadAborted(t.frag,t.part):this.hls.trigger(y.ERROR,t)}else this.hls.trigger(y.ERROR,{type:_.OTHER_ERROR,details:w.INTERNAL_EXCEPTION,err:e,error:e,fatal:!0})
 return null},r._handleTransmuxerFlush=function(e){var t=this.getCurrentContext(e)
-if(t&&this.state===kr){var r=t.frag,i=t.part,n=t.level,a=self.performance.now()
-r.stats.parsing.end=a,i&&(i.stats.parsing.end=a),this.updateLevelTiming(r,i,n,e.partial)}else this.fragCurrent||this.state===br||this.state===xr||(this.state=yr)},r.getCurrentContext=function(e){var t=this.levels,r=this.fragCurrent,i=e.level,n=e.sn,a=e.part
+if(t&&this.state===xr){var r=t.frag,i=t.part,n=t.level,a=self.performance.now()
+r.stats.parsing.end=a,i&&(i.stats.parsing.end=a),this.updateLevelTiming(r,i,n,e.partial)}else this.fragCurrent||this.state===wr||this.state===Rr||(this.state=Er)},r.getCurrentContext=function(e){var t=this.levels,r=this.fragCurrent,i=e.level,n=e.sn,a=e.part
 if(null==t||!t[i])return this.warn("Levels object was unset while buffering fragment "+n+" of level "+i+". The current chunk will not be buffered."),null
-var s=t[i],o=a>-1?Rt(s,n,a):null,l=o?o.fragment:function(e,t,r){if(null==e||!e.details)return null
+var s=t[i],o=a>-1?Mt(s,n,a):null,l=o?o.fragment:function(e,t,r){if(null==e||!e.details)return null
 var i=e.details,n=i.fragments[t-i.startSN]
 return n||((n=i.fragmentHint)&&n.sn===t?n:t<i.startSN&&r&&r.sn===t?r:null)}(s,n,r)
 return l?(r&&r!==l&&(l.stats=r.stats),{frag:l,part:o,level:s}):null},r.bufferFragmentData=function(e,t,r,i){var n
-if(e&&this.state===kr){var a=e.data1,s=e.data2,o=a
-if(a&&s&&(o=xe(a,s)),null!=(n=o)&&n.length){var l={type:e.type,frag:t,part:r,chunkMeta:i,parent:t.type,data:o}
-this.hls.trigger(b.BUFFER_APPENDING,l),e.dropped&&e.independent&&!r&&this.flushBufferGap(t)}}},r.flushBufferGap=function(e){var t=this.media
-if(t)if(lr.isBuffered(t,t.currentTime)){var r=t.currentTime,i=lr.bufferInfo(t,r,0),n=e.duration,a=Math.min(2*this.config.maxFragLookUpTolerance,.25*n),s=Math.max(Math.min(e.start-a,i.end-a),r+a)
+if(e&&this.state===xr){var a=e.data1,s=e.data2,o=a
+if(a&&s&&(o=Pe(a,s)),null!=(n=o)&&n.length){var l={type:e.type,frag:t,part:r,chunkMeta:i,parent:t.type,data:o}
+this.hls.trigger(y.BUFFER_APPENDING,l),e.dropped&&e.independent&&!r&&this.flushBufferGap(t)}}},r.flushBufferGap=function(e){var t=this.media
+if(t)if(dr.isBuffered(t,t.currentTime)){var r=t.currentTime,i=dr.bufferInfo(t,r,0),n=e.duration,a=Math.min(2*this.config.maxFragLookUpTolerance,.25*n),s=Math.max(Math.min(e.start-a,i.end-a),r+a)
 e.start-s>a&&this.flushMainBuffer(s,e.start)}else this.flushMainBuffer(0,e.start)},r.getFwdBufferInfo=function(e,t){var r=this.getLoadPosition()
-return v(r)?this.getFwdBufferInfoAtPos(e,r,t):null},r.getFwdBufferInfoAtPos=function(e,t,r){var i=this.config.maxBufferHole,n=lr.bufferInfo(e,t,i)
+return b(r)?this.getFwdBufferInfoAtPos(e,r,t):null},r.getFwdBufferInfoAtPos=function(e,t,r){var i=this.config.maxBufferHole,n=dr.bufferInfo(e,t,i)
 if(0===n.len&&void 0!==n.nextStart){var a=this.fragmentTracker.getBufferedFrag(t,r)
-if(a&&n.nextStart<a.end)return lr.bufferInfo(e,t,Math.max(n.nextStart,i))}return n},r.getMaxBufferLength=function(e){var t,r=this.config
+if(a&&n.nextStart<a.end)return dr.bufferInfo(e,t,Math.max(n.nextStart,i))}return n},r.getMaxBufferLength=function(e){var t,r=this.config
 return t=e?Math.max(8*r.maxBufferSize/e,r.maxBufferLength):r.maxBufferLength,Math.min(t,r.maxMaxBufferLength)},r.reduceMaxBufferLength=function(e){var t=this.config,r=e||t.maxBufferLength
-return t.maxMaxBufferLength>=r&&(t.maxMaxBufferLength/=2,this.warn("Reduce max buffer length to "+t.maxMaxBufferLength+"s"),!0)},r.getNextFragment=function(e,t){var r=t.fragments,i=r.length
+return t.maxMaxBufferLength>=r&&(t.maxMaxBufferLength/=2,this.warn("Reduce max buffer length to "+t.maxMaxBufferLength+"s"),!0)},r.getAppendedFrag=function(e,t){var r=this.fragmentTracker.getAppendedFrag(e,lt)
+return r&&"fragment"in r?r.fragment:r},r.getNextFragment=function(e,t){var r=t.fragments,i=r.length
 if(!i)return null
 var n,a=this.config,s=r[0].start
 if(t.live){var o=a.initialLiveManifestSize
@@ -4765,7 +4775,7 @@ if(i<o)return this.warn("Not enough fragments to start playback (have: "+i+", ne
 t.PTSKnown||this.startFragRequested||-1!==this.startPosition||(n=this.getInitialLiveFragment(t,r),this.startPosition=n?this.hls.liveSyncPosition||n.start:e)}else e<=s&&(n=r[0])
 if(!n){var l=a.lowLatencyMode?t.partEnd:t.fragmentEnd
 n=this.getFragmentAtPosition(e,l,t)}return this.mapToInitFragWhenRequired(n)},r.isLoopLoading=function(e,t){var r=this.fragmentTracker.getState(e)
-return(r===Qt||r===Yt&&!!e.gap)&&this.nextLoadPosition>t},r.getNextFragmentLoopLoading=function(e,t,r,i,n){var a=e.gap,s=this.getNextFragment(this.nextLoadPosition,t)
+return(r===Zt||r===Jt&&!!e.gap)&&this.nextLoadPosition>t},r.getNextFragmentLoopLoading=function(e,t,r,i,n){var a=e.gap,s=this.getNextFragment(this.nextLoadPosition,t)
 if(null===s)return s
 if(e=s,a&&e&&!e.gap&&r.nextStart){var o=this.getFwdBufferInfoAtPos(this.mediaBuffer?this.mediaBuffer:this.media,r.nextStart,i)
 if(null!==o&&r.len+o.len>=n)return this.log('buffer full after gaps in "'+i+'" playlist starting at sn: '+e.sn),null}return e},r.mapToInitFragWhenRequired=function(e){return null==e||!e.initSegment||null!=e&&e.initSegment.data||this.bitrateTest?e:e.initSegment},r.getNextPart=function(e,t,r){for(var i=-1,n=!1,a=!0,s=0,o=e.length;s<o;s++){var l=e[s]
@@ -4773,137 +4783,137 @@ if(a=a&&!l.independent,i>-1&&r<l.start)break
 var u=l.loaded
 u?i=-1:(n||l.independent||a)&&l.fragment===t&&(i=s),n=u}return i},r.loadedEndOfParts=function(e,t){var r=e[e.length-1]
 return r&&t>r.start&&r.loaded},r.getInitialLiveFragment=function(e,t){var r=this.fragPrevious,i=null
-if(r){if(e.hasProgramDateTime&&(this.log("Live playlist, switching playlist, load frag with same PDT: "+r.programDateTime),i=function(e,t,r){if(null===t||!Array.isArray(e)||!e.length||!v(t))return null
+if(r){if(e.hasProgramDateTime&&(this.log("Live playlist, switching playlist, load frag with same PDT: "+r.programDateTime),i=function(e,t,r){if(null===t||!Array.isArray(e)||!e.length||!b(t))return null
 if(t<(e[0].programDateTime||0))return null
 if(t>=(e[e.length-1].endProgramDateTime||0))return null
 r=r||0
 for(var i=0;i<e.length;++i){var n=e[i]
-if(Ut(t,r,n))return n}return null}(t,r.endProgramDateTime,this.config.maxFragLookUpTolerance)),!i){var n=r.sn+1
+if(Vt(t,r,n))return n}return null}(t,r.endProgramDateTime,this.config.maxFragLookUpTolerance)),!i){var n=r.sn+1
 if(n>=e.startSN&&n<=e.endSN){var a=t[n-e.startSN]
-r.cc===a.cc&&(i=a,this.log("Live playlist, switching playlist, load frag with next SN: "+i.sn))}i||(i=function(e,t){return Ft(e,(function(e){return e.cc<t?1:e.cc>t?-1:0}))}(t,r.cc),i&&this.log("Live playlist, switching playlist, load frag with same CC: "+i.sn))}}else{var s=this.hls.liveSyncPosition
-null!==s&&(i=this.getFragmentAtPosition(s,this.bitrateTest?e.fragmentEnd:e.edge,e))}return i},r.getFragmentAtPosition=function(e,t,r){var i,n=this.config,a=this.fragPrevious,s=r.fragments,o=r.endSN,l=r.fragmentHint,u=n.maxFragLookUpTolerance,c=!!(n.lowLatencyMode&&r.partList&&l)
-if(c&&l&&!this.bitrateTest&&(s=s.concat(l),o=l.sn),i=e<t?Nt(a,s,e,e>t-u?0:u):s[s.length-1]){var d=i.sn-r.startSN,h=this.fragmentTracker.getState(i)
-if((h===Qt||h===Yt&&i.gap)&&(a=i),a&&i.sn===a.sn&&!c&&a&&i.level===a.level){var f=s[d+1]
-i=i.sn<o&&this.fragmentTracker.getState(f)!==Qt?f:null}}return i},r.synchronizeToLiveEdge=function(e){var t=this.config,r=this.media
+r.cc===a.cc&&(i=a,this.log("Live playlist, switching playlist, load frag with next SN: "+i.sn))}i||(i=function(e,t){return Ut(e,(function(e){return e.cc<t?1:e.cc>t?-1:0}))}(t,r.cc),i&&this.log("Live playlist, switching playlist, load frag with same CC: "+i.sn))}}else{var s=this.hls.liveSyncPosition
+null!==s&&(i=this.getFragmentAtPosition(s,this.bitrateTest?e.fragmentEnd:e.edge,e))}return i},r.getFragmentAtPosition=function(e,t,r){var i,n=this.config,a=this.fragPrevious,s=r.fragments,o=r.endSN,l=r.fragmentHint,u=n.maxFragLookUpTolerance,c=r.partList,d=!!(n.lowLatencyMode&&null!=c&&c.length&&l)
+if(d&&l&&!this.bitrateTest&&(s=s.concat(l),o=l.sn),i=e<t?Bt(a,s,e,e>t-u?0:u):s[s.length-1]){var h=i.sn-r.startSN,f=this.fragmentTracker.getState(i)
+if((f===Zt||f===Jt&&i.gap)&&(a=i),a&&i.sn===a.sn&&(!d||c[0].fragment.sn>i.sn)&&a&&i.level===a.level){var p=s[h+1]
+i=i.sn<o&&this.fragmentTracker.getState(p)!==Zt?p:null}}return i},r.synchronizeToLiveEdge=function(e){var t=this.config,r=this.media
 if(r){var i=this.hls.liveSyncPosition,n=r.currentTime,a=e.fragments[0].start,s=e.edge,o=n>=a-t.maxFragLookUpTolerance&&n<=s
 if(null!==i&&r.duration>i&&(n<i||!o)){var l=void 0!==t.liveMaxLatencyDuration?t.liveMaxLatencyDuration:t.liveMaxLatencyDurationCount*e.targetduration;(!o&&r.readyState<4||n<s-l)&&(this.loadedmetadata||(this.nextLoadPosition=i),r.readyState&&(this.warn("Playback: "+n.toFixed(3)+" is located too far from the end of live sliding playlist: "+s+", reset currentTime to : "+i.toFixed(3)),r.currentTime=i))}}},r.alignPlaylists=function(e,t){var r=this.levels,i=this.levelLastLoaded,n=this.fragPrevious,a=null!==i?r[i]:null,s=e.fragments.length
 if(!s)return this.warn("No fragments in live playlist"),0
-var o=e.fragments[0].start,l=!t,u=e.alignedSliding&&v(o)
+var o=e.fragments[0].start,l=!t,u=e.alignedSliding&&b(o)
 if(l||!u&&!o){(function(e,t,r){t&&(function(e,t,r){if(function(e,t,r){return!(!t.details||!(r.endCC>r.startCC||e&&e.cc<r.startCC))}(e,r,t)){var i=function(e,t,r){var i=e.fragments,n=t.fragments
-if(n.length&&i.length){var a=cr(i,n[0].cc)
+if(n.length&&i.length){var a=fr(i,n[0].cc)
 if(a&&(!a||a.startPTS))return a
-S.log("No frag in previous level to align on")}else S.log("No fragments to align")}(r.details,t)
-i&&v(i.start)&&(S.log("Adjusting PTS using last level due to CC increase within current level "+t.url),hr(i.start,t))}}(e,r,t),!r.alignedSliding&&t.details&&function(e,t){if(t.fragments.length&&e.hasProgramDateTime&&t.hasProgramDateTime){var r=t.fragments[0].programDateTime,i=e.fragments[0].programDateTime,n=(i-r)/1e3+t.fragments[0].start
-n&&v(n)&&(S.log("Adjusting PTS using programDateTime delta "+(i-r)+"ms, sliding:"+n.toFixed(3)+" "+e.url+" "),hr(n,e))}}(r,t.details),r.alignedSliding||!t.details||r.skippedSegments||Pt(t.details,r))})(n,a,e)
+O.log("No frag in previous level to align on")}else O.log("No fragments to align")}(r.details,t)
+i&&b(i.start)&&(O.log("Adjusting PTS using last level due to CC increase within current level "+t.url),mr(i.start,t))}}(e,r,t),!r.alignedSliding&&t.details&&function(e,t){if(t.fragments.length&&e.hasProgramDateTime&&t.hasProgramDateTime){var r=t.fragments[0].programDateTime,i=e.fragments[0].programDateTime,n=(i-r)/1e3+t.fragments[0].start
+n&&b(n)&&(O.log("Adjusting PTS using programDateTime delta "+(i-r)+"ms, sliding:"+n.toFixed(3)+" "+e.url+" "),mr(n,e))}}(r,t.details),r.alignedSliding||!t.details||r.skippedSegments||Ct(t.details,r))})(n,a,e)
 var c=e.fragments[0].start
 return this.log("Live playlist sliding: "+c.toFixed(2)+" start-sn: "+(t?t.startSN:"na")+"->"+e.startSN+" prev-sn: "+(n?n.sn:"na")+" fragments: "+s),c}return o},r.waitForCdnTuneIn=function(e){return e.live&&e.canBlockReload&&e.partTarget&&e.tuneInGoal>Math.max(e.partHoldBack,3*e.partTarget)},r.setStartPosition=function(e,t){var r=this.startPosition
 if(r<t&&(r=-1),-1===r||-1===this.lastCurrentTime){var i=null!==this.startTimeOffset,n=i?this.startTimeOffset:e.startTimeOffset
-null!==n&&v(n)?(r=t+n,n<0&&(r+=e.totalduration),r=Math.min(Math.max(t,r),t+e.totalduration),this.log("Start time offset "+n+" found in "+(i?"multivariant":"media")+" playlist, adjust startPosition to "+r),this.startPosition=r):e.live?r=this.hls.liveSyncPosition||t:this.startPosition=r=0,this.lastCurrentTime=r}this.nextLoadPosition=r},r.getLoadPosition=function(){var e=this.media,t=0
-return this.loadedmetadata&&e?t=e.currentTime:this.nextLoadPosition&&(t=this.nextLoadPosition),t},r.handleFragLoadAborted=function(e,t){this.transmuxer&&"initSegment"!==e.sn&&e.stats.aborted&&(this.warn("Fragment "+e.sn+(t?" part"+t.index:"")+" of level "+e.level+" was aborted"),this.resetFragmentLoading(e))},r.resetFragmentLoading=function(e){this.fragCurrent&&(this.fragContextChanged(e)||this.state===Er)||(this.state=yr)},r.onFragmentOrKeyLoadError=function(e,t){if(t.chunkMeta&&!t.frag){var r=this.getCurrentContext(t.chunkMeta)
+null!==n&&b(n)?(r=t+n,n<0&&(r+=e.totalduration),r=Math.min(Math.max(t,r),t+e.totalduration),this.log("Start time offset "+n+" found in "+(i?"multivariant":"media")+" playlist, adjust startPosition to "+r),this.startPosition=r):e.live?r=this.hls.liveSyncPosition||t:this.startPosition=r=0,this.lastCurrentTime=r}this.nextLoadPosition=r},r.getLoadPosition=function(){var e=this.media,t=0
+return this.loadedmetadata&&e?t=e.currentTime:this.nextLoadPosition&&(t=this.nextLoadPosition),t},r.handleFragLoadAborted=function(e,t){this.transmuxer&&"initSegment"!==e.sn&&e.stats.aborted&&(this.warn("Fragment "+e.sn+(t?" part "+t.index:"")+" of level "+e.level+" was aborted"),this.resetFragmentLoading(e))},r.resetFragmentLoading=function(e){this.fragCurrent&&(this.fragContextChanged(e)||this.state===Sr)||(this.state=Er)},r.onFragmentOrKeyLoadError=function(e,t){if(t.chunkMeta&&!t.frag){var r=this.getCurrentContext(t.chunkMeta)
 r&&(t.frag=r.frag)}var i=t.frag
 if(i&&i.type===e&&this.levels)if(this.fragContextChanged(i)){var n
-this.warn("Frag load error must match current frag to retry "+i.url+" > "+(null==(n=this.fragCurrent)?void 0:n.url))}else{var a=t.details===_.FRAG_GAP
+this.warn("Frag load error must match current frag to retry "+i.url+" > "+(null==(n=this.fragCurrent)?void 0:n.url))}else{var a=t.details===w.FRAG_GAP
 a&&this.fragmentTracker.fragBuffered(i,!0)
 var s=t.errorAction,o=s||{},l=o.action,u=o.retryCount,c=void 0===u?0:u,d=o.retryConfig
 if(s&&5===l&&d){this.loadedmetadata||(this.startFragRequested=!1,this.nextLoadPosition=this.startPosition)
-var h=It(d,c)
-this.warn("Fragment "+i.sn+" of "+e+" "+i.level+" errored with "+t.details+", retrying loading "+(c+1)+"/"+d.maxNumRetry+" in "+h+"ms"),s.resolved=!0,this.retryDate=self.performance.now()+h,this.state=Er}else d&&s?(this.resetFragmentErrors(e),c<d.maxNumRetry?a||(s.resolved=!0):S.warn(t.details+" reached or exceeded max retry ("+c+")")):this.state=xr
-this.tickImmediate()}},r.reduceLengthAndFlushBuffer=function(e){if(this.state===kr||this.state===Sr){var t=e.parent,r=this.getFwdBufferInfo(this.mediaBuffer,t),i=r&&r.len>.5
+var h=Ft(d,c)
+this.warn("Fragment "+i.sn+" of "+e+" "+i.level+" errored with "+t.details+", retrying loading "+(c+1)+"/"+d.maxNumRetry+" in "+h+"ms"),s.resolved=!0,this.retryDate=self.performance.now()+h,this.state=Sr}else d&&s?(this.resetFragmentErrors(e),c<d.maxNumRetry?a||(s.resolved=!0):O.warn(t.details+" reached or exceeded max retry ("+c+")")):this.state=Rr
+this.tickImmediate()}},r.reduceLengthAndFlushBuffer=function(e){if(this.state===xr||this.state===Pr){var t=e.parent,r=this.getFwdBufferInfo(this.mediaBuffer,t),i=r&&r.len>.5
 i&&this.reduceMaxBufferLength(r.len)
 var n=!i
-return n&&this.warn("Buffer full error while media.currentTime is not buffered, flush "+t+" buffer"),e.frag&&(this.fragmentTracker.removeFragment(e.frag),this.nextLoadPosition=e.frag.start),this.resetLoadingState(),n}return!1},r.resetFragmentErrors=function(e){e===st&&(this.fragCurrent=null),this.loadedmetadata||(this.startFragRequested=!1),this.state!==br&&(this.state=yr)},r.afterBufferFlushed=function(e,t,r){if(e){var i=lr.getBuffered(e)
-this.fragmentTracker.detectEvictedFragments(t,i,r),this.state===Or&&this.resetLoadingState()}},r.resetLoadingState=function(){this.log("Reset loading state"),this.fragCurrent=null,this.fragPrevious=null,this.state=yr},r.resetStartWhenNotLoaded=function(e){if(!this.loadedmetadata){this.startFragRequested=!1
+return n&&this.warn("Buffer full error while media.currentTime is not buffered, flush "+t+" buffer"),e.frag&&(this.fragmentTracker.removeFragment(e.frag),this.nextLoadPosition=e.frag.start),this.resetLoadingState(),n}return!1},r.resetFragmentErrors=function(e){e===ut&&(this.fragCurrent=null),this.loadedmetadata||(this.startFragRequested=!1),this.state!==wr&&(this.state=Er)},r.afterBufferFlushed=function(e,t,r){if(e){var i=dr.getBuffered(e)
+this.fragmentTracker.detectEvictedFragments(t,i,r),this.state===Ar&&this.resetLoadingState()}},r.resetLoadingState=function(){this.log("Reset loading state"),this.fragCurrent=null,this.fragPrevious=null,this.state=Er},r.resetStartWhenNotLoaded=function(e){if(!this.loadedmetadata){this.startFragRequested=!1
 var t=this.levels?this.levels[e].details:null
 null!=t&&t.live?(this.startPosition=-1,this.setStartPosition(t,0),this.resetLoadingState()):this.nextLoadPosition=this.startPosition}},r.resetWhenMissingContext=function(e){this.warn("The loading context changed while buffering fragment "+e.sn+" of level "+e.level+". This chunk will not be buffered."),this.removeUnbufferedFrags(),this.resetStartWhenNotLoaded(e.level),this.resetLoadingState()},r.removeUnbufferedFrags=function(e){void 0===e&&(e=0),this.fragmentTracker.removeFragmentsInRange(e,1/0,this.playlistType,!1,!0)},r.updateLevelTiming=function(e,t,r,i){var n,a=this,s=r.details
 if(s){if(Object.keys(e.elementaryStreams).reduce((function(t,n){var o=e.elementaryStreams[n]
 if(o){var l=o.endPTS-o.startPTS
 if(l<=0)return a.warn("Could not parse fragment "+e.sn+" "+n+" duration reliably ("+l+")"),t||!1
-var u=i?0:Ot(s,e,o.startPTS,o.endPTS,o.startDTS,o.endDTS)
-return a.hls.trigger(b.LEVEL_PTS_UPDATED,{details:s,level:r,drift:u,type:n,frag:e,start:o.startPTS,end:o.endPTS}),!0}return t}),!1))r.fragmentError=0
+var u=i?0:At(s,e,o.startPTS,o.endPTS,o.startDTS,o.endDTS)
+return a.hls.trigger(y.LEVEL_PTS_UPDATED,{details:s,level:r,drift:u,type:n,frag:e,start:o.startPTS,end:o.endPTS}),!0}return t}),!1))r.fragmentError=0
 else if(null===(null==(n=this.transmuxer)?void 0:n.error)){var o=new Error("Found no media in fragment "+e.sn+" of level "+r.id+" resetting transmuxer to fallback to playlist timing")
-if(this.warn(o.message),this.hls.trigger(b.ERROR,{type:y.MEDIA_ERROR,details:_.FRAG_PARSING_ERROR,fatal:!1,error:o,frag:e,reason:"Found no media in msn "+e.sn+' of level "'+r.url+'"'}),!this.hls)return
-this.resetTransmuxer()}this.state=Sr,this.hls.trigger(b.FRAG_PARSED,{frag:e,part:t})}else this.warn("level.details undefined")},r.resetTransmuxer=function(){this.transmuxer&&(this.transmuxer.destroy(),this.transmuxer=null)},r.recoverWorkerError=function(e){"demuxerWorker"===e.event&&(this.resetTransmuxer(),this.resetLoadingState())},a(t,[{key:"state",get:function(){return this._state},set:function(e){var t=this._state
-t!==e&&(this._state=e,this.log(t+"->"+e))}}]),t}(sr)
-function Cr(){if("undefined"!=typeof self)return self.MediaSource||self.WebKitMediaSource}function Dr(){return self.SourceBuffer||self.WebKitSourceBuffer}function Mr(e,t){return void 0===e&&(e=""),void 0===t&&(t=9e4),{type:e,id:-1,pid:-1,inputTimeScale:t,sequenceNumber:-1,samples:[],dropped:0}}var Ir=function(){function e(){this._audioTrack=void 0,this._id3Track=void 0,this.frameIndex=0,this.cachedData=null,this.basePTS=null,this.initPTS=null,this.lastPTS=null}var t=e.prototype
-return t.resetInitSegment=function(e,t,r,i){this._id3Track={type:"id3",id:3,pid:-1,inputTimeScale:9e4,sequenceNumber:0,samples:[],dropped:0}},t.resetTimeStamp=function(e){this.initPTS=e,this.resetContiguity()},t.resetContiguity=function(){this.basePTS=null,this.lastPTS=null,this.frameIndex=0},t.canParse=function(e,t){return!1},t.appendFrame=function(e,t,r){},t.demux=function(e,t){this.cachedData&&(e=xe(this.cachedData,e),this.cachedData=null)
-var r,i=te(e,0),n=i?i.length:0,a=this._audioTrack,s=this._id3Track,o=i?function(e){for(var t=se(e),r=0;r<t.length;r++){var i=t[r]
-if(ne(i))return de(i)}}(i):void 0,l=e.length
-for((null===this.basePTS||0===this.frameIndex&&v(o))&&(this.basePTS=Lr(o,t,this.initPTS),this.lastPTS=this.basePTS),null===this.lastPTS&&(this.lastPTS=this.basePTS),i&&i.length>0&&s.samples.push({pts:this.lastPTS,dts:this.lastPTS,data:i,type:mt,duration:Number.POSITIVE_INFINITY});n<l;){if(this.canParse(e,n)){var u=this.appendFrame(a,e,n)
-u?(this.frameIndex++,this.lastPTS=u.sample.pts,r=n+=u.length):n=l}else ie(e,n)?(i=te(e,n),s.samples.push({pts:this.lastPTS,dts:this.lastPTS,data:i,type:mt,duration:Number.POSITIVE_INFINITY}),r=n+=i.length):n++
-if(n===l&&r!==l){var c=X(e,r)
-this.cachedData?this.cachedData=xe(this.cachedData,c):this.cachedData=c}}return{audioTrack:a,videoTrack:Mr(),id3Track:s,textTrack:Mr()}},t.demuxSampleAes=function(e,t,r){return Promise.reject(new Error("["+this+"] This demuxer does not support Sample-AES decryption"))},t.flush=function(e){var t=this.cachedData
-return t&&(this.cachedData=null,this.demux(t,0)),{audioTrack:this._audioTrack,videoTrack:Mr(),id3Track:this._id3Track,textTrack:Mr()}},t.destroy=function(){},e}(),Lr=function(e,t,r){return v(e)?90*e:9e4*t+(r?9e4*r.baseTime/r.timescale:0)}
-function jr(e,t){return 255===e[t]&&240==(246&e[t+1])}function Fr(e,t){return 1&e[t+1]?7:9}function Nr(e,t){return(3&e[t+3])<<11|e[t+4]<<3|(224&e[t+5])>>>5}function zr(e,t){return t+1<e.length&&jr(e,t)}function Ur(e,t){if(zr(e,t)){var r=Fr(e,t)
+if(this.warn(o.message),this.hls.trigger(y.ERROR,{type:_.MEDIA_ERROR,details:w.FRAG_PARSING_ERROR,fatal:!1,error:o,frag:e,reason:"Found no media in msn "+e.sn+' of level "'+r.url+'"'}),!this.hls)return
+this.resetTransmuxer()}this.state=Pr,this.hls.trigger(y.FRAG_PARSED,{frag:e,part:t})}else this.warn("level.details undefined")},r.resetTransmuxer=function(){this.transmuxer&&(this.transmuxer.destroy(),this.transmuxer=null)},r.recoverWorkerError=function(e){"demuxerWorker"===e.event&&(this.resetTransmuxer(),this.resetLoadingState())},a(t,[{key:"state",get:function(){return this._state},set:function(e){var t=this._state
+t!==e&&(this._state=e,this.log(t+"->"+e))}}]),t}(ur)
+function Ir(){return self.SourceBuffer||self.WebKitSourceBuffer}function Lr(e,t){return void 0===e&&(e=""),void 0===t&&(t=9e4),{type:e,id:-1,pid:-1,inputTimeScale:t,sequenceNumber:-1,samples:[],dropped:0}}var jr=function(){function e(){this._audioTrack=void 0,this._id3Track=void 0,this.frameIndex=0,this.cachedData=null,this.basePTS=null,this.initPTS=null,this.lastPTS=null}var t=e.prototype
+return t.resetInitSegment=function(e,t,r,i){this._id3Track={type:"id3",id:3,pid:-1,inputTimeScale:9e4,sequenceNumber:0,samples:[],dropped:0}},t.resetTimeStamp=function(e){this.initPTS=e,this.resetContiguity()},t.resetContiguity=function(){this.basePTS=null,this.lastPTS=null,this.frameIndex=0},t.canParse=function(e,t){return!1},t.appendFrame=function(e,t,r){},t.demux=function(e,t){this.cachedData&&(e=Pe(this.cachedData,e),this.cachedData=null)
+var r,i=re(e,0),n=i?i.length:0,a=this._audioTrack,s=this._id3Track,o=i?function(e){for(var t=oe(e),r=0;r<t.length;r++){var i=t[r]
+if(ae(i))return he(i)}}(i):void 0,l=e.length
+for((null===this.basePTS||0===this.frameIndex&&b(o))&&(this.basePTS=Fr(o,t,this.initPTS),this.lastPTS=this.basePTS),null===this.lastPTS&&(this.lastPTS=this.basePTS),i&&i.length>0&&s.samples.push({pts:this.lastPTS,dts:this.lastPTS,data:i,type:bt,duration:Number.POSITIVE_INFINITY});n<l;){if(this.canParse(e,n)){var u=this.appendFrame(a,e,n)
+u?(this.frameIndex++,this.lastPTS=u.sample.pts,r=n+=u.length):n=l}else ne(e,n)?(i=re(e,n),s.samples.push({pts:this.lastPTS,dts:this.lastPTS,data:i,type:bt,duration:Number.POSITIVE_INFINITY}),r=n+=i.length):n++
+if(n===l&&r!==l){var c=J(e,r)
+this.cachedData?this.cachedData=Pe(this.cachedData,c):this.cachedData=c}}return{audioTrack:a,videoTrack:Lr(),id3Track:s,textTrack:Lr()}},t.demuxSampleAes=function(e,t,r){return Promise.reject(new Error("["+this+"] This demuxer does not support Sample-AES decryption"))},t.flush=function(e){var t=this.cachedData
+return t&&(this.cachedData=null,this.demux(t,0)),{audioTrack:this._audioTrack,videoTrack:Lr(),id3Track:this._id3Track,textTrack:Lr()}},t.destroy=function(){},e}(),Fr=function(e,t,r){return b(e)?90*e:9e4*t+(r?9e4*r.baseTime/r.timescale:0)}
+function Nr(e,t){return 255===e[t]&&240==(246&e[t+1])}function zr(e,t){return 1&e[t+1]?7:9}function Ur(e,t){return(3&e[t+3])<<11|e[t+4]<<3|(224&e[t+5])>>>5}function Br(e,t){return t+1<e.length&&Nr(e,t)}function Hr(e,t){if(Br(e,t)){var r=zr(e,t)
 if(t+r>=e.length)return!1
-var i=Nr(e,t)
+var i=Ur(e,t)
 if(i<=r)return!1
 var n=t+i
-return n===e.length||zr(e,n)}return!1}function Br(e,t,r,i,n){if(!e.samplerate){var a=function(e,t,r,i){var n,a,s,o,l=navigator.userAgent.toLowerCase(),u=i,c=[96e3,88200,64e3,48e3,44100,32e3,24e3,22050,16e3,12e3,11025,8e3,7350]
+return n===e.length||Br(e,n)}return!1}function Vr(e,t,r,i,n){if(!e.samplerate){var a=function(e,t,r,i){var n,a,s,o,l=navigator.userAgent.toLowerCase(),u=i,c=[96e3,88200,64e3,48e3,44100,32e3,24e3,22050,16e3,12e3,11025,8e3,7350]
 n=1+((192&t[r+2])>>>6)
 var d=(60&t[r+2])>>>2
-if(!(d>c.length-1))return s=(1&t[r+2])<<2,s|=(192&t[r+3])>>>6,S.log("manifest codec:"+i+", ADTS type:"+n+", samplingIndex:"+d),/firefox/i.test(l)?d>=6?(n=5,o=new Array(4),a=d-3):(n=2,o=new Array(2),a=d):-1!==l.indexOf("android")?(n=2,o=new Array(2),a=d):(n=5,o=new Array(4),i&&(-1!==i.indexOf("mp4a.40.29")||-1!==i.indexOf("mp4a.40.5"))||!i&&d>=6?a=d-3:((i&&-1!==i.indexOf("mp4a.40.2")&&(d>=6&&1===s||/vivaldi/i.test(l))||!i&&1===s)&&(n=2,o=new Array(2)),a=d)),o[0]=n<<3,o[0]|=(14&d)>>1,o[1]|=(1&d)<<7,o[1]|=s<<3,5===n&&(o[1]|=(14&a)>>1,o[2]=(1&a)<<7,o[2]|=8,o[3]=0),{config:o,samplerate:c[d],channelCount:s,codec:"mp4a.40."+n,manifestCodec:u}
-e.trigger(b.ERROR,{type:y.MEDIA_ERROR,details:_.FRAG_PARSING_ERROR,fatal:!0,reason:"invalid ADTS sampling index:"+d})}(t,r,i,n)
+if(!(d>c.length-1))return s=(1&t[r+2])<<2,s|=(192&t[r+3])>>>6,O.log("manifest codec:"+i+", ADTS type:"+n+", samplingIndex:"+d),/firefox/i.test(l)?d>=6?(n=5,o=new Array(4),a=d-3):(n=2,o=new Array(2),a=d):-1!==l.indexOf("android")?(n=2,o=new Array(2),a=d):(n=5,o=new Array(4),i&&(-1!==i.indexOf("mp4a.40.29")||-1!==i.indexOf("mp4a.40.5"))||!i&&d>=6?a=d-3:((i&&-1!==i.indexOf("mp4a.40.2")&&(d>=6&&1===s||/vivaldi/i.test(l))||!i&&1===s)&&(n=2,o=new Array(2)),a=d)),o[0]=n<<3,o[0]|=(14&d)>>1,o[1]|=(1&d)<<7,o[1]|=s<<3,5===n&&(o[1]|=(14&a)>>1,o[2]=(1&a)<<7,o[2]|=8,o[3]=0),{config:o,samplerate:c[d],channelCount:s,codec:"mp4a.40."+n,manifestCodec:u}
+e.trigger(y.ERROR,{type:_.MEDIA_ERROR,details:w.FRAG_PARSING_ERROR,fatal:!0,reason:"invalid ADTS sampling index:"+d})}(t,r,i,n)
 if(!a)return
-e.config=a.config,e.samplerate=a.samplerate,e.channelCount=a.channelCount,e.codec=a.codec,e.manifestCodec=a.manifestCodec,S.log("parsed codec:"+e.codec+", rate:"+a.samplerate+", channels:"+a.channelCount)}}function Hr(e){return 9216e4/e}function Vr(e,t,r,i,n){var a,s=i+n*Hr(e.samplerate),o=function(e,t){var r=Fr(e,t)
-if(t+r<=e.length){var i=Nr(e,t)-r
+e.config=a.config,e.samplerate=a.samplerate,e.channelCount=a.channelCount,e.codec=a.codec,e.manifestCodec=a.manifestCodec,O.log("parsed codec:"+e.codec+", rate:"+a.samplerate+", channels:"+a.channelCount)}}function $r(e){return 9216e4/e}function qr(e,t,r,i,n){var a,s=i+n*$r(e.samplerate),o=function(e,t){var r=zr(e,t)
+if(t+r<=e.length){var i=Ur(e,t)-r
 if(i>0)return{headerLength:r,frameLength:i}}}(t,r)
 if(o){var l=o.frameLength,u=o.headerLength,c=u+l,d=Math.max(0,r+c-t.length)
 d?(a=new Uint8Array(c-u)).set(t.subarray(r+u,t.length),0):a=t.subarray(r+u,r+c)
 var h={unit:a,pts:s}
 return d||e.samples.push(h),{sample:h,length:c,missing:d}}var f=t.length-r
-return(a=new Uint8Array(f)).set(t.subarray(r,t.length),0),{sample:{unit:a,pts:s},length:f,missing:-1}}var $r=function(e){function t(t,r){var i
+return(a=new Uint8Array(f)).set(t.subarray(r,t.length),0),{sample:{unit:a,pts:s},length:f,missing:-1}}var Gr=function(e){function t(t,r){var i
 return(i=e.call(this)||this).observer=void 0,i.config=void 0,i.observer=t,i.config=r,i}l(t,e)
 var r=t.prototype
 return r.resetInitSegment=function(t,r,i,n){e.prototype.resetInitSegment.call(this,t,r,i,n),this._audioTrack={container:"audio/adts",type:"audio",id:2,pid:-1,sequenceNumber:0,segmentCodec:"aac",samples:[],manifestCodec:r,duration:n,inputTimeScale:9e4,dropped:0}},t.probe=function(e){if(!e)return!1
-for(var t=(te(e,0)||[]).length,r=e.length;t<r;t++)if(Ur(e,t))return S.log("ADTS sync word found !"),!0
-return!1},r.canParse=function(e,t){return function(e,t){return function(e,t){return t+5<e.length}(e,t)&&jr(e,t)&&Nr(e,t)<=e.length-t}(e,t)},r.appendFrame=function(e,t,r){Br(e,this.observer,t,r,e.manifestCodec)
-var i=Vr(e,t,r,this.basePTS,this.frameIndex)
-if(i&&0===i.missing)return i},t}(Ir),qr=/\/emsg[-/]ID3/i,Gr=function(){function e(e,t){this.remainderData=null,this.timeOffset=0,this.config=void 0,this.videoTrack=void 0,this.audioTrack=void 0,this.id3Track=void 0,this.txtTrack=void 0,this.config=t}var t=e.prototype
-return t.resetTimeStamp=function(){},t.resetInitSegment=function(e,t,r,i){var n=this.videoTrack=Mr("video",1),a=this.audioTrack=Mr("audio",1),s=this.txtTrack=Mr("text",1)
-if(this.id3Track=Mr("id3",1),this.timeOffset=0,null!=e&&e.byteLength){var o=ke(e)
+for(var t=(re(e,0)||[]).length,r=e.length;t<r;t++)if(Hr(e,t))return O.log("ADTS sync word found !"),!0
+return!1},r.canParse=function(e,t){return function(e,t){return function(e,t){return t+5<e.length}(e,t)&&Nr(e,t)&&Ur(e,t)<=e.length-t}(e,t)},r.appendFrame=function(e,t,r){Vr(e,this.observer,t,r,e.manifestCodec)
+var i=qr(e,t,r,this.basePTS,this.frameIndex)
+if(i&&0===i.missing)return i},t}(jr),Kr=/\/emsg[-/]ID3/i,Wr=function(){function e(e,t){this.remainderData=null,this.timeOffset=0,this.config=void 0,this.videoTrack=void 0,this.audioTrack=void 0,this.id3Track=void 0,this.txtTrack=void 0,this.config=t}var t=e.prototype
+return t.resetTimeStamp=function(){},t.resetInitSegment=function(e,t,r,i){var n=this.videoTrack=Lr("video",1),a=this.audioTrack=Lr("audio",1),s=this.txtTrack=Lr("text",1)
+if(this.id3Track=Lr("id3",1),this.timeOffset=0,null!=e&&e.byteLength){var o=Se(e)
 if(o.video){var l=o.video,u=l.id,c=l.timescale,d=l.codec
 n.id=u,n.timescale=s.timescale=c,n.codec=d}if(o.audio){var h=o.audio,f=h.id,p=h.timescale,m=h.codec
-a.id=f,a.timescale=p,a.codec=m}s.id=ge.text,n.sampleDuration=0,n.duration=a.duration=i}},t.resetContiguity=function(){},e.probe=function(e){return Ee(e=e.length>16384?e.subarray(0,16384):e,["moof"]).length>0},t.demux=function(e,t){this.timeOffset=t
+a.id=f,a.timescale=p,a.codec=m}s.id=ve.text,n.sampleDuration=0,n.duration=a.duration=i}},t.resetContiguity=function(){this.remainderData=null},e.probe=function(e){return Te(e=e.length>16384?e.subarray(0,16384):e,["moof"]).length>0},t.demux=function(e,t){this.timeOffset=t
 var r=e,i=this.videoTrack,n=this.txtTrack
-if(this.config.progressive){this.remainderData&&(r=xe(this.remainderData,e))
-var a=function(e){var t={valid:null,remainder:null},r=Ee(e,["moof"])
+if(this.config.progressive){this.remainderData&&(r=Pe(this.remainderData,e))
+var a=function(e){var t={valid:null,remainder:null},r=Te(e,["moof"])
 if(!r)return t
 if(r.length<2)return t.remainder=e,t
 var i=r[r.length-1]
-return t.valid=X(e,0,i.byteOffset-8),t.remainder=X(e,i.byteOffset-8),t}(r)
+return t.valid=J(e,0,i.byteOffset-8),t.remainder=J(e,i.byteOffset-8),t}(r)
 this.remainderData=a.remainder,i.samples=a.valid||new Uint8Array}else i.samples=r
 var s=this.extractID3Track(i,t)
-return n.samples=Pe(t,i),{videoTrack:i,audioTrack:this.audioTrack,id3Track:s,textTrack:this.txtTrack}},t.flush=function(){var e=this.timeOffset,t=this.videoTrack,r=this.txtTrack
+return n.samples=Ae(t,i),{videoTrack:i,audioTrack:this.audioTrack,id3Track:s,textTrack:this.txtTrack}},t.flush=function(){var e=this.timeOffset,t=this.videoTrack,r=this.txtTrack
 t.samples=this.remainderData||new Uint8Array,this.remainderData=null
 var i=this.extractID3Track(t,this.timeOffset)
-return r.samples=Pe(e,t),{videoTrack:t,audioTrack:Mr(),id3Track:i,textTrack:Mr()}},t.extractID3Track=function(e,t){var r=this.id3Track
-if(e.samples.length){var i=Ee(e.samples,["emsg"])
+return r.samples=Ae(e,t),{videoTrack:t,audioTrack:Lr(),id3Track:i,textTrack:Lr()}},t.extractID3Track=function(e,t){var r=this.id3Track
+if(e.samples.length){var i=Te(e.samples,["emsg"])
 i&&i.forEach((function(e){var i=function(e){var t=e[0],r="",i="",n=0,a=0,s=0,o=0,l=0,u=0
-if(0===t){for(;"\0"!==ve(e.subarray(u,u+1));)r+=ve(e.subarray(u,u+1)),u+=1
-for(r+=ve(e.subarray(u,u+1)),u+=1;"\0"!==ve(e.subarray(u,u+1));)i+=ve(e.subarray(u,u+1)),u+=1
-i+=ve(e.subarray(u,u+1)),u+=1,n=ye(e,12),a=ye(e,16),o=ye(e,20),l=ye(e,24),u=28}else if(1===t){n=ye(e,u+=4)
-var c=ye(e,u+=4),d=ye(e,u+=4)
-for(u+=4,s=Math.pow(2,32)*c+d,Number.isSafeInteger(s)||(s=Number.MAX_SAFE_INTEGER,S.warn("Presentation time exceeds safe integer limit and wrapped to max safe integer in parsing emsg box")),o=ye(e,u),l=ye(e,u+=4),u+=4;"\0"!==ve(e.subarray(u,u+1));)r+=ve(e.subarray(u,u+1)),u+=1
-for(r+=ve(e.subarray(u,u+1)),u+=1;"\0"!==ve(e.subarray(u,u+1));)i+=ve(e.subarray(u,u+1)),u+=1
-i+=ve(e.subarray(u,u+1)),u+=1}return{schemeIdUri:r,value:i,timeScale:n,presentationTime:s,presentationTimeDelta:a,eventDuration:o,id:l,payload:e.subarray(u,e.byteLength)}}(e)
-if(qr.test(i.schemeIdUri)){var n=v(i.presentationTime)?i.presentationTime/i.timeScale:t+i.presentationTimeDelta/i.timeScale,a=4294967295===i.eventDuration?Number.POSITIVE_INFINITY:i.eventDuration/i.timeScale
+if(0===t){for(;"\0"!==be(e.subarray(u,u+1));)r+=be(e.subarray(u,u+1)),u+=1
+for(r+=be(e.subarray(u,u+1)),u+=1;"\0"!==be(e.subarray(u,u+1));)i+=be(e.subarray(u,u+1)),u+=1
+i+=be(e.subarray(u,u+1)),u+=1,n=_e(e,12),a=_e(e,16),o=_e(e,20),l=_e(e,24),u=28}else if(1===t){n=_e(e,u+=4)
+var c=_e(e,u+=4),d=_e(e,u+=4)
+for(u+=4,s=Math.pow(2,32)*c+d,Number.isSafeInteger(s)||(s=Number.MAX_SAFE_INTEGER,O.warn("Presentation time exceeds safe integer limit and wrapped to max safe integer in parsing emsg box")),o=_e(e,u),l=_e(e,u+=4),u+=4;"\0"!==be(e.subarray(u,u+1));)r+=be(e.subarray(u,u+1)),u+=1
+for(r+=be(e.subarray(u,u+1)),u+=1;"\0"!==be(e.subarray(u,u+1));)i+=be(e.subarray(u,u+1)),u+=1
+i+=be(e.subarray(u,u+1)),u+=1}return{schemeIdUri:r,value:i,timeScale:n,presentationTime:s,presentationTimeDelta:a,eventDuration:o,id:l,payload:e.subarray(u,e.byteLength)}}(e)
+if(Kr.test(i.schemeIdUri)){var n=b(i.presentationTime)?i.presentationTime/i.timeScale:t+i.presentationTimeDelta/i.timeScale,a=4294967295===i.eventDuration?Number.POSITIVE_INFINITY:i.eventDuration/i.timeScale
 a<=.001&&(a=Number.POSITIVE_INFINITY)
 var s=i.payload
-r.samples.push({data:s,len:s.byteLength,dts:n,pts:n,type:gt,duration:a})}}))}return r},t.demuxSampleAes=function(e,t,r){return Promise.reject(new Error("The MP4 demuxer does not support SAMPLE-AES decryption"))},t.destroy=function(){},e}(),Kr=null,Wr=[32,64,96,128,160,192,224,256,288,320,352,384,416,448,32,48,56,64,80,96,112,128,160,192,224,256,320,384,32,40,48,56,64,80,96,112,128,160,192,224,256,320,32,48,56,64,80,96,112,128,144,160,176,192,224,256,8,16,24,32,40,48,56,64,80,96,112,128,144,160],Yr=[44100,48e3,32e3,22050,24e3,16e3,11025,12e3,8e3],Qr=[[0,72,144,12],[0,0,0,0],[0,72,144,12],[0,144,144,12]],Xr=[0,1,1,4]
-function Jr(e,t,r,i,n){if(!(r+24>t.length)){var a=Zr(t,r)
+r.samples.push({data:s,len:s.byteLength,dts:n,pts:n,type:yt,duration:a})}}))}return r},t.demuxSampleAes=function(e,t,r){return Promise.reject(new Error("The MP4 demuxer does not support SAMPLE-AES decryption"))},t.destroy=function(){},e}(),Yr=null,Qr=[32,64,96,128,160,192,224,256,288,320,352,384,416,448,32,48,56,64,80,96,112,128,160,192,224,256,320,384,32,40,48,56,64,80,96,112,128,160,192,224,256,320,32,48,56,64,80,96,112,128,144,160,176,192,224,256,8,16,24,32,40,48,56,64,80,96,112,128,144,160],Xr=[44100,48e3,32e3,22050,24e3,16e3,11025,12e3,8e3],Jr=[[0,72,144,12],[0,0,0,0],[0,72,144,12],[0,144,144,12]],Zr=[0,1,1,4]
+function ei(e,t,r,i,n){if(!(r+24>t.length)){var a=ti(t,r)
 if(a&&r+a.frameLength<=t.length){var s=i+n*(9e4*a.samplesPerFrame/a.sampleRate),o={unit:t.subarray(r,r+a.frameLength),pts:s,dts:s}
-return e.config=[],e.channelCount=a.channelCount,e.samplerate=a.sampleRate,e.samples.push(o),{sample:o,length:a.frameLength,missing:0}}}}function Zr(e,t){var r=e[t+1]>>3&3,i=e[t+1]>>1&3,n=e[t+2]>>4&15,a=e[t+2]>>2&3
-if(1!==r&&0!==n&&15!==n&&3!==a){var s=e[t+2]>>1&1,o=e[t+3]>>6,l=1e3*Wr[14*(3===r?3-i:3===i?3:4)+n-1],u=Yr[3*(3===r?0:2===r?1:2)+a],c=3===o?1:2,d=Qr[r][i],h=Xr[i],f=8*d*h,p=Math.floor(d*l/u+s)*h
-if(null===Kr){var m=(navigator.userAgent||"").match(/Chrome\/(\d+)/i)
-Kr=m?parseInt(m[1]):0}return!!Kr&&Kr<=87&&2===i&&l>=224e3&&0===o&&(e[t+3]=128|e[t+3]),{sampleRate:u,channelCount:c,frameLength:p,samplesPerFrame:f}}}function ei(e,t){return 255===e[t]&&224==(224&e[t+1])&&0!=(6&e[t+1])}function ti(e,t){return t+1<e.length&&ei(e,t)}function ri(e,t){if(t+1<e.length&&ei(e,t)){var r=Zr(e,t),i=4
+return e.config=[],e.channelCount=a.channelCount,e.samplerate=a.sampleRate,e.samples.push(o),{sample:o,length:a.frameLength,missing:0}}}}function ti(e,t){var r=e[t+1]>>3&3,i=e[t+1]>>1&3,n=e[t+2]>>4&15,a=e[t+2]>>2&3
+if(1!==r&&0!==n&&15!==n&&3!==a){var s=e[t+2]>>1&1,o=e[t+3]>>6,l=1e3*Qr[14*(3===r?3-i:3===i?3:4)+n-1],u=Xr[3*(3===r?0:2===r?1:2)+a],c=3===o?1:2,d=Jr[r][i],h=Zr[i],f=8*d*h,p=Math.floor(d*l/u+s)*h
+if(null===Yr){var m=(navigator.userAgent||"").match(/Chrome\/(\d+)/i)
+Yr=m?parseInt(m[1]):0}return!!Yr&&Yr<=87&&2===i&&l>=224e3&&0===o&&(e[t+3]=128|e[t+3]),{sampleRate:u,channelCount:c,frameLength:p,samplesPerFrame:f}}}function ri(e,t){return 255===e[t]&&224==(224&e[t+1])&&0!=(6&e[t+1])}function ii(e,t){return t+1<e.length&&ri(e,t)}function ni(e,t){if(t+1<e.length&&ri(e,t)){var r=ti(e,t),i=4
 null!=r&&r.frameLength&&(i=r.frameLength)
 var n=t+i
-return n===e.length||ti(e,n)}return!1}var ii=function(){function e(e){this.data=void 0,this.bytesAvailable=void 0,this.word=void 0,this.bitsAvailable=void 0,this.data=e,this.bytesAvailable=e.byteLength,this.word=0,this.bitsAvailable=0}var t=e.prototype
+return n===e.length||ii(e,n)}return!1}var ai=function(){function e(e){this.data=void 0,this.bytesAvailable=void 0,this.word=void 0,this.bitsAvailable=void 0,this.data=e,this.bytesAvailable=e.byteLength,this.word=0,this.bitsAvailable=0}var t=e.prototype
 return t.loadWord=function(){var e=this.data,t=this.bytesAvailable,r=e.byteLength-t,i=new Uint8Array(4),n=Math.min(4,t)
 if(0===n)throw new Error("no bytes available")
 i.set(e.subarray(r,r+n)),this.word=new DataView(i.buffer).getUint32(0),this.bitsAvailable=8*n,this.bytesAvailable-=n},t.skipBits=function(e){var t
 e=Math.min(e,8*this.bytesAvailable+this.bitsAvailable),this.bitsAvailable>e?(this.word<<=e,this.bitsAvailable-=e):(e-=this.bitsAvailable,e-=(t=e>>3)<<3,this.bytesAvailable-=t,this.loadWord(),this.word<<=e,this.bitsAvailable-=e)},t.readBits=function(e){var t=Math.min(this.bitsAvailable,e),r=this.word>>>32-t
-if(e>32&&S.error("Cannot read more than 32 bits at a time"),this.bitsAvailable-=t,this.bitsAvailable>0)this.word<<=t
+if(e>32&&O.error("Cannot read more than 32 bits at a time"),this.bitsAvailable-=t,this.bitsAvailable>0)this.word<<=t
 else{if(!(this.bytesAvailable>0))throw new Error("no bits available")
 this.loadWord()}return(t=e-t)>0&&this.bitsAvailable?r<<t|this.readBits(t):r},t.skipLZ=function(){var e
 for(e=0;e<this.bitsAvailable;++e)if(0!=(this.word&2147483648>>>e))return this.word<<=e,this.bitsAvailable-=e,e
@@ -4953,74 +4963,74 @@ case 15:w=[3,2]
 break
 case 16:w=[2,1]
 break
-case 255:w=[o()<<8|o(),o()<<8|o()]}return{width:Math.ceil(16*(b+1)-2*i-2*n),height:(2-_)*(y+1)*16-(_?2:4)*(a+s),pixelRatio:w}},t.readSliceType=function(){return this.readUByte(),this.readUEG(),this.readUEG()},e}(),ni=function(){function e(e,t,r){this.keyData=void 0,this.decrypter=void 0,this.keyData=r,this.decrypter=new vr(t,{removePKCS7Padding:!1})}var t=e.prototype
+case 255:w=[o()<<8|o(),o()<<8|o()]}return{width:Math.ceil(16*(b+1)-2*i-2*n),height:(2-_)*(y+1)*16-(_?2:4)*(a+s),pixelRatio:w}},t.readSliceType=function(){return this.readUByte(),this.readUEG(),this.readUEG()},e}(),si=function(){function e(e,t,r){this.keyData=void 0,this.decrypter=void 0,this.keyData=r,this.decrypter=new _r(t,{removePKCS7Padding:!1})}var t=e.prototype
 return t.decryptBuffer=function(e){return this.decrypter.decrypt(e,this.keyData.key.buffer,this.keyData.iv.buffer)},t.decryptAacSample=function(e,t,r){var i=this,n=e[t].unit
 if(!(n.length<=16)){var a=n.subarray(16,n.length-n.length%16),s=a.buffer.slice(a.byteOffset,a.byteOffset+a.length)
 this.decryptBuffer(s).then((function(a){var s=new Uint8Array(a)
 n.set(s,16),i.decrypter.isSync()||i.decryptAacSamples(e,t+1,r)}))}},t.decryptAacSamples=function(e,t,r){for(;;t++){if(t>=e.length)return void r()
 if(!(e[t].unit.length<32||(this.decryptAacSample(e,t,r),this.decrypter.isSync())))return}},t.getAvcEncryptedData=function(e){for(var t=16*Math.floor((e.length-48)/160)+16,r=new Int8Array(t),i=0,n=32;n<e.length-16;n+=160,i+=16)r.set(e.subarray(n,n+16),i)
 return r},t.getAvcDecryptedUnit=function(e,t){for(var r=new Uint8Array(t),i=0,n=32;n<e.length-16;n+=160,i+=16)e.set(r.subarray(i,i+16),n)
-return e},t.decryptAvcSample=function(e,t,r,i,n){var a=this,s=Ce(n.data),o=this.getAvcEncryptedData(s)
+return e},t.decryptAvcSample=function(e,t,r,i,n){var a=this,s=De(n.data),o=this.getAvcEncryptedData(s)
 this.decryptBuffer(o.buffer).then((function(o){n.data=a.getAvcDecryptedUnit(s,o),a.decrypter.isSync()||a.decryptAvcSamples(e,t,r+1,i)}))},t.decryptAvcSamples=function(e,t,r,i){if(e instanceof Uint8Array)throw new Error("Cannot decrypt samples of type Uint8Array")
 for(;;t++,r=0){if(t>=e.length)return void i()
 for(var n=e[t].units;!(r>=n.length);r++){var a=n[r]
-if(!(a.data.length<=48||1!==a.type&&5!==a.type||(this.decryptAvcSample(e,t,r,i,a),this.decrypter.isSync())))return}}},e}(),ai=188,si=function(){function e(e,t,r){this.observer=void 0,this.config=void 0,this.typeSupported=void 0,this.sampleAes=null,this.pmtParsed=!1,this.audioCodec=void 0,this.videoCodec=void 0,this._duration=0,this._pmtId=-1,this._avcTrack=void 0,this._audioTrack=void 0,this._id3Track=void 0,this._txtTrack=void 0,this.aacOverFlow=null,this.avcSample=null,this.remainderData=null,this.observer=e,this.config=t,this.typeSupported=r}e.probe=function(t){var r=e.syncOffset(t)
-return r>0&&S.warn("MPEG2-TS detected but first sync word found @ offset "+r),-1!==r},e.syncOffset=function(e){for(var t=e.length,r=Math.min(940,e.length-ai)+1,i=0;i<r;){for(var n=!1,a=i;a<t&&71===e[a];a+=ai)if(n||0!==li(e,a)||(n=!0),n&&a+ai>r)return i
-i++}return-1},e.createTrack=function(e,t){return{container:"video"===e||"audio"===e?"video/mp2t":void 0,type:e,id:ge[e],pid:-1,inputTimeScale:9e4,sequenceNumber:0,samples:[],dropped:0,duration:"audio"===e?t:void 0}}
+if(!(a.data.length<=48||1!==a.type&&5!==a.type||(this.decryptAvcSample(e,t,r,i,a),this.decrypter.isSync())))return}}},e}(),oi=188,li=function(){function e(e,t,r){this.observer=void 0,this.config=void 0,this.typeSupported=void 0,this.sampleAes=null,this.pmtParsed=!1,this.audioCodec=void 0,this.videoCodec=void 0,this._duration=0,this._pmtId=-1,this._avcTrack=void 0,this._audioTrack=void 0,this._id3Track=void 0,this._txtTrack=void 0,this.aacOverFlow=null,this.avcSample=null,this.remainderData=null,this.observer=e,this.config=t,this.typeSupported=r}e.probe=function(t){var r=e.syncOffset(t)
+return r>0&&O.warn("MPEG2-TS detected but first sync word found @ offset "+r),-1!==r},e.syncOffset=function(e){for(var t=e.length,r=Math.min(940,e.length-oi)+1,i=0;i<r;){for(var n=!1,a=i;a<t&&71===e[a];a+=oi)if(n||0!==ci(e,a)||(n=!0),n&&a+oi>r)return i
+i++}return-1},e.createTrack=function(e,t){return{container:"video"===e||"audio"===e?"video/mp2t":void 0,type:e,id:ve[e],pid:-1,inputTimeScale:9e4,sequenceNumber:0,samples:[],dropped:0,duration:"audio"===e?t:void 0}}
 var t=e.prototype
 return t.resetInitSegment=function(t,r,i,n){this.pmtParsed=!1,this._pmtId=-1,this._avcTrack=e.createTrack("video"),this._audioTrack=e.createTrack("audio",n),this._id3Track=e.createTrack("id3"),this._txtTrack=e.createTrack("text"),this._audioTrack.segmentCodec="aac",this.aacOverFlow=null,this.avcSample=null,this.remainderData=null,this.audioCodec=r,this.videoCodec=i,this._duration=n},t.resetTimeStamp=function(){},t.resetContiguity=function(){var e=this._audioTrack,t=this._avcTrack,r=this._id3Track
 e&&(e.pesData=null),t&&(t.pesData=null),r&&(r.pesData=null),this.aacOverFlow=null,this.avcSample=null,this.remainderData=null},t.demux=function(t,r,i,n){var a
 void 0===i&&(i=!1),void 0===n&&(n=!1),i||(this.sampleAes=null)
-var s=this._avcTrack,o=this._audioTrack,l=this._id3Track,u=this._txtTrack,c=s.pid,d=s.pesData,h=o.pid,f=l.pid,p=o.pesData,m=l.pesData,g=null,v=this.pmtParsed,w=this._pmtId,E=t.length
-if(this.remainderData&&(E=(t=xe(this.remainderData,t)).length,this.remainderData=null),E<ai&&!n)return this.remainderData=t,{audioTrack:o,videoTrack:s,id3Track:l,textTrack:u}
-var T=Math.max(0,e.syncOffset(t));(E-=(E-T)%ai)<t.byteLength&&!n&&(this.remainderData=new Uint8Array(t.buffer,E,t.buffer.byteLength-E))
-for(var k=0,O=T;O<E;O+=ai)if(71===t[O]){var x=!!(64&t[O+1]),P=li(t,O),A=void 0
-if((48&t[O+3])>>4>1){if((A=O+5+t[O+4])===O+ai)continue}else A=O+4
-switch(P){case c:x&&(d&&(a=di(d))&&this.parseAVCPES(s,u,a,!1),d={data:[],size:0}),d&&(d.data.push(t.subarray(A,O+ai)),d.size+=O+ai-A)
+var s=this._avcTrack,o=this._audioTrack,l=this._id3Track,u=this._txtTrack,c=s.pid,d=s.pesData,h=o.pid,f=l.pid,p=o.pesData,m=l.pesData,g=null,v=this.pmtParsed,b=this._pmtId,E=t.length
+if(this.remainderData&&(E=(t=Pe(this.remainderData,t)).length,this.remainderData=null),E<oi&&!n)return this.remainderData=t,{audioTrack:o,videoTrack:s,id3Track:l,textTrack:u}
+var T=Math.max(0,e.syncOffset(t));(E-=(E-T)%oi)<t.byteLength&&!n&&(this.remainderData=new Uint8Array(t.buffer,E,t.buffer.byteLength-E))
+for(var k=0,S=T;S<E;S+=oi)if(71===t[S]){var x=!!(64&t[S+1]),P=ci(t,S),A=void 0
+if((48&t[S+3])>>4>1){if((A=S+5+t[S+4])===S+oi)continue}else A=S+4
+switch(P){case c:x&&(d&&(a=fi(d))&&this.parseAVCPES(s,u,a,!1),d={data:[],size:0}),d&&(d.data.push(t.subarray(A,S+oi)),d.size+=S+oi-A)
 break
-case h:if(x){if(p&&(a=di(p)))switch(o.segmentCodec){case"aac":this.parseAACPES(o,a)
+case h:if(x){if(p&&(a=fi(p)))switch(o.segmentCodec){case"aac":this.parseAACPES(o,a)
 break
-case"mp3":this.parseMPEGPES(o,a)}p={data:[],size:0}}p&&(p.data.push(t.subarray(A,O+ai)),p.size+=O+ai-A)
+case"mp3":this.parseMPEGPES(o,a)}p={data:[],size:0}}p&&(p.data.push(t.subarray(A,S+oi)),p.size+=S+oi-A)
 break
-case f:x&&(m&&(a=di(m))&&this.parseID3PES(l,a),m={data:[],size:0}),m&&(m.data.push(t.subarray(A,O+ai)),m.size+=O+ai-A)
+case f:x&&(m&&(a=fi(m))&&this.parseID3PES(l,a),m={data:[],size:0}),m&&(m.data.push(t.subarray(A,S+oi)),m.size+=S+oi-A)
 break
-case 0:x&&(A+=t[A]+1),w=this._pmtId=ui(t,A)
+case 0:x&&(A+=t[A]+1),b=this._pmtId=di(t,A)
 break
-case w:x&&(A+=t[A]+1)
-var R=ci(t,A,this.typeSupported,i);(c=R.avc)>0&&(s.pid=c),(h=R.audio)>0&&(o.pid=h,o.segmentCodec=R.segmentCodec),(f=R.id3)>0&&(l.pid=f),null===g||v||(S.warn("MPEG-TS PMT found at "+O+" after unknown PID '"+g+"'. Backtracking to sync byte @"+T+" to parse all TS packets."),g=null,O=T-188),v=this.pmtParsed=!0
+case b:x&&(A+=t[A]+1)
+var R=hi(t,A,this.typeSupported,i);(c=R.avc)>0&&(s.pid=c),(h=R.audio)>0&&(o.pid=h,o.segmentCodec=R.segmentCodec),(f=R.id3)>0&&(l.pid=f),null===g||v||(O.warn("MPEG-TS PMT found at "+S+" after unknown PID '"+g+"'. Backtracking to sync byte @"+T+" to parse all TS packets."),g=null,S=T-188),v=this.pmtParsed=!0
 break
 case 17:case 8191:break
 default:g=P}}else k++
 if(k>0){var C=new Error("Found "+k+" TS packet/s that do not start with 0x47")
-this.observer.emit(b.ERROR,b.ERROR,{type:y.MEDIA_ERROR,details:_.FRAG_PARSING_ERROR,fatal:!1,error:C,reason:C.message})}s.pesData=d,o.pesData=p,l.pesData=m
+this.observer.emit(y.ERROR,y.ERROR,{type:_.MEDIA_ERROR,details:w.FRAG_PARSING_ERROR,fatal:!1,error:C,reason:C.message})}s.pesData=d,o.pesData=p,l.pesData=m
 var D={audioTrack:o,videoTrack:s,id3Track:l,textTrack:u}
 return n&&this.extractRemainingSamples(D),D},t.flush=function(){var e,t=this.remainderData
 return this.remainderData=null,e=t?this.demux(t,-1,!1,!0):{videoTrack:this._avcTrack,audioTrack:this._audioTrack,id3Track:this._id3Track,textTrack:this._txtTrack},this.extractRemainingSamples(e),this.sampleAes?this.decrypt(e,this.sampleAes):e},t.extractRemainingSamples=function(e){var t,r=e.audioTrack,i=e.videoTrack,n=e.id3Track,a=e.textTrack,s=i.pesData,o=r.pesData,l=n.pesData
-if(s&&(t=di(s))?(this.parseAVCPES(i,a,t,!0),i.pesData=null):i.pesData=s,o&&(t=di(o))){switch(r.segmentCodec){case"aac":this.parseAACPES(r,t)
+if(s&&(t=fi(s))?(this.parseAVCPES(i,a,t,!0),i.pesData=null):i.pesData=s,o&&(t=fi(o))){switch(r.segmentCodec){case"aac":this.parseAACPES(r,t)
 break
-case"mp3":this.parseMPEGPES(r,t)}r.pesData=null}else null!=o&&o.size&&S.log("last AAC PES packet truncated,might overlap between fragments"),r.pesData=o
-l&&(t=di(l))?(this.parseID3PES(n,t),n.pesData=null):n.pesData=l},t.demuxSampleAes=function(e,t,r){var i=this.demux(e,r,!0,!this.config.progressive),n=this.sampleAes=new ni(this.observer,this.config,t)
+case"mp3":this.parseMPEGPES(r,t)}r.pesData=null}else null!=o&&o.size&&O.log("last AAC PES packet truncated,might overlap between fragments"),r.pesData=o
+l&&(t=fi(l))?(this.parseID3PES(n,t),n.pesData=null):n.pesData=l},t.demuxSampleAes=function(e,t,r){var i=this.demux(e,r,!0,!this.config.progressive),n=this.sampleAes=new si(this.observer,this.config,t)
 return this.decrypt(i,n)},t.decrypt=function(e,t){return new Promise((function(r){var i=e.audioTrack,n=e.videoTrack
 i.samples&&"aac"===i.segmentCodec?t.decryptAacSamples(i.samples,0,(function(){n.samples?t.decryptAvcSamples(n.samples,0,0,(function(){r(e)})):r(e)})):n.samples&&t.decryptAvcSamples(n.samples,0,0,(function(){r(e)}))}))},t.destroy=function(){this._duration=0},t.parseAVCPES=function(e,t,r,i){var n,a=this,s=this.parseAVCNALu(e,r.data),o=this.avcSample,l=!1
-r.data=null,o&&s.length&&!e.audFound&&(hi(o,e),o=this.avcSample=oi(!1,r.pts,r.dts,"")),s.forEach((function(i){switch(i.type){case 1:n=!0,o||(o=a.avcSample=oi(!0,r.pts,r.dts,"")),o.frame=!0
+r.data=null,o&&s.length&&!e.audFound&&(pi(o,e),o=this.avcSample=ui(!1,r.pts,r.dts,"")),s.forEach((function(i){switch(i.type){case 1:n=!0,o||(o=a.avcSample=ui(!0,r.pts,r.dts,"")),o.frame=!0
 var s=i.data
-if(l&&s.length>4){var u=new ii(s).readSliceType()
+if(l&&s.length>4){var u=new ai(s).readSliceType()
 2!==u&&4!==u&&7!==u&&9!==u||(o.key=!0)}break
-case 5:n=!0,o||(o=a.avcSample=oi(!0,r.pts,r.dts,"")),o.key=!0,o.frame=!0
+case 5:n=!0,o||(o=a.avcSample=ui(!0,r.pts,r.dts,"")),o.key=!0,o.frame=!0
 break
-case 6:n=!0,Re(i.data,1,r.pts,t.samples)
+case 6:n=!0,Ce(i.data,1,r.pts,t.samples)
 break
-case 7:if(n=!0,l=!0,!e.sps){var c=i.data,d=new ii(c).readSPS()
+case 7:if(n=!0,l=!0,!e.sps){var c=i.data,d=new ai(c).readSPS()
 e.width=d.width,e.height=d.height,e.pixelRatio=d.pixelRatio,e.sps=[c],e.duration=a._duration
 for(var h=c.subarray(1,4),f="avc1.",p=0;p<3;p++){var m=h[p].toString(16)
 m.length<2&&(m="0"+m),f+=m}e.codec=f}break
 case 8:n=!0,e.pps||(e.pps=[i.data])
 break
-case 9:n=!1,e.audFound=!0,o&&hi(o,e),o=a.avcSample=oi(!1,r.pts,r.dts,"")
+case 9:n=!1,e.audFound=!0,o&&pi(o,e),o=a.avcSample=ui(!1,r.pts,r.dts,"")
 break
 case 12:n=!0
 break
-default:n=!1,o&&(o.debug+="unknown NAL "+i.type+" ")}o&&n&&o.units.push(i)})),i&&o&&(hi(o,e),this.avcSample=null)},t.getLastNalUnit=function(e){var t,r,i=this.avcSample
+default:n=!1,o&&(o.debug+="unknown NAL "+i.type+" ")}o&&n&&o.units.push(i)})),i&&o&&(pi(o,e),this.avcSample=null)},t.getLastNalUnit=function(e){var t,r,i=this.avcSample
 if(i&&0!==i.units.length||(i=e[e.length-1]),null!=(t=i)&&t.units){var n=i.units
 r=n[n.length-1]}return r},t.parseAVCNALu=function(e,t){var r,i,n=t.byteLength,a=e.naluState||0,s=a,o=[],l=0,u=-1,c=0
 for(-1===a&&(u=0,c=31&t[0],a=0,l=1);l<n;)if(r=t[l++],a)if(1!==a)if(r)if(1===r){if(u>=0){var d={data:t.subarray(u,l-a-1),type:c}
@@ -5038,57 +5048,57 @@ if(s){this.aacOverFlow=null
 var l=s.missing,u=s.sample.unit.byteLength
 if(-1===l){var c=new Uint8Array(u+o.byteLength)
 c.set(s.sample.unit,0),c.set(o,u),o=c}else{var d=u-l
-s.sample.unit.set(o.subarray(0,l),d),e.samples.push(s.sample),a=s.missing}}for(r=a,i=o.length;r<i-1&&!zr(o,r);r++);if(r!==a){var h,f=r<i-1
+s.sample.unit.set(o.subarray(0,l),d),e.samples.push(s.sample),a=s.missing}}for(r=a,i=o.length;r<i-1&&!Br(o,r);r++);if(r!==a){var h,f=r<i-1
 h=f?"AAC PES did not start with ADTS header,offset:"+r:"No ADTS header found in AAC PES"
 var p=new Error(h)
-if(S.warn("parsing error: "+h),this.observer.emit(b.ERROR,b.ERROR,{type:y.MEDIA_ERROR,details:_.FRAG_PARSING_ERROR,fatal:!1,levelRetry:f,error:p,reason:h}),!f)return}if(Br(e,this.observer,o,r,this.audioCodec),void 0!==t.pts)n=t.pts
-else{if(!s)return void S.warn("[tsdemuxer]: AAC PES unknown PTS")
-var m=Hr(e.samplerate)
-n=s.sample.pts+m}for(var g,v=0;r<i;){if(r+=(g=Vr(e,o,r,n,v)).length,g.missing){this.aacOverFlow=g
-break}for(v++;r<i-1&&!zr(o,r);r++);}},t.parseMPEGPES=function(e,t){var r=t.data,i=r.length,n=0,a=0,s=t.pts
-if(void 0!==s)for(;a<i;)if(ti(r,a)){var o=Jr(e,r,a,s,n)
+if(O.warn("parsing error: "+h),this.observer.emit(y.ERROR,y.ERROR,{type:_.MEDIA_ERROR,details:w.FRAG_PARSING_ERROR,fatal:!1,levelRetry:f,error:p,reason:h}),!f)return}if(Vr(e,this.observer,o,r,this.audioCodec),void 0!==t.pts)n=t.pts
+else{if(!s)return void O.warn("[tsdemuxer]: AAC PES unknown PTS")
+var m=$r(e.samplerate)
+n=s.sample.pts+m}for(var g,v=0;r<i;){if(r+=(g=qr(e,o,r,n,v)).length,g.missing){this.aacOverFlow=g
+break}for(v++;r<i-1&&!Br(o,r);r++);}},t.parseMPEGPES=function(e,t){var r=t.data,i=r.length,n=0,a=0,s=t.pts
+if(void 0!==s)for(;a<i;)if(ii(r,a)){var o=ei(e,r,a,s,n)
 if(!o)break
 a+=o.length,n++}else a++
-else S.warn("[tsdemuxer]: MPEG PES unknown PTS")},t.parseID3PES=function(e,t){if(void 0!==t.pts){var r=o({},t,{type:this._avcTrack?gt:mt,duration:Number.POSITIVE_INFINITY})
-e.samples.push(r)}else S.warn("[tsdemuxer]: ID3 PES unknown PTS")},e}()
-function oi(e,t,r,i){return{key:e,frame:!1,pts:t,dts:r,units:[],debug:i,length:0}}function li(e,t){return((31&e[t+1])<<8)+e[t+2]}function ui(e,t){return(31&e[t+10])<<8|e[t+11]}function ci(e,t,r,i){var n={audio:-1,avc:-1,id3:-1,segmentCodec:"aac"},a=t+3+((15&e[t+1])<<8|e[t+2])-4
-for(t+=12+((15&e[t+10])<<8|e[t+11]);t<a;){var s=li(e,t)
-switch(e[t]){case 207:if(!i){S.log("ADTS AAC with AES-128-CBC frame encryption found in unencrypted stream")
+else O.warn("[tsdemuxer]: MPEG PES unknown PTS")},t.parseID3PES=function(e,t){if(void 0!==t.pts){var r=o({},t,{type:this._avcTrack?yt:bt,duration:Number.POSITIVE_INFINITY})
+e.samples.push(r)}else O.warn("[tsdemuxer]: ID3 PES unknown PTS")},e}()
+function ui(e,t,r,i){return{key:e,frame:!1,pts:t,dts:r,units:[],debug:i,length:0}}function ci(e,t){return((31&e[t+1])<<8)+e[t+2]}function di(e,t){return(31&e[t+10])<<8|e[t+11]}function hi(e,t,r,i){var n={audio:-1,avc:-1,id3:-1,segmentCodec:"aac"},a=t+3+((15&e[t+1])<<8|e[t+2])-4
+for(t+=12+((15&e[t+10])<<8|e[t+11]);t<a;){var s=ci(e,t)
+switch(e[t]){case 207:if(!i){O.log("ADTS AAC with AES-128-CBC frame encryption found in unencrypted stream")
 break}case 15:-1===n.audio&&(n.audio=s)
 break
 case 21:-1===n.id3&&(n.id3=s)
 break
-case 219:if(!i){S.log("H.264 with AES-128-CBC slice encryption found in unencrypted stream")
+case 219:if(!i){O.log("H.264 with AES-128-CBC slice encryption found in unencrypted stream")
 break}case 27:-1===n.avc&&(n.avc=s)
 break
-case 3:case 4:!0!==r.mpeg&&!0!==r.mp3?S.log("MPEG audio found, not supported in this browser"):-1===n.audio&&(n.audio=s,n.segmentCodec="mp3")
+case 3:case 4:!0!==r.mpeg&&!0!==r.mp3?O.log("MPEG audio found, not supported in this browser"):-1===n.audio&&(n.audio=s,n.segmentCodec="mp3")
 break
-case 36:S.warn("Unsupported HEVC stream type found")}t+=5+((15&e[t+3])<<8|e[t+4])}return n}function di(e){var t,r,i,n,a,s=0,o=e.data
+case 36:O.warn("Unsupported HEVC stream type found")}t+=5+((15&e[t+3])<<8|e[t+4])}return n}function fi(e){var t,r,i,n,a,s=0,o=e.data
 if(!e||0===e.size)return null
 for(;o[0].length<19&&o.length>1;){var l=new Uint8Array(o[0].length+o[1].length)
 l.set(o[0]),l.set(o[1],o[0].length),o[0]=l,o.splice(1,1)}if(1===((t=o[0])[0]<<16)+(t[1]<<8)+t[2]){if((r=(t[4]<<8)+t[5])&&r>e.size-6)return null
 var u=t[7]
-192&u&&(n=536870912*(14&t[9])+4194304*(255&t[10])+16384*(254&t[11])+128*(255&t[12])+(254&t[13])/2,64&u?n-(a=536870912*(14&t[14])+4194304*(255&t[15])+16384*(254&t[16])+128*(255&t[17])+(254&t[18])/2)>54e5&&(S.warn(Math.round((n-a)/9e4)+"s delta between PTS and DTS, align them"),n=a):a=n)
+192&u&&(n=536870912*(14&t[9])+4194304*(255&t[10])+16384*(254&t[11])+128*(255&t[12])+(254&t[13])/2,64&u?n-(a=536870912*(14&t[14])+4194304*(255&t[15])+16384*(254&t[16])+128*(255&t[17])+(254&t[18])/2)>54e5&&(O.warn(Math.round((n-a)/9e4)+"s delta between PTS and DTS, align them"),n=a):a=n)
 var c=(i=t[8])+9
 if(e.size<=c)return null
 e.size-=c
 for(var d=new Uint8Array(e.size),h=0,f=o.length;h<f;h++){var p=(t=o[h]).byteLength
 if(c){if(c>p){c-=p
-continue}t=t.subarray(c),p-=c,c=0}d.set(t,s),s+=p}return r&&(r-=i+3),{data:d,pts:n,dts:a,len:r}}return null}function hi(e,t){if(e.units.length&&e.frame){if(void 0===e.pts){var r=t.samples,i=r.length
+continue}t=t.subarray(c),p-=c,c=0}d.set(t,s),s+=p}return r&&(r-=i+3),{data:d,pts:n,dts:a,len:r}}return null}function pi(e,t){if(e.units.length&&e.frame){if(void 0===e.pts){var r=t.samples,i=r.length
 if(!i)return void t.dropped++
 var n=r[i-1]
-e.pts=n.pts,e.dts=n.dts}t.samples.push(e)}e.debug.length&&S.log(e.pts+"/"+e.dts+":"+e.debug)}var fi=function(e){function t(){return e.apply(this,arguments)||this}l(t,e)
+e.pts=n.pts,e.dts=n.dts}t.samples.push(e)}e.debug.length&&O.log(e.pts+"/"+e.dts+":"+e.debug)}var mi=function(e){function t(){return e.apply(this,arguments)||this}l(t,e)
 var r=t.prototype
 return r.resetInitSegment=function(t,r,i,n){e.prototype.resetInitSegment.call(this,t,r,i,n),this._audioTrack={container:"audio/mpeg",type:"audio",id:2,pid:-1,sequenceNumber:0,segmentCodec:"mp3",samples:[],manifestCodec:r,duration:n,inputTimeScale:9e4,dropped:0}},t.probe=function(e){if(!e)return!1
-for(var t=(te(e,0)||[]).length,r=e.length;t<r;t++)if(ri(e,t))return S.log("MPEG Audio sync word found !"),!0
-return!1},r.canParse=function(e,t){return function(e,t){return ei(e,t)&&4<=e.length-t}(e,t)},r.appendFrame=function(e,t,r){if(null!==this.basePTS)return Jr(e,t,r,this.basePTS,this.frameIndex)},t}(Ir),pi=function(){function e(){}return e.getSilentFrame=function(e,t){if("mp4a.40.2"===e){if(1===t)return new Uint8Array([0,200,0,128,35,128])
+for(var t=(re(e,0)||[]).length,r=e.length;t<r;t++)if(ni(e,t))return O.log("MPEG Audio sync word found !"),!0
+return!1},r.canParse=function(e,t){return function(e,t){return ri(e,t)&&4<=e.length-t}(e,t)},r.appendFrame=function(e,t,r){if(null!==this.basePTS)return ei(e,t,r,this.basePTS,this.frameIndex)},t}(jr),gi=function(){function e(){}return e.getSilentFrame=function(e,t){if("mp4a.40.2"===e){if(1===t)return new Uint8Array([0,200,0,128,35,128])
 if(2===t)return new Uint8Array([33,0,73,144,2,25,0,35,128])
 if(3===t)return new Uint8Array([0,200,0,128,32,132,1,38,64,8,100,0,142])
 if(4===t)return new Uint8Array([0,200,0,128,32,132,1,38,64,8,100,0,128,44,128,8,2,56])
 if(5===t)return new Uint8Array([0,200,0,128,32,132,1,38,64,8,100,0,130,48,4,153,0,33,144,2,56])
 if(6===t)return new Uint8Array([0,200,0,128,32,132,1,38,64,8,100,0,130,48,4,153,0,33,144,2,0,178,0,32,8,224])}else{if(1===t)return new Uint8Array([1,64,34,128,163,78,230,128,186,8,0,0,0,28,6,241,193,10,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,94])
 if(2===t)return new Uint8Array([1,64,34,128,163,94,230,128,186,8,0,0,0,0,149,0,6,241,161,10,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,94])
-if(3===t)return new Uint8Array([1,64,34,128,163,94,230,128,186,8,0,0,0,0,149,0,6,241,161,10,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,94])}},e}(),mi=Math.pow(2,32)-1,gi=function(){function e(){}return e.init=function(){var t
+if(3===t)return new Uint8Array([1,64,34,128,163,94,230,128,186,8,0,0,0,0,149,0,6,241,161,10,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,94])}},e}(),vi=Math.pow(2,32)-1,bi=function(){function e(){}return e.init=function(){var t
 for(t in e.types={avc1:[],avcC:[],btrt:[],dinf:[],dref:[],esds:[],ftyp:[],hdlr:[],mdat:[],mdhd:[],mdia:[],mfhd:[],minf:[],moof:[],moov:[],mp4a:[],".mp3":[],mvex:[],mvhd:[],pasp:[],sdtp:[],stbl:[],stco:[],stsc:[],stsd:[],stsz:[],stts:[],tfdt:[],tfhd:[],traf:[],trak:[],trun:[],trex:[],tkhd:[],vmhd:[],smhd:[]},e.types)e.types.hasOwnProperty(t)&&(e.types[t]=[t.charCodeAt(0),t.charCodeAt(1),t.charCodeAt(2),t.charCodeAt(3)])
 var r=new Uint8Array([0,0,0,0,0,0,0,0,118,105,100,101,0,0,0,0,0,0,0,0,0,0,0,0,86,105,100,101,111,72,97,110,100,108,101,114,0]),i=new Uint8Array([0,0,0,0,0,0,0,0,115,111,117,110,0,0,0,0,0,0,0,0,0,0,0,0,83,111,117,110,100,72,97,110,100,108,101,114,0])
 e.HDLR_TYPES={video:r,audio:i}
@@ -5100,11 +5110,11 @@ for(var a=i.length,s=a;a--;)t+=i[a].byteLength
 var o=new Uint8Array(t)
 for(o[0]=t>>24&255,o[1]=t>>16&255,o[2]=t>>8&255,o[3]=255&t,o.set(e,4),a=0,t=8;a<s;a++)o.set(i[a],t),t+=i[a].byteLength
 return o},e.hdlr=function(t){return e.box(e.types.hdlr,e.HDLR_TYPES[t])},e.mdat=function(t){return e.box(e.types.mdat,t)},e.mdhd=function(t,r){r*=t
-var i=Math.floor(r/(mi+1)),n=Math.floor(r%(mi+1))
+var i=Math.floor(r/(vi+1)),n=Math.floor(r%(vi+1))
 return e.box(e.types.mdhd,new Uint8Array([1,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,3,t>>24&255,t>>16&255,t>>8&255,255&t,i>>24,i>>16&255,i>>8&255,255&i,n>>24,n>>16&255,n>>8&255,255&n,85,196,0,0]))},e.mdia=function(t){return e.box(e.types.mdia,e.mdhd(t.timescale,t.duration),e.hdlr(t.type),e.minf(t))},e.mfhd=function(t){return e.box(e.types.mfhd,new Uint8Array([0,0,0,0,t>>24,t>>16&255,t>>8&255,255&t]))},e.minf=function(t){return"audio"===t.type?e.box(e.types.minf,e.box(e.types.smhd,e.SMHD),e.DINF,e.stbl(t)):e.box(e.types.minf,e.box(e.types.vmhd,e.VMHD),e.DINF,e.stbl(t))},e.moof=function(t,r,i){return e.box(e.types.moof,e.mfhd(t),e.traf(i,r))},e.moov=function(t){for(var r=t.length,i=[];r--;)i[r]=e.trak(t[r])
 return e.box.apply(null,[e.types.moov,e.mvhd(t[0].timescale,t[0].duration)].concat(i).concat(e.mvex(t)))},e.mvex=function(t){for(var r=t.length,i=[];r--;)i[r]=e.trex(t[r])
 return e.box.apply(null,[e.types.mvex].concat(i))},e.mvhd=function(t,r){r*=t
-var i=Math.floor(r/(mi+1)),n=Math.floor(r%(mi+1)),a=new Uint8Array([1,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,3,t>>24&255,t>>16&255,t>>8&255,255&t,i>>24,i>>16&255,i>>8&255,255&i,n>>24,n>>16&255,n>>8&255,255&n,0,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,64,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,255,255,255,255])
+var i=Math.floor(r/(vi+1)),n=Math.floor(r%(vi+1)),a=new Uint8Array([1,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,3,t>>24&255,t>>16&255,t>>8&255,255&t,i>>24,i>>16&255,i>>8&255,255&i,n>>24,n>>16&255,n>>8&255,255&n,0,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,64,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,255,255,255,255])
 return e.box(e.types.mvhd,a)},e.sdtp=function(t){var r,i,n=t.samples||[],a=new Uint8Array(4+n.length)
 for(r=0;r<n.length;r++)i=n[r].flags,a[r+4]=i.dependsOn<<4|i.isDependedOn<<2|i.hasRedundancy
 return e.box(e.types.sdtp,a)},e.stbl=function(t){return e.box(e.types.stbl,e.stsd(t),e.box(e.types.stts,e.STTS),e.box(e.types.stsc,e.STSC),e.box(e.types.stsz,e.STSZ),e.box(e.types.stco,e.STCO))},e.avc1=function(t){var r,i,n,a=[],s=[]
@@ -5114,177 +5124,177 @@ var o=e.box(e.types.avcC,new Uint8Array([1,a[3],a[4],a[5],255,224|t.sps.length].
 return e.box(e.types.avc1,new Uint8Array([0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,l>>8&255,255&l,u>>8&255,255&u,0,72,0,0,0,72,0,0,0,0,0,0,0,1,18,100,97,105,108,121,109,111,116,105,111,110,47,104,108,115,46,106,115,0,0,0,0,0,0,0,0,0,0,0,0,0,0,24,17,17]),o,e.box(e.types.btrt,new Uint8Array([0,28,156,128,0,45,198,192,0,45,198,192])),e.box(e.types.pasp,new Uint8Array([c>>24,c>>16&255,c>>8&255,255&c,d>>24,d>>16&255,d>>8&255,255&d])))},e.esds=function(e){var t=e.config.length
 return new Uint8Array([0,0,0,0,3,23+t,0,1,0,4,15+t,64,21,0,0,0,0,0,0,0,0,0,0,0,5].concat([t]).concat(e.config).concat([6,1,2]))},e.mp4a=function(t){var r=t.samplerate
 return e.box(e.types.mp4a,new Uint8Array([0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,t.channelCount,0,16,0,0,0,0,r>>8&255,255&r,0,0]),e.box(e.types.esds,e.esds(t)))},e.mp3=function(t){var r=t.samplerate
-return e.box(e.types[".mp3"],new Uint8Array([0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,t.channelCount,0,16,0,0,0,0,r>>8&255,255&r,0,0]))},e.stsd=function(t){return"audio"===t.type?"mp3"===t.segmentCodec&&"mp3"===t.codec?e.box(e.types.stsd,e.STSD,e.mp3(t)):e.box(e.types.stsd,e.STSD,e.mp4a(t)):e.box(e.types.stsd,e.STSD,e.avc1(t))},e.tkhd=function(t){var r=t.id,i=t.duration*t.timescale,n=t.width,a=t.height,s=Math.floor(i/(mi+1)),o=Math.floor(i%(mi+1))
-return e.box(e.types.tkhd,new Uint8Array([1,0,0,7,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,3,r>>24&255,r>>16&255,r>>8&255,255&r,0,0,0,0,s>>24,s>>16&255,s>>8&255,255&s,o>>24,o>>16&255,o>>8&255,255&o,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,64,0,0,0,n>>8&255,255&n,0,0,a>>8&255,255&a,0,0]))},e.traf=function(t,r){var i=e.sdtp(t),n=t.id,a=Math.floor(r/(mi+1)),s=Math.floor(r%(mi+1))
+return e.box(e.types[".mp3"],new Uint8Array([0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,t.channelCount,0,16,0,0,0,0,r>>8&255,255&r,0,0]))},e.stsd=function(t){return"audio"===t.type?"mp3"===t.segmentCodec&&"mp3"===t.codec?e.box(e.types.stsd,e.STSD,e.mp3(t)):e.box(e.types.stsd,e.STSD,e.mp4a(t)):e.box(e.types.stsd,e.STSD,e.avc1(t))},e.tkhd=function(t){var r=t.id,i=t.duration*t.timescale,n=t.width,a=t.height,s=Math.floor(i/(vi+1)),o=Math.floor(i%(vi+1))
+return e.box(e.types.tkhd,new Uint8Array([1,0,0,7,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,3,r>>24&255,r>>16&255,r>>8&255,255&r,0,0,0,0,s>>24,s>>16&255,s>>8&255,255&s,o>>24,o>>16&255,o>>8&255,255&o,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,64,0,0,0,n>>8&255,255&n,0,0,a>>8&255,255&a,0,0]))},e.traf=function(t,r){var i=e.sdtp(t),n=t.id,a=Math.floor(r/(vi+1)),s=Math.floor(r%(vi+1))
 return e.box(e.types.traf,e.box(e.types.tfhd,new Uint8Array([0,0,0,0,n>>24,n>>16&255,n>>8&255,255&n])),e.box(e.types.tfdt,new Uint8Array([1,0,0,0,a>>24,a>>16&255,a>>8&255,255&a,s>>24,s>>16&255,s>>8&255,255&s])),e.trun(t,i.length+16+20+8+16+8+8),i)},e.trak=function(t){return t.duration=t.duration||4294967295,e.box(e.types.trak,e.tkhd(t),e.mdia(t))},e.trex=function(t){var r=t.id
 return e.box(e.types.trex,new Uint8Array([0,0,0,0,r>>24,r>>16&255,r>>8&255,255&r,0,0,0,1,0,0,0,0,0,0,0,0,0,1,0,1]))},e.trun=function(t,r){var i,n,a,s,o,l,u=t.samples||[],c=u.length,d=12+16*c,h=new Uint8Array(d)
 for(r+=8+d,h.set(["video"===t.type?1:0,0,15,1,c>>>24&255,c>>>16&255,c>>>8&255,255&c,r>>>24&255,r>>>16&255,r>>>8&255,255&r],0),i=0;i<c;i++)a=(n=u[i]).duration,s=n.size,o=n.flags,l=n.cts,h.set([a>>>24&255,a>>>16&255,a>>>8&255,255&a,s>>>24&255,s>>>16&255,s>>>8&255,255&s,o.isLeading<<2|o.dependsOn,o.isDependedOn<<6|o.hasRedundancy<<4|o.paddingValue<<1|o.isNonSync,61440&o.degradPrio,15&o.degradPrio,l>>>24&255,l>>>16&255,l>>>8&255,255&l],12+16*i)
 return e.box(e.types.trun,h)},e.initSegment=function(t){e.types||e.init()
 var r=e.moov(t),i=new Uint8Array(e.FTYP.byteLength+r.byteLength)
 return i.set(e.FTYP),i.set(r,e.FTYP.byteLength),i},e}()
-function vi(e,t,r,i){void 0===r&&(r=1),void 0===i&&(i=!1)
+function yi(e,t,r,i){void 0===r&&(r=1),void 0===i&&(i=!1)
 var n=e*t*r
-return i?Math.round(n):n}function bi(e,t){return void 0===t&&(t=!1),vi(e,1e3,1/9e4,t)}gi.types=void 0,gi.HDLR_TYPES=void 0,gi.STTS=void 0,gi.STSC=void 0,gi.STCO=void 0,gi.STSZ=void 0,gi.VMHD=void 0,gi.SMHD=void 0,gi.STSD=void 0,gi.FTYP=void 0,gi.DINF=void 0
-var yi=null,_i=null,wi=function(){function e(e,t,r,i){if(this.observer=void 0,this.config=void 0,this.typeSupported=void 0,this.ISGenerated=!1,this._initPTS=null,this._initDTS=null,this.nextAvcDts=null,this.nextAudioPts=null,this.videoSampleDuration=null,this.isAudioContiguous=!1,this.isVideoContiguous=!1,this.observer=e,this.config=t,this.typeSupported=r,this.ISGenerated=!1,null===yi){var n=(navigator.userAgent||"").match(/Chrome\/(\d+)/i)
-yi=n?parseInt(n[1]):0}if(null===_i){var a=navigator.userAgent.match(/Safari\/(\d+)/i)
-_i=a?parseInt(a[1]):0}}var t=e.prototype
-return t.destroy=function(){},t.resetTimeStamp=function(e){S.log("[mp4-remuxer]: initPTS & initDTS reset"),this._initPTS=this._initDTS=e},t.resetNextTimestamp=function(){S.log("[mp4-remuxer]: reset next timestamp"),this.isVideoContiguous=!1,this.isAudioContiguous=!1},t.resetInitSegment=function(){S.log("[mp4-remuxer]: ISGenerated flag reset"),this.ISGenerated=!1},t.getVideoStartPts=function(e){var t=!1,r=e.reduce((function(e,r){var i=r.pts-e
-return i<-4294967296?(t=!0,Ei(e,r.pts)):i>0?e:r.pts}),e[0].pts)
-return t&&S.debug("PTS rollover detected"),r},t.remux=function(e,t,r,i,n,a,s,o){var l,u,c,d,h,f,p=n,m=n,g=e.pid>-1,v=t.pid>-1,b=t.samples.length,y=e.samples.length>0,_=s&&b>0||b>1
+return i?Math.round(n):n}function _i(e,t){return void 0===t&&(t=!1),yi(e,1e3,1/9e4,t)}bi.types=void 0,bi.HDLR_TYPES=void 0,bi.STTS=void 0,bi.STSC=void 0,bi.STCO=void 0,bi.STSZ=void 0,bi.VMHD=void 0,bi.SMHD=void 0,bi.STSD=void 0,bi.FTYP=void 0,bi.DINF=void 0
+var wi=null,Ei=null,Ti=function(){function e(e,t,r,i){if(this.observer=void 0,this.config=void 0,this.typeSupported=void 0,this.ISGenerated=!1,this._initPTS=null,this._initDTS=null,this.nextAvcDts=null,this.nextAudioPts=null,this.videoSampleDuration=null,this.isAudioContiguous=!1,this.isVideoContiguous=!1,this.observer=e,this.config=t,this.typeSupported=r,this.ISGenerated=!1,null===wi){var n=(navigator.userAgent||"").match(/Chrome\/(\d+)/i)
+wi=n?parseInt(n[1]):0}if(null===Ei){var a=navigator.userAgent.match(/Safari\/(\d+)/i)
+Ei=a?parseInt(a[1]):0}}var t=e.prototype
+return t.destroy=function(){},t.resetTimeStamp=function(e){O.log("[mp4-remuxer]: initPTS & initDTS reset"),this._initPTS=this._initDTS=e},t.resetNextTimestamp=function(){O.log("[mp4-remuxer]: reset next timestamp"),this.isVideoContiguous=!1,this.isAudioContiguous=!1},t.resetInitSegment=function(){O.log("[mp4-remuxer]: ISGenerated flag reset"),this.ISGenerated=!1},t.getVideoStartPts=function(e){var t=!1,r=e.reduce((function(e,r){var i=r.pts-e
+return i<-4294967296?(t=!0,ki(e,r.pts)):i>0?e:r.pts}),e[0].pts)
+return t&&O.debug("PTS rollover detected"),r},t.remux=function(e,t,r,i,n,a,s,o){var l,u,c,d,h,f,p=n,m=n,g=e.pid>-1,v=t.pid>-1,b=t.samples.length,y=e.samples.length>0,_=s&&b>0||b>1
 if((!g||y)&&(!v||_)||this.ISGenerated||s){this.ISGenerated||(c=this.generateIS(e,t,n,a))
 var w,E=this.isVideoContiguous,T=-1
 if(_&&(T=function(e){for(var t=0;t<e.length;t++)if(e[t].key)return t
-return-1}(t.samples),!E&&this.config.forceKeyFrameOnDiscontinuity))if(f=!0,T>0){S.warn("[mp4-remuxer]: Dropped "+T+" out of "+b+" video samples due to a missing keyframe")
+return-1}(t.samples),!E&&this.config.forceKeyFrameOnDiscontinuity))if(f=!0,T>0){O.warn("[mp4-remuxer]: Dropped "+T+" out of "+b+" video samples due to a missing keyframe")
 var k=this.getVideoStartPts(t.samples)
-t.samples=t.samples.slice(T),t.dropped+=T,w=m+=(t.samples[0].pts-k)/t.inputTimeScale}else-1===T&&(S.warn("[mp4-remuxer]: No keyframe found out of "+b+" video samples"),f=!1)
-if(this.ISGenerated){if(y&&_){var O=this.getVideoStartPts(t.samples),x=(Ei(e.samples[0].pts,O)-O)/t.inputTimeScale
-p+=Math.max(0,x),m+=Math.max(0,-x)}if(y){if(e.samplerate||(S.warn("[mp4-remuxer]: regenerate InitSegment as audio detected"),c=this.generateIS(e,t,n,a)),u=this.remuxAudio(e,p,this.isAudioContiguous,a,v||_||o===st?m:void 0),_){var P=u?u.endPTS-u.startPTS:0
-t.inputTimeScale||(S.warn("[mp4-remuxer]: regenerate InitSegment as video detected"),c=this.generateIS(e,t,n,a)),l=this.remuxVideo(t,m,E,P)}}else _&&(l=this.remuxVideo(t,m,E,0))
-l&&(l.firstKeyFrame=T,l.independent=-1!==T,l.firstKeyFramePTS=w)}}return this.ISGenerated&&this._initPTS&&this._initDTS&&(r.samples.length&&(h=Ti(r,n,this._initPTS,this._initDTS)),i.samples.length&&(d=ki(i,n,this._initPTS))),{audio:u,video:l,initSegment:c,independent:f,text:d,id3:h}},t.generateIS=function(e,t,r,i){var n,a,s,o=e.samples,l=t.samples,u=this.typeSupported,c={},d=this._initPTS,h=!d||i,f="audio/mp4"
-if(h&&(n=a=1/0),e.config&&o.length&&(e.timescale=e.samplerate,"mp3"===e.segmentCodec&&(u.mpeg?(f="audio/mpeg",e.codec=""):u.mp3&&(e.codec="mp3")),c.audio={id:"audio",container:f,codec:e.codec,initSegment:"mp3"===e.segmentCodec&&u.mpeg?new Uint8Array(0):gi.initSegment([e]),metadata:{channelCount:e.channelCount}},h&&(s=e.inputTimeScale,d&&s===d.timescale?h=!1:n=a=o[0].pts-Math.round(s*r))),t.sps&&t.pps&&l.length&&(t.timescale=t.inputTimeScale,c.video={id:"main",container:"video/mp4",codec:t.codec,initSegment:gi.initSegment([t]),metadata:{width:t.width,height:t.height}},h))if(s=t.inputTimeScale,d&&s===d.timescale)h=!1
+t.samples=t.samples.slice(T),t.dropped+=T,w=m+=(t.samples[0].pts-k)/t.inputTimeScale}else-1===T&&(O.warn("[mp4-remuxer]: No keyframe found out of "+b+" video samples"),f=!1)
+if(this.ISGenerated){if(y&&_){var S=this.getVideoStartPts(t.samples),x=(ki(e.samples[0].pts,S)-S)/t.inputTimeScale
+p+=Math.max(0,x),m+=Math.max(0,-x)}if(y){if(e.samplerate||(O.warn("[mp4-remuxer]: regenerate InitSegment as audio detected"),c=this.generateIS(e,t,n,a)),u=this.remuxAudio(e,p,this.isAudioContiguous,a,v||_||o===ut?m:void 0),_){var P=u?u.endPTS-u.startPTS:0
+t.inputTimeScale||(O.warn("[mp4-remuxer]: regenerate InitSegment as video detected"),c=this.generateIS(e,t,n,a)),l=this.remuxVideo(t,m,E,P)}}else _&&(l=this.remuxVideo(t,m,E,0))
+l&&(l.firstKeyFrame=T,l.independent=-1!==T,l.firstKeyFramePTS=w)}}return this.ISGenerated&&this._initPTS&&this._initDTS&&(r.samples.length&&(h=Si(r,n,this._initPTS,this._initDTS)),i.samples.length&&(d=Oi(i,n,this._initPTS))),{audio:u,video:l,initSegment:c,independent:f,text:d,id3:h}},t.generateIS=function(e,t,r,i){var n,a,s,o=e.samples,l=t.samples,u=this.typeSupported,c={},d=this._initPTS,h=!d||i,f="audio/mp4"
+if(h&&(n=a=1/0),e.config&&o.length&&(e.timescale=e.samplerate,"mp3"===e.segmentCodec&&(u.mpeg?(f="audio/mpeg",e.codec=""):u.mp3&&(e.codec="mp3")),c.audio={id:"audio",container:f,codec:e.codec,initSegment:"mp3"===e.segmentCodec&&u.mpeg?new Uint8Array(0):bi.initSegment([e]),metadata:{channelCount:e.channelCount}},h&&(s=e.inputTimeScale,d&&s===d.timescale?h=!1:n=a=o[0].pts-Math.round(s*r))),t.sps&&t.pps&&l.length&&(t.timescale=t.inputTimeScale,c.video={id:"main",container:"video/mp4",codec:t.codec,initSegment:bi.initSegment([t]),metadata:{width:t.width,height:t.height}},h))if(s=t.inputTimeScale,d&&s===d.timescale)h=!1
 else{var p=this.getVideoStartPts(l),m=Math.round(s*r)
-a=Math.min(a,Ei(l[0].dts,p)-m),n=Math.min(n,p-m)}if(Object.keys(c).length)return this.ISGenerated=!0,h?(this._initPTS={baseTime:n,timescale:s},this._initDTS={baseTime:a,timescale:s}):n=s=void 0,{tracks:c,initPTS:n,timescale:s}},t.remuxVideo=function(e,t,r,i){var n,a,s=e.inputTimeScale,l=e.samples,u=[],c=l.length,d=this._initPTS,h=this.nextAvcDts,f=8,p=this.videoSampleDuration,m=Number.POSITIVE_INFINITY,g=Number.NEGATIVE_INFINITY,v=!1
-r&&null!==h||(h=t*s-(l[0].pts-Ei(l[0].dts,l[0].pts)))
-for(var w=d.baseTime*s/d.timescale,E=0;E<c;E++){var T=l[E]
-T.pts=Ei(T.pts-w,h),T.dts=Ei(T.dts-w,h),T.dts<l[E>0?E-1:E].dts&&(v=!0)}v&&l.sort((function(e,t){var r=e.dts-t.dts,i=e.pts-t.pts
+a=Math.min(a,ki(l[0].dts,p)-m),n=Math.min(n,p-m)}if(Object.keys(c).length)return this.ISGenerated=!0,h?(this._initPTS={baseTime:n,timescale:s},this._initDTS={baseTime:a,timescale:s}):n=s=void 0,{tracks:c,initPTS:n,timescale:s}},t.remuxVideo=function(e,t,r,i){var n,a,s=e.inputTimeScale,l=e.samples,u=[],c=l.length,d=this._initPTS,h=this.nextAvcDts,f=8,p=this.videoSampleDuration,m=Number.POSITIVE_INFINITY,g=Number.NEGATIVE_INFINITY,v=!1
+r&&null!==h||(h=t*s-(l[0].pts-ki(l[0].dts,l[0].pts)))
+for(var b=d.baseTime*s/d.timescale,E=0;E<c;E++){var T=l[E]
+T.pts=ki(T.pts-b,h),T.dts=ki(T.dts-b,h),T.dts<l[E>0?E-1:E].dts&&(v=!0)}v&&l.sort((function(e,t){var r=e.dts-t.dts,i=e.pts-t.pts
 return r||i})),n=l[0].dts
-var k=l[l.length-1].dts-n,O=k?Math.round(k/(c-1)):p||e.inputTimeScale/30
-if(r){var x=n-h,P=x>O,A=x<-1
-if((P||A)&&(P?S.warn("AVC: "+bi(x,!0)+" ms ("+x+"dts) hole between fragments detected, filling it"):S.warn("AVC: "+bi(-x,!0)+" ms ("+x+"dts) overlapping between fragments detected"),!A||h>l[0].pts)){n=h
+var k=l[l.length-1].dts-n,S=k?Math.round(k/(c-1)):p||e.inputTimeScale/30
+if(r){var x=n-h,P=x>S,A=x<-1
+if((P||A)&&(P?O.warn("AVC: "+_i(x,!0)+" ms ("+x+"dts) hole between fragments detected, filling it"):O.warn("AVC: "+_i(-x,!0)+" ms ("+x+"dts) overlapping between fragments detected"),!A||h>l[0].pts)){n=h
 var R=l[0].pts-x
-l[0].dts=n,l[0].pts=R,S.log("Video: First PTS/DTS adjusted: "+bi(R,!0)+"/"+bi(n,!0)+", delta: "+bi(x,!0)+" ms")}}n=Math.max(0,n)
+l[0].dts=n,l[0].pts=R,O.log("Video: First PTS/DTS adjusted: "+_i(R,!0)+"/"+_i(n,!0)+", delta: "+_i(x,!0)+" ms")}}n=Math.max(0,n)
 for(var C=0,D=0,M=0;M<c;M++){for(var I=l[M],L=I.units,j=L.length,F=0,N=0;N<j;N++)F+=L[N].data.length
 D+=F,C+=j,I.length=F,I.dts=Math.max(I.dts,n),m=Math.min(I.pts,m),g=Math.max(I.pts,g)}a=l[c-1].dts
 var z,U=D+4*C+8
-try{z=new Uint8Array(U)}catch(e){return void this.observer.emit(b.ERROR,b.ERROR,{type:y.MUX_ERROR,details:_.REMUX_ALLOC_ERROR,fatal:!1,error:e,bytes:U,reason:"fail allocating video mdat "+U})}var B=new DataView(z.buffer)
-B.setUint32(0,U),z.set(gi.types.mdat,4)
+try{z=new Uint8Array(U)}catch(e){return void this.observer.emit(y.ERROR,y.ERROR,{type:_.MUX_ERROR,details:w.REMUX_ALLOC_ERROR,fatal:!1,error:e,bytes:U,reason:"fail allocating video mdat "+U})}var B=new DataView(z.buffer)
+B.setUint32(0,U),z.set(bi.types.mdat,4)
 for(var H=!1,V=Number.POSITIVE_INFINITY,$=Number.POSITIVE_INFINITY,q=Number.NEGATIVE_INFINITY,G=Number.NEGATIVE_INFINITY,K=0;K<c;K++){for(var W=l[K],Y=W.units,Q=0,X=0,J=Y.length;X<J;X++){var Z=Y[X],ee=Z.data,te=Z.data.byteLength
 B.setUint32(f,te),f+=4,z.set(ee,f),f+=te,Q+=4+te}var re=void 0
 if(K<c-1)p=l[K+1].dts-W.dts,re=l[K+1].pts-W.pts
-else{var ie=this.config,ne=K>0?W.dts-l[K-1].dts:O
-if(re=K>0?W.pts-l[K-1].pts:O,ie.stretchShortVideoTrack&&null!==this.nextAudioPts){var ae=Math.floor(ie.maxBufferHole*s),se=(i?m+i*s:this.nextAudioPts)-W.pts
-se>ae?((p=se-ne)<0?p=ne:H=!0,S.log("[mp4-remuxer]: It is approximately "+se/90+" ms to the next segment; using duration "+p/90+" ms for the last video frame.")):p=ne}else p=ne}var oe=Math.round(W.pts-W.dts)
-V=Math.min(V,p),q=Math.max(q,p),$=Math.min($,re),G=Math.max(G,re),u.push(new Oi(W.key,p,Q,oe))}if(u.length)if(yi){if(yi<70){var le=u[0].flags
-le.dependsOn=2,le.isNonSync=0}}else if(_i&&G-$<q-V&&O/q<.025&&0===u[0].cts){S.warn("Found irregular gaps in sample duration. Using PTS instead of DTS to determine MP4 sample duration.")
+else{var ie=this.config,ne=K>0?W.dts-l[K-1].dts:S
+if(re=K>0?W.pts-l[K-1].pts:S,ie.stretchShortVideoTrack&&null!==this.nextAudioPts){var ae=Math.floor(ie.maxBufferHole*s),se=(i?m+i*s:this.nextAudioPts)-W.pts
+se>ae?((p=se-ne)<0?p=ne:H=!0,O.log("[mp4-remuxer]: It is approximately "+se/90+" ms to the next segment; using duration "+p/90+" ms for the last video frame.")):p=ne}else p=ne}var oe=Math.round(W.pts-W.dts)
+V=Math.min(V,p),q=Math.max(q,p),$=Math.min($,re),G=Math.max(G,re),u.push(new Pi(W.key,p,Q,oe))}if(u.length)if(wi){if(wi<70){var le=u[0].flags
+le.dependsOn=2,le.isNonSync=0}}else if(Ei&&G-$<q-V&&S/q<.025&&0===u[0].cts){O.warn("Found irregular gaps in sample duration. Using PTS instead of DTS to determine MP4 sample duration.")
 for(var ue=n,ce=0,de=u.length;ce<de;ce++){var he=ue+u[ce].duration,fe=ue+u[ce].cts
 if(ce<de-1){var pe=he+u[ce+1].cts
-u[ce].duration=pe-fe}else u[ce].duration=ce?u[ce-1].duration:O
-u[ce].cts=0,ue=he}}p=H||!p?O:p,this.nextAvcDts=h=a+p,this.videoSampleDuration=p,this.isVideoContiguous=!0
-var me={data1:gi.moof(e.sequenceNumber++,n,o({},e,{samples:u})),data2:z,startPTS:m/s,endPTS:(g+p)/s,startDTS:n/s,endDTS:h/s,type:"video",hasAudio:!1,hasVideo:!0,nb:u.length,dropped:e.dropped}
-return e.samples=[],e.dropped=0,me},t.remuxAudio=function(e,t,r,i,n){var a=e.inputTimeScale,s=a/(e.samplerate?e.samplerate:a),l="aac"===e.segmentCodec?1024:1152,u=l*s,c=this._initPTS,d="mp3"===e.segmentCodec&&this.typeSupported.mpeg,h=[],f=void 0!==n,p=e.samples,m=d?0:8,g=this.nextAudioPts||-1,v=t*a,w=c.baseTime*a/c.timescale
-if(this.isAudioContiguous=r=r||p.length&&g>0&&(i&&Math.abs(v-g)<9e3||Math.abs(Ei(p[0].pts-w,v)-g)<20*u),p.forEach((function(e){e.pts=Ei(e.pts-w,v)})),!r||g<0){if(p=p.filter((function(e){return e.pts>=0})),!p.length)return
-g=0===n?0:i&&!f?Math.max(0,v):p[0].pts}if("aac"===e.segmentCodec)for(var E=this.config.maxAudioFramesDrift,T=0,k=g;T<p.length;T++){var O=p[T],x=O.pts,P=x-k,A=Math.abs(1e3*P/a)
-if(P<=-E*u&&f)0===T&&(S.warn("Audio frame @ "+(x/a).toFixed(3)+"s overlaps nextAudioPts by "+Math.round(1e3*P/a)+" ms."),this.nextAudioPts=g=k=x)
-else if(P>=E*u&&A<1e4&&f){var R=Math.round(P/u);(k=x-R*u)<0&&(R--,k+=u),0===T&&(this.nextAudioPts=g=k),S.warn("[mp4-remuxer]: Injecting "+R+" audio frame @ "+(k/a).toFixed(3)+"s due to "+Math.round(1e3*P/a)+" ms gap.")
-for(var C=0;C<R;C++){var D=Math.max(k,0),M=pi.getSilentFrame(e.manifestCodec||e.codec,e.channelCount)
-M||(S.log("[mp4-remuxer]: Unable to get silent frame for given audio codec; duplicating last frame instead."),M=O.unit.subarray()),p.splice(T,0,{unit:M,pts:D}),k+=u,T++}}O.pts=k,k+=u}for(var I,L=null,j=null,F=0,N=p.length;N--;)F+=p[N].unit.byteLength
+u[ce].duration=pe-fe}else u[ce].duration=ce?u[ce-1].duration:S
+u[ce].cts=0,ue=he}}p=H||!p?S:p,this.nextAvcDts=h=a+p,this.videoSampleDuration=p,this.isVideoContiguous=!0
+var me={data1:bi.moof(e.sequenceNumber++,n,o({},e,{samples:u})),data2:z,startPTS:m/s,endPTS:(g+p)/s,startDTS:n/s,endDTS:h/s,type:"video",hasAudio:!1,hasVideo:!0,nb:u.length,dropped:e.dropped}
+return e.samples=[],e.dropped=0,me},t.remuxAudio=function(e,t,r,i,n){var a=e.inputTimeScale,s=a/(e.samplerate?e.samplerate:a),l="aac"===e.segmentCodec?1024:1152,u=l*s,c=this._initPTS,d="mp3"===e.segmentCodec&&this.typeSupported.mpeg,h=[],f=void 0!==n,p=e.samples,m=d?0:8,g=this.nextAudioPts||-1,v=t*a,b=c.baseTime*a/c.timescale
+if(this.isAudioContiguous=r=r||p.length&&g>0&&(i&&Math.abs(v-g)<9e3||Math.abs(ki(p[0].pts-b,v)-g)<20*u),p.forEach((function(e){e.pts=ki(e.pts-b,v)})),!r||g<0){if(p=p.filter((function(e){return e.pts>=0})),!p.length)return
+g=0===n?0:i&&!f?Math.max(0,v):p[0].pts}if("aac"===e.segmentCodec)for(var E=this.config.maxAudioFramesDrift,T=0,k=g;T<p.length;T++){var S=p[T],x=S.pts,P=x-k,A=Math.abs(1e3*P/a)
+if(P<=-E*u&&f)0===T&&(O.warn("Audio frame @ "+(x/a).toFixed(3)+"s overlaps nextAudioPts by "+Math.round(1e3*P/a)+" ms."),this.nextAudioPts=g=k=x)
+else if(P>=E*u&&A<1e4&&f){var R=Math.round(P/u);(k=x-R*u)<0&&(R--,k+=u),0===T&&(this.nextAudioPts=g=k),O.warn("[mp4-remuxer]: Injecting "+R+" audio frame @ "+(k/a).toFixed(3)+"s due to "+Math.round(1e3*P/a)+" ms gap.")
+for(var C=0;C<R;C++){var D=Math.max(k,0),M=gi.getSilentFrame(e.manifestCodec||e.codec,e.channelCount)
+M||(O.log("[mp4-remuxer]: Unable to get silent frame for given audio codec; duplicating last frame instead."),M=S.unit.subarray()),p.splice(T,0,{unit:M,pts:D}),k+=u,T++}}S.pts=k,k+=u}for(var I,L=null,j=null,F=0,N=p.length;N--;)F+=p[N].unit.byteLength
 for(var z=0,U=p.length;z<U;z++){var B=p[z],H=B.unit,V=B.pts
 if(null!==j)h[z-1].duration=Math.round((V-j)/s)
 else{if(r&&"aac"===e.segmentCodec&&(V=g),L=V,!(F>0))return
 F+=m
-try{I=new Uint8Array(F)}catch(e){return void this.observer.emit(b.ERROR,b.ERROR,{type:y.MUX_ERROR,details:_.REMUX_ALLOC_ERROR,fatal:!1,error:e,bytes:F,reason:"fail allocating audio mdat "+F})}d||(new DataView(I.buffer).setUint32(0,F),I.set(gi.types.mdat,4))}I.set(H,m)
+try{I=new Uint8Array(F)}catch(e){return void this.observer.emit(y.ERROR,y.ERROR,{type:_.MUX_ERROR,details:w.REMUX_ALLOC_ERROR,fatal:!1,error:e,bytes:F,reason:"fail allocating audio mdat "+F})}d||(new DataView(I.buffer).setUint32(0,F),I.set(bi.types.mdat,4))}I.set(H,m)
 var $=H.byteLength
-m+=$,h.push(new Oi(!0,l,$,0)),j=V}var q=h.length
+m+=$,h.push(new Pi(!0,l,$,0)),j=V}var q=h.length
 if(q){var G=h[h.length-1]
 this.nextAudioPts=g=j+s*G.duration
-var K=d?new Uint8Array(0):gi.moof(e.sequenceNumber++,L/s,o({},e,{samples:h}))
+var K=d?new Uint8Array(0):bi.moof(e.sequenceNumber++,L/s,o({},e,{samples:h}))
 e.samples=[]
 var W=L/a,Y=g/a,Q={data1:K,data2:I,startPTS:W,endPTS:Y,startDTS:W,endDTS:Y,type:"audio",hasAudio:!0,hasVideo:!1,nb:q}
-return this.isAudioContiguous=!0,Q}},t.remuxEmptyAudio=function(e,t,r,i){var n=e.inputTimeScale,a=n/(e.samplerate?e.samplerate:n),s=this.nextAudioPts,o=this._initDTS,l=9e4*o.baseTime/o.timescale,u=(null!==s?s:i.startDTS*n)+l,c=i.endDTS*n+l,d=1024*a,h=Math.ceil((c-u)/d),f=pi.getSilentFrame(e.manifestCodec||e.codec,e.channelCount)
-if(S.warn("[mp4-remuxer]: remux empty Audio"),f){for(var p=[],m=0;m<h;m++){var g=u+m*d
-p.push({unit:f,pts:g,dts:g})}return e.samples=p,this.remuxAudio(e,t,r,!1)}S.trace("[mp4-remuxer]: Unable to remuxEmptyAudio since we were unable to get a silent frame for given audio codec")},e}()
-function Ei(e,t){var r
+return this.isAudioContiguous=!0,Q}},t.remuxEmptyAudio=function(e,t,r,i){var n=e.inputTimeScale,a=n/(e.samplerate?e.samplerate:n),s=this.nextAudioPts,o=this._initDTS,l=9e4*o.baseTime/o.timescale,u=(null!==s?s:i.startDTS*n)+l,c=i.endDTS*n+l,d=1024*a,h=Math.ceil((c-u)/d),f=gi.getSilentFrame(e.manifestCodec||e.codec,e.channelCount)
+if(O.warn("[mp4-remuxer]: remux empty Audio"),f){for(var p=[],m=0;m<h;m++){var g=u+m*d
+p.push({unit:f,pts:g,dts:g})}return e.samples=p,this.remuxAudio(e,t,r,!1)}O.trace("[mp4-remuxer]: Unable to remuxEmptyAudio since we were unable to get a silent frame for given audio codec")},e}()
+function ki(e,t){var r
 if(null===t)return e
 for(r=t<e?-8589934592:8589934592;Math.abs(e-t)>4294967296;)e+=r
-return e}function Ti(e,t,r,i){var n=e.samples.length
+return e}function Si(e,t,r,i){var n=e.samples.length
 if(n){for(var a=e.inputTimeScale,s=0;s<n;s++){var o=e.samples[s]
-o.pts=Ei(o.pts-9e4*r.baseTime/r.timescale,t*a)/a,o.dts=Ei(o.dts-9e4*i.baseTime/i.timescale,t*a)/a}var l=e.samples
-return e.samples=[],{samples:l}}}function ki(e,t,r){var i=e.samples.length
+o.pts=ki(o.pts-9e4*r.baseTime/r.timescale,t*a)/a,o.dts=ki(o.dts-9e4*i.baseTime/i.timescale,t*a)/a}var l=e.samples
+return e.samples=[],{samples:l}}}function Oi(e,t,r){var i=e.samples.length
 if(i){for(var n=e.inputTimeScale,a=0;a<i;a++){var s=e.samples[a]
-s.pts=Ei(s.pts-9e4*r.baseTime/r.timescale,t*n)/n}e.samples.sort((function(e,t){return e.pts-t.pts}))
+s.pts=ki(s.pts-9e4*r.baseTime/r.timescale,t*n)/n}e.samples.sort((function(e,t){return e.pts-t.pts}))
 var o=e.samples
-return e.samples=[],{samples:o}}}var Si,Oi=function(e,t,r,i){this.size=void 0,this.duration=void 0,this.cts=void 0,this.flags=void 0,this.duration=t,this.size=r,this.cts=i,this.flags=new xi(e)},xi=function(e){this.isLeading=0,this.isDependedOn=0,this.hasRedundancy=0,this.degradPrio=0,this.dependsOn=1,this.isNonSync=1,this.dependsOn=e?2:1,this.isNonSync=e?0:1},Pi=function(){function e(){this.emitInitSegment=!1,this.audioCodec=void 0,this.videoCodec=void 0,this.initData=void 0,this.initPTS=null,this.initTracks=void 0,this.lastEndTime=null}var t=e.prototype
+return e.samples=[],{samples:o}}}var xi,Pi=function(e,t,r,i){this.size=void 0,this.duration=void 0,this.cts=void 0,this.flags=void 0,this.duration=t,this.size=r,this.cts=i,this.flags=new Ai(e)},Ai=function(e){this.isLeading=0,this.isDependedOn=0,this.hasRedundancy=0,this.degradPrio=0,this.dependsOn=1,this.isNonSync=1,this.dependsOn=e?2:1,this.isNonSync=e?0:1},Ri=function(){function e(){this.emitInitSegment=!1,this.audioCodec=void 0,this.videoCodec=void 0,this.initData=void 0,this.initPTS=null,this.initTracks=void 0,this.lastEndTime=null}var t=e.prototype
 return t.destroy=function(){},t.resetTimeStamp=function(e){this.initPTS=e,this.lastEndTime=null},t.resetNextTimestamp=function(){this.lastEndTime=null},t.resetInitSegment=function(e,t,r,i){this.audioCodec=t,this.videoCodec=r,this.generateInitSegment(function(e,t){if(!e||!t)return e
 var r=t.keyId
-return r&&t.isCommonEncryption&&Ee(e,["moov","trak"]).forEach((function(e){var t=Ee(e,["mdia","minf","stbl","stsd"])[0].subarray(8),i=Ee(t,["enca"]),n=i.length>0
-n||(i=Ee(t,["encv"])),i.forEach((function(e){Ee(n?e.subarray(28):e.subarray(78),["sinf"]).forEach((function(e){var t=Se(e)
+return r&&t.isCommonEncryption&&Te(e,["moov","trak"]).forEach((function(e){var t=Te(e,["mdia","minf","stbl","stsd"])[0].subarray(8),i=Te(t,["enca"]),n=i.length>0
+n||(i=Te(t,["encv"])),i.forEach((function(e){Te(n?e.subarray(28):e.subarray(78),["sinf"]).forEach((function(e){var t=Oe(e)
 if(t){var i=t.subarray(8,24)
-i.some((function(e){return 0!==e}))||(S.log("[eme] Patching keyId in 'enc"+(n?"a":"v")+">sinf>>tenc' box: "+fe(i)+" -> "+fe(r)),t.set(r,8))}}))}))})),e}(e,i)),this.emitInitSegment=!0},t.generateInitSegment=function(e){var t=this.audioCodec,r=this.videoCodec
+i.some((function(e){return 0!==e}))||(O.log("[eme] Patching keyId in 'enc"+(n?"a":"v")+">sinf>>tenc' box: "+pe(i)+" -> "+pe(r)),t.set(r,8))}}))}))})),e}(e,i)),this.emitInitSegment=!0},t.generateInitSegment=function(e){var t=this.audioCodec,r=this.videoCodec
 if(null==e||!e.byteLength)return this.initTracks=void 0,void(this.initData=void 0)
-var i=this.initData=ke(e)
-t||(t=Ai(i.audio,D)),r||(r=Ai(i.video,M))
+var i=this.initData=Se(e)
+t||(t=Ci(i.audio,M)),r||(r=Ci(i.video,I))
 var n={}
-i.audio&&i.video?n.audiovideo={container:"video/mp4",codec:t+","+r,initSegment:e,id:"main"}:i.audio?n.audio={container:"audio/mp4",codec:t,initSegment:e,id:"audio"}:i.video?n.video={container:"video/mp4",codec:r,initSegment:e,id:"main"}:S.warn("[passthrough-remuxer.ts]: initSegment does not contain moov or trak boxes."),this.initTracks=n},t.remux=function(e,t,r,i,n,a){var s,o,l=this.initPTS,u=this.lastEndTime,c={audio:void 0,video:void 0,text:i,id3:r,initSegment:void 0}
-v(u)||(u=this.lastEndTime=n||0)
+i.audio&&i.video?n.audiovideo={container:"video/mp4",codec:t+","+r,initSegment:e,id:"main"}:i.audio?n.audio={container:"audio/mp4",codec:t,initSegment:e,id:"audio"}:i.video?n.video={container:"video/mp4",codec:r,initSegment:e,id:"main"}:O.warn("[passthrough-remuxer.ts]: initSegment does not contain moov or trak boxes."),this.initTracks=n},t.remux=function(e,t,r,i,n,a){var s,o,l=this.initPTS,u=this.lastEndTime,c={audio:void 0,video:void 0,text:i,id3:r,initSegment:void 0}
+b(u)||(u=this.lastEndTime=n||0)
 var d=t.samples
 if(null==d||!d.length)return c
 var h={initPTS:void 0,timescale:1},f=this.initData
-if(null!=(s=f)&&s.length||(this.generateInitSegment(d),f=this.initData),null==(o=f)||!o.length)return S.warn("[passthrough-remuxer.ts]: Failed to generate initSegment."),c
+if(null!=(s=f)&&s.length||(this.generateInitSegment(d),f=this.initData),null==(o=f)||!o.length)return O.warn("[passthrough-remuxer.ts]: Failed to generate initSegment."),c
 this.emitInitSegment&&(h.tracks=this.initTracks,this.emitInitSegment=!1)
-var p=function(e,t){return Ee(t,["moof","traf"]).reduce((function(t,r){var i=Ee(r,["tfdt"])[0],n=i[0],a=Ee(r,["tfhd"]).reduce((function(t,r){var a=ye(r,4),s=e[a]
-if(s){var o=ye(i,4)
-if(1===n){if(o===pe)return S.warn("[mp4-demuxer]: Ignoring assumed invalid signed 64-bit track fragment decode time"),t
-o*=pe+1,o+=ye(i,8)}var l=o/(s.timescale||9e4)
+var p=function(e,t){for(var r=0,i=0,n=0,a=Te(e,["moof","traf"]),s=0;s<a.length;s++){var o=a[s],l=Te(o,["tfhd"])[0],u=t[_e(l,4)]
+if(u){var c=u.default,d=_e(l,0)|(null==c?void 0:c.flags),h=null==c?void 0:c.duration
+8&d&&(h=_e(l,2&d?12:8))
+for(var f=u.timescale||9e4,p=Te(o,["trun"]),m=0;m<p.length;m++)!(r=xe(p[m]))&&h&&(r=h*_e(p[m],4)),u.type===I?i+=r/f:u.type===M&&(n+=r/f)}}if(0===i&&0===n){for(var g=0,v=Te(e,["sidx"]),b=0;b<v.length;b++){var y=ke(v[b])
+null!=y&&y.references&&(g+=y.references.reduce((function(e,t){return e+t.info.duration||0}),0))}return g}return i||n}(d,f),m=function(e,t){return Te(t,["moof","traf"]).reduce((function(t,r){var i=Te(r,["tfdt"])[0],n=i[0],a=Te(r,["tfhd"]).reduce((function(t,r){var a=_e(r,4),s=e[a]
+if(s){var o=_e(i,4)
+if(1===n){if(o===me)return O.warn("[mp4-demuxer]: Ignoring assumed invalid signed 64-bit track fragment decode time"),t
+o*=me+1,o+=_e(i,8)}var l=o/(s.timescale||9e4)
 if(isFinite(l)&&(null===t||l<t))return l}return t}),null)
-return null!==a&&isFinite(a)&&(null===t||a<t)?a:t}),null)}(f,d),m=null===p?n:p;(function(e,t,r){if(null===e)return!0
-var i=t-e.baseTime/e.timescale
-return i<0&&Math.abs(i-r)>1}(l,m,n)||h.timescale!==l.timescale&&a)&&(h.initPTS=m-n,this.initPTS=l={baseTime:h.initPTS,timescale:1})
-var g=function(e,t){for(var r=0,i=0,n=0,a=Ee(e,["moof","traf"]),s=0;s<a.length;s++){var o=a[s],l=Ee(o,["tfhd"])[0],u=t[ye(l,4)]
-if(u){var c=u.default,d=ye(l,0)|(null==c?void 0:c.flags),h=null==c?void 0:c.duration
-8&d&&(h=ye(l,2&d?12:8))
-for(var f=u.timescale||9e4,p=Ee(o,["trun"]),m=0;m<p.length;m++)!(r=Oe(p[m]))&&h&&(r=h*ye(p[m],4)),u.type===M?i+=r/f:u.type===D&&(n+=r/f)}}if(0===i&&0===n){for(var g=0,v=Ee(e,["sidx"]),b=0;b<v.length;b++){var y=Te(v[b])
-null!=y&&y.references&&(g+=y.references.reduce((function(e,t){return e+t.info.duration||0}),0))}return g}return i||n}(d,f),b=e?m-l.baseTime/l.timescale:u,y=b+g
-!function(e,t,r){Ee(t,["moof","traf"]).forEach((function(t){Ee(t,["tfhd"]).forEach((function(i){var n=ye(i,4),a=e[n]
+return null!==a&&isFinite(a)&&(null===t||a<t)?a:t}),null)}(f,d),g=null===m?n:m;(function(e,t,r,i){if(null===e)return!0
+var n=Math.max(i,1),a=t-e.baseTime/e.timescale
+return Math.abs(a-r)>n}(l,g,n,p)||h.timescale!==l.timescale&&a)&&(h.initPTS=g-n,l&&1===l.timescale&&O.warn("Adjusting initPTS by "+(h.initPTS-l.baseTime)),this.initPTS=l={baseTime:h.initPTS,timescale:1})
+var v=e?g-l.baseTime/l.timescale:u,y=v+p
+!function(e,t,r){Te(t,["moof","traf"]).forEach((function(t){Te(t,["tfhd"]).forEach((function(i){var n=_e(i,4),a=e[n]
 if(a){var s=a.timescale||9e4
-Ee(t,["tfdt"]).forEach((function(e){var t=e[0],i=ye(e,4)
-if(0===t)i-=r*s,we(e,4,i=Math.max(i,0))
-else{i*=Math.pow(2,32),i+=ye(e,8),i-=r*s,i=Math.max(i,0)
-var n=Math.floor(i/(pe+1)),a=Math.floor(i%(pe+1))
-we(e,4,n),we(e,8,a)}}))}}))}))}(f,d,l.baseTime/l.timescale),g>0?this.lastEndTime=y:(S.warn("Duration parsed from mp4 should be greater than zero"),this.resetNextTimestamp())
+Te(t,["tfdt"]).forEach((function(e){var t=e[0],i=_e(e,4)
+if(0===t)i-=r*s,Ee(e,4,i=Math.max(i,0))
+else{i*=Math.pow(2,32),i+=_e(e,8),i-=r*s,i=Math.max(i,0)
+var n=Math.floor(i/(me+1)),a=Math.floor(i%(me+1))
+Ee(e,4,n),Ee(e,8,a)}}))}}))}))}(f,d,l.baseTime/l.timescale),p>0?this.lastEndTime=y:(O.warn("Duration parsed from mp4 should be greater than zero"),this.resetNextTimestamp())
 var _=!!f.audio,w=!!f.video,E=""
 _&&(E+="audio"),w&&(E+="video")
-var T={data1:d,startPTS:b,startDTS:b,endPTS:y,endDTS:y,type:E,hasAudio:_,hasVideo:w,nb:1,dropped:0}
-return c.audio="audio"===T.type?T:void 0,c.video="audio"!==T.type?T:void 0,c.initSegment=h,c.id3=Ti(r,n,l,l),i.samples.length&&(c.text=ki(i,n,l)),c},e}()
-function Ai(e,t){var r=null==e?void 0:e.codec
-return r&&r.length>4?r:"hvc1"===r||"hev1"===r?"hvc1.1.c.L120.90":"av01"===r?"av01.0.04M.08":"avc1"===r||t===M?"avc1.42e01e":"mp4a.40.5"}try{Si=self.performance.now.bind(self.performance)}catch(e){S.debug("Unable to use Performance API on this environment"),Si="undefined"!=typeof self&&self.Date.now}var Ri=[{demux:Gr,remux:Pi},{demux:si,remux:wi},{demux:$r,remux:wi},{demux:fi,remux:wi}],Ci=function(){function e(e,t,r,i,n){this.async=!1,this.observer=void 0,this.typeSupported=void 0,this.config=void 0,this.vendor=void 0,this.id=void 0,this.demuxer=void 0,this.remuxer=void 0,this.decrypter=void 0,this.probe=void 0,this.decryptionPromise=null,this.transmuxConfig=void 0,this.currentTransmuxState=void 0,this.observer=e,this.typeSupported=t,this.config=r,this.vendor=i,this.id=n}var t=e.prototype
+var T={data1:d,startPTS:v,startDTS:v,endPTS:y,endDTS:y,type:E,hasAudio:_,hasVideo:w,nb:1,dropped:0}
+return c.audio="audio"===T.type?T:void 0,c.video="audio"!==T.type?T:void 0,c.initSegment=h,c.id3=Si(r,n,l,l),i.samples.length&&(c.text=Oi(i,n,l)),c},e}()
+function Ci(e,t){var r=null==e?void 0:e.codec
+return r&&r.length>4?r:"hvc1"===r||"hev1"===r?"hvc1.1.6.L120.90":"av01"===r?"av01.0.04M.08":"avc1"===r||t===I?"avc1.42e01e":"mp4a.40.5"}try{xi=self.performance.now.bind(self.performance)}catch(e){O.debug("Unable to use Performance API on this environment"),xi="undefined"!=typeof self&&self.Date.now}var Di=[{demux:Wr,remux:Ri},{demux:li,remux:Ti},{demux:Gr,remux:Ti},{demux:mi,remux:Ti}],Mi=function(){function e(e,t,r,i,n){this.async=!1,this.observer=void 0,this.typeSupported=void 0,this.config=void 0,this.vendor=void 0,this.id=void 0,this.demuxer=void 0,this.remuxer=void 0,this.decrypter=void 0,this.probe=void 0,this.decryptionPromise=null,this.transmuxConfig=void 0,this.currentTransmuxState=void 0,this.observer=e,this.typeSupported=t,this.config=r,this.vendor=i,this.id=n}var t=e.prototype
 return t.configure=function(e){this.transmuxConfig=e,this.decrypter&&this.decrypter.reset()},t.push=function(e,t,r,i){var n=this,a=r.transmuxing
-a.executeStart=Si()
+a.executeStart=xi()
 var s=new Uint8Array(e),o=this.currentTransmuxState,l=this.transmuxConfig
 i&&(this.currentTransmuxState=i)
-var u=i||o,c=u.contiguous,d=u.discontinuity,h=u.trackSwitch,f=u.accurateTimeOffset,p=u.timeOffset,m=u.initSegmentChange,g=l.audioCodec,v=l.videoCodec,w=l.defaultInitPts,E=l.duration,T=l.initSegmentData,k=function(e,t){var r=null
+var u=i||o,c=u.contiguous,d=u.discontinuity,h=u.trackSwitch,f=u.accurateTimeOffset,p=u.timeOffset,m=u.initSegmentChange,g=l.audioCodec,v=l.videoCodec,b=l.defaultInitPts,E=l.duration,T=l.initSegmentData,k=function(e,t){var r=null
 return e.byteLength>0&&null!=t&&null!=t.key&&null!==t.iv&&null!=t.method&&(r=t),r}(s,t)
-if(k&&"AES-128"===k.method){var O=this.getDecrypter()
-if(!O.isSync())return this.decryptionPromise=O.webCryptoDecrypt(s,k.key.buffer,k.iv.buffer).then((function(e){var t=n.push(e,null,r)
+if(k&&"AES-128"===k.method){var S=this.getDecrypter()
+if(!S.isSync())return this.decryptionPromise=S.webCryptoDecrypt(s,k.key.buffer,k.iv.buffer).then((function(e){var t=n.push(e,null,r)
 return n.decryptionPromise=null,t})),this.decryptionPromise
-var x=O.softwareDecrypt(s,k.key.buffer,k.iv.buffer)
-if(r.part>-1&&(x=O.flush()),!x)return a.executeEnd=Si(),Di(r)
+var x=S.softwareDecrypt(s,k.key.buffer,k.iv.buffer)
+if(r.part>-1&&(x=S.flush()),!x)return a.executeEnd=xi(),Ii(r)
 s=new Uint8Array(x)}var P=this.needsProbing(d,h)
 if(P){var A=this.configureTransmuxer(s)
-if(A)return S.warn("[transmuxer] "+A.message),this.observer.emit(b.ERROR,b.ERROR,{type:y.MEDIA_ERROR,details:_.FRAG_PARSING_ERROR,fatal:!1,error:A,reason:A.message}),a.executeEnd=Si(),Di(r)}(d||h||m||P)&&this.resetInitSegment(T,g,v,E,t),(d||m||P)&&this.resetInitialTimestamp(w),c||this.resetContiguity()
+if(A)return O.warn("[transmuxer] "+A.message),this.observer.emit(y.ERROR,y.ERROR,{type:_.MEDIA_ERROR,details:w.FRAG_PARSING_ERROR,fatal:!1,error:A,reason:A.message}),a.executeEnd=xi(),Ii(r)}(d||h||m||P)&&this.resetInitSegment(T,g,v,E,t),(d||m||P)&&this.resetInitialTimestamp(b),c||this.resetContiguity()
 var R=this.transmux(s,k,p,f,r),C=this.currentTransmuxState
-return C.contiguous=!0,C.discontinuity=!1,C.trackSwitch=!1,a.executeEnd=Si(),R},t.flush=function(e){var t=this,r=e.transmuxing
-r.executeStart=Si()
+return C.contiguous=!0,C.discontinuity=!1,C.trackSwitch=!1,a.executeEnd=xi(),R},t.flush=function(e){var t=this,r=e.transmuxing
+r.executeStart=xi()
 var i=this.decrypter,n=this.currentTransmuxState,a=this.decryptionPromise
 if(a)return a.then((function(){return t.flush(e)}))
 var s=[],o=n.timeOffset
 if(i){var l=i.flush()
 l&&s.push(this.push(l,null,e))}var u=this.demuxer,c=this.remuxer
-if(!u||!c)return r.executeEnd=Si(),[Di(e)]
+if(!u||!c)return r.executeEnd=xi(),[Ii(e)]
 var d=u.flush(o)
-return Mi(d)?d.then((function(r){return t.flushRemux(s,r,e),s})):(this.flushRemux(s,d,e),s)},t.flushRemux=function(e,t,r){var i=t.audioTrack,n=t.videoTrack,a=t.id3Track,s=t.textTrack,o=this.currentTransmuxState,l=o.accurateTimeOffset,u=o.timeOffset
-S.log("[transmuxer.ts]: Flushed fragment "+r.sn+(r.part>-1?" p: "+r.part:"")+" of level "+r.level)
+return Li(d)?d.then((function(r){return t.flushRemux(s,r,e),s})):(this.flushRemux(s,d,e),s)},t.flushRemux=function(e,t,r){var i=t.audioTrack,n=t.videoTrack,a=t.id3Track,s=t.textTrack,o=this.currentTransmuxState,l=o.accurateTimeOffset,u=o.timeOffset
+O.log("[transmuxer.ts]: Flushed fragment "+r.sn+(r.part>-1?" p: "+r.part:"")+" of level "+r.level)
 var c=this.remuxer.remux(i,n,a,s,u,l,!0,this.id)
-e.push({remuxResult:c,chunkMeta:r}),r.transmuxing.executeEnd=Si()},t.resetInitialTimestamp=function(e){var t=this.demuxer,r=this.remuxer
+e.push({remuxResult:c,chunkMeta:r}),r.transmuxing.executeEnd=xi()},t.resetInitialTimestamp=function(e){var t=this.demuxer,r=this.remuxer
 t&&r&&(t.resetTimeStamp(e),r.resetTimeStamp(e))},t.resetContiguity=function(){var e=this.demuxer,t=this.remuxer
 e&&t&&(e.resetContiguity(),t.resetNextTimestamp())},t.resetInitSegment=function(e,t,r,i,n){var a=this.demuxer,s=this.remuxer
 a&&s&&(a.resetInitSegment(e,t,r,i),s.resetInitSegment(e,t,r,n))},t.destroy=function(){this.demuxer&&(this.demuxer.destroy(),this.demuxer=void 0),this.remuxer&&(this.remuxer.destroy(),this.remuxer=void 0)},t.transmux=function(e,t,r,i,n){return t&&"SAMPLE-AES"===t.method?this.transmuxSampleAes(e,t,r,i,n):this.transmuxUnencrypted(e,r,i,n)},t.transmuxUnencrypted=function(e,t,r,i){var n=this.demuxer.demux(e,t,!1,!this.config.progressive),a=n.audioTrack,s=n.videoTrack,o=n.id3Track,l=n.textTrack
 return{remuxResult:this.remuxer.remux(a,s,o,l,t,r,!1,this.id),chunkMeta:i}},t.transmuxSampleAes=function(e,t,r,i,n){var a=this
-return this.demuxer.demuxSampleAes(e,t,r).then((function(e){return{remuxResult:a.remuxer.remux(e.audioTrack,e.videoTrack,e.id3Track,e.textTrack,r,i,!1,a.id),chunkMeta:n}}))},t.configureTransmuxer=function(e){for(var t,r=this.config,i=this.observer,n=this.typeSupported,a=this.vendor,s=0,o=Ri.length;s<o;s++)if(Ri[s].demux.probe(e)){t=Ri[s]
+return this.demuxer.demuxSampleAes(e,t,r).then((function(e){return{remuxResult:a.remuxer.remux(e.audioTrack,e.videoTrack,e.id3Track,e.textTrack,r,i,!1,a.id),chunkMeta:n}}))},t.configureTransmuxer=function(e){for(var t,r=this.config,i=this.observer,n=this.typeSupported,a=this.vendor,s=0,o=Di.length;s<o;s++)if(Di[s].demux.probe(e)){t=Di[s]
 break}if(!t)return new Error("Failed to find demuxer by probing fragment data")
 var l=this.demuxer,u=this.remuxer,c=t.remux,d=t.demux
 u&&u instanceof c||(this.remuxer=new c(i,r,n,a)),l&&l instanceof d||(this.demuxer=new d(i,r,n),this.probe=d.probe)},t.needsProbing=function(e,t){return!this.demuxer||!this.remuxer||e||t},t.getDecrypter=function(){var e=this.decrypter
-return e||(e=this.decrypter=new vr(this.config)),e},e}(),Di=function(e){return{remuxResult:{},chunkMeta:e}}
-function Mi(e){return"then"in e&&e.then instanceof Function}var Ii=function(e,t,r,i,n){this.audioCodec=void 0,this.videoCodec=void 0,this.initSegmentData=void 0,this.duration=void 0,this.defaultInitPts=void 0,this.audioCodec=e,this.videoCodec=t,this.initSegmentData=r,this.duration=i,this.defaultInitPts=n||null},Li=function(e,t,r,i,n,a){this.discontinuity=void 0,this.contiguous=void 0,this.accurateTimeOffset=void 0,this.trackSwitch=void 0,this.timeOffset=void 0,this.initSegmentChange=void 0,this.discontinuity=e,this.contiguous=t,this.accurateTimeOffset=r,this.trackSwitch=i,this.timeOffset=n,this.initSegmentChange=a},ji={}
+return e||(e=this.decrypter=new _r(this.config)),e},e}(),Ii=function(e){return{remuxResult:{},chunkMeta:e}}
+function Li(e){return"then"in e&&e.then instanceof Function}var ji=function(e,t,r,i,n){this.audioCodec=void 0,this.videoCodec=void 0,this.initSegmentData=void 0,this.duration=void 0,this.defaultInitPts=void 0,this.audioCodec=e,this.videoCodec=t,this.initSegmentData=r,this.duration=i,this.defaultInitPts=n||null},Fi=function(e,t,r,i,n,a){this.discontinuity=void 0,this.contiguous=void 0,this.accurateTimeOffset=void 0,this.trackSwitch=void 0,this.timeOffset=void 0,this.initSegmentChange=void 0,this.discontinuity=e,this.contiguous=t,this.accurateTimeOffset=r,this.trackSwitch=i,this.timeOffset=n,this.initSegmentChange=a},Ni={exports:{}}
 !function(e){var t=Object.prototype.hasOwnProperty,r="~"
 function i(){}function n(e,t,r){this.fn=e,this.context=t,this.once=r||!1}function a(e,t,i,a,s){if("function"!=typeof i)throw new TypeError("The listener must be a function")
 var o=new n(i,a||e,s),l=r?r+t:t
@@ -5322,36 +5332,36 @@ var o=this._events[a]
 if(o.fn)o.fn!==t||n&&!o.once||i&&o.context!==i||s(this,a)
 else{for(var l=0,u=[],c=o.length;l<c;l++)(o[l].fn!==t||n&&!o[l].once||i&&o[l].context!==i)&&u.push(o[l])
 u.length?this._events[a]=1===u.length?u[0]:u:s(this,a)}return this},o.prototype.removeAllListeners=function(e){var t
-return e?(t=r?r+e:e,this._events[t]&&s(this,t)):(this._events=new i,this._eventsCount=0),this},o.prototype.off=o.prototype.removeListener,o.prototype.addListener=o.prototype.on,o.prefixed=r,o.EventEmitter=o,e.exports=o}({get exports(){return ji},set exports(e){ji=e}})
-var Fi=ji
-function Ni(e,t){if(!((r=t.remuxResult).audio||r.video||r.text||r.id3||r.initSegment))return!1
+return e?(t=r?r+e:e,this._events[t]&&s(this,t)):(this._events=new i,this._eventsCount=0),this},o.prototype.off=o.prototype.removeListener,o.prototype.addListener=o.prototype.on,o.prefixed=r,o.EventEmitter=o,e.exports=o}(Ni)
+var zi=function(e){return e&&e.__esModule&&Object.prototype.hasOwnProperty.call(e,"default")?e.default:e}(Ni.exports)
+function Ui(e,t){if(!((r=t.remuxResult).audio||r.video||r.text||r.id3||r.initSegment))return!1
 var r,i=[],n=t.remuxResult,a=n.audio,s=n.video
-return a&&zi(i,a),s&&zi(i,s),e.postMessage({event:"transmuxComplete",data:t},i),!0}function zi(e,t){t.data1&&e.push(t.data1.buffer),t.data2&&e.push(t.data2.buffer)}function Ui(e,t,r){t.reduce((function(t,r){return Ni(e,r)||t}),!1)||e.postMessage({event:"transmuxComplete",data:t[0]}),e.postMessage({event:"flush",data:r})}void 0!==t&&t&&function(e){var t=new Fi,r=function(t,r){e.postMessage({event:t,data:r})}
-t.on(b.FRAG_DECRYPTED,r),t.on(b.ERROR,r)
+return a&&Bi(i,a),s&&Bi(i,s),e.postMessage({event:"transmuxComplete",data:t},i),!0}function Bi(e,t){t.data1&&e.push(t.data1.buffer),t.data2&&e.push(t.data2.buffer)}function Hi(e,t,r){t.reduce((function(t,r){return Ui(e,r)||t}),!1)||e.postMessage({event:"transmuxComplete",data:t[0]}),e.postMessage({event:"flush",data:r})}void 0!==t&&t&&function(e){var t=new zi,r=function(t,r){e.postMessage({event:t,data:r})}
+t.on(y.FRAG_DECRYPTED,r),t.on(y.ERROR,r)
 e.addEventListener("message",(function(i){var n=i.data
 switch(n.cmd){case"init":var a=JSON.parse(n.config)
-e.transmuxer=new Ci(t,n.typeSupported,a,n.vendor,n.id),k(a.debug,n.id),function(){var e=function(e){S[e]=function(t){r("workerLog",{logType:e,message:t})}}
-for(var t in S)e(t)}(),r("init",null)
+e.transmuxer=new Mi(t,n.typeSupported,a,n.vendor,n.id),S(a.debug,n.id),function(){var e=function(e){O[e]=function(t){r("workerLog",{logType:e,message:t})}}
+for(var t in O)e(t)}(),r("init",null)
 break
 case"configure":e.transmuxer.configure(n.config)
 break
 case"demux":var s=e.transmuxer.push(n.data,n.decryptdata,n.chunkMeta,n.state)
-Mi(s)?(e.transmuxer.async=!0,s.then((function(t){Ni(e,t)})).catch((function(e){r(b.ERROR,{type:y.MEDIA_ERROR,details:_.FRAG_PARSING_ERROR,chunkMeta:n.chunkMeta,fatal:!1,error:e,err:e,reason:"transmuxer-worker push error"})}))):(e.transmuxer.async=!1,Ni(e,s))
+Li(s)?(e.transmuxer.async=!0,s.then((function(t){Ui(e,t)})).catch((function(e){r(y.ERROR,{type:_.MEDIA_ERROR,details:w.FRAG_PARSING_ERROR,chunkMeta:n.chunkMeta,fatal:!1,error:e,err:e,reason:"transmuxer-worker push error"})}))):(e.transmuxer.async=!1,Ui(e,s))
 break
 case"flush":var o=n.chunkMeta,l=e.transmuxer.flush(o)
-Mi(l)||e.transmuxer.async?(Mi(l)||(l=Promise.resolve(l)),l.then((function(t){Ui(e,t,o)})).catch((function(e){r(b.ERROR,{type:y.MEDIA_ERROR,details:_.FRAG_PARSING_ERROR,chunkMeta:n.chunkMeta,fatal:!1,error:e,err:e,reason:"transmuxer-worker flush error"})}))):Ui(e,l,o)}}))}(self)
-var Bi=Cr()||{isTypeSupported:function(){return!1}},Hi=function(){function t(t,r,i,n){var a=this
+Li(l)||e.transmuxer.async?(Li(l)||(l=Promise.resolve(l)),l.then((function(t){Hi(e,t,o)})).catch((function(e){r(y.ERROR,{type:_.MEDIA_ERROR,details:w.FRAG_PARSING_ERROR,chunkMeta:n.chunkMeta,fatal:!1,error:e,err:e,reason:"transmuxer-worker flush error"})}))):Hi(e,l,o)}}))}(self)
+var Vi=Be()||{isTypeSupported:function(){return!1}},$i=function(){function t(t,r,i,n){var a=this
 this.error=null,this.hls=void 0,this.id=void 0,this.observer=void 0,this.frag=null,this.part=null,this.useWorker=void 0,this.workerContext=null,this.onwmsg=void 0,this.transmuxer=null,this.onTransmuxComplete=void 0,this.onFlush=void 0
 var s=t.config
 this.hls=t,this.id=r,this.useWorker=!!s.enableWorker,this.onTransmuxComplete=i,this.onFlush=n
-var o=function(e,t){(t=t||{}).frag=a.frag,t.id=a.id,e===b.ERROR&&(a.error=t.error),a.hls.trigger(e,t)}
-this.observer=new Fi,this.observer.on(b.FRAG_DECRYPTED,o),this.observer.on(b.ERROR,o)
-var l,u,c,d,h={mp4:Bi.isTypeSupported("video/mp4"),mpeg:Bi.isTypeSupported("audio/mpeg"),mp3:Bi.isTypeSupported('audio/mp4; codecs="mp3"')},f=navigator.vendor
-if(!this.useWorker||"undefined"==typeof Worker||(s.workerPath,0))this.transmuxer=new Ci(this.observer,h,s,f,r)
-else try{s.workerPath?(S.log("loading Web Worker "+s.workerPath+' for "'+r+'"'),this.workerContext=(c=s.workerPath,d=new self.URL(c,self.location.href).href,{worker:new self.Worker(d),scriptURL:d})):(S.log('injecting Web Worker for "'+r+'"'),this.workerContext=(l=new self.Blob(["var exports={};var module={exports:exports};function define(f){f()};define.amd=true;("+e.toString()+")(true);"],{type:"text/javascript"}),u=self.URL.createObjectURL(l),{worker:new self.Worker(u),objectURL:u})),this.onwmsg=function(e){return a.onWorkerMessage(e)}
+var o=function(e,t){(t=t||{}).frag=a.frag,t.id=a.id,e===y.ERROR&&(a.error=t.error),a.hls.trigger(e,t)}
+this.observer=new zi,this.observer.on(y.FRAG_DECRYPTED,o),this.observer.on(y.ERROR,o)
+var l,u,c,d,h={mp4:Vi.isTypeSupported("video/mp4"),mpeg:Vi.isTypeSupported("audio/mpeg"),mp3:Vi.isTypeSupported('audio/mp4; codecs="mp3"')},f=navigator.vendor
+if(!this.useWorker||"undefined"==typeof Worker||(s.workerPath,0))this.transmuxer=new Mi(this.observer,h,s,f,r)
+else try{s.workerPath?(O.log("loading Web Worker "+s.workerPath+' for "'+r+'"'),this.workerContext=(c=s.workerPath,d=new self.URL(c,self.location.href).href,{worker:new self.Worker(d),scriptURL:d})):(O.log('injecting Web Worker for "'+r+'"'),this.workerContext=(l=new self.Blob(["var exports={};var module={exports:exports};function define(f){f()};define.amd=true;("+e.toString()+")(true);"],{type:"text/javascript"}),u=self.URL.createObjectURL(l),{worker:new self.Worker(u),objectURL:u})),this.onwmsg=function(e){return a.onWorkerMessage(e)}
 var p=this.workerContext.worker
 p.addEventListener("message",this.onwmsg),p.onerror=function(e){var t=new Error(e.message+"  ("+e.filename+":"+e.lineno+")")
-s.enableWorker=!1,S.warn('Error in "'+r+'" Web Worker, fallback to inline'),a.hls.trigger(b.ERROR,{type:y.OTHER_ERROR,details:_.INTERNAL_EXCEPTION,fatal:!1,event:"demuxerWorker",error:t})},p.postMessage({cmd:"init",typeSupported:h,vendor:f,id:r,config:JSON.stringify(s)})}catch(e){S.warn('Error setting up "'+r+'" Web Worker, fallback to inline',e),this.resetWorker(),this.error=null,this.transmuxer=new Ci(this.observer,h,s,f,r)}}var r=t.prototype
+s.enableWorker=!1,O.warn('Error in "'+r+'" Web Worker, fallback to inline'),a.hls.trigger(y.ERROR,{type:_.OTHER_ERROR,details:w.INTERNAL_EXCEPTION,fatal:!1,event:"demuxerWorker",error:t})},p.postMessage({cmd:"init",typeSupported:h,vendor:f,id:r,config:JSON.stringify(s)})}catch(e){O.warn('Error setting up "'+r+'" Web Worker, fallback to inline',e),this.resetWorker(),this.error=null,this.transmuxer=new Mi(this.observer,h,s,f,r)}}var r=t.prototype
 return r.resetWorker=function(){if(this.workerContext){var e=this.workerContext,t=e.worker,r=e.objectURL
 r&&self.URL.revokeObjectURL(r),t.removeEventListener("message",this.onwmsg),t.onerror=null,t.terminate(),this.workerContext=null}},r.destroy=function(){if(this.workerContext)this.resetWorker(),this.onwmsg=void 0
 else{var e=this.transmuxer
@@ -5359,17 +5369,17 @@ e&&(e.destroy(),this.transmuxer=null)}var t=this.observer
 t&&t.removeAllListeners(),this.frag=null,this.observer=null,this.hls=null},r.push=function(e,t,r,i,n,a,s,o,l,u){var c,d,h=this
 l.transmuxing.start=self.performance.now()
 var f=this.transmuxer,p=a?a.start:n.start,m=n.decryptdata,g=this.frag,v=!(g&&n.cc===g.cc),b=!(g&&l.level===g.level),y=g?l.sn-g.sn:-1,_=this.part?l.part-this.part.index:-1,w=0===y&&l.id>1&&l.id===(null==g?void 0:g.stats.chunkCount),E=!b&&(1===y||0===y&&(1===_||w&&_<=0)),T=self.performance.now();(b||y||0===n.stats.parsing.start)&&(n.stats.parsing.start=T),!a||!_&&E||(a.stats.parsing.start=T)
-var k=!(g&&(null==(c=n.initSegment)?void 0:c.url)===(null==(d=g.initSegment)?void 0:d.url)),O=new Li(v,E,o,b,p,k)
-if(!E||v||k){S.log("[transmuxer-interface, "+n.type+"]: Starting new transmux session for sn: "+l.sn+" p: "+l.part+" level: "+l.level+" id: "+l.id+"\n        discontinuity: "+v+"\n        trackSwitch: "+b+"\n        contiguous: "+E+"\n        accurateTimeOffset: "+o+"\n        timeOffset: "+p+"\n        initSegmentChange: "+k)
-var x=new Ii(r,i,t,s,u)
-this.configureTransmuxer(x)}if(this.frag=n,this.part=a,this.workerContext)this.workerContext.worker.postMessage({cmd:"demux",data:e,decryptdata:m,chunkMeta:l,state:O},e instanceof ArrayBuffer?[e]:[])
-else if(f){var P=f.push(e,m,l,O)
-Mi(P)?(f.async=!0,P.then((function(e){h.handleTransmuxComplete(e)})).catch((function(e){h.transmuxerError(e,l,"transmuxer-interface push error")}))):(f.async=!1,this.handleTransmuxComplete(P))}},r.flush=function(e){var t=this
+var k=!(g&&(null==(c=n.initSegment)?void 0:c.url)===(null==(d=g.initSegment)?void 0:d.url)),S=new Fi(v,E,o,b,p,k)
+if(!E||v||k){O.log("[transmuxer-interface, "+n.type+"]: Starting new transmux session for sn: "+l.sn+" p: "+l.part+" level: "+l.level+" id: "+l.id+"\n        discontinuity: "+v+"\n        trackSwitch: "+b+"\n        contiguous: "+E+"\n        accurateTimeOffset: "+o+"\n        timeOffset: "+p+"\n        initSegmentChange: "+k)
+var x=new ji(r,i,t,s,u)
+this.configureTransmuxer(x)}if(this.frag=n,this.part=a,this.workerContext)this.workerContext.worker.postMessage({cmd:"demux",data:e,decryptdata:m,chunkMeta:l,state:S},e instanceof ArrayBuffer?[e]:[])
+else if(f){var P=f.push(e,m,l,S)
+Li(P)?(f.async=!0,P.then((function(e){h.handleTransmuxComplete(e)})).catch((function(e){h.transmuxerError(e,l,"transmuxer-interface push error")}))):(f.async=!1,this.handleTransmuxComplete(P))}},r.flush=function(e){var t=this
 e.transmuxing.start=self.performance.now()
 var r=this.transmuxer
 if(this.workerContext)this.workerContext.worker.postMessage({cmd:"flush",chunkMeta:e})
 else if(r){var i=r.flush(e)
-Mi(i)||r.async?(Mi(i)||(i=Promise.resolve(i)),i.then((function(r){t.handleFlushResult(r,e)})).catch((function(r){t.transmuxerError(r,e,"transmuxer-interface flush error")}))):this.handleFlushResult(i,e)}},r.transmuxerError=function(e,t,r){this.hls&&(this.error=e,this.hls.trigger(b.ERROR,{type:y.MEDIA_ERROR,details:_.FRAG_PARSING_ERROR,chunkMeta:t,fatal:!1,error:e,err:e,reason:r}))},r.handleFlushResult=function(e,t){var r=this
+Li(i)||r.async?(Li(i)||(i=Promise.resolve(i)),i.then((function(r){t.handleFlushResult(r,e)})).catch((function(r){t.transmuxerError(r,e,"transmuxer-interface flush error")}))):this.handleFlushResult(i,e)}},r.transmuxerError=function(e,t,r){this.hls&&(this.error=e,this.hls.trigger(y.ERROR,{type:_.MEDIA_ERROR,details:w.FRAG_PARSING_ERROR,chunkMeta:t,fatal:!1,error:e,err:e,reason:r}))},r.handleFlushResult=function(e,t){var r=this
 e.forEach((function(e){r.handleTransmuxComplete(e)})),this.onFlush(t)},r.onWorkerMessage=function(e){var t=e.data,r=this.hls
 switch(t.event){case"init":var i,n=null==(i=this.workerContext)?void 0:i.objectURL
 n&&self.URL.revokeObjectURL(n)
@@ -5378,296 +5388,299 @@ case"transmuxComplete":this.handleTransmuxComplete(t.data)
 break
 case"flush":this.onFlush(t.data)
 break
-case"workerLog":S[t.data.logType]&&S[t.data.logType](t.data.message)
+case"workerLog":O[t.data.logType]&&O[t.data.logType](t.data.message)
 break
 default:t.data=t.data||{},t.data.frag=this.frag,t.data.id=this.id,r.trigger(t.event,t.data)}},r.configureTransmuxer=function(e){var t=this.transmuxer
-this.workerContext?this.workerContext.worker.postMessage({cmd:"configure",config:e}):t&&t.configure(e)},r.handleTransmuxComplete=function(e){e.chunkMeta.transmuxing.end=self.performance.now(),this.onTransmuxComplete(e)},t}(),Vi=function(){function e(e,t,r,i){this.config=void 0,this.media=null,this.fragmentTracker=void 0,this.hls=void 0,this.nudgeRetry=0,this.stallReported=!1,this.stalled=null,this.moved=!1,this.seeking=!1,this.config=e,this.media=t,this.fragmentTracker=r,this.hls=i}var t=e.prototype
+this.workerContext?this.workerContext.worker.postMessage({cmd:"configure",config:e}):t&&t.configure(e)},r.handleTransmuxComplete=function(e){e.chunkMeta.transmuxing.end=self.performance.now(),this.onTransmuxComplete(e)},t}(),qi=function(){function e(e,t,r,i){this.config=void 0,this.media=null,this.fragmentTracker=void 0,this.hls=void 0,this.nudgeRetry=0,this.stallReported=!1,this.stalled=null,this.moved=!1,this.seeking=!1,this.config=e,this.media=t,this.fragmentTracker=r,this.hls=i}var t=e.prototype
 return t.destroy=function(){this.media=null,this.hls=this.fragmentTracker=null},t.poll=function(e,t){var r=this.config,i=this.media,n=this.stalled
 if(null!==i){var a=i.currentTime,s=i.seeking,o=this.seeking&&!s,l=!this.seeking&&s
 if(this.seeking=s,a===e){if(l||o)this.stalled=null
-else if(!(i.paused&&!s||i.ended||0===i.playbackRate)&&lr.getBuffered(i).length){var u=lr.bufferInfo(i,a,0),c=u.len>0,d=u.nextStart||0
+else if(!(i.paused&&!s||i.ended||0===i.playbackRate)&&dr.getBuffered(i).length){var u=dr.bufferInfo(i,a,0),c=u.len>0,d=u.nextStart||0
 if(c||d){if(s){var h=u.len>2,f=!d||t&&t.start<=a||d-a>2&&!this.fragmentTracker.getPartialFragment(a)
 if(h||f)return
 this.moved=!1}if(!this.moved&&null!==this.stalled){var p,m=Math.max(d,u.start||0)-a,g=this.hls.levels?this.hls.levels[this.hls.currentLevel]:null,v=(null==g||null==(p=g.details)?void 0:p.live)?2*g.details.targetduration:2,b=this.fragmentTracker.getPartialFragment(a)
 if(m>0&&(m<=v||b))return void this._trySkipBufferHole(b)}var y=self.performance.now()
 if(null!==n){var _=y-n
-if(s||!(_>=250)||(this._reportStall(u),this.media)){var w=lr.bufferInfo(i,a,r.maxBufferHole)
+if(s||!(_>=250)||(this._reportStall(u),this.media)){var w=dr.bufferInfo(i,a,r.maxBufferHole)
 this._tryFixBufferStall(w,_)}}else this.stalled=y}}}else if(this.moved=!0,null!==n){if(this.stallReported){var E=self.performance.now()-n
-S.warn("playback not stuck anymore @"+a+", after "+Math.round(E)+"ms"),this.stallReported=!1}this.stalled=null,this.nudgeRetry=0}}},t._tryFixBufferStall=function(e,t){var r=this.config,i=this.fragmentTracker,n=this.media
+O.warn("playback not stuck anymore @"+a+", after "+Math.round(E)+"ms"),this.stallReported=!1}this.stalled=null,this.nudgeRetry=0}}},t._tryFixBufferStall=function(e,t){var r=this.config,i=this.fragmentTracker,n=this.media
 if(null!==n){var a=n.currentTime,s=i.getPartialFragment(a)
-if(s&&(this._trySkipBufferHole(s)||!this.media))return;(e.len>r.maxBufferHole||e.nextStart&&e.nextStart-a<r.maxBufferHole)&&t>1e3*r.highBufferWatchdogPeriod&&(S.warn("Trying to nudge playhead over buffer-hole"),this.stalled=null,this._tryNudgeBuffer())}},t._reportStall=function(e){var t=this.hls,r=this.media
+if(s&&(this._trySkipBufferHole(s)||!this.media))return;(e.len>r.maxBufferHole||e.nextStart&&e.nextStart-a<r.maxBufferHole)&&t>1e3*r.highBufferWatchdogPeriod&&(O.warn("Trying to nudge playhead over buffer-hole"),this.stalled=null,this._tryNudgeBuffer())}},t._reportStall=function(e){var t=this.hls,r=this.media
 if(!this.stallReported&&r){this.stallReported=!0
 var i=new Error("Playback stalling at @"+r.currentTime+" due to low buffer ("+JSON.stringify(e)+")")
-S.warn(i.message),t.trigger(b.ERROR,{type:y.MEDIA_ERROR,details:_.BUFFER_STALLED_ERROR,fatal:!1,error:i,buffer:e.len})}},t._trySkipBufferHole=function(e){var t=this.config,r=this.hls,i=this.media
+O.warn(i.message),t.trigger(y.ERROR,{type:_.MEDIA_ERROR,details:w.BUFFER_STALLED_ERROR,fatal:!1,error:i,buffer:e.len})}},t._trySkipBufferHole=function(e){var t=this.config,r=this.hls,i=this.media
 if(null===i)return 0
-var n=i.currentTime,a=lr.bufferInfo(i,n,0),s=n<a.start?a.start:a.nextStart
+var n=i.currentTime,a=dr.bufferInfo(i,n,0),s=n<a.start?a.start:a.nextStart
 if(s){var o=a.len<=t.maxBufferHole,l=a.len>0&&a.len<1&&i.readyState<3,u=s-n
 if(u>0&&(o||l)){if(u>t.maxBufferHole){var c=this.fragmentTracker,d=!1
-if(0===n){var h=c.getAppendedFrag(0,at)
-h&&s<h.end&&(d=!0)}if(!d){var f=e||c.getAppendedFrag(n,at)
+if(0===n){var h=c.getAppendedFrag(0,lt)
+h&&s<h.end&&(d=!0)}if(!d){var f=e||c.getAppendedFrag(n,lt)
 if(f){for(var p=!1,m=f.end;m<s;){var g=c.getPartialFragment(m)
 if(!g){p=!0
 break}m+=g.duration}if(p)return 0}}}var v=Math.max(s+.05,n+.1)
-if(S.warn("skipping hole, adjusting currentTime from "+n+" to "+v),this.moved=!0,this.stalled=null,i.currentTime=v,e&&!e.gap){var w=new Error("fragment loaded with buffer holes, seeking from "+n+" to "+v)
-r.trigger(b.ERROR,{type:y.MEDIA_ERROR,details:_.BUFFER_SEEK_OVER_HOLE,fatal:!1,error:w,reason:w.message,frag:e})}return v}}return 0},t._tryNudgeBuffer=function(){var e=this.config,t=this.hls,r=this.media,i=this.nudgeRetry
+if(O.warn("skipping hole, adjusting currentTime from "+n+" to "+v),this.moved=!0,this.stalled=null,i.currentTime=v,e&&!e.gap){var b=new Error("fragment loaded with buffer holes, seeking from "+n+" to "+v)
+r.trigger(y.ERROR,{type:_.MEDIA_ERROR,details:w.BUFFER_SEEK_OVER_HOLE,fatal:!1,error:b,reason:b.message,frag:e})}return v}}return 0},t._tryNudgeBuffer=function(){var e=this.config,t=this.hls,r=this.media,i=this.nudgeRetry
 if(null!==r){var n=r.currentTime
 if(this.nudgeRetry++,i<e.nudgeMaxRetry){var a=n+(i+1)*e.nudgeOffset,s=new Error("Nudging 'currentTime' from "+n+" to "+a)
-S.warn(s.message),r.currentTime=a,t.trigger(b.ERROR,{type:y.MEDIA_ERROR,details:_.BUFFER_NUDGE_ON_STALL,error:s,fatal:!1})}else{var o=new Error("Playhead still not moving while enough data buffered @"+n+" after "+e.nudgeMaxRetry+" nudges")
-S.error(o.message),t.trigger(b.ERROR,{type:y.MEDIA_ERROR,details:_.BUFFER_STALLED_ERROR,error:o,fatal:!0})}}},e}(),$i=function(e){function t(t,r,i){var n
-return(n=e.call(this,t,r,i,"[stream-controller]",at)||this).audioCodecSwap=!1,n.gapController=null,n.level=-1,n._forceStartLoad=!1,n.altAudio=!1,n.audioOnly=!1,n.fragPlaying=null,n.onvplaying=null,n.onvseeked=null,n.fragLastKbps=0,n.couldBacktrack=!1,n.backtrackFragment=null,n.audioCodecSwitch=!1,n.videoBuffer=null,n._registerListeners(),n}l(t,e)
+O.warn(s.message),r.currentTime=a,t.trigger(y.ERROR,{type:_.MEDIA_ERROR,details:w.BUFFER_NUDGE_ON_STALL,error:s,fatal:!1})}else{var o=new Error("Playhead still not moving while enough data buffered @"+n+" after "+e.nudgeMaxRetry+" nudges")
+O.error(o.message),t.trigger(y.ERROR,{type:_.MEDIA_ERROR,details:w.BUFFER_STALLED_ERROR,error:o,fatal:!0})}}},e}(),Gi=function(e){function t(t,r,i){var n
+return(n=e.call(this,t,r,i,"[stream-controller]",lt)||this).audioCodecSwap=!1,n.gapController=null,n.level=-1,n._forceStartLoad=!1,n.altAudio=!1,n.audioOnly=!1,n.fragPlaying=null,n.onvplaying=null,n.onvseeked=null,n.fragLastKbps=0,n.couldBacktrack=!1,n.backtrackFragment=null,n.audioCodecSwitch=!1,n.videoBuffer=null,n._registerListeners(),n}l(t,e)
 var r=t.prototype
 return r._registerListeners=function(){var e=this.hls
-e.on(b.MEDIA_ATTACHED,this.onMediaAttached,this),e.on(b.MEDIA_DETACHING,this.onMediaDetaching,this),e.on(b.MANIFEST_LOADING,this.onManifestLoading,this),e.on(b.MANIFEST_PARSED,this.onManifestParsed,this),e.on(b.LEVEL_LOADING,this.onLevelLoading,this),e.on(b.LEVEL_LOADED,this.onLevelLoaded,this),e.on(b.FRAG_LOAD_EMERGENCY_ABORTED,this.onFragLoadEmergencyAborted,this),e.on(b.ERROR,this.onError,this),e.on(b.AUDIO_TRACK_SWITCHING,this.onAudioTrackSwitching,this),e.on(b.AUDIO_TRACK_SWITCHED,this.onAudioTrackSwitched,this),e.on(b.BUFFER_CREATED,this.onBufferCreated,this),e.on(b.BUFFER_FLUSHED,this.onBufferFlushed,this),e.on(b.LEVELS_UPDATED,this.onLevelsUpdated,this),e.on(b.FRAG_BUFFERED,this.onFragBuffered,this)},r._unregisterListeners=function(){var e=this.hls
-e.off(b.MEDIA_ATTACHED,this.onMediaAttached,this),e.off(b.MEDIA_DETACHING,this.onMediaDetaching,this),e.off(b.MANIFEST_LOADING,this.onManifestLoading,this),e.off(b.MANIFEST_PARSED,this.onManifestParsed,this),e.off(b.LEVEL_LOADED,this.onLevelLoaded,this),e.off(b.FRAG_LOAD_EMERGENCY_ABORTED,this.onFragLoadEmergencyAborted,this),e.off(b.ERROR,this.onError,this),e.off(b.AUDIO_TRACK_SWITCHING,this.onAudioTrackSwitching,this),e.off(b.AUDIO_TRACK_SWITCHED,this.onAudioTrackSwitched,this),e.off(b.BUFFER_CREATED,this.onBufferCreated,this),e.off(b.BUFFER_FLUSHED,this.onBufferFlushed,this),e.off(b.LEVELS_UPDATED,this.onLevelsUpdated,this),e.off(b.FRAG_BUFFERED,this.onFragBuffered,this)},r.onHandlerDestroying=function(){this._unregisterListeners(),this.onMediaDetaching()},r.startLoad=function(e){if(this.levels){var t=this.lastCurrentTime,r=this.hls
-if(this.stopLoad(),this.setInterval(100),this.level=-1,!this.startFragRequested){var i=r.startLevel;-1===i&&(r.config.testBandwidth&&this.levels.length>1?(i=0,this.bitrateTest=!0):i=r.nextAutoLevel),this.level=r.nextLoadLevel=i,this.loadedmetadata=!1}t>0&&-1===e&&(this.log("Override startPosition with lastCurrentTime @"+t.toFixed(3)),e=t),this.state=yr,this.nextLoadPosition=this.startPosition=this.lastCurrentTime=e,this.tick()}else this._forceStartLoad=!0,this.state=br},r.stopLoad=function(){this._forceStartLoad=!1,e.prototype.stopLoad.call(this)},r.doTick=function(){switch(this.state){case Ar:var e,t=this.levels,r=this.level,i=null==t||null==(e=t[r])?void 0:e.details
+e.on(y.MEDIA_ATTACHED,this.onMediaAttached,this),e.on(y.MEDIA_DETACHING,this.onMediaDetaching,this),e.on(y.MANIFEST_LOADING,this.onManifestLoading,this),e.on(y.MANIFEST_PARSED,this.onManifestParsed,this),e.on(y.LEVEL_LOADING,this.onLevelLoading,this),e.on(y.LEVEL_LOADED,this.onLevelLoaded,this),e.on(y.FRAG_LOAD_EMERGENCY_ABORTED,this.onFragLoadEmergencyAborted,this),e.on(y.ERROR,this.onError,this),e.on(y.AUDIO_TRACK_SWITCHING,this.onAudioTrackSwitching,this),e.on(y.AUDIO_TRACK_SWITCHED,this.onAudioTrackSwitched,this),e.on(y.BUFFER_CREATED,this.onBufferCreated,this),e.on(y.BUFFER_FLUSHED,this.onBufferFlushed,this),e.on(y.LEVELS_UPDATED,this.onLevelsUpdated,this),e.on(y.FRAG_BUFFERED,this.onFragBuffered,this)},r._unregisterListeners=function(){var e=this.hls
+e.off(y.MEDIA_ATTACHED,this.onMediaAttached,this),e.off(y.MEDIA_DETACHING,this.onMediaDetaching,this),e.off(y.MANIFEST_LOADING,this.onManifestLoading,this),e.off(y.MANIFEST_PARSED,this.onManifestParsed,this),e.off(y.LEVEL_LOADED,this.onLevelLoaded,this),e.off(y.FRAG_LOAD_EMERGENCY_ABORTED,this.onFragLoadEmergencyAborted,this),e.off(y.ERROR,this.onError,this),e.off(y.AUDIO_TRACK_SWITCHING,this.onAudioTrackSwitching,this),e.off(y.AUDIO_TRACK_SWITCHED,this.onAudioTrackSwitched,this),e.off(y.BUFFER_CREATED,this.onBufferCreated,this),e.off(y.BUFFER_FLUSHED,this.onBufferFlushed,this),e.off(y.LEVELS_UPDATED,this.onLevelsUpdated,this),e.off(y.FRAG_BUFFERED,this.onFragBuffered,this)},r.onHandlerDestroying=function(){this._unregisterListeners(),this.onMediaDetaching()},r.startLoad=function(e){if(this.levels){var t=this.lastCurrentTime,r=this.hls
+if(this.stopLoad(),this.setInterval(100),this.level=-1,!this.startFragRequested){var i=r.startLevel;-1===i&&(r.config.testBandwidth&&this.levels.length>1?(i=0,this.bitrateTest=!0):i=r.nextAutoLevel),this.level=r.nextLoadLevel=i,this.loadedmetadata=!1}t>0&&-1===e&&(this.log("Override startPosition with lastCurrentTime @"+t.toFixed(3)),e=t),this.state=Er,this.nextLoadPosition=this.startPosition=this.lastCurrentTime=e,this.tick()}else this._forceStartLoad=!0,this.state=wr},r.stopLoad=function(){this._forceStartLoad=!1,e.prototype.stopLoad.call(this)},r.doTick=function(){switch(this.state){case Dr:var e,t=this.levels,r=this.level,i=null==t||null==(e=t[r])?void 0:e.details
 if(i&&(!i.live||this.levelLastLoaded===this.level)){if(this.waitForCdnTuneIn(i))break
-this.state=yr
+this.state=Er
 break}break
-case Er:var n,a=self.performance.now(),s=this.retryDate;(!s||a>=s||null!=(n=this.media)&&n.seeking)&&(this.resetStartWhenNotLoaded(this.level),this.state=yr)}this.state===yr&&this.doTickIdle(),this.onTickEnd()},r.onTickEnd=function(){e.prototype.onTickEnd.call(this),this.checkBuffer(),this.checkFragmentChanged()},r.doTickIdle=function(){var e=this.hls,t=this.levelLastLoaded,r=this.levels,i=this.media,n=e.config,a=e.nextLoadLevel
+case Sr:var n,a=self.performance.now(),s=this.retryDate;(!s||a>=s||null!=(n=this.media)&&n.seeking)&&(this.resetStartWhenNotLoaded(this.level),this.state=Er)}this.state===Er&&this.doTickIdle(),this.onTickEnd()},r.onTickEnd=function(){e.prototype.onTickEnd.call(this),this.checkBuffer(),this.checkFragmentChanged()},r.doTickIdle=function(){var e=this.hls,t=this.levelLastLoaded,r=this.levels,i=this.media,n=e.config,a=e.nextLoadLevel
 if(null!==t&&(i||!this.startFragRequested&&n.startFragPrefetch)&&(!this.altAudio||!this.audioOnly)&&null!=r&&r[a]){var s=r[a],o=this.getMainFwdBufferInfo()
 if(null!==o){var l=this.getLevelDetails()
 if(l&&this._streamEnded(o,l)){var u={}
-return this.altAudio&&(u.type="video"),this.hls.trigger(b.BUFFER_EOS,u),void(this.state=Or)}e.loadLevel!==a&&-1===e.manualLevel&&this.log("Adapting to level "+a+" from level "+this.level),this.level=e.nextLoadLevel=a
+return this.altAudio&&(u.type="video"),this.hls.trigger(y.BUFFER_EOS,u),void(this.state=Ar)}e.loadLevel!==a&&-1===e.manualLevel&&this.log("Adapting to level "+a+" from level "+this.level),this.level=e.nextLoadLevel=a
 var c=s.details
-if(!c||this.state===Ar||c.live&&this.levelLastLoaded!==a)return this.level=a,void(this.state=Ar)
+if(!c||this.state===Dr||c.live&&this.levelLastLoaded!==a)return this.level=a,void(this.state=Dr)
 var d=o.len,h=this.getMaxBufferLength(s.maxBitrate)
 if(!(d>=h)){this.backtrackFragment&&this.backtrackFragment.start>o.end&&(this.backtrackFragment=null)
 var f=this.backtrackFragment?this.backtrackFragment.start:o.end,p=this.getNextFragment(f,c)
-if(this.couldBacktrack&&!this.fragPrevious&&p&&"initSegment"!==p.sn&&this.fragmentTracker.getState(p)!==Qt){var m,g=(null!=(m=this.backtrackFragment)?m:p).sn-c.startSN,v=c.fragments[g-1]
+if(this.couldBacktrack&&!this.fragPrevious&&p&&"initSegment"!==p.sn&&this.fragmentTracker.getState(p)!==Zt){var m,g=(null!=(m=this.backtrackFragment)?m:p).sn-c.startSN,v=c.fragments[g-1]
 v&&p.cc===v.cc&&(p=v,this.fragmentTracker.removeFragment(v))}else this.backtrackFragment&&o.len&&(this.backtrackFragment=null)
-if(p&&this.isLoopLoading(p,f)){if(!p.gap){var y=this.audioOnly&&!this.altAudio?D:M,_=(y===M?this.videoBuffer:this.mediaBuffer)||this.media
-_&&this.afterBufferFlushed(_,y,at)}p=this.getNextFragmentLoopLoading(p,c,o,at,h)}p&&(!p.initSegment||p.initSegment.data||this.bitrateTest||(p=p.initSegment),this.loadFragment(p,s,f))}}}},r.loadFragment=function(t,r,i){var n=this.fragmentTracker.getState(t)
-this.fragCurrent=t,n===Kt?"initSegment"===t.sn?this._loadInitSegment(t,r):this.bitrateTest?(this.log("Fragment "+t.sn+" of level "+t.level+" is being downloaded to test bitrate and will not be buffered"),this._loadBitrateTestFrag(t,r)):(this.startFragRequested=!0,e.prototype.loadFragment.call(this,t,r,i)):this.clearTrackerIfNeeded(t)},r.getAppendedFrag=function(e){var t=this.fragmentTracker.getAppendedFrag(e,at)
-return t&&"fragment"in t?t.fragment:t},r.getBufferedFrag=function(e){return this.fragmentTracker.getBufferedFrag(e,at)},r.followingBufferedFrag=function(e){return e?this.getBufferedFrag(e.end+.5):null},r.immediateLevelSwitch=function(){this.abortCurrentFrag(),this.flushMainBuffer(0,Number.POSITIVE_INFINITY)},r.nextLevelSwitch=function(){var e=this.levels,t=this.media
+if(p&&this.isLoopLoading(p,f)){if(!p.gap){var b=this.audioOnly&&!this.altAudio?M:I,_=(b===I?this.videoBuffer:this.mediaBuffer)||this.media
+_&&this.afterBufferFlushed(_,b,lt)}p=this.getNextFragmentLoopLoading(p,c,o,lt,h)}p&&(!p.initSegment||p.initSegment.data||this.bitrateTest||(p=p.initSegment),this.loadFragment(p,s,f))}}}},r.loadFragment=function(t,r,i){var n=this.fragmentTracker.getState(t)
+this.fragCurrent=t,n===Qt||n===Jt?"initSegment"===t.sn?this._loadInitSegment(t,r):this.bitrateTest?(this.log("Fragment "+t.sn+" of level "+t.level+" is being downloaded to test bitrate and will not be buffered"),this._loadBitrateTestFrag(t,r)):(this.startFragRequested=!0,e.prototype.loadFragment.call(this,t,r,i)):this.clearTrackerIfNeeded(t)},r.getBufferedFrag=function(e){return this.fragmentTracker.getBufferedFrag(e,lt)},r.followingBufferedFrag=function(e){return e?this.getBufferedFrag(e.end+.5):null},r.immediateLevelSwitch=function(){this.abortCurrentFrag(),this.flushMainBuffer(0,Number.POSITIVE_INFINITY)},r.nextLevelSwitch=function(){var e=this.levels,t=this.media
 if(null!=t&&t.readyState){var r,i=this.getAppendedFrag(t.currentTime)
-if(i&&i.start>1&&this.flushMainBuffer(0,i.start-1),!t.paused&&e){var n=e[this.hls.nextLoadLevel],a=this.fragLastKbps
-r=a&&this.fragCurrent?this.fragCurrent.duration*n.maxBitrate/(1e3*a)+1:0}else r=0
-var s=this.getBufferedFrag(t.currentTime+r)
-if(s){var o=this.followingBufferedFrag(s)
-if(o){this.abortCurrentFrag()
-var l=o.maxStartPTS?o.maxStartPTS:o.start,u=o.duration,c=Math.max(s.end,l+Math.min(Math.max(u-this.config.maxFragLookUpTolerance,.5*u),.75*u))
-this.flushMainBuffer(c,Number.POSITIVE_INFINITY)}}}},r.abortCurrentFrag=function(){var e=this.fragCurrent
-switch(this.fragCurrent=null,this.backtrackFragment=null,e&&(e.abortRequests(),this.fragmentTracker.removeFragment(e)),this.state){case _r:case wr:case Er:case kr:case Sr:this.state=yr}this.nextLoadPosition=this.getLoadPosition()},r.flushMainBuffer=function(t,r){e.prototype.flushMainBuffer.call(this,t,r,this.altAudio?"video":null)},r.onMediaAttached=function(t,r){e.prototype.onMediaAttached.call(this,t,r)
+i&&i.start>1&&this.flushMainBuffer(0,i.start-1)
+var n=this.getLevelDetails()
+if(null!=n&&n.live){var a=this.getMainFwdBufferInfo()
+if(!a||a.len<2*n.targetduration)return}if(!t.paused&&e){var s=e[this.hls.nextLoadLevel],o=this.fragLastKbps
+r=o&&this.fragCurrent?this.fragCurrent.duration*s.maxBitrate/(1e3*o)+1:0}else r=0
+var l=this.getBufferedFrag(t.currentTime+r)
+if(l){var u=this.followingBufferedFrag(l)
+if(u){this.abortCurrentFrag()
+var c=u.maxStartPTS?u.maxStartPTS:u.start,d=u.duration,h=Math.max(l.end,c+Math.min(Math.max(d-this.config.maxFragLookUpTolerance,.5*d),.75*d))
+this.flushMainBuffer(h,Number.POSITIVE_INFINITY)}}}},r.abortCurrentFrag=function(){var e=this.fragCurrent
+switch(this.fragCurrent=null,this.backtrackFragment=null,e&&(e.abortRequests(),this.fragmentTracker.removeFragment(e)),this.state){case Tr:case kr:case Sr:case xr:case Pr:this.state=Er}this.nextLoadPosition=this.getLoadPosition()},r.flushMainBuffer=function(t,r){e.prototype.flushMainBuffer.call(this,t,r,this.altAudio?"video":null)},r.onMediaAttached=function(t,r){e.prototype.onMediaAttached.call(this,t,r)
 var i=r.media
-this.onvplaying=this.onMediaPlaying.bind(this),this.onvseeked=this.onMediaSeeked.bind(this),i.addEventListener("playing",this.onvplaying),i.addEventListener("seeked",this.onvseeked),this.gapController=new Vi(this.config,i,this.fragmentTracker,this.hls)},r.onMediaDetaching=function(){var t=this.media
+this.onvplaying=this.onMediaPlaying.bind(this),this.onvseeked=this.onMediaSeeked.bind(this),i.addEventListener("playing",this.onvplaying),i.addEventListener("seeked",this.onvseeked),this.gapController=new qi(this.config,i,this.fragmentTracker,this.hls)},r.onMediaDetaching=function(){var t=this.media
 t&&this.onvplaying&&this.onvseeked&&(t.removeEventListener("playing",this.onvplaying),t.removeEventListener("seeked",this.onvseeked),this.onvplaying=this.onvseeked=null,this.videoBuffer=null),this.fragPlaying=null,this.gapController&&(this.gapController.destroy(),this.gapController=null),e.prototype.onMediaDetaching.call(this)},r.onMediaPlaying=function(){this.tick()},r.onMediaSeeked=function(){var e=this.media,t=e?e.currentTime:null
-v(t)&&this.log("Media seeked to "+t.toFixed(3))
+b(t)&&this.log("Media seeked to "+t.toFixed(3))
 var r=this.getMainFwdBufferInfo()
-null!==r&&0!==r.len?this.tick():this.warn('Main forward buffer length on "seeked" event '+(r?r.len:"empty")+")")},r.onManifestLoading=function(){this.log("Trigger BUFFER_RESET"),this.hls.trigger(b.BUFFER_RESET,void 0),this.fragmentTracker.removeAllFragments(),this.couldBacktrack=!1,this.startPosition=this.lastCurrentTime=0,this.fragPlaying=null,this.backtrackFragment=null},r.onManifestParsed=function(e,t){var r,i,n,a=!1,s=!1
-t.levels.forEach((function(e){(r=e.audioCodec)&&(-1!==r.indexOf("mp4a.40.2")&&(a=!0),-1!==r.indexOf("mp4a.40.5")&&(s=!0))})),this.audioCodecSwitch=a&&s&&!("function"==typeof(null==(n=Dr())||null==(i=n.prototype)?void 0:i.changeType)),this.audioCodecSwitch&&this.log("Both AAC/HE-AAC audio found in levels; declaring level codec as HE-AAC"),this.levels=t.levels,this.startFragRequested=!1},r.onLevelLoading=function(e,t){var r=this.levels
-if(r&&this.state===yr){var i=r[t.level];(!i.details||i.details.live&&this.levelLastLoaded!==t.level||this.waitForCdnTuneIn(i.details))&&(this.state=Ar)}},r.onLevelLoaded=function(e,t){var r,i=this.levels,n=t.level,a=t.details,s=a.totalduration
-if(i){this.log("Level "+n+" loaded ["+a.startSN+","+a.endSN+"], cc ["+a.startCC+", "+a.endCC+"] duration:"+s)
+null!==r&&0!==r.len?this.tick():this.warn('Main forward buffer length on "seeked" event '+(r?r.len:"empty")+")")},r.onManifestLoading=function(){this.log("Trigger BUFFER_RESET"),this.hls.trigger(y.BUFFER_RESET,void 0),this.fragmentTracker.removeAllFragments(),this.couldBacktrack=!1,this.startPosition=this.lastCurrentTime=0,this.levels=this.fragPlaying=this.backtrackFragment=null,this.altAudio=this.audioOnly=!1},r.onManifestParsed=function(e,t){var r,i,n,a=!1,s=!1
+t.levels.forEach((function(e){(r=e.audioCodec)&&(-1!==r.indexOf("mp4a.40.2")&&(a=!0),-1!==r.indexOf("mp4a.40.5")&&(s=!0))})),this.audioCodecSwitch=a&&s&&!("function"==typeof(null==(n=Ir())||null==(i=n.prototype)?void 0:i.changeType)),this.audioCodecSwitch&&this.log("Both AAC/HE-AAC audio found in levels; declaring level codec as HE-AAC"),this.levels=t.levels,this.startFragRequested=!1},r.onLevelLoading=function(e,t){var r=this.levels
+if(r&&this.state===Er){var i=r[t.level];(!i.details||i.details.live&&this.levelLastLoaded!==t.level||this.waitForCdnTuneIn(i.details))&&(this.state=Dr)}},r.onLevelLoaded=function(e,t){var r,i=this.levels,n=t.level,a=t.details,s=a.totalduration
+if(i){this.log("Level "+n+" loaded ["+a.startSN+","+a.endSN+"]"+(a.lastPartSn?"[part-"+a.lastPartSn+"-"+a.lastPartIndex+"]":"")+", cc ["+a.startCC+", "+a.endCC+"] duration:"+s)
 var o=i[n],l=this.fragCurrent
-!l||this.state!==wr&&this.state!==Er||l.level===t.level&&l.urlId===o.urlId||!l.loader||this.abortCurrentFrag()
+!l||this.state!==kr&&this.state!==Sr||l.level===t.level&&l.urlId===o.urlId||!l.loader||this.abortCurrentFrag()
 var u=0
 if(a.live||null!=(r=o.details)&&r.live){if(a.fragments[0]||(a.deltaUpdateFailed=!0),a.deltaUpdateFailed)return
-u=this.alignPlaylists(a,o.details)}if(o.details=a,this.levelLastLoaded=n,this.hls.trigger(b.LEVEL_UPDATED,{details:a,level:n}),this.state===Ar){if(this.waitForCdnTuneIn(a))return
-this.state=yr}this.startFragRequested?a.live&&this.synchronizeToLiveEdge(a):this.setStartPosition(a,u),this.tick()}else this.warn("Levels were reset while loading level "+n)},r._handleFragmentLoadProgress=function(e){var t,r=e.frag,i=e.part,n=e.payload,a=this.levels
+u=this.alignPlaylists(a,o.details)}if(o.details=a,this.levelLastLoaded=n,this.hls.trigger(y.LEVEL_UPDATED,{details:a,level:n}),this.state===Dr){if(this.waitForCdnTuneIn(a))return
+this.state=Er}this.startFragRequested?a.live&&this.synchronizeToLiveEdge(a):this.setStartPosition(a,u),this.tick()}else this.warn("Levels were reset while loading level "+n)},r._handleFragmentLoadProgress=function(e){var t,r=e.frag,i=e.part,n=e.payload,a=this.levels
 if(a){var s=a[r.level],o=s.details
 if(!o)return this.warn("Dropping fragment "+r.sn+" of level "+r.level+" after level details were reset"),void this.fragmentTracker.removeFragment(r)
-var l=s.videoCodec,u=o.PTSKnown||!o.live,c=null==(t=r.initSegment)?void 0:t.data,d=this._getAudioCodec(s),h=this.transmuxer=this.transmuxer||new Hi(this.hls,at,this._handleTransmuxComplete.bind(this),this._handleTransmuxerFlush.bind(this)),f=i?i.index:-1,p=-1!==f,m=new ur(r.level,r.sn,r.stats.chunkCount,n.byteLength,f,p),g=this.initPTS[r.cc]
+var l=s.videoCodec,u=o.PTSKnown||!o.live,c=null==(t=r.initSegment)?void 0:t.data,d=this._getAudioCodec(s),h=this.transmuxer=this.transmuxer||new $i(this.hls,lt,this._handleTransmuxComplete.bind(this),this._handleTransmuxerFlush.bind(this)),f=i?i.index:-1,p=-1!==f,m=new hr(r.level,r.sn,r.stats.chunkCount,n.byteLength,f,p),g=this.initPTS[r.cc]
 h.push(n,c,d,l,r,i,o.totalduration,u,m,g)}else this.warn("Levels were reset while fragment load was in progress. Fragment "+r.sn+" of level "+r.level+" will not be buffered")},r.onAudioTrackSwitching=function(e,t){var r=this.altAudio
 if(!t.url){if(this.mediaBuffer!==this.media){this.log("Switching on main audio, use media.buffered to schedule main fragment loading"),this.mediaBuffer=this.media
 var i=this.fragCurrent
 i&&(this.log("Switching to main audio track, cancel main fragment load"),i.abortRequests(),this.fragmentTracker.removeFragment(i)),this.resetTransmuxer(),this.resetLoadingState()}else this.audioOnly&&this.resetTransmuxer()
 var n=this.hls
-r&&(n.trigger(b.BUFFER_FLUSHING,{startOffset:0,endOffset:Number.POSITIVE_INFINITY,type:null}),this.fragmentTracker.removeAllFragments()),n.trigger(b.AUDIO_TRACK_SWITCHED,t)}},r.onAudioTrackSwitched=function(e,t){var r=t.id,i=!!this.hls.audioTracks[r].url
+r&&(n.trigger(y.BUFFER_FLUSHING,{startOffset:0,endOffset:Number.POSITIVE_INFINITY,type:null}),this.fragmentTracker.removeAllFragments()),n.trigger(y.AUDIO_TRACK_SWITCHED,t)}},r.onAudioTrackSwitched=function(e,t){var r=t.id,i=!!this.hls.audioTracks[r].url
 if(i){var n=this.videoBuffer
 n&&this.mediaBuffer!==n&&(this.log("Switching on alternate audio, use video.buffered to schedule main fragment loading"),this.mediaBuffer=n)}this.altAudio=i,this.tick()},r.onBufferCreated=function(e,t){var r,i,n=t.tracks,a=!1
 for(var s in n){var o=n[s]
 if("main"===o.id){if(i=s,r=o,"video"===s){var l=n[s]
 l&&(this.videoBuffer=l.buffer)}}else a=!0}a&&r?(this.log("Alternate track found, use "+i+".buffered to schedule main fragment loading"),this.mediaBuffer=r.buffer):this.mediaBuffer=this.media},r.onFragBuffered=function(e,t){var r=t.frag,i=t.part
-if(!r||r.type===at){if(this.fragContextChanged(r))return this.warn("Fragment "+r.sn+(i?" p: "+i.index:"")+" of level "+r.level+" finished buffering, but was aborted. state: "+this.state),void(this.state===Sr&&(this.state=yr))
+if(!r||r.type===lt){if(this.fragContextChanged(r))return this.warn("Fragment "+r.sn+(i?" p: "+i.index:"")+" of level "+r.level+" finished buffering, but was aborted. state: "+this.state),void(this.state===Pr&&(this.state=Er))
 var n=i?i.stats:r.stats
 this.fragLastKbps=Math.round(8*n.total/(n.buffering.end-n.loading.first)),"initSegment"!==r.sn&&(this.fragPrevious=r),this.fragBufferedComplete(r,i)}},r.onError=function(e,t){var r
-if(t.fatal)this.state=xr
-else switch(t.details){case _.FRAG_GAP:case _.FRAG_PARSING_ERROR:case _.FRAG_DECRYPT_ERROR:case _.FRAG_LOAD_ERROR:case _.FRAG_LOAD_TIMEOUT:case _.KEY_LOAD_ERROR:case _.KEY_LOAD_TIMEOUT:this.onFragmentOrKeyLoadError(at,t)
+if(t.fatal)this.state=Rr
+else switch(t.details){case w.FRAG_GAP:case w.FRAG_PARSING_ERROR:case w.FRAG_DECRYPT_ERROR:case w.FRAG_LOAD_ERROR:case w.FRAG_LOAD_TIMEOUT:case w.KEY_LOAD_ERROR:case w.KEY_LOAD_TIMEOUT:this.onFragmentOrKeyLoadError(lt,t)
 break
-case _.LEVEL_LOAD_ERROR:case _.LEVEL_LOAD_TIMEOUT:case _.LEVEL_PARSING_ERROR:t.levelRetry||this.state!==Ar||(null==(r=t.context)?void 0:r.type)!==rt||(this.state=yr)
+case w.LEVEL_LOAD_ERROR:case w.LEVEL_LOAD_TIMEOUT:case w.LEVEL_PARSING_ERROR:t.levelRetry||this.state!==Dr||(null==(r=t.context)?void 0:r.type)!==at||(this.state=Er)
 break
-case _.BUFFER_FULL_ERROR:if(!t.parent||"main"!==t.parent)return
+case w.BUFFER_FULL_ERROR:if(!t.parent||"main"!==t.parent)return
 this.reduceLengthAndFlushBuffer(t)&&this.flushMainBuffer(0,Number.POSITIVE_INFINITY)
 break
-case _.INTERNAL_EXCEPTION:this.recoverWorkerError(t)}},r.checkBuffer=function(){var e=this.media,t=this.gapController
-if(e&&t&&e.readyState){if(this.loadedmetadata||!lr.getBuffered(e).length){var r=this.state!==yr?this.fragCurrent:null
-t.poll(this.lastCurrentTime,r)}this.lastCurrentTime=e.currentTime}},r.onFragLoadEmergencyAborted=function(){this.state=yr,this.loadedmetadata||(this.startFragRequested=!1,this.nextLoadPosition=this.startPosition),this.tickImmediate()},r.onBufferFlushed=function(e,t){var r=t.type
-if(r!==D||this.audioOnly&&!this.altAudio){var i=(r===M?this.videoBuffer:this.mediaBuffer)||this.media
-this.afterBufferFlushed(i,r,at)}},r.onLevelsUpdated=function(e,t){this.levels=t.levels},r.swapAudioCodec=function(){this.audioCodecSwap=!this.audioCodecSwap},r.seekToStartPos=function(){var e=this.media
+case w.INTERNAL_EXCEPTION:this.recoverWorkerError(t)}},r.checkBuffer=function(){var e=this.media,t=this.gapController
+if(e&&t&&e.readyState){if(this.loadedmetadata||!dr.getBuffered(e).length){var r=this.state!==Er?this.fragCurrent:null
+t.poll(this.lastCurrentTime,r)}this.lastCurrentTime=e.currentTime}},r.onFragLoadEmergencyAborted=function(){this.state=Er,this.loadedmetadata||(this.startFragRequested=!1,this.nextLoadPosition=this.startPosition),this.tickImmediate()},r.onBufferFlushed=function(e,t){var r=t.type
+if(r!==M||this.audioOnly&&!this.altAudio){var i=(r===I?this.videoBuffer:this.mediaBuffer)||this.media
+this.afterBufferFlushed(i,r,lt)}},r.onLevelsUpdated=function(e,t){this.levels=t.levels},r.swapAudioCodec=function(){this.audioCodecSwap=!this.audioCodecSwap},r.seekToStartPos=function(){var e=this.media
 if(e){var t=e.currentTime,r=this.startPosition
 if(r>=0&&t<r){if(e.seeking)return void this.log("could not seek to "+r+", already seeking at "+t)
-var i=lr.getBuffered(e),n=(i.length?i.start(0):0)-r
+var i=dr.getBuffered(e),n=(i.length?i.start(0):0)-r
 n>0&&(n<this.config.maxBufferHole||n<this.config.maxFragLookUpTolerance)&&(this.log("adjusting start position by "+n+" to match buffer start"),r+=n,this.startPosition=r),this.log("seek to target start position "+r+" from current time "+t),e.currentTime=r}}},r._getAudioCodec=function(e){var t=this.config.defaultAudioCodec||e.audioCodec
 return this.audioCodecSwap&&t&&(this.log("Swapping audio codec"),t=-1!==t.indexOf("mp4a.40.5")?"mp4a.40.2":"mp4a.40.5"),t},r._loadBitrateTestFrag=function(e,t){var r=this
 e.bitrateTest=!0,this._doFragLoad(e,t).then((function(i){var n=r.hls
-if(i&&!r.fragContextChanged(e)){t.fragmentError=0,r.state=yr,r.startFragRequested=!1,r.bitrateTest=!1
+if(i&&!r.fragContextChanged(e)){t.fragmentError=0,r.state=Er,r.startFragRequested=!1,r.bitrateTest=!1
 var a=e.stats
-a.parsing.start=a.parsing.end=a.buffering.start=a.buffering.end=self.performance.now(),n.trigger(b.FRAG_LOADED,i),e.bitrateTest=!1}}))},r._handleTransmuxComplete=function(e){var t,r="main",i=this.hls,n=e.remuxResult,a=e.chunkMeta,s=this.getCurrentContext(a)
+a.parsing.start=a.parsing.end=a.buffering.start=a.buffering.end=self.performance.now(),n.trigger(y.FRAG_LOADED,i),e.bitrateTest=!1}}))},r._handleTransmuxComplete=function(e){var t,r="main",i=this.hls,n=e.remuxResult,a=e.chunkMeta,s=this.getCurrentContext(a)
 if(s){var o=s.frag,l=s.part,u=s.level,c=n.video,d=n.text,h=n.id3,f=n.initSegment,p=u.details,m=this.altAudio?void 0:n.audio
 if(this.fragContextChanged(o))this.fragmentTracker.removeFragment(o)
-else{if(this.state=kr,f){f.tracks&&(this._bufferInitSegment(u,f.tracks,o,a),i.trigger(b.FRAG_PARSING_INIT_SEGMENT,{frag:o,id:r,tracks:f.tracks}))
-var g=f.initPTS,y=f.timescale
-v(g)&&(this.initPTS[o.cc]={baseTime:g,timescale:y},i.trigger(b.INIT_PTS_FOUND,{frag:o,id:r,initPTS:g,timescale:y}))}if(c&&!1!==n.independent){if(p){var _=c.startPTS,w=c.endPTS,E=c.startDTS,T=c.endDTS
-if(l)l.elementaryStreams[c.type]={startPTS:_,endPTS:w,startDTS:E,endDTS:T}
-else if(c.firstKeyFrame&&c.independent&&1===a.id&&(this.couldBacktrack=!0),c.dropped&&c.independent){var k=this.getMainFwdBufferInfo()
-if((k?k.end:this.getLoadPosition())+this.config.maxBufferHole<(c.firstKeyFramePTS?c.firstKeyFramePTS:_)-this.config.maxBufferHole)return void this.backtrack(o)
-o.setElementaryStreamInfo(c.type,o.start,w,o.start,T,!0)}o.setElementaryStreamInfo(c.type,_,w,E,T),this.backtrackFragment&&(this.backtrackFragment=o),this.bufferFragmentData(c,o,l,a)}}else if(!1===n.independent)return void this.backtrack(o)
-if(m){var S=m.startPTS,O=m.endPTS,x=m.startDTS,P=m.endDTS
-l&&(l.elementaryStreams[D]={startPTS:S,endPTS:O,startDTS:x,endDTS:P}),o.setElementaryStreamInfo(D,S,O,x,P),this.bufferFragmentData(m,o,l,a)}if(p&&null!=h&&null!=(t=h.samples)&&t.length){var A={id:r,frag:o,details:p,samples:h.samples}
-i.trigger(b.FRAG_PARSING_METADATA,A)}if(p&&d){var R={id:r,frag:o,details:p,samples:d.samples}
-i.trigger(b.FRAG_PARSING_USERDATA,R)}}}else this.resetWhenMissingContext(a)},r._bufferInitSegment=function(e,t,r,i){var n=this
-if(this.state===kr){this.audioOnly=!!t.audio&&!t.video,this.altAudio&&!this.audioOnly&&delete t.audio
+else{if(this.state=xr,f){if(null!=f&&f.tracks){var g=o.initSegment||o
+this._bufferInitSegment(u,f.tracks,g,a),i.trigger(y.FRAG_PARSING_INIT_SEGMENT,{frag:g,id:r,tracks:f.tracks})}var v=f.initPTS,_=f.timescale
+b(v)&&(this.initPTS[o.cc]={baseTime:v,timescale:_},i.trigger(y.INIT_PTS_FOUND,{frag:o,id:r,initPTS:v,timescale:_}))}if(c&&!1!==n.independent){if(p){var w=c.startPTS,E=c.endPTS,T=c.startDTS,k=c.endDTS
+if(l)l.elementaryStreams[c.type]={startPTS:w,endPTS:E,startDTS:T,endDTS:k}
+else if(c.firstKeyFrame&&c.independent&&1===a.id&&(this.couldBacktrack=!0),c.dropped&&c.independent){var S=this.getMainFwdBufferInfo()
+if((S?S.end:this.getLoadPosition())+this.config.maxBufferHole<(c.firstKeyFramePTS?c.firstKeyFramePTS:w)-this.config.maxBufferHole)return void this.backtrack(o)
+o.setElementaryStreamInfo(c.type,o.start,E,o.start,k,!0)}o.setElementaryStreamInfo(c.type,w,E,T,k),this.backtrackFragment&&(this.backtrackFragment=o),this.bufferFragmentData(c,o,l,a)}}else if(!1===n.independent)return void this.backtrack(o)
+if(m){var O=m.startPTS,x=m.endPTS,P=m.startDTS,A=m.endDTS
+l&&(l.elementaryStreams[M]={startPTS:O,endPTS:x,startDTS:P,endDTS:A}),o.setElementaryStreamInfo(M,O,x,P,A),this.bufferFragmentData(m,o,l,a)}if(p&&null!=h&&null!=(t=h.samples)&&t.length){var R={id:r,frag:o,details:p,samples:h.samples}
+i.trigger(y.FRAG_PARSING_METADATA,R)}if(p&&d){var C={id:r,frag:o,details:p,samples:d.samples}
+i.trigger(y.FRAG_PARSING_USERDATA,C)}}}else this.resetWhenMissingContext(a)},r._bufferInitSegment=function(e,t,r,i){var n=this
+if(this.state===xr){this.audioOnly=!!t.audio&&!t.video,this.altAudio&&!this.audioOnly&&delete t.audio
 var a=t.audio,s=t.video,o=t.audiovideo
 if(a){var l=e.audioCodec,u=navigator.userAgent.toLowerCase()
-this.audioCodecSwitch&&(l&&(l=-1!==l.indexOf("mp4a.40.5")?"mp4a.40.2":"mp4a.40.5"),1!==a.metadata.channelCount&&-1===u.indexOf("firefox")&&(l="mp4a.40.5")),-1!==u.indexOf("android")&&"audio/mpeg"!==a.container&&(l="mp4a.40.2",this.log("Android: force audio codec to "+l)),e.audioCodec&&e.audioCodec!==l&&this.log('Swapping manifest audio codec "'+e.audioCodec+'" for "'+l+'"'),a.levelCodec=l,a.id="main",this.log("Init audio buffer, container:"+a.container+", codecs[selected/level/parsed]=["+(l||"")+"/"+(e.audioCodec||"")+"/"+a.codec+"]")}s&&(s.levelCodec=e.videoCodec,s.id="main",this.log("Init video buffer, container:"+s.container+", codecs[level/parsed]=["+(e.videoCodec||"")+"/"+s.codec+"]")),o&&this.log("Init audiovideo buffer, container:"+o.container+", codecs[level/parsed]=["+(e.attrs.CODECS||"")+"/"+o.codec+"]"),this.hls.trigger(b.BUFFER_CODECS,t),Object.keys(t).forEach((function(e){var a=t[e].initSegment
-null!=a&&a.byteLength&&n.hls.trigger(b.BUFFER_APPENDING,{type:e,data:a,frag:r,part:null,chunkMeta:i,parent:r.type})})),this.tick()}},r.getMainFwdBufferInfo=function(){return this.getFwdBufferInfo(this.mediaBuffer?this.mediaBuffer:this.media,at)},r.backtrack=function(e){this.couldBacktrack=!0,this.backtrackFragment=e,this.resetTransmuxer(),this.flushBufferGap(e),this.fragmentTracker.removeFragment(e),this.fragPrevious=null,this.nextLoadPosition=e.start,this.state=yr},r.checkFragmentChanged=function(){var e=this.media,t=null
+this.audioCodecSwitch&&(l&&(l=-1!==l.indexOf("mp4a.40.5")?"mp4a.40.2":"mp4a.40.5"),1!==a.metadata.channelCount&&-1===u.indexOf("firefox")&&(l="mp4a.40.5")),-1!==u.indexOf("android")&&"audio/mpeg"!==a.container&&(l="mp4a.40.2",this.log("Android: force audio codec to "+l)),e.audioCodec&&e.audioCodec!==l&&this.log('Swapping manifest audio codec "'+e.audioCodec+'" for "'+l+'"'),a.levelCodec=l,a.id="main",this.log("Init audio buffer, container:"+a.container+", codecs[selected/level/parsed]=["+(l||"")+"/"+(e.audioCodec||"")+"/"+a.codec+"]")}s&&(s.levelCodec=e.videoCodec,s.id="main",this.log("Init video buffer, container:"+s.container+", codecs[level/parsed]=["+(e.videoCodec||"")+"/"+s.codec+"]")),o&&this.log("Init audiovideo buffer, container:"+o.container+", codecs[level/parsed]=["+(e.attrs.CODECS||"")+"/"+o.codec+"]"),this.hls.trigger(y.BUFFER_CODECS,t),Object.keys(t).forEach((function(e){var a=t[e].initSegment
+null!=a&&a.byteLength&&n.hls.trigger(y.BUFFER_APPENDING,{type:e,data:a,frag:r,part:null,chunkMeta:i,parent:r.type})})),this.tick()}},r.getMainFwdBufferInfo=function(){return this.getFwdBufferInfo(this.mediaBuffer?this.mediaBuffer:this.media,lt)},r.backtrack=function(e){this.couldBacktrack=!0,this.backtrackFragment=e,this.resetTransmuxer(),this.flushBufferGap(e),this.fragmentTracker.removeFragment(e),this.fragPrevious=null,this.nextLoadPosition=e.start,this.state=Er},r.checkFragmentChanged=function(){var e=this.media,t=null
 if(e&&e.readyState>1&&!1===e.seeking){var r=e.currentTime
-if(lr.isBuffered(e,r)?t=this.getAppendedFrag(r):lr.isBuffered(e,r+.1)&&(t=this.getAppendedFrag(r+.1)),t){this.backtrackFragment=null
+if(dr.isBuffered(e,r)?t=this.getAppendedFrag(r):dr.isBuffered(e,r+.1)&&(t=this.getAppendedFrag(r+.1)),t){this.backtrackFragment=null
 var i=this.fragPlaying,n=t.level
-i&&t.sn===i.sn&&i.level===n&&t.urlId===i.urlId||(this.fragPlaying=t,this.hls.trigger(b.FRAG_CHANGED,{frag:t}),i&&i.level===n||this.hls.trigger(b.LEVEL_SWITCHED,{level:n}))}}},a(t,[{key:"nextLevel",get:function(){var e=this.nextBufferedFrag
+i&&t.sn===i.sn&&i.level===n&&t.urlId===i.urlId||(this.fragPlaying=t,this.hls.trigger(y.FRAG_CHANGED,{frag:t}),i&&i.level===n||this.hls.trigger(y.LEVEL_SWITCHED,{level:n}))}}},a(t,[{key:"nextLevel",get:function(){var e=this.nextBufferedFrag
 return e?e.level:-1}},{key:"currentFrag",get:function(){var e=this.media
 return e?this.fragPlaying||this.getAppendedFrag(e.currentTime):null}},{key:"currentProgramDateTime",get:function(){var e=this.media
 if(e){var t=e.currentTime,r=this.currentFrag
-if(r&&v(t)&&v(r.programDateTime)){var i=r.programDateTime+1e3*(t-r.start)
+if(r&&b(t)&&b(r.programDateTime)){var i=r.programDateTime+1e3*(t-r.start)
 return new Date(i)}}return null}},{key:"currentLevel",get:function(){var e=this.currentFrag
 return e?e.level:-1}},{key:"nextBufferedFrag",get:function(){var e=this.currentFrag
-return e?this.followingBufferedFrag(e):null}},{key:"forceStartLoad",get:function(){return this._forceStartLoad}}]),t}(Rr),qi=function(){function e(e,t,r){void 0===t&&(t=0),void 0===r&&(r=0),this.halfLife=void 0,this.alpha_=void 0,this.estimate_=void 0,this.totalWeight_=void 0,this.halfLife=e,this.alpha_=e?Math.exp(Math.log(.5)/e):0,this.estimate_=t,this.totalWeight_=r}var t=e.prototype
+return e?this.followingBufferedFrag(e):null}},{key:"forceStartLoad",get:function(){return this._forceStartLoad}}]),t}(Mr),Ki=function(){function e(e,t,r){void 0===t&&(t=0),void 0===r&&(r=0),this.halfLife=void 0,this.alpha_=void 0,this.estimate_=void 0,this.totalWeight_=void 0,this.halfLife=e,this.alpha_=e?Math.exp(Math.log(.5)/e):0,this.estimate_=t,this.totalWeight_=r}var t=e.prototype
 return t.sample=function(e,t){var r=Math.pow(this.alpha_,e)
 this.estimate_=t*(1-r)+r*this.estimate_,this.totalWeight_+=e},t.getTotalWeight=function(){return this.totalWeight_},t.getEstimate=function(){if(this.alpha_){var e=1-Math.pow(this.alpha_,this.totalWeight_)
-if(e)return this.estimate_/e}return this.estimate_},e}(),Gi=function(){function e(e,t,r,i){void 0===i&&(i=100),this.defaultEstimate_=void 0,this.minWeight_=void 0,this.minDelayMs_=void 0,this.slow_=void 0,this.fast_=void 0,this.defaultTTFB_=void 0,this.ttfb_=void 0,this.defaultEstimate_=r,this.minWeight_=.001,this.minDelayMs_=50,this.slow_=new qi(e),this.fast_=new qi(t),this.defaultTTFB_=i,this.ttfb_=new qi(e)}var t=e.prototype
+if(e)return this.estimate_/e}return this.estimate_},e}(),Wi=function(){function e(e,t,r,i){void 0===i&&(i=100),this.defaultEstimate_=void 0,this.minWeight_=void 0,this.minDelayMs_=void 0,this.slow_=void 0,this.fast_=void 0,this.defaultTTFB_=void 0,this.ttfb_=void 0,this.defaultEstimate_=r,this.minWeight_=.001,this.minDelayMs_=50,this.slow_=new Ki(e),this.fast_=new Ki(t),this.defaultTTFB_=i,this.ttfb_=new Ki(e)}var t=e.prototype
 return t.update=function(e,t){var r=this.slow_,i=this.fast_,n=this.ttfb_
-r.halfLife!==e&&(this.slow_=new qi(e,r.getEstimate(),r.getTotalWeight())),i.halfLife!==t&&(this.fast_=new qi(t,i.getEstimate(),i.getTotalWeight())),n.halfLife!==e&&(this.ttfb_=new qi(e,n.getEstimate(),n.getTotalWeight()))},t.sample=function(e,t){var r=(e=Math.max(e,this.minDelayMs_))/1e3,i=8*t/r
+r.halfLife!==e&&(this.slow_=new Ki(e,r.getEstimate(),r.getTotalWeight())),i.halfLife!==t&&(this.fast_=new Ki(t,i.getEstimate(),i.getTotalWeight())),n.halfLife!==e&&(this.ttfb_=new Ki(e,n.getEstimate(),n.getTotalWeight()))},t.sample=function(e,t){var r=(e=Math.max(e,this.minDelayMs_))/1e3,i=8*t/r
 this.fast_.sample(r,i),this.slow_.sample(r,i)},t.sampleTTFB=function(e){var t=e/1e3,r=Math.sqrt(2)*Math.exp(-Math.pow(t,2)/2)
-this.ttfb_.sample(r,Math.max(e,5))},t.canEstimate=function(){return this.fast_.getTotalWeight()>=this.minWeight_},t.getEstimate=function(){return this.canEstimate()?Math.min(this.fast_.getEstimate(),this.slow_.getEstimate()):this.defaultEstimate_},t.getEstimateTTFB=function(){return this.ttfb_.getTotalWeight()>=this.minWeight_?this.ttfb_.getEstimate():this.defaultTTFB_},t.destroy=function(){},e}(),Ki=function(){function e(e){this.hls=void 0,this.lastLevelLoadSec=0,this.lastLoadedFragLevel=0,this._nextAutoLevel=-1,this.timer=-1,this.onCheck=this._abandonRulesCheck.bind(this),this.fragCurrent=null,this.partCurrent=null,this.bitrateTestDelay=0,this.bwEstimator=void 0,this.hls=e
+this.ttfb_.sample(r,Math.max(e,5))},t.canEstimate=function(){return this.fast_.getTotalWeight()>=this.minWeight_},t.getEstimate=function(){return this.canEstimate()?Math.min(this.fast_.getEstimate(),this.slow_.getEstimate()):this.defaultEstimate_},t.getEstimateTTFB=function(){return this.ttfb_.getTotalWeight()>=this.minWeight_?this.ttfb_.getEstimate():this.defaultTTFB_},t.destroy=function(){},e}(),Yi=function(){function e(e){this.hls=void 0,this.lastLevelLoadSec=0,this.lastLoadedFragLevel=0,this._nextAutoLevel=-1,this.timer=-1,this.onCheck=this._abandonRulesCheck.bind(this),this.fragCurrent=null,this.partCurrent=null,this.bitrateTestDelay=0,this.bwEstimator=void 0,this.hls=e
 var t=e.config
-this.bwEstimator=new Gi(t.abrEwmaSlowVoD,t.abrEwmaFastVoD,t.abrEwmaDefaultEstimate),this.registerListeners()}var t=e.prototype
+this.bwEstimator=new Wi(t.abrEwmaSlowVoD,t.abrEwmaFastVoD,t.abrEwmaDefaultEstimate),this.registerListeners()}var t=e.prototype
 return t.registerListeners=function(){var e=this.hls
-e.on(b.FRAG_LOADING,this.onFragLoading,this),e.on(b.FRAG_LOADED,this.onFragLoaded,this),e.on(b.FRAG_BUFFERED,this.onFragBuffered,this),e.on(b.LEVEL_SWITCHING,this.onLevelSwitching,this),e.on(b.LEVEL_LOADED,this.onLevelLoaded,this)},t.unregisterListeners=function(){var e=this.hls
-e.off(b.FRAG_LOADING,this.onFragLoading,this),e.off(b.FRAG_LOADED,this.onFragLoaded,this),e.off(b.FRAG_BUFFERED,this.onFragBuffered,this),e.off(b.LEVEL_SWITCHING,this.onLevelSwitching,this),e.off(b.LEVEL_LOADED,this.onLevelLoaded,this)},t.destroy=function(){this.unregisterListeners(),this.clearTimer(),this.hls=this.onCheck=null,this.fragCurrent=this.partCurrent=null},t.onFragLoading=function(e,t){var r,i=t.frag
+e.on(y.FRAG_LOADING,this.onFragLoading,this),e.on(y.FRAG_LOADED,this.onFragLoaded,this),e.on(y.FRAG_BUFFERED,this.onFragBuffered,this),e.on(y.LEVEL_SWITCHING,this.onLevelSwitching,this),e.on(y.LEVEL_LOADED,this.onLevelLoaded,this)},t.unregisterListeners=function(){var e=this.hls
+e.off(y.FRAG_LOADING,this.onFragLoading,this),e.off(y.FRAG_LOADED,this.onFragLoaded,this),e.off(y.FRAG_BUFFERED,this.onFragBuffered,this),e.off(y.LEVEL_SWITCHING,this.onLevelSwitching,this),e.off(y.LEVEL_LOADED,this.onLevelLoaded,this)},t.destroy=function(){this.unregisterListeners(),this.clearTimer(),this.hls=this.onCheck=null,this.fragCurrent=this.partCurrent=null},t.onFragLoading=function(e,t){var r,i=t.frag
 this.ignoreFragment(i)||(this.fragCurrent=i,this.partCurrent=null!=(r=t.part)?r:null,this.clearTimer(),this.timer=self.setInterval(this.onCheck,100))},t.onLevelSwitching=function(e,t){this.clearTimer()},t.getTimeToLoadFrag=function(e,t,r,i){return e+r/t+(i?this.lastLevelLoadSec:0)},t.onLevelLoaded=function(e,t){var r=this.hls.config,i=t.stats,n=i.total,a=i.bwEstimate
-v(n)&&v(a)&&(this.lastLevelLoadSec=8*n/a),t.details.live?this.bwEstimator.update(r.abrEwmaSlowLive,r.abrEwmaFastLive):this.bwEstimator.update(r.abrEwmaSlowVoD,r.abrEwmaFastVoD)},t._abandonRulesCheck=function(){var e=this.fragCurrent,t=this.partCurrent,r=this.hls,i=r.autoLevelEnabled,n=r.media
+b(n)&&b(a)&&(this.lastLevelLoadSec=8*n/a),t.details.live?this.bwEstimator.update(r.abrEwmaSlowLive,r.abrEwmaFastLive):this.bwEstimator.update(r.abrEwmaSlowVoD,r.abrEwmaFastVoD)},t._abandonRulesCheck=function(){var e=this.fragCurrent,t=this.partCurrent,r=this.hls,i=r.autoLevelEnabled,n=r.media
 if(e&&n){var a=performance.now(),s=t?t.stats:e.stats,o=t?t.duration:e.duration,l=a-s.loading.start
 if(s.aborted||s.loaded&&s.loaded===s.total||0===e.level)return this.clearTimer(),void(this._nextAutoLevel=-1)
 if(i&&!n.paused&&n.playbackRate&&n.readyState){var u=r.mainForwardBufferInfo
 if(null!==u){var c=this.bwEstimator.getEstimateTTFB(),d=Math.abs(n.playbackRate)
 if(!(l<=Math.max(c,o/(2*d)*1e3))){var h=u.len/d
-if(!(h>=2*o/d)){var f=s.loading.first?s.loading.first-s.loading.start:-1,p=s.loaded&&f>-1,m=this.bwEstimator.getEstimate(),g=r.levels,y=r.minAutoLevel,_=g[e.level],w=s.total||Math.max(s.loaded,Math.round(o*_.maxBitrate/8)),E=l-f
+if(!(h>=2*o/d)){var f=s.loading.first?s.loading.first-s.loading.start:-1,p=s.loaded&&f>-1,m=this.bwEstimator.getEstimate(),g=r.levels,v=r.minAutoLevel,_=g[e.level],w=s.total||Math.max(s.loaded,Math.round(o*_.maxBitrate/8)),E=l-f
 E<1&&p&&(E=Math.min(l,8*s.loaded/m))
 var T=p?1e3*s.loaded/E:0,k=T?(w-s.loaded)/T:8*w/m+c/1e3
-if(!(k<=h)){var O,x=T?8*T:m,P=Number.POSITIVE_INFINITY
-for(O=e.level-1;O>y;O--){var A=g[O].maxBitrate
-if((P=this.getTimeToLoadFrag(c/1e3,x,o*A,!g[O].details))<h)break}P>=k||P>10*o||(r.nextLoadLevel=O,p?this.bwEstimator.sample(l-Math.min(c,f),s.loaded):this.bwEstimator.sampleTTFB(l),this.clearTimer(),S.warn("[abr] Fragment "+e.sn+(t?" part "+t.index:"")+" of level "+e.level+" is loading too slowly;\n      Time to underbuffer: "+h.toFixed(3)+" s\n      Estimated load time for current fragment: "+k.toFixed(3)+" s\n      Estimated load time for down switch fragment: "+P.toFixed(3)+" s\n      TTFB estimate: "+f+"\n      Current BW estimate: "+(v(m)?(m/1024).toFixed(3):"Unknown")+" Kb/s\n      New BW estimate: "+(this.bwEstimator.getEstimate()/1024).toFixed(3)+" Kb/s\n      Aborting and switching to level "+O),e.loader&&(this.fragCurrent=this.partCurrent=null,e.abortRequests()),r.trigger(b.FRAG_LOAD_EMERGENCY_ABORTED,{frag:e,part:t,stats:s}))}}}}}}},t.onFragLoaded=function(e,t){var r=t.frag,i=t.part,n=i?i.stats:r.stats
-if(r.type===at&&this.bwEstimator.sampleTTFB(n.loading.first-n.loading.start),!this.ignoreFragment(r)){if(this.clearTimer(),this.lastLoadedFragLevel=r.level,this._nextAutoLevel=-1,this.hls.config.abrMaxWithRealBitrate){var a=i?i.duration:r.duration,s=this.hls.levels[r.level],o=(s.loaded?s.loaded.bytes:0)+n.loaded,l=(s.loaded?s.loaded.duration:0)+a
+if(!(k<=h)){var S,x=T?8*T:m,P=Number.POSITIVE_INFINITY
+for(S=e.level-1;S>v;S--){var A=g[S].maxBitrate
+if((P=this.getTimeToLoadFrag(c/1e3,x,o*A,!g[S].details))<h)break}P>=k||P>10*o||(r.nextLoadLevel=S,p?this.bwEstimator.sample(l-Math.min(c,f),s.loaded):this.bwEstimator.sampleTTFB(l),this.clearTimer(),O.warn("[abr] Fragment "+e.sn+(t?" part "+t.index:"")+" of level "+e.level+" is loading too slowly;\n      Time to underbuffer: "+h.toFixed(3)+" s\n      Estimated load time for current fragment: "+k.toFixed(3)+" s\n      Estimated load time for down switch fragment: "+P.toFixed(3)+" s\n      TTFB estimate: "+f+"\n      Current BW estimate: "+(b(m)?(m/1024).toFixed(3):"Unknown")+" Kb/s\n      New BW estimate: "+(this.bwEstimator.getEstimate()/1024).toFixed(3)+" Kb/s\n      Aborting and switching to level "+S),e.loader&&(this.fragCurrent=this.partCurrent=null,e.abortRequests()),r.trigger(y.FRAG_LOAD_EMERGENCY_ABORTED,{frag:e,part:t,stats:s}))}}}}}}},t.onFragLoaded=function(e,t){var r=t.frag,i=t.part,n=i?i.stats:r.stats
+if(r.type===lt&&this.bwEstimator.sampleTTFB(n.loading.first-n.loading.start),!this.ignoreFragment(r)){if(this.clearTimer(),this.lastLoadedFragLevel=r.level,this._nextAutoLevel=-1,this.hls.config.abrMaxWithRealBitrate){var a=i?i.duration:r.duration,s=this.hls.levels[r.level],o=(s.loaded?s.loaded.bytes:0)+n.loaded,l=(s.loaded?s.loaded.duration:0)+a
 s.loaded={bytes:o,duration:l},s.realBitrate=Math.round(8*o/l)}if(r.bitrateTest){var u={stats:n,frag:r,part:i,id:r.type}
-this.onFragBuffered(b.FRAG_BUFFERED,u),r.bitrateTest=!1}}},t.onFragBuffered=function(e,t){var r=t.frag,i=t.part,n=null!=i&&i.stats.loaded?i.stats:r.stats
+this.onFragBuffered(y.FRAG_BUFFERED,u),r.bitrateTest=!1}}},t.onFragBuffered=function(e,t){var r=t.frag,i=t.part,n=null!=i&&i.stats.loaded?i.stats:r.stats
 if(!n.aborted&&!this.ignoreFragment(r)){var a=n.parsing.end-n.loading.start-Math.min(n.loading.first-n.loading.start,this.bwEstimator.getEstimateTTFB())
-this.bwEstimator.sample(a,n.loaded),n.bwEstimate=this.bwEstimator.getEstimate(),r.bitrateTest?this.bitrateTestDelay=a/1e3:this.bitrateTestDelay=0}},t.ignoreFragment=function(e){return e.type!==at||"initSegment"===e.sn},t.clearTimer=function(){self.clearInterval(this.timer)},t.getNextABRAutoLevel=function(){var e=this.fragCurrent,t=this.partCurrent,r=this.hls,i=r.maxAutoLevel,n=r.config,a=r.minAutoLevel,s=r.media,o=t?t.duration:e?e.duration:0,l=s&&0!==s.playbackRate?Math.abs(s.playbackRate):1,u=this.bwEstimator?this.bwEstimator.getEstimate():n.abrEwmaDefaultEstimate,c=r.mainForwardBufferInfo,d=(c?c.len:0)/l,h=this.findBestLevel(u,a,i,d,n.abrBandWidthFactor,n.abrBandWidthUpFactor)
+this.bwEstimator.sample(a,n.loaded),n.bwEstimate=this.bwEstimator.getEstimate(),r.bitrateTest?this.bitrateTestDelay=a/1e3:this.bitrateTestDelay=0}},t.ignoreFragment=function(e){return e.type!==lt||"initSegment"===e.sn},t.clearTimer=function(){self.clearInterval(this.timer)},t.getNextABRAutoLevel=function(){var e=this.fragCurrent,t=this.partCurrent,r=this.hls,i=r.maxAutoLevel,n=r.config,a=r.minAutoLevel,s=r.media,o=t?t.duration:e?e.duration:0,l=s&&0!==s.playbackRate?Math.abs(s.playbackRate):1,u=this.bwEstimator?this.bwEstimator.getEstimate():n.abrEwmaDefaultEstimate,c=r.mainForwardBufferInfo,d=(c?c.len:0)/l,h=this.findBestLevel(u,a,i,d,n.abrBandWidthFactor,n.abrBandWidthUpFactor)
 if(h>=0)return h
-S.trace("[abr] "+(d?"rebuffering expected":"buffer is empty")+", finding optimal quality level")
+O.trace("[abr] "+(d?"rebuffering expected":"buffer is empty")+", finding optimal quality level")
 var f=o?Math.min(o,n.maxStarvationDelay):n.maxStarvationDelay,p=n.abrBandWidthFactor,m=n.abrBandWidthUpFactor
 if(!d){var g=this.bitrateTestDelay
-g&&(f=(o?Math.min(o,n.maxLoadingDelay):n.maxLoadingDelay)-g,S.trace("[abr] bitrate test took "+Math.round(1e3*g)+"ms, set first fragment max fetchDuration to "+Math.round(1e3*f)+" ms"),p=m=1)}return h=this.findBestLevel(u,a,i,d+f,p,m),Math.max(h,0)},t.findBestLevel=function(e,t,r,i,n,a){for(var s,o=this.fragCurrent,l=this.partCurrent,u=this.lastLoadedFragLevel,c=this.hls.levels,d=c[u],h=!(null==d||null==(s=d.details)||!s.live),f=null==d?void 0:d.codecSet,p=l?l.duration:o?o.duration:0,m=this.bwEstimator.getEstimateTTFB()/1e3,g=t,b=-1,y=r;y>=t;y--){var _=c[y]
-if(!_||f&&_.codecSet!==f)_&&(g=Math.min(y,g),b=Math.max(y,b))
-else{-1!==b&&S.trace("[abr] Skipped level(s) "+g+"-"+b+' with CODECS:"'+c[b].attrs.CODECS+'"; not compatible with "'+d.attrs.CODECS+'"')
+g&&(f=(o?Math.min(o,n.maxLoadingDelay):n.maxLoadingDelay)-g,O.trace("[abr] bitrate test took "+Math.round(1e3*g)+"ms, set first fragment max fetchDuration to "+Math.round(1e3*f)+" ms"),p=m=1)}return h=this.findBestLevel(u,a,i,d+f,p,m),Math.max(h,0)},t.findBestLevel=function(e,t,r,i,n,a){for(var s,o=this.fragCurrent,l=this.partCurrent,u=this.lastLoadedFragLevel,c=this.hls.levels,d=c[u],h=!(null==d||null==(s=d.details)||!s.live),f=null==d?void 0:d.codecSet,p=l?l.duration:o?o.duration:0,m=this.bwEstimator.getEstimateTTFB()/1e3,g=t,v=-1,y=r;y>=t;y--){var _=c[y]
+if(!_||f&&_.codecSet!==f)_&&(g=Math.min(y,g),v=Math.max(y,v))
+else{-1!==v&&O.trace("[abr] Skipped level(s) "+g+"-"+v+' with CODECS:"'+c[v].attrs.CODECS+'"; not compatible with "'+d.attrs.CODECS+'"')
 var w,E=_.details,T=(l?null==E?void 0:E.partTarget:null==E?void 0:E.averagetargetduration)||p
 w=y<=u?n*e:a*e
-var k=c[y].maxBitrate,O=this.getTimeToLoadFrag(m,w,k*T,void 0===E)
-if(S.trace("[abr] level:"+y+" adjustedbw-bitrate:"+Math.round(w-k)+" avgDuration:"+T.toFixed(1)+" maxFetchDuration:"+i.toFixed(1)+" fetchDuration:"+O.toFixed(1)),w>k&&(0===O||!v(O)||h&&!this.bitrateTestDelay||O<i))return y}}return-1},a(e,[{key:"nextAutoLevel",get:function(){var e=this._nextAutoLevel,t=this.bwEstimator
+var k=c[y].maxBitrate,S=this.getTimeToLoadFrag(m,w,k*T,void 0===E)
+if(O.trace("[abr] level:"+y+" adjustedbw-bitrate:"+Math.round(w-k)+" avgDuration:"+T.toFixed(1)+" maxFetchDuration:"+i.toFixed(1)+" fetchDuration:"+S.toFixed(1)),w>k&&(0===S||!b(S)||h&&!this.bitrateTestDelay||S<i))return y}}return-1},a(e,[{key:"nextAutoLevel",get:function(){var e=this._nextAutoLevel,t=this.bwEstimator
 if(-1!==e&&!t.canEstimate())return e
 var r=this.getNextABRAutoLevel()
 if(-1!==e){var i=this.hls.levels
-if(i.length>Math.max(e,r)&&i[e].loadError<=i[r].loadError)return e}return-1!==e&&(r=Math.min(e,r)),r},set:function(e){this._nextAutoLevel=e}}]),e}(),Wi=function(){function e(){this.chunks=[],this.dataLength=0}var t=e.prototype
+if(i.length>Math.max(e,r)&&i[e].loadError<=i[r].loadError)return e}return-1!==e&&(r=Math.min(e,r)),r},set:function(e){this._nextAutoLevel=e}}]),e}(),Qi=function(){function e(){this.chunks=[],this.dataLength=0}var t=e.prototype
 return t.push=function(e){this.chunks.push(e),this.dataLength+=e.length},t.flush=function(){var e,t=this.chunks,r=this.dataLength
 return t.length?(e=1===t.length?t[0]:function(e,t){for(var r=new Uint8Array(t),i=0,n=0;n<e.length;n++){var a=e[n]
-r.set(a,i),i+=a.length}return r}(t,r),this.reset(),e):new Uint8Array(0)},t.reset=function(){this.chunks.length=0,this.dataLength=0},e}(),Yi=function(e){function t(t,r,i){var n
-return(n=e.call(this,t,r,i,"[audio-stream-controller]",st)||this).videoBuffer=null,n.videoTrackCC=-1,n.waitingVideoCC=-1,n.bufferedTrack=null,n.switchingTrack=null,n.trackId=-1,n.waitingData=null,n.mainDetails=null,n.bufferFlushed=!1,n.cachedTrackLoadedData=null,n._registerListeners(),n}l(t,e)
+r.set(a,i),i+=a.length}return r}(t,r),this.reset(),e):new Uint8Array(0)},t.reset=function(){this.chunks.length=0,this.dataLength=0},e}(),Xi=function(e){function t(t,r,i){var n
+return(n=e.call(this,t,r,i,"[audio-stream-controller]",ut)||this).videoBuffer=null,n.videoTrackCC=-1,n.waitingVideoCC=-1,n.bufferedTrack=null,n.switchingTrack=null,n.trackId=-1,n.waitingData=null,n.mainDetails=null,n.bufferFlushed=!1,n.cachedTrackLoadedData=null,n._registerListeners(),n}l(t,e)
 var r=t.prototype
 return r.onHandlerDestroying=function(){this._unregisterListeners(),this.mainDetails=null,this.bufferedTrack=null,this.switchingTrack=null},r._registerListeners=function(){var e=this.hls
-e.on(b.MEDIA_ATTACHED,this.onMediaAttached,this),e.on(b.MEDIA_DETACHING,this.onMediaDetaching,this),e.on(b.MANIFEST_LOADING,this.onManifestLoading,this),e.on(b.LEVEL_LOADED,this.onLevelLoaded,this),e.on(b.AUDIO_TRACKS_UPDATED,this.onAudioTracksUpdated,this),e.on(b.AUDIO_TRACK_SWITCHING,this.onAudioTrackSwitching,this),e.on(b.AUDIO_TRACK_LOADED,this.onAudioTrackLoaded,this),e.on(b.ERROR,this.onError,this),e.on(b.BUFFER_RESET,this.onBufferReset,this),e.on(b.BUFFER_CREATED,this.onBufferCreated,this),e.on(b.BUFFER_FLUSHED,this.onBufferFlushed,this),e.on(b.INIT_PTS_FOUND,this.onInitPtsFound,this),e.on(b.FRAG_BUFFERED,this.onFragBuffered,this)},r._unregisterListeners=function(){var e=this.hls
-e.off(b.MEDIA_ATTACHED,this.onMediaAttached,this),e.off(b.MEDIA_DETACHING,this.onMediaDetaching,this),e.off(b.MANIFEST_LOADING,this.onManifestLoading,this),e.off(b.LEVEL_LOADED,this.onLevelLoaded,this),e.off(b.AUDIO_TRACKS_UPDATED,this.onAudioTracksUpdated,this),e.off(b.AUDIO_TRACK_SWITCHING,this.onAudioTrackSwitching,this),e.off(b.AUDIO_TRACK_LOADED,this.onAudioTrackLoaded,this),e.off(b.ERROR,this.onError,this),e.off(b.BUFFER_RESET,this.onBufferReset,this),e.off(b.BUFFER_CREATED,this.onBufferCreated,this),e.off(b.BUFFER_FLUSHED,this.onBufferFlushed,this),e.off(b.INIT_PTS_FOUND,this.onInitPtsFound,this),e.off(b.FRAG_BUFFERED,this.onFragBuffered,this)},r.onInitPtsFound=function(e,t){var r=t.frag,i=t.id,n=t.initPTS,a=t.timescale
+e.on(y.MEDIA_ATTACHED,this.onMediaAttached,this),e.on(y.MEDIA_DETACHING,this.onMediaDetaching,this),e.on(y.MANIFEST_LOADING,this.onManifestLoading,this),e.on(y.LEVEL_LOADED,this.onLevelLoaded,this),e.on(y.AUDIO_TRACKS_UPDATED,this.onAudioTracksUpdated,this),e.on(y.AUDIO_TRACK_SWITCHING,this.onAudioTrackSwitching,this),e.on(y.AUDIO_TRACK_LOADED,this.onAudioTrackLoaded,this),e.on(y.ERROR,this.onError,this),e.on(y.BUFFER_RESET,this.onBufferReset,this),e.on(y.BUFFER_CREATED,this.onBufferCreated,this),e.on(y.BUFFER_FLUSHED,this.onBufferFlushed,this),e.on(y.INIT_PTS_FOUND,this.onInitPtsFound,this),e.on(y.FRAG_BUFFERED,this.onFragBuffered,this)},r._unregisterListeners=function(){var e=this.hls
+e.off(y.MEDIA_ATTACHED,this.onMediaAttached,this),e.off(y.MEDIA_DETACHING,this.onMediaDetaching,this),e.off(y.MANIFEST_LOADING,this.onManifestLoading,this),e.off(y.LEVEL_LOADED,this.onLevelLoaded,this),e.off(y.AUDIO_TRACKS_UPDATED,this.onAudioTracksUpdated,this),e.off(y.AUDIO_TRACK_SWITCHING,this.onAudioTrackSwitching,this),e.off(y.AUDIO_TRACK_LOADED,this.onAudioTrackLoaded,this),e.off(y.ERROR,this.onError,this),e.off(y.BUFFER_RESET,this.onBufferReset,this),e.off(y.BUFFER_CREATED,this.onBufferCreated,this),e.off(y.BUFFER_FLUSHED,this.onBufferFlushed,this),e.off(y.INIT_PTS_FOUND,this.onInitPtsFound,this),e.off(y.FRAG_BUFFERED,this.onFragBuffered,this)},r.onInitPtsFound=function(e,t){var r=t.frag,i=t.id,n=t.initPTS,a=t.timescale
 if("main"===i){var s=r.cc
-this.initPTS[r.cc]={baseTime:n,timescale:a},this.log("InitPTS for cc: "+s+" found from main: "+n),this.videoTrackCC=s,this.state===Pr&&this.tick()}},r.startLoad=function(e){if(!this.levels)return this.startPosition=e,void(this.state=br)
+this.initPTS[r.cc]={baseTime:n,timescale:a},this.log("InitPTS for cc: "+s+" found from main: "+n),this.videoTrackCC=s,this.state===Cr&&this.tick()}},r.startLoad=function(e){if(!this.levels)return this.startPosition=e,void(this.state=wr)
 var t=this.lastCurrentTime
-this.stopLoad(),this.setInterval(100),t>0&&-1===e?(this.log("Override startPosition with lastCurrentTime @"+t.toFixed(3)),e=t,this.state=yr):(this.loadedmetadata=!1,this.state=Tr),this.nextLoadPosition=this.startPosition=this.lastCurrentTime=e,this.tick()},r.doTick=function(){switch(this.state){case yr:this.doTickIdle()
+this.stopLoad(),this.setInterval(100),t>0&&-1===e?(this.log("Override startPosition with lastCurrentTime @"+t.toFixed(3)),e=t,this.state=Er):(this.loadedmetadata=!1,this.state=Or),this.nextLoadPosition=this.startPosition=this.lastCurrentTime=e,this.tick()},r.doTick=function(){switch(this.state){case Er:this.doTickIdle()
 break
-case Tr:var t,r=this.levels,i=this.trackId,n=null==r||null==(t=r[i])?void 0:t.details
+case Or:var t,r=this.levels,i=this.trackId,n=null==r||null==(t=r[i])?void 0:t.details
 if(n){if(this.waitForCdnTuneIn(n))break
-this.state=Pr}break
-case Er:var a,s=performance.now(),o=this.retryDate;(!o||s>=o||null!=(a=this.media)&&a.seeking)&&(this.log("RetryDate reached, switch back to IDLE state"),this.resetStartWhenNotLoaded(this.trackId),this.state=yr)
+this.state=Cr}break
+case Sr:var a,s=performance.now(),o=this.retryDate;(!o||s>=o||null!=(a=this.media)&&a.seeking)&&(this.log("RetryDate reached, switch back to IDLE state"),this.resetStartWhenNotLoaded(this.trackId),this.state=Er)
 break
-case Pr:var l=this.waitingData
+case Cr:var l=this.waitingData
 if(l){var u=l.frag,c=l.part,d=l.cache,h=l.complete
-if(void 0!==this.initPTS[u.cc]){this.waitingData=null,this.waitingVideoCC=-1,this.state=wr
+if(void 0!==this.initPTS[u.cc]){this.waitingData=null,this.waitingVideoCC=-1,this.state=kr
 var f={frag:u,part:c,payload:d.flush(),networkDetails:null}
 this._handleFragmentLoadProgress(f),h&&e.prototype._handleFragmentLoadComplete.call(this,f)}else if(this.videoTrackCC!==this.waitingVideoCC)this.log("Waiting fragment cc ("+u.cc+") cancelled because video is at cc "+this.videoTrackCC),this.clearWaitingFragment()
-else{var p=this.getLoadPosition(),m=lr.bufferInfo(this.mediaBuffer,p,this.config.maxBufferHole)
-zt(m.end,this.config.maxFragLookUpTolerance,u)<0&&(this.log("Waiting fragment cc ("+u.cc+") @ "+u.start+" cancelled because another fragment at "+m.end+" is needed"),this.clearWaitingFragment())}}else this.state=yr}this.onTickEnd()},r.clearWaitingFragment=function(){var e=this.waitingData
-e&&(this.fragmentTracker.removeFragment(e.frag),this.waitingData=null,this.waitingVideoCC=-1,this.state=yr)},r.resetLoadingState=function(){this.clearWaitingFragment(),e.prototype.resetLoadingState.call(this)},r.onTickEnd=function(){var e=this.media
+else{var p=this.getLoadPosition(),m=dr.bufferInfo(this.mediaBuffer,p,this.config.maxBufferHole)
+Ht(m.end,this.config.maxFragLookUpTolerance,u)<0&&(this.log("Waiting fragment cc ("+u.cc+") @ "+u.start+" cancelled because another fragment at "+m.end+" is needed"),this.clearWaitingFragment())}}else this.state=Er}this.onTickEnd()},r.clearWaitingFragment=function(){var e=this.waitingData
+e&&(this.fragmentTracker.removeFragment(e.frag),this.waitingData=null,this.waitingVideoCC=-1,this.state=Er)},r.resetLoadingState=function(){this.clearWaitingFragment(),e.prototype.resetLoadingState.call(this)},r.onTickEnd=function(){var e=this.media
 null!=e&&e.readyState&&(this.lastCurrentTime=e.currentTime)},r.doTickIdle=function(){var e=this.hls,t=this.levels,r=this.media,i=this.trackId,n=e.config
 if(null!=t&&t[i]&&(r||!this.startFragRequested&&n.startFragPrefetch)){var a=t[i],s=a.details
-if(!s||s.live&&this.levelLastLoaded!==i||this.waitForCdnTuneIn(s))this.state=Tr
+if(!s||s.live&&this.levelLastLoaded!==i||this.waitForCdnTuneIn(s))this.state=Or
 else{var o=this.mediaBuffer?this.mediaBuffer:this.media
-this.bufferFlushed&&o&&(this.bufferFlushed=!1,this.afterBufferFlushed(o,D,st))
-var l=this.getFwdBufferInfo(o,st)
+this.bufferFlushed&&o&&(this.bufferFlushed=!1,this.afterBufferFlushed(o,M,ut))
+var l=this.getFwdBufferInfo(o,ut)
 if(null!==l){var u=this.bufferedTrack,c=this.switchingTrack
-if(!c&&this._streamEnded(l,s))return e.trigger(b.BUFFER_EOS,{type:"audio"}),void(this.state=Or)
-var d=this.getFwdBufferInfo(this.videoBuffer?this.videoBuffer:this.media,at),h=l.len,f=this.getMaxBufferLength(null==d?void 0:d.len)
+if(!c&&this._streamEnded(l,s))return e.trigger(y.BUFFER_EOS,{type:"audio"}),void(this.state=Ar)
+var d=this.getFwdBufferInfo(this.videoBuffer?this.videoBuffer:this.media,lt),h=l.len,f=this.getMaxBufferLength(null==d?void 0:d.len)
 if(!(h>=f)||c){var p=s.fragments[0].start,m=l.end
 if(c&&r){var g=this.getLoadPosition()
-u&&c.attrs!==u.attrs&&(m=g),s.PTSKnown&&g<p&&(l.end>p||l.nextStart)&&(this.log("Alt audio track ahead of main track, seek to start of alt audio track"),r.currentTime=p+.05)}var v=this.getNextFragment(m,s),y=!1
-if(v&&this.isLoopLoading(v,m)&&(y=!!v.gap,v=this.getNextFragmentLoopLoading(v,s,l,at,f)),v){var _=d&&v.start>d.end+s.targetduration
-if(_||(null==d||!d.len)&&l.len){var w=this.fragmentTracker.getBufferedFrag(v.start,at)
+u&&c.attrs!==u.attrs&&(m=g),s.PTSKnown&&g<p&&(l.end>p||l.nextStart)&&(this.log("Alt audio track ahead of main track, seek to start of alt audio track"),r.currentTime=p+.05)}var v=this.getNextFragment(m,s),b=!1
+if(v&&this.isLoopLoading(v,m)&&(b=!!v.gap,v=this.getNextFragmentLoopLoading(v,s,l,lt,f)),v){var _=d&&v.start>d.end+s.targetduration
+if(_||(null==d||!d.len)&&l.len){var w=this.getAppendedFrag(v.start,lt)
 if(null===w)return
-if(y||(y=!!w.gap||!!_&&0===d.len),_&&!y||y&&l.nextStart&&l.nextStart<w.end)return}this.loadFragment(v,a,m)}else this.bufferFlushed=!0}}}}},r.getMaxBufferLength=function(t){var r=e.prototype.getMaxBufferLength.call(this)
+if(b||(b=!!w.gap||!!_&&0===d.len),_&&!b||b&&l.nextStart&&l.nextStart<w.end)return}this.loadFragment(v,a,m)}else this.bufferFlushed=!0}}}}},r.getMaxBufferLength=function(t){var r=e.prototype.getMaxBufferLength.call(this)
 return t?Math.min(Math.max(r,t),this.config.maxMaxBufferLength):r},r.onMediaDetaching=function(){this.videoBuffer=null,e.prototype.onMediaDetaching.call(this)},r.onAudioTracksUpdated=function(e,t){var r=t.audioTracks
-this.resetTransmuxer(),this.levels=r.map((function(e){return new kt(e)}))},r.onAudioTrackSwitching=function(e,t){var r=!!t.url
+this.resetTransmuxer(),this.levels=r.map((function(e){return new xt(e)}))},r.onAudioTrackSwitching=function(e,t){var r=!!t.url
 this.trackId=t.id
 var i=this.fragCurrent
-i&&(i.abortRequests(),this.removeUnbufferedFrags(i.start)),this.resetLoadingState(),r?this.setInterval(100):this.resetTransmuxer(),r?(this.switchingTrack=t,this.state=yr):(this.switchingTrack=null,this.bufferedTrack=t,this.state=br),this.tick()},r.onManifestLoading=function(){this.mainDetails=null,this.fragmentTracker.removeAllFragments(),this.startPosition=this.lastCurrentTime=0,this.bufferFlushed=!1,this.bufferedTrack=null,this.switchingTrack=null},r.onLevelLoaded=function(e,t){this.mainDetails=t.details,null!==this.cachedTrackLoadedData&&(this.hls.trigger(b.AUDIO_TRACK_LOADED,this.cachedTrackLoadedData),this.cachedTrackLoadedData=null)},r.onAudioTrackLoaded=function(e,t){var r
+i&&(i.abortRequests(),this.removeUnbufferedFrags(i.start)),this.resetLoadingState(),r?this.setInterval(100):this.resetTransmuxer(),r?(this.switchingTrack=t,this.state=Er):(this.switchingTrack=null,this.bufferedTrack=t,this.state=wr),this.tick()},r.onManifestLoading=function(){this.fragmentTracker.removeAllFragments(),this.startPosition=this.lastCurrentTime=0,this.bufferFlushed=!1,this.levels=this.mainDetails=this.waitingData=this.bufferedTrack=this.cachedTrackLoadedData=this.switchingTrack=null,this.startFragRequested=!1,this.trackId=this.videoTrackCC=this.waitingVideoCC=-1},r.onLevelLoaded=function(e,t){this.mainDetails=t.details,null!==this.cachedTrackLoadedData&&(this.hls.trigger(y.AUDIO_TRACK_LOADED,this.cachedTrackLoadedData),this.cachedTrackLoadedData=null)},r.onAudioTrackLoaded=function(e,t){var r
 if(null!=this.mainDetails){var i=this.levels,n=t.details,a=t.id
-if(i){this.log("Track "+a+" loaded ["+n.startSN+","+n.endSN+"],duration:"+n.totalduration)
+if(i){this.log("Track "+a+" loaded ["+n.startSN+","+n.endSN+"]"+(n.lastPartSn?"[part-"+n.lastPartSn+"-"+n.lastPartIndex+"]":"")+",duration:"+n.totalduration)
 var s=i[a],o=0
 if(n.live||null!=(r=s.details)&&r.live){var l=this.mainDetails
 if(n.fragments[0]||(n.deltaUpdateFailed=!0),n.deltaUpdateFailed||!l)return
-!s.details&&n.hasProgramDateTime&&l.hasProgramDateTime?(fr(n,l),o=n.fragments[0].start):o=this.alignPlaylists(n,s.details)}s.details=n,this.levelLastLoaded=a,this.startFragRequested||!this.mainDetails&&n.live||this.setStartPosition(s.details,o),this.state!==Tr||this.waitForCdnTuneIn(n)||(this.state=yr),this.tick()}else this.warn("Audio tracks were reset while loading level "+a)}else this.cachedTrackLoadedData=t},r._handleFragmentLoadProgress=function(e){var t,r=e.frag,i=e.part,n=e.payload,a=this.config,s=this.trackId,o=this.levels
+!s.details&&n.hasProgramDateTime&&l.hasProgramDateTime?(gr(n,l),o=n.fragments[0].start):o=this.alignPlaylists(n,s.details)}s.details=n,this.levelLastLoaded=a,this.startFragRequested||!this.mainDetails&&n.live||this.setStartPosition(s.details,o),this.state!==Or||this.waitForCdnTuneIn(n)||(this.state=Er),this.tick()}else this.warn("Audio tracks were reset while loading level "+a)}else this.cachedTrackLoadedData=t},r._handleFragmentLoadProgress=function(e){var t,r=e.frag,i=e.part,n=e.payload,a=this.config,s=this.trackId,o=this.levels
 if(o){var l=o[s]
 if(l){var u=l.details
 if(!u)return this.warn("Audio track details undefined on fragment load progress"),void this.removeUnbufferedFrags(r.start)
 var c=a.defaultAudioCodec||l.audioCodec||"mp4a.40.2",d=this.transmuxer
-d||(d=this.transmuxer=new Hi(this.hls,st,this._handleTransmuxComplete.bind(this),this._handleTransmuxerFlush.bind(this)))
+d||(d=this.transmuxer=new $i(this.hls,ut,this._handleTransmuxComplete.bind(this),this._handleTransmuxerFlush.bind(this)))
 var h=this.initPTS[r.cc],f=null==(t=r.initSegment)?void 0:t.data
-if(void 0!==h){var p=i?i.index:-1,m=-1!==p,g=new ur(r.level,r.sn,r.stats.chunkCount,n.byteLength,p,m)
-d.push(n,f,c,"",r,i,u.totalduration,!1,g,h)}else this.log("Unknown video PTS for cc "+r.cc+", waiting for video PTS before demuxing audio frag "+r.sn+" of ["+u.startSN+" ,"+u.endSN+"],track "+s),(this.waitingData=this.waitingData||{frag:r,part:i,cache:new Wi,complete:!1}).cache.push(new Uint8Array(n)),this.waitingVideoCC=this.videoTrackCC,this.state=Pr}else this.warn("Audio track is undefined on fragment load progress")}else this.warn("Audio tracks were reset while fragment load was in progress. Fragment "+r.sn+" of level "+r.level+" will not be buffered")},r._handleFragmentLoadComplete=function(t){this.waitingData?this.waitingData.complete=!0:e.prototype._handleFragmentLoadComplete.call(this,t)},r.onBufferReset=function(){this.mediaBuffer=this.videoBuffer=null,this.loadedmetadata=!1},r.onBufferCreated=function(e,t){var r=t.tracks.audio
+if(void 0!==h){var p=i?i.index:-1,m=-1!==p,g=new hr(r.level,r.sn,r.stats.chunkCount,n.byteLength,p,m)
+d.push(n,f,c,"",r,i,u.totalduration,!1,g,h)}else this.log("Unknown video PTS for cc "+r.cc+", waiting for video PTS before demuxing audio frag "+r.sn+" of ["+u.startSN+" ,"+u.endSN+"],track "+s),(this.waitingData=this.waitingData||{frag:r,part:i,cache:new Qi,complete:!1}).cache.push(new Uint8Array(n)),this.waitingVideoCC=this.videoTrackCC,this.state=Cr}else this.warn("Audio track is undefined on fragment load progress")}else this.warn("Audio tracks were reset while fragment load was in progress. Fragment "+r.sn+" of level "+r.level+" will not be buffered")},r._handleFragmentLoadComplete=function(t){this.waitingData?this.waitingData.complete=!0:e.prototype._handleFragmentLoadComplete.call(this,t)},r.onBufferReset=function(){this.mediaBuffer=this.videoBuffer=null,this.loadedmetadata=!1},r.onBufferCreated=function(e,t){var r=t.tracks.audio
 r&&(this.mediaBuffer=r.buffer||null),t.tracks.video&&(this.videoBuffer=t.tracks.video.buffer||null)},r.onFragBuffered=function(e,t){var r,n=t.frag,a=t.part
-if(n.type===st)if(this.fragContextChanged(n))this.warn("Fragment "+n.sn+(a?" p: "+a.index:"")+" of level "+n.level+" finished buffering, but was aborted. state: "+this.state+", audioSwitch: "+(this.switchingTrack?this.switchingTrack.name:"false"))
+if(n.type===ut)if(this.fragContextChanged(n))this.warn("Fragment "+n.sn+(a?" p: "+a.index:"")+" of level "+n.level+" finished buffering, but was aborted. state: "+this.state+", audioSwitch: "+(this.switchingTrack?this.switchingTrack.name:"false"))
 else{if("initSegment"!==n.sn){this.fragPrevious=n
 var s=this.switchingTrack
-s&&(this.bufferedTrack=s,this.switchingTrack=null,this.hls.trigger(b.AUDIO_TRACK_SWITCHED,i({},s)))}this.fragBufferedComplete(n,a)}else this.loadedmetadata||n.type!==at||null!=(r=this.videoBuffer||this.media)&&r.buffered.length&&(this.loadedmetadata=!0)},r.onError=function(t,r){var i
-if(r.fatal)this.state=xr
-else switch(r.details){case _.FRAG_GAP:case _.FRAG_PARSING_ERROR:case _.FRAG_DECRYPT_ERROR:case _.FRAG_LOAD_ERROR:case _.FRAG_LOAD_TIMEOUT:case _.KEY_LOAD_ERROR:case _.KEY_LOAD_TIMEOUT:this.onFragmentOrKeyLoadError(st,r)
+s&&(this.bufferedTrack=s,this.switchingTrack=null,this.hls.trigger(y.AUDIO_TRACK_SWITCHED,i({},s)))}this.fragBufferedComplete(n,a)}else this.loadedmetadata||n.type!==lt||null!=(r=this.videoBuffer||this.media)&&r.buffered.length&&(this.loadedmetadata=!0)},r.onError=function(t,r){var i
+if(r.fatal)this.state=Rr
+else switch(r.details){case w.FRAG_GAP:case w.FRAG_PARSING_ERROR:case w.FRAG_DECRYPT_ERROR:case w.FRAG_LOAD_ERROR:case w.FRAG_LOAD_TIMEOUT:case w.KEY_LOAD_ERROR:case w.KEY_LOAD_TIMEOUT:this.onFragmentOrKeyLoadError(ut,r)
 break
-case _.AUDIO_TRACK_LOAD_ERROR:case _.AUDIO_TRACK_LOAD_TIMEOUT:case _.LEVEL_PARSING_ERROR:r.levelRetry||this.state!==Tr||(null==(i=r.context)?void 0:i.type)!==it||(this.state=yr)
+case w.AUDIO_TRACK_LOAD_ERROR:case w.AUDIO_TRACK_LOAD_TIMEOUT:case w.LEVEL_PARSING_ERROR:r.levelRetry||this.state!==Or||(null==(i=r.context)?void 0:i.type)!==st||(this.state=Er)
 break
-case _.BUFFER_FULL_ERROR:if(!r.parent||"audio"!==r.parent)return
+case w.BUFFER_FULL_ERROR:if(!r.parent||"audio"!==r.parent)return
 this.reduceLengthAndFlushBuffer(r)&&(this.bufferedTrack=null,e.prototype.flushMainBuffer.call(this,0,Number.POSITIVE_INFINITY,"audio"))
 break
-case _.INTERNAL_EXCEPTION:this.recoverWorkerError(r)}},r.onBufferFlushed=function(e,t){t.type===D&&(this.bufferFlushed=!0,this.state===Or&&(this.state=yr))},r._handleTransmuxComplete=function(e){var t,r="audio",i=this.hls,n=e.remuxResult,a=e.chunkMeta,s=this.getCurrentContext(a)
+case w.INTERNAL_EXCEPTION:this.recoverWorkerError(r)}},r.onBufferFlushed=function(e,t){t.type===M&&(this.bufferFlushed=!0,this.state===Ar&&(this.state=Er))},r._handleTransmuxComplete=function(e){var t,r="audio",i=this.hls,n=e.remuxResult,a=e.chunkMeta,s=this.getCurrentContext(a)
 if(s){var l=s.frag,u=s.part,c=s.level.details,d=n.audio,h=n.text,f=n.id3,p=n.initSegment
-if(!this.fragContextChanged(l)&&c){if(this.state=kr,this.switchingTrack&&d&&this.completeAudioSwitch(this.switchingTrack),null!=p&&p.tracks&&(this._bufferInitSegment(p.tracks,l,a),i.trigger(b.FRAG_PARSING_INIT_SEGMENT,{frag:l,id:r,tracks:p.tracks})),d){var m=d.startPTS,g=d.endPTS,v=d.startDTS,y=d.endDTS
-u&&(u.elementaryStreams[D]={startPTS:m,endPTS:g,startDTS:v,endDTS:y}),l.setElementaryStreamInfo(D,m,g,v,y),this.bufferFragmentData(d,l,u,a)}if(null!=f&&null!=(t=f.samples)&&t.length){var _=o({id:r,frag:l,details:c},f)
-i.trigger(b.FRAG_PARSING_METADATA,_)}if(h){var w=o({id:r,frag:l,details:c},h)
-i.trigger(b.FRAG_PARSING_USERDATA,w)}}else this.fragmentTracker.removeFragment(l)}else this.resetWhenMissingContext(a)},r._bufferInitSegment=function(e,t,r){if(this.state===kr){e.video&&delete e.video
+if(!this.fragContextChanged(l)&&c){if(this.state=xr,this.switchingTrack&&d&&this.completeAudioSwitch(this.switchingTrack),null!=p&&p.tracks){var m=l.initSegment||l
+this._bufferInitSegment(p.tracks,m,a),i.trigger(y.FRAG_PARSING_INIT_SEGMENT,{frag:m,id:r,tracks:p.tracks})}if(d){var g=d.startPTS,v=d.endPTS,b=d.startDTS,_=d.endDTS
+u&&(u.elementaryStreams[M]={startPTS:g,endPTS:v,startDTS:b,endDTS:_}),l.setElementaryStreamInfo(M,g,v,b,_),this.bufferFragmentData(d,l,u,a)}if(null!=f&&null!=(t=f.samples)&&t.length){var w=o({id:r,frag:l,details:c},f)
+i.trigger(y.FRAG_PARSING_METADATA,w)}if(h){var E=o({id:r,frag:l,details:c},h)
+i.trigger(y.FRAG_PARSING_USERDATA,E)}}else this.fragmentTracker.removeFragment(l)}else this.resetWhenMissingContext(a)},r._bufferInitSegment=function(e,t,r){if(this.state===xr){e.video&&delete e.video
 var i=e.audio
-if(i){i.levelCodec=i.codec,i.id="audio",this.log("Init audio buffer, container:"+i.container+", codecs[parsed]=["+i.codec+"]"),this.hls.trigger(b.BUFFER_CODECS,e)
+if(i){i.levelCodec=i.codec,i.id="audio",this.log("Init audio buffer, container:"+i.container+", codecs[parsed]=["+i.codec+"]"),this.hls.trigger(y.BUFFER_CODECS,e)
 var n=i.initSegment
 if(null!=n&&n.byteLength){var a={type:"audio",frag:t,part:null,chunkMeta:r,parent:t.type,data:n}
-this.hls.trigger(b.BUFFER_APPENDING,a)}this.tick()}}},r.loadFragment=function(t,r,i){var n,a=this.fragmentTracker.getState(t)
-this.fragCurrent=t,this.switchingTrack||a===Kt||a===Yt?"initSegment"===t.sn?this._loadInitSegment(t,r):null!=(n=r.details)&&n.live&&!this.initPTS[t.cc]?(this.log("Waiting for video PTS in continuity counter "+t.cc+" of live stream before loading audio fragment "+t.sn+" of level "+this.trackId),this.state=Pr):(this.startFragRequested=!0,e.prototype.loadFragment.call(this,t,r,i)):this.clearTrackerIfNeeded(t)},r.completeAudioSwitch=function(t){var r=this.hls,n=this.media,a=this.bufferedTrack,s=null==a?void 0:a.attrs,o=t.attrs
-n&&s&&(s.CHANNELS!==o.CHANNELS||s.NAME!==o.NAME||s.LANGUAGE!==o.LANGUAGE)&&(this.log("Switching audio track : flushing all audio"),e.prototype.flushMainBuffer.call(this,0,Number.POSITIVE_INFINITY,"audio")),this.bufferedTrack=t,this.switchingTrack=null,r.trigger(b.AUDIO_TRACK_SWITCHED,i({},t))},t}(Rr),Qi=function(e){function t(t){var r
+this.hls.trigger(y.BUFFER_APPENDING,a)}this.tick()}}},r.loadFragment=function(t,r,i){var n,a=this.fragmentTracker.getState(t)
+this.fragCurrent=t,this.switchingTrack||a===Qt||a===Jt?"initSegment"===t.sn?this._loadInitSegment(t,r):null!=(n=r.details)&&n.live&&!this.initPTS[t.cc]?(this.log("Waiting for video PTS in continuity counter "+t.cc+" of live stream before loading audio fragment "+t.sn+" of level "+this.trackId),this.state=Cr):(this.startFragRequested=!0,e.prototype.loadFragment.call(this,t,r,i)):this.clearTrackerIfNeeded(t)},r.completeAudioSwitch=function(t){var r=this.hls,n=this.media,a=this.bufferedTrack,s=null==a?void 0:a.attrs,o=t.attrs
+n&&s&&(s.CHANNELS!==o.CHANNELS||s.NAME!==o.NAME||s.LANGUAGE!==o.LANGUAGE)&&(this.log("Switching audio track : flushing all audio"),e.prototype.flushMainBuffer.call(this,0,Number.POSITIVE_INFINITY,"audio")),this.bufferedTrack=t,this.switchingTrack=null,r.trigger(y.AUDIO_TRACK_SWITCHED,i({},t))},t}(Mr),Ji=function(e){function t(t){var r
 return(r=e.call(this,t,"[audio-track-controller]")||this).tracks=[],r.groupId=null,r.tracksInGroup=[],r.trackId=-1,r.currentTrack=null,r.selectDefaultTrack=!0,r.registerListeners(),r}l(t,e)
 var r=t.prototype
 return r.registerListeners=function(){var e=this.hls
-e.on(b.MANIFEST_LOADING,this.onManifestLoading,this),e.on(b.MANIFEST_PARSED,this.onManifestParsed,this),e.on(b.LEVEL_LOADING,this.onLevelLoading,this),e.on(b.LEVEL_SWITCHING,this.onLevelSwitching,this),e.on(b.AUDIO_TRACK_LOADED,this.onAudioTrackLoaded,this),e.on(b.ERROR,this.onError,this)},r.unregisterListeners=function(){var e=this.hls
-e.off(b.MANIFEST_LOADING,this.onManifestLoading,this),e.off(b.MANIFEST_PARSED,this.onManifestParsed,this),e.off(b.LEVEL_LOADING,this.onLevelLoading,this),e.off(b.LEVEL_SWITCHING,this.onLevelSwitching,this),e.off(b.AUDIO_TRACK_LOADED,this.onAudioTrackLoaded,this),e.off(b.ERROR,this.onError,this)},r.destroy=function(){this.unregisterListeners(),this.tracks.length=0,this.tracksInGroup.length=0,this.currentTrack=null,e.prototype.destroy.call(this)},r.onManifestLoading=function(){this.tracks=[],this.groupId=null,this.tracksInGroup=[],this.trackId=-1,this.currentTrack=null,this.selectDefaultTrack=!0},r.onManifestParsed=function(e,t){this.tracks=t.audioTracks||[]},r.onAudioTrackLoaded=function(e,t){var r=t.id,i=t.groupId,n=t.details,a=this.tracksInGroup[r]
+e.on(y.MANIFEST_LOADING,this.onManifestLoading,this),e.on(y.MANIFEST_PARSED,this.onManifestParsed,this),e.on(y.LEVEL_LOADING,this.onLevelLoading,this),e.on(y.LEVEL_SWITCHING,this.onLevelSwitching,this),e.on(y.AUDIO_TRACK_LOADED,this.onAudioTrackLoaded,this),e.on(y.ERROR,this.onError,this)},r.unregisterListeners=function(){var e=this.hls
+e.off(y.MANIFEST_LOADING,this.onManifestLoading,this),e.off(y.MANIFEST_PARSED,this.onManifestParsed,this),e.off(y.LEVEL_LOADING,this.onLevelLoading,this),e.off(y.LEVEL_SWITCHING,this.onLevelSwitching,this),e.off(y.AUDIO_TRACK_LOADED,this.onAudioTrackLoaded,this),e.off(y.ERROR,this.onError,this)},r.destroy=function(){this.unregisterListeners(),this.tracks.length=0,this.tracksInGroup.length=0,this.currentTrack=null,e.prototype.destroy.call(this)},r.onManifestLoading=function(){this.tracks=[],this.groupId=null,this.tracksInGroup=[],this.trackId=-1,this.currentTrack=null,this.selectDefaultTrack=!0},r.onManifestParsed=function(e,t){this.tracks=t.audioTracks||[]},r.onAudioTrackLoaded=function(e,t){var r=t.id,i=t.groupId,n=t.details,a=this.tracksInGroup[r]
 if(a&&a.groupId===i){var s=a.details
 a.details=t.details,this.log("audio-track "+r+' "'+a.name+'" lang:'+a.lang+" group:"+i+" loaded ["+n.startSN+"-"+n.endSN+"]"),r===this.trackId&&this.playlistLoaded(r,t,s)}else this.warn("Track with id:"+r+" and group:"+i+" not found in active group "+a.groupId)},r.onLevelLoading=function(e,t){this.switchLevel(t.level)},r.onLevelSwitching=function(e,t){this.switchLevel(t.level)},r.switchLevel=function(e){var t=this.hls.levels[e]
 if(null!=t&&t.audioGroupIds){var r=t.audioGroupIds[t.urlId]
@@ -5675,32 +5688,32 @@ if(this.groupId!==r){this.groupId=r||null
 var i=this.tracks.filter((function(e){return!r||e.groupId===r}))
 this.selectDefaultTrack&&!i.some((function(e){return e.default}))&&(this.selectDefaultTrack=!1),this.tracksInGroup=i
 var n={audioTracks:i}
-this.log("Updating audio tracks, "+i.length+" track(s) found in group:"+r),this.hls.trigger(b.AUDIO_TRACKS_UPDATED,n),this.selectInitialTrack()}else this.shouldReloadPlaylist(this.currentTrack)&&this.setAudioTrack(this.trackId)}},r.onError=function(e,t){!t.fatal&&t.context&&t.context.type===it&&t.context.id===this.trackId&&t.context.groupId===this.groupId&&(this.requestScheduled=-1,this.checkRetry(t))},r.setAudioTrack=function(e){var t=this.tracksInGroup
+this.log("Updating audio tracks, "+i.length+" track(s) found in group:"+r),this.hls.trigger(y.AUDIO_TRACKS_UPDATED,n),this.selectInitialTrack()}else this.shouldReloadPlaylist(this.currentTrack)&&this.setAudioTrack(this.trackId)}},r.onError=function(e,t){!t.fatal&&t.context&&t.context.type===st&&t.context.id===this.trackId&&t.context.groupId===this.groupId&&(this.requestScheduled=-1,this.checkRetry(t))},r.setAudioTrack=function(e){var t=this.tracksInGroup
 if(e<0||e>=t.length)this.warn("Invalid id passed to audio-track controller")
 else{this.clearTimer()
 var r=this.currentTrack
 t[this.trackId]
 var n=t[e],a=n.groupId,s=n.name
-if(this.log("Switching to audio-track "+e+' "'+s+'" lang:'+n.lang+" group:"+a),this.trackId=e,this.currentTrack=n,this.selectDefaultTrack=!1,this.hls.trigger(b.AUDIO_TRACK_SWITCHING,i({},n)),!n.details||n.details.live){var o=this.switchParams(n.url,null==r?void 0:r.details)
+if(this.log("Switching to audio-track "+e+' "'+s+'" lang:'+n.lang+" group:"+a),this.trackId=e,this.currentTrack=n,this.selectDefaultTrack=!1,this.hls.trigger(y.AUDIO_TRACK_SWITCHING,i({},n)),!n.details||n.details.live){var o=this.switchParams(n.url,null==r?void 0:r.details)
 this.loadPlaylist(o)}}},r.selectInitialTrack=function(){var e=this.tracksInGroup,t=this.findTrackId(this.currentTrack)|this.findTrackId(null)
 if(-1!==t)this.setAudioTrack(t)
 else{var r=new Error("No track found for running audio group-ID: "+this.groupId+" track count: "+e.length)
-this.warn(r.message),this.hls.trigger(b.ERROR,{type:y.MEDIA_ERROR,details:_.AUDIO_TRACK_LOAD_ERROR,fatal:!0,error:r})}},r.findTrackId=function(e){for(var t=this.tracksInGroup,r=0;r<t.length;r++){var i=t[r]
-if(!this.selectDefaultTrack||i.default){if(!e||e.attrs["STABLE-RENDITION-ID"]===i.attrs["STABLE-RENDITION-ID"])return i.id
+this.warn(r.message),this.hls.trigger(y.ERROR,{type:_.MEDIA_ERROR,details:w.AUDIO_TRACK_LOAD_ERROR,fatal:!0,error:r})}},r.findTrackId=function(e){for(var t=this.tracksInGroup,r=0;r<t.length;r++){var i=t[r]
+if(!this.selectDefaultTrack||i.default){if(!e||void 0!==e.attrs["STABLE-RENDITION-ID"]&&e.attrs["STABLE-RENDITION-ID"]===i.attrs["STABLE-RENDITION-ID"])return i.id
 if(e.name===i.name&&e.lang===i.lang)return i.id}}return-1},r.loadPlaylist=function(t){e.prototype.loadPlaylist.call(this)
 var r=this.tracksInGroup[this.trackId]
 if(this.shouldLoadPlaylist(r)){var i=r.id,n=r.groupId,a=r.url
-if(t)try{a=t.addDirectives(a)}catch(e){this.warn("Could not construct new URL with HLS Delivery Directives: "+e)}this.log("loading audio-track playlist "+i+' "'+r.name+'" lang:'+r.lang+" group:"+n),this.clearTimer(),this.hls.trigger(b.AUDIO_TRACK_LOADING,{url:a,id:i,groupId:n,deliveryDirectives:t||null})}},a(t,[{key:"audioTracks",get:function(){return this.tracksInGroup}},{key:"audioTrack",get:function(){return this.trackId},set:function(e){this.selectDefaultTrack=!1,this.setAudioTrack(e)}}]),t}(Vt)
-function Xi(e,t){if(e.length!==t.length)return!1
-for(var r=0;r<e.length;r++)if(!Ji(e[r].attrs,t[r].attrs))return!1
-return!0}function Ji(e,t){var r=e["STABLE-RENDITION-ID"]
-return r?r===t["STABLE-RENDITION-ID"]:!["LANGUAGE","NAME","CHARACTERISTICS","AUTOSELECT","DEFAULT","FORCED"].some((function(r){return e[r]!==t[r]}))}var Zi=function(e){function t(t,r,i){var n
-return(n=e.call(this,t,r,i,"[subtitle-stream-controller]",ot)||this).levels=[],n.currentTrackId=-1,n.tracksBuffered=[],n.mainDetails=null,n._registerListeners(),n}l(t,e)
+if(t)try{a=t.addDirectives(a)}catch(e){this.warn("Could not construct new URL with HLS Delivery Directives: "+e)}this.log("loading audio-track playlist "+i+' "'+r.name+'" lang:'+r.lang+" group:"+n),this.clearTimer(),this.hls.trigger(y.AUDIO_TRACK_LOADING,{url:a,id:i,groupId:n,deliveryDirectives:t||null})}},a(t,[{key:"audioTracks",get:function(){return this.tracksInGroup}},{key:"audioTrack",get:function(){return this.trackId},set:function(e){this.selectDefaultTrack=!1,this.setAudioTrack(e)}}]),t}(Gt)
+function Zi(e,t){if(e.length!==t.length)return!1
+for(var r=0;r<e.length;r++)if(!en(e[r].attrs,t[r].attrs))return!1
+return!0}function en(e,t){var r=e["STABLE-RENDITION-ID"]
+return r?r===t["STABLE-RENDITION-ID"]:!["LANGUAGE","NAME","CHARACTERISTICS","AUTOSELECT","DEFAULT","FORCED"].some((function(r){return e[r]!==t[r]}))}var tn=function(e){function t(t,r,i){var n
+return(n=e.call(this,t,r,i,"[subtitle-stream-controller]",ct)||this).levels=[],n.currentTrackId=-1,n.tracksBuffered=[],n.mainDetails=null,n._registerListeners(),n}l(t,e)
 var r=t.prototype
 return r.onHandlerDestroying=function(){this._unregisterListeners(),this.mainDetails=null},r._registerListeners=function(){var e=this.hls
-e.on(b.MEDIA_ATTACHED,this.onMediaAttached,this),e.on(b.MEDIA_DETACHING,this.onMediaDetaching,this),e.on(b.MANIFEST_LOADING,this.onManifestLoading,this),e.on(b.LEVEL_LOADED,this.onLevelLoaded,this),e.on(b.ERROR,this.onError,this),e.on(b.SUBTITLE_TRACKS_UPDATED,this.onSubtitleTracksUpdated,this),e.on(b.SUBTITLE_TRACK_SWITCH,this.onSubtitleTrackSwitch,this),e.on(b.SUBTITLE_TRACK_LOADED,this.onSubtitleTrackLoaded,this),e.on(b.SUBTITLE_FRAG_PROCESSED,this.onSubtitleFragProcessed,this),e.on(b.BUFFER_FLUSHING,this.onBufferFlushing,this),e.on(b.FRAG_BUFFERED,this.onFragBuffered,this)},r._unregisterListeners=function(){var e=this.hls
-e.off(b.MEDIA_ATTACHED,this.onMediaAttached,this),e.off(b.MEDIA_DETACHING,this.onMediaDetaching,this),e.off(b.MANIFEST_LOADING,this.onManifestLoading,this),e.off(b.LEVEL_LOADED,this.onLevelLoaded,this),e.off(b.ERROR,this.onError,this),e.off(b.SUBTITLE_TRACKS_UPDATED,this.onSubtitleTracksUpdated,this),e.off(b.SUBTITLE_TRACK_SWITCH,this.onSubtitleTrackSwitch,this),e.off(b.SUBTITLE_TRACK_LOADED,this.onSubtitleTrackLoaded,this),e.off(b.SUBTITLE_FRAG_PROCESSED,this.onSubtitleFragProcessed,this),e.off(b.BUFFER_FLUSHING,this.onBufferFlushing,this),e.off(b.FRAG_BUFFERED,this.onFragBuffered,this)},r.startLoad=function(e){this.stopLoad(),this.state=yr,this.setInterval(500),this.nextLoadPosition=this.startPosition=this.lastCurrentTime=e,this.tick()},r.onManifestLoading=function(){this.mainDetails=null,this.fragmentTracker.removeAllFragments()},r.onMediaDetaching=function(){this.tracksBuffered=[],e.prototype.onMediaDetaching.call(this)},r.onLevelLoaded=function(e,t){this.mainDetails=t.details},r.onSubtitleFragProcessed=function(e,t){var r=t.frag,i=t.success
-if(this.fragPrevious=r,this.state=yr,i){var n=this.tracksBuffered[this.currentTrackId]
+e.on(y.MEDIA_ATTACHED,this.onMediaAttached,this),e.on(y.MEDIA_DETACHING,this.onMediaDetaching,this),e.on(y.MANIFEST_LOADING,this.onManifestLoading,this),e.on(y.LEVEL_LOADED,this.onLevelLoaded,this),e.on(y.ERROR,this.onError,this),e.on(y.SUBTITLE_TRACKS_UPDATED,this.onSubtitleTracksUpdated,this),e.on(y.SUBTITLE_TRACK_SWITCH,this.onSubtitleTrackSwitch,this),e.on(y.SUBTITLE_TRACK_LOADED,this.onSubtitleTrackLoaded,this),e.on(y.SUBTITLE_FRAG_PROCESSED,this.onSubtitleFragProcessed,this),e.on(y.BUFFER_FLUSHING,this.onBufferFlushing,this),e.on(y.FRAG_BUFFERED,this.onFragBuffered,this)},r._unregisterListeners=function(){var e=this.hls
+e.off(y.MEDIA_ATTACHED,this.onMediaAttached,this),e.off(y.MEDIA_DETACHING,this.onMediaDetaching,this),e.off(y.MANIFEST_LOADING,this.onManifestLoading,this),e.off(y.LEVEL_LOADED,this.onLevelLoaded,this),e.off(y.ERROR,this.onError,this),e.off(y.SUBTITLE_TRACKS_UPDATED,this.onSubtitleTracksUpdated,this),e.off(y.SUBTITLE_TRACK_SWITCH,this.onSubtitleTrackSwitch,this),e.off(y.SUBTITLE_TRACK_LOADED,this.onSubtitleTrackLoaded,this),e.off(y.SUBTITLE_FRAG_PROCESSED,this.onSubtitleFragProcessed,this),e.off(y.BUFFER_FLUSHING,this.onBufferFlushing,this),e.off(y.FRAG_BUFFERED,this.onFragBuffered,this)},r.startLoad=function(e){this.stopLoad(),this.state=Er,this.setInterval(500),this.nextLoadPosition=this.startPosition=this.lastCurrentTime=e,this.tick()},r.onManifestLoading=function(){this.mainDetails=null,this.fragmentTracker.removeAllFragments()},r.onMediaDetaching=function(){this.tracksBuffered=[],e.prototype.onMediaDetaching.call(this)},r.onLevelLoaded=function(e,t){this.mainDetails=t.details},r.onSubtitleFragProcessed=function(e,t){var r=t.frag,i=t.success
+if(this.fragPrevious=r,this.state=Er,i){var n=this.tracksBuffered[this.currentTrackId]
 if(n){for(var a,s=r.start,o=0;o<n.length;o++)if(s>=n[o].start&&s<=n[o].end){a=n[o]
 break}var l=r.start+r.duration
 a?a.end=l:(a={start:s,end:l},n.push(a)),this.fragmentTracker.fragBuffered(r)}}},r.onBufferFlushing=function(e,t){var r=t.startOffset,i=t.endOffset
@@ -5710,10 +5723,10 @@ var s=i-a[n].details.targetduration
 if(s<=0)return
 t.endOffsetSubtitles=Math.max(0,s),this.tracksBuffered.forEach((function(e){for(var t=0;t<e.length;)if(e[t].end<=s)e.shift()
 else{if(!(e[t].start<s))break
-e[t].start=s,t++}})),this.fragmentTracker.removeFragmentsInRange(r,s,ot)}},r.onFragBuffered=function(e,t){var r
-this.loadedmetadata||t.frag.type!==at||null!=(r=this.media)&&r.buffered.length&&(this.loadedmetadata=!0)},r.onError=function(e,t){var r=t.frag;(null==r?void 0:r.type)===ot&&(this.fragCurrent&&this.fragCurrent.abortRequests(),this.state!==br&&(this.state=yr))},r.onSubtitleTracksUpdated=function(e,t){var r=this,i=t.subtitleTracks
-Xi(this.levels,i)?this.levels=i.map((function(e){return new kt(e)})):(this.tracksBuffered=[],this.levels=i.map((function(e){var t=new kt(e)
-return r.tracksBuffered[t.id]=[],t})),this.fragmentTracker.removeFragmentsInRange(0,Number.POSITIVE_INFINITY,ot),this.fragPrevious=null,this.mediaBuffer=null)},r.onSubtitleTrackSwitch=function(e,t){if(this.currentTrackId=t.id,this.levels.length&&-1!==this.currentTrackId){var r=this.levels[this.currentTrackId]
+e[t].start=s,t++}})),this.fragmentTracker.removeFragmentsInRange(r,s,ct)}},r.onFragBuffered=function(e,t){var r
+this.loadedmetadata||t.frag.type!==lt||null!=(r=this.media)&&r.buffered.length&&(this.loadedmetadata=!0)},r.onError=function(e,t){var r=t.frag;(null==r?void 0:r.type)===ct&&(this.fragCurrent&&this.fragCurrent.abortRequests(),this.state!==wr&&(this.state=Er))},r.onSubtitleTracksUpdated=function(e,t){var r=this,i=t.subtitleTracks
+Zi(this.levels,i)?this.levels=i.map((function(e){return new xt(e)})):(this.tracksBuffered=[],this.levels=i.map((function(e){var t=new xt(e)
+return r.tracksBuffered[t.id]=[],t})),this.fragmentTracker.removeFragmentsInRange(0,Number.POSITIVE_INFINITY,ct),this.fragPrevious=null,this.mediaBuffer=null)},r.onSubtitleTrackSwitch=function(e,t){if(this.currentTrackId=t.id,this.levels.length&&-1!==this.currentTrackId){var r=this.levels[this.currentTrackId]
 null!=r&&r.details?this.mediaBuffer=this.mediaBufferTimeRanges:this.mediaBuffer=null,r&&this.setInterval(500)}else this.clearInterval()},r.onSubtitleTrackLoaded=function(e,t){var r,i=t.details,n=t.id,a=this.currentTrackId,s=this.levels
 if(s.length){var o=s[a]
 if(!(n>=s.length||n!==a)&&o){this.mediaBuffer=this.mediaBufferTimeRanges
@@ -5721,27 +5734,27 @@ var l=0
 if(i.live||null!=(r=o.details)&&r.live){var u=this.mainDetails
 if(i.deltaUpdateFailed||!u)return
 var c=u.fragments[0]
-o.details?0===(l=this.alignPlaylists(i,o.details))&&c&&At(i,l=c.start):i.hasProgramDateTime&&u.hasProgramDateTime?(fr(i,u),l=i.fragments[0].start):c&&At(i,l=c.start)}o.details=i,this.levelLastLoaded=n,this.startFragRequested||!this.mainDetails&&i.live||this.setStartPosition(o.details,l),this.tick(),i.live&&!this.fragCurrent&&this.media&&this.state===yr&&(Nt(null,i.fragments,this.media.currentTime,0)||(this.warn("Subtitle playlist not aligned with playback"),o.details=void 0))}}},r._handleFragmentLoadComplete=function(e){var t=this,r=e.frag,i=e.payload,n=r.decryptdata,a=this.hls
+o.details?0===(l=this.alignPlaylists(i,o.details))&&c&&Dt(i,l=c.start):i.hasProgramDateTime&&u.hasProgramDateTime?(gr(i,u),l=i.fragments[0].start):c&&Dt(i,l=c.start)}o.details=i,this.levelLastLoaded=n,this.startFragRequested||!this.mainDetails&&i.live||this.setStartPosition(o.details,l),this.tick(),i.live&&!this.fragCurrent&&this.media&&this.state===Er&&(Bt(null,i.fragments,this.media.currentTime,0)||(this.warn("Subtitle playlist not aligned with playback"),o.details=void 0))}}},r._handleFragmentLoadComplete=function(e){var t=this,r=e.frag,i=e.payload,n=r.decryptdata,a=this.hls
 if(!this.fragContextChanged(r)&&i&&i.byteLength>0&&n&&n.key&&n.iv&&"AES-128"===n.method){var s=performance.now()
-this.decrypter.decrypt(new Uint8Array(i),n.key.buffer,n.iv.buffer).catch((function(e){throw a.trigger(b.ERROR,{type:y.MEDIA_ERROR,details:_.FRAG_DECRYPT_ERROR,fatal:!1,error:e,reason:e.message,frag:r}),e})).then((function(e){var t=performance.now()
-a.trigger(b.FRAG_DECRYPTED,{frag:r,payload:e,stats:{tstart:s,tdecrypt:t}})})).catch((function(e){t.warn(e.name+": "+e.message),t.state=yr}))}},r.doTick=function(){if(this.media){if(this.state===yr){var e=this.currentTrackId,t=this.levels,r=t[e]
+this.decrypter.decrypt(new Uint8Array(i),n.key.buffer,n.iv.buffer).catch((function(e){throw a.trigger(y.ERROR,{type:_.MEDIA_ERROR,details:w.FRAG_DECRYPT_ERROR,fatal:!1,error:e,reason:e.message,frag:r}),e})).then((function(e){var t=performance.now()
+a.trigger(y.FRAG_DECRYPTED,{frag:r,payload:e,stats:{tstart:s,tdecrypt:t}})})).catch((function(e){t.warn(e.name+": "+e.message),t.state=Er}))}},r.doTick=function(){if(this.media){if(this.state===Er){var e=this.currentTrackId,t=this.levels,r=t[e]
 if(!t.length||!r||!r.details)return
-var i=r.details,n=i.targetduration,a=this.config,s=this.getLoadPosition(),o=lr.bufferedInfo(this.tracksBuffered[this.currentTrackId]||[],s-n,a.maxBufferHole),l=o.end,u=o.len,c=this.getFwdBufferInfo(this.media,at)
+var i=r.details,n=i.targetduration,a=this.config,s=this.getLoadPosition(),o=dr.bufferedInfo(this.tracksBuffered[this.currentTrackId]||[],s-n,a.maxBufferHole),l=o.end,u=o.len,c=this.getFwdBufferInfo(this.media,lt)
 if(u>this.getMaxBufferLength(null==c?void 0:c.len)+n)return
 var d=i.fragments,h=d.length,f=i.edge,p=null,m=this.fragPrevious
 if(l<f){var g=a.maxFragLookUpTolerance
-!(p=Nt(m,d,Math.max(d[0].start,l),g))&&m&&m.start<d[0].start&&(p=d[0])}else p=d[h-1]
+!(p=Bt(m,d,Math.max(d[0].start,l),g))&&m&&m.start<d[0].start&&(p=d[0])}else p=d[h-1]
 if(!p)return
-p=this.mapToInitFragWhenRequired(p),this.fragmentTracker.getState(p)===Kt&&this.loadFragment(p,r,l)}}else this.state=yr},r.getMaxBufferLength=function(t){var r=e.prototype.getMaxBufferLength.call(this)
-return t?Math.max(r,t):r},r.loadFragment=function(t,r,i){this.fragCurrent=t,"initSegment"===t.sn?this._loadInitSegment(t,r):(this.startFragRequested=!0,e.prototype.loadFragment.call(this,t,r,i))},a(t,[{key:"mediaBufferTimeRanges",get:function(){return new en(this.tracksBuffered[this.currentTrackId]||[])}}]),t}(Rr),en=function(e){this.buffered=void 0
+p=this.mapToInitFragWhenRequired(p),this.fragmentTracker.getState(p)===Qt&&this.loadFragment(p,r,l)}}else this.state=Er},r.getMaxBufferLength=function(t){var r=e.prototype.getMaxBufferLength.call(this)
+return t?Math.max(r,t):r},r.loadFragment=function(t,r,i){this.fragCurrent=t,"initSegment"===t.sn?this._loadInitSegment(t,r):(this.startFragRequested=!0,e.prototype.loadFragment.call(this,t,r,i))},a(t,[{key:"mediaBufferTimeRanges",get:function(){return new rn(this.tracksBuffered[this.currentTrackId]||[])}}]),t}(Mr),rn=function(e){this.buffered=void 0
 var t=function(t,r,i){if((r>>>=0)>i-1)throw new DOMException("Failed to execute '"+t+"' on 'TimeRanges': The index provided ("+r+") is greater than the maximum bound ("+i+")")
 return e[r][t]}
-this.buffered={get length(){return e.length},end:function(r){return t("end",r,e.length)},start:function(r){return t("start",r,e.length)}}},tn=function(e){function t(t){var r
+this.buffered={get length(){return e.length},end:function(r){return t("end",r,e.length)},start:function(r){return t("start",r,e.length)}}},nn=function(e){function t(t){var r
 return(r=e.call(this,t,"[subtitle-track-controller]")||this).media=null,r.tracks=[],r.groupId=null,r.tracksInGroup=[],r.trackId=-1,r.selectDefaultTrack=!0,r.queuedDefaultTrack=-1,r.trackChangeListener=function(){return r.onTextTracksChanged()},r.asyncPollTrackChange=function(){return r.pollTrackChange(0)},r.useTextTrackPolling=!1,r.subtitlePollingInterval=-1,r._subtitleDisplay=!0,r.registerListeners(),r}l(t,e)
 var r=t.prototype
 return r.destroy=function(){this.unregisterListeners(),this.tracks.length=0,this.tracksInGroup.length=0,this.trackChangeListener=this.asyncPollTrackChange=null,e.prototype.destroy.call(this)},r.registerListeners=function(){var e=this.hls
-e.on(b.MEDIA_ATTACHED,this.onMediaAttached,this),e.on(b.MEDIA_DETACHING,this.onMediaDetaching,this),e.on(b.MANIFEST_LOADING,this.onManifestLoading,this),e.on(b.MANIFEST_PARSED,this.onManifestParsed,this),e.on(b.LEVEL_LOADING,this.onLevelLoading,this),e.on(b.LEVEL_SWITCHING,this.onLevelSwitching,this),e.on(b.SUBTITLE_TRACK_LOADED,this.onSubtitleTrackLoaded,this),e.on(b.ERROR,this.onError,this)},r.unregisterListeners=function(){var e=this.hls
-e.off(b.MEDIA_ATTACHED,this.onMediaAttached,this),e.off(b.MEDIA_DETACHING,this.onMediaDetaching,this),e.off(b.MANIFEST_LOADING,this.onManifestLoading,this),e.off(b.MANIFEST_PARSED,this.onManifestParsed,this),e.off(b.LEVEL_LOADING,this.onLevelLoading,this),e.off(b.LEVEL_SWITCHING,this.onLevelSwitching,this),e.off(b.SUBTITLE_TRACK_LOADED,this.onSubtitleTrackLoaded,this),e.off(b.ERROR,this.onError,this)},r.onMediaAttached=function(e,t){this.media=t.media,this.media&&(this.queuedDefaultTrack>-1&&(this.subtitleTrack=this.queuedDefaultTrack,this.queuedDefaultTrack=-1),this.useTextTrackPolling=!(this.media.textTracks&&"onchange"in this.media.textTracks),this.useTextTrackPolling?this.pollTrackChange(500):this.media.textTracks.addEventListener("change",this.asyncPollTrackChange))},r.pollTrackChange=function(e){self.clearInterval(this.subtitlePollingInterval),this.subtitlePollingInterval=self.setInterval(this.trackChangeListener,e)},r.onMediaDetaching=function(){this.media&&(self.clearInterval(this.subtitlePollingInterval),this.useTextTrackPolling||this.media.textTracks.removeEventListener("change",this.asyncPollTrackChange),this.trackId>-1&&(this.queuedDefaultTrack=this.trackId),rn(this.media.textTracks).forEach((function(e){ft(e)})),this.subtitleTrack=-1,this.media=null)},r.onManifestLoading=function(){this.tracks=[],this.groupId=null,this.tracksInGroup=[],this.trackId=-1,this.selectDefaultTrack=!0},r.onManifestParsed=function(e,t){this.tracks=t.subtitleTracks},r.onSubtitleTrackLoaded=function(e,t){var r=t.id,i=t.details,n=this.trackId,a=this.tracksInGroup[n]
+e.on(y.MEDIA_ATTACHED,this.onMediaAttached,this),e.on(y.MEDIA_DETACHING,this.onMediaDetaching,this),e.on(y.MANIFEST_LOADING,this.onManifestLoading,this),e.on(y.MANIFEST_PARSED,this.onManifestParsed,this),e.on(y.LEVEL_LOADING,this.onLevelLoading,this),e.on(y.LEVEL_SWITCHING,this.onLevelSwitching,this),e.on(y.SUBTITLE_TRACK_LOADED,this.onSubtitleTrackLoaded,this),e.on(y.ERROR,this.onError,this)},r.unregisterListeners=function(){var e=this.hls
+e.off(y.MEDIA_ATTACHED,this.onMediaAttached,this),e.off(y.MEDIA_DETACHING,this.onMediaDetaching,this),e.off(y.MANIFEST_LOADING,this.onManifestLoading,this),e.off(y.MANIFEST_PARSED,this.onManifestParsed,this),e.off(y.LEVEL_LOADING,this.onLevelLoading,this),e.off(y.LEVEL_SWITCHING,this.onLevelSwitching,this),e.off(y.SUBTITLE_TRACK_LOADED,this.onSubtitleTrackLoaded,this),e.off(y.ERROR,this.onError,this)},r.onMediaAttached=function(e,t){this.media=t.media,this.media&&(this.queuedDefaultTrack>-1&&(this.subtitleTrack=this.queuedDefaultTrack,this.queuedDefaultTrack=-1),this.useTextTrackPolling=!(this.media.textTracks&&"onchange"in this.media.textTracks),this.useTextTrackPolling?this.pollTrackChange(500):this.media.textTracks.addEventListener("change",this.asyncPollTrackChange))},r.pollTrackChange=function(e){self.clearInterval(this.subtitlePollingInterval),this.subtitlePollingInterval=self.setInterval(this.trackChangeListener,e)},r.onMediaDetaching=function(){this.media&&(self.clearInterval(this.subtitlePollingInterval),this.useTextTrackPolling||this.media.textTracks.removeEventListener("change",this.asyncPollTrackChange),this.trackId>-1&&(this.queuedDefaultTrack=this.trackId),an(this.media.textTracks).forEach((function(e){gt(e)})),this.subtitleTrack=-1,this.media=null)},r.onManifestLoading=function(){this.tracks=[],this.groupId=null,this.tracksInGroup=[],this.trackId=-1,this.selectDefaultTrack=!0},r.onManifestParsed=function(e,t){this.tracks=t.subtitleTracks},r.onSubtitleTrackLoaded=function(e,t){var r=t.id,i=t.details,n=this.trackId,a=this.tracksInGroup[n]
 if(a){var s=a.details
 a.details=t.details,this.log("subtitle track "+r+" loaded ["+i.startSN+"-"+i.endSN+"]"),r===this.trackId&&this.playlistLoaded(r,t,s)}else this.warn("Invalid subtitle track id "+r)},r.onLevelLoading=function(e,t){this.switchLevel(t.level)},r.onLevelSwitching=function(e,t){this.switchLevel(t.level)},r.switchLevel=function(e){var t=this.hls.levels[e]
 if(null!=t&&t.textGroupIds){var r=t.textGroupIds[t.urlId],i=this.tracksInGroup?this.tracksInGroup[this.trackId]:void 0
@@ -5750,12 +5763,12 @@ this.tracksInGroup=n
 var a=this.findTrackId(null==i?void 0:i.name)||this.findTrackId()
 this.groupId=r||null
 var s={subtitleTracks:n}
-this.log("Updating subtitle tracks, "+n.length+' track(s) found in "'+r+'" group-id'),this.hls.trigger(b.SUBTITLE_TRACKS_UPDATED,s),-1!==a&&this.setSubtitleTrack(a,i)}else this.shouldReloadPlaylist(i)&&this.setSubtitleTrack(this.trackId,i)}},r.findTrackId=function(e){for(var t=this.tracksInGroup,r=0;r<t.length;r++){var i=t[r]
-if((!this.selectDefaultTrack||i.default)&&(!e||e===i.name))return i.id}return-1},r.onError=function(e,t){!t.fatal&&t.context&&t.context.type===nt&&t.context.id===this.trackId&&t.context.groupId===this.groupId&&this.checkRetry(t)},r.loadPlaylist=function(t){e.prototype.loadPlaylist.call(this)
+this.log("Updating subtitle tracks, "+n.length+' track(s) found in "'+r+'" group-id'),this.hls.trigger(y.SUBTITLE_TRACKS_UPDATED,s),-1!==a&&this.setSubtitleTrack(a,i)}else this.shouldReloadPlaylist(i)&&this.setSubtitleTrack(this.trackId,i)}},r.findTrackId=function(e){for(var t=this.tracksInGroup,r=0;r<t.length;r++){var i=t[r]
+if((!this.selectDefaultTrack||i.default)&&(!e||e===i.name))return i.id}return-1},r.onError=function(e,t){!t.fatal&&t.context&&t.context.type===ot&&t.context.id===this.trackId&&t.context.groupId===this.groupId&&this.checkRetry(t)},r.loadPlaylist=function(t){e.prototype.loadPlaylist.call(this)
 var r=this.tracksInGroup[this.trackId]
 if(this.shouldLoadPlaylist(r)){var i=r.id,n=r.groupId,a=r.url
-if(t)try{a=t.addDirectives(a)}catch(e){this.warn("Could not construct new URL with HLS Delivery Directives: "+e)}this.log("Loading subtitle playlist for id "+i),this.hls.trigger(b.SUBTITLE_TRACK_LOADING,{url:a,id:i,groupId:n,deliveryDirectives:t||null})}},r.toggleTrackModes=function(e){var t=this,r=this.media,i=this.trackId
-if(r){var n=rn(r.textTracks),a=n.filter((function(e){return e.groupId===t.groupId}))
+if(t)try{a=t.addDirectives(a)}catch(e){this.warn("Could not construct new URL with HLS Delivery Directives: "+e)}this.log("Loading subtitle playlist for id "+i),this.hls.trigger(y.SUBTITLE_TRACK_LOADING,{url:a,id:i,groupId:n,deliveryDirectives:t||null})}},r.toggleTrackModes=function(e){var t=this,r=this.media,i=this.trackId
+if(r){var n=an(r.textTracks),a=n.filter((function(e){return e.groupId===t.groupId}))
 if(-1===e)[].slice.call(n).forEach((function(e){e.mode="disabled"}))
 else{var s=a[i]
 s&&(s.mode="disabled")}var o=a[e]
@@ -5763,128 +5776,128 @@ o&&(o.mode=this.subtitleDisplay?"showing":"hidden")}},r.setSubtitleTrack=functio
 if(this.media){if(this.trackId!==e&&this.toggleTrackModes(e),!(this.trackId===e&&(-1===e||null!=(r=i[e])&&r.details)||e<-1||e>=i.length)){this.clearTimer()
 var n=i[e]
 if(this.log("Switching to subtitle-track "+e+(n?' "'+n.name+'" lang:'+n.lang+" group:"+n.groupId:"")),this.trackId=e,n){var a=n.id,s=n.groupId,o=void 0===s?"":s,l=n.name,u=n.type,c=n.url
-this.hls.trigger(b.SUBTITLE_TRACK_SWITCH,{id:a,groupId:o,name:l,type:u,url:c})
+this.hls.trigger(y.SUBTITLE_TRACK_SWITCH,{id:a,groupId:o,name:l,type:u,url:c})
 var d=this.switchParams(n.url,null==t?void 0:t.details)
-this.loadPlaylist(d)}else this.hls.trigger(b.SUBTITLE_TRACK_SWITCH,{id:e})}}else this.queuedDefaultTrack=e},r.onTextTracksChanged=function(){if(this.useTextTrackPolling||self.clearInterval(this.subtitlePollingInterval),this.media&&this.hls.config.renderTextTracksNatively){for(var e=-1,t=rn(this.media.textTracks),r=0;r<t.length;r++)if("hidden"===t[r].mode)e=r
+this.loadPlaylist(d)}else this.hls.trigger(y.SUBTITLE_TRACK_SWITCH,{id:e})}}else this.queuedDefaultTrack=e},r.onTextTracksChanged=function(){if(this.useTextTrackPolling||self.clearInterval(this.subtitlePollingInterval),this.media&&this.hls.config.renderTextTracksNatively){for(var e=-1,t=an(this.media.textTracks),r=0;r<t.length;r++)if("hidden"===t[r].mode)e=r
 else if("showing"===t[r].mode){e=r
 break}this.subtitleTrack!==e&&(this.subtitleTrack=e)}},a(t,[{key:"subtitleDisplay",get:function(){return this._subtitleDisplay},set:function(e){this._subtitleDisplay=e,this.trackId>-1&&this.toggleTrackModes(this.trackId)}},{key:"subtitleTracks",get:function(){return this.tracksInGroup}},{key:"subtitleTrack",get:function(){return this.trackId},set:function(e){this.selectDefaultTrack=!1
 var t=this.tracksInGroup?this.tracksInGroup[this.trackId]:void 0
-this.setSubtitleTrack(e,t)}}]),t}(Vt)
-function rn(e){for(var t=[],r=0;r<e.length;r++){var i=e[r]
-"subtitles"!==i.kind&&"captions"!==i.kind||!i.label||t.push(e[r])}return t}var nn=function(){function e(e){this.buffers=void 0,this.queues={video:[],audio:[],audiovideo:[]},this.buffers=e}var t=e.prototype
+this.setSubtitleTrack(e,t)}}]),t}(Gt)
+function an(e){for(var t=[],r=0;r<e.length;r++){var i=e[r]
+"subtitles"!==i.kind&&"captions"!==i.kind||!i.label||t.push(e[r])}return t}var sn=function(){function e(e){this.buffers=void 0,this.queues={video:[],audio:[],audiovideo:[]},this.buffers=e}var t=e.prototype
 return t.append=function(e,t){var r=this.queues[t]
 r.push(e),1===r.length&&this.buffers[t]&&this.executeNext(t)},t.insertAbort=function(e,t){this.queues[t].unshift(e),this.executeNext(t)},t.appendBlocker=function(e){var t,r=new Promise((function(e){t=e})),i={execute:t,onStart:function(){},onComplete:function(){},onError:function(){}}
 return this.append(i,e),r},t.executeNext=function(e){var t=this.buffers,r=this.queues,i=t[e],n=r[e]
 if(n.length){var a=n[0]
-try{a.execute()}catch(t){S.warn("[buffer-operation-queue]: Unhandled exception executing the current operation"),a.onError(t),null!=i&&i.updating||(n.shift(),this.executeNext(e))}}},t.shiftAndExecuteNext=function(e){this.queues[e].shift(),this.executeNext(e)},t.current=function(e){return this.queues[e][0]},e}(),an=Cr(),sn=/([ha]vc.)(?:\.[^.,]+)+/,on=function(){function e(e){var t=this
+try{a.execute()}catch(t){O.warn("[buffer-operation-queue]: Unhandled exception executing the current operation"),a.onError(t),null!=i&&i.updating||(n.shift(),this.executeNext(e))}}},t.shiftAndExecuteNext=function(e){this.queues[e].shift(),this.executeNext(e)},t.current=function(e){return this.queues[e][0]},e}(),on=Be(),ln=/([ha]vc.)(?:\.[^.,]+)+/,un=function(){function e(e){var t=this
 this.details=null,this._objectUrl=null,this.operationQueue=void 0,this.listeners=void 0,this.hls=void 0,this.bufferCodecEventsExpected=0,this._bufferCodecEventsTotal=0,this.media=null,this.mediaSource=null,this.lastMpegAudioChunk=null,this.appendError=0,this.tracks={},this.pendingTracks={},this.sourceBuffer=void 0,this._onMediaSourceOpen=function(){var e=t.media,r=t.mediaSource
-S.log("[buffer-controller]: Media source opened"),e&&(e.removeEventListener("emptied",t._onMediaEmptied),t.updateMediaElementDuration(),t.hls.trigger(b.MEDIA_ATTACHED,{media:e})),r&&r.removeEventListener("sourceopen",t._onMediaSourceOpen),t.checkPendingTracks()},this._onMediaSourceClose=function(){S.log("[buffer-controller]: Media source closed")},this._onMediaSourceEnded=function(){S.log("[buffer-controller]: Media source ended")},this._onMediaEmptied=function(){var e=t.media,r=t._objectUrl
-e&&e.src!==r&&S.error("Media element src was set while attaching MediaSource ("+r+" > "+e.src+")")},this.hls=e,this._initSourceBuffer(),this.registerListeners()}var t=e.prototype
+O.log("[buffer-controller]: Media source opened"),e&&(e.removeEventListener("emptied",t._onMediaEmptied),t.updateMediaElementDuration(),t.hls.trigger(y.MEDIA_ATTACHED,{media:e})),r&&r.removeEventListener("sourceopen",t._onMediaSourceOpen),t.checkPendingTracks()},this._onMediaSourceClose=function(){O.log("[buffer-controller]: Media source closed")},this._onMediaSourceEnded=function(){O.log("[buffer-controller]: Media source ended")},this._onMediaEmptied=function(){var e=t.media,r=t._objectUrl
+e&&e.src!==r&&O.error("Media element src was set while attaching MediaSource ("+r+" > "+e.src+")")},this.hls=e,this._initSourceBuffer(),this.registerListeners()}var t=e.prototype
 return t.hasSourceTypes=function(){return this.getSourceBufferTypes().length>0||Object.keys(this.pendingTracks).length>0},t.destroy=function(){this.unregisterListeners(),this.details=null,this.lastMpegAudioChunk=null},t.registerListeners=function(){var e=this.hls
-e.on(b.MEDIA_ATTACHING,this.onMediaAttaching,this),e.on(b.MEDIA_DETACHING,this.onMediaDetaching,this),e.on(b.MANIFEST_PARSED,this.onManifestParsed,this),e.on(b.BUFFER_RESET,this.onBufferReset,this),e.on(b.BUFFER_APPENDING,this.onBufferAppending,this),e.on(b.BUFFER_CODECS,this.onBufferCodecs,this),e.on(b.BUFFER_EOS,this.onBufferEos,this),e.on(b.BUFFER_FLUSHING,this.onBufferFlushing,this),e.on(b.LEVEL_UPDATED,this.onLevelUpdated,this),e.on(b.FRAG_PARSED,this.onFragParsed,this),e.on(b.FRAG_CHANGED,this.onFragChanged,this)},t.unregisterListeners=function(){var e=this.hls
-e.off(b.MEDIA_ATTACHING,this.onMediaAttaching,this),e.off(b.MEDIA_DETACHING,this.onMediaDetaching,this),e.off(b.MANIFEST_PARSED,this.onManifestParsed,this),e.off(b.BUFFER_RESET,this.onBufferReset,this),e.off(b.BUFFER_APPENDING,this.onBufferAppending,this),e.off(b.BUFFER_CODECS,this.onBufferCodecs,this),e.off(b.BUFFER_EOS,this.onBufferEos,this),e.off(b.BUFFER_FLUSHING,this.onBufferFlushing,this),e.off(b.LEVEL_UPDATED,this.onLevelUpdated,this),e.off(b.FRAG_PARSED,this.onFragParsed,this),e.off(b.FRAG_CHANGED,this.onFragChanged,this)},t._initSourceBuffer=function(){this.sourceBuffer={},this.operationQueue=new nn(this.sourceBuffer),this.listeners={audio:[],video:[],audiovideo:[]},this.lastMpegAudioChunk=null},t.onManifestParsed=function(e,t){var r=2;(t.audio&&!t.video||!t.altAudio)&&(r=1),this.bufferCodecEventsExpected=this._bufferCodecEventsTotal=r,this.details=null,S.log(this.bufferCodecEventsExpected+" bufferCodec event(s) expected")},t.onMediaAttaching=function(e,t){var r=this.media=t.media
-if(r&&an){var i=this.mediaSource=new an
+e.on(y.MEDIA_ATTACHING,this.onMediaAttaching,this),e.on(y.MEDIA_DETACHING,this.onMediaDetaching,this),e.on(y.MANIFEST_LOADING,this.onManifestLoading,this),e.on(y.MANIFEST_PARSED,this.onManifestParsed,this),e.on(y.BUFFER_RESET,this.onBufferReset,this),e.on(y.BUFFER_APPENDING,this.onBufferAppending,this),e.on(y.BUFFER_CODECS,this.onBufferCodecs,this),e.on(y.BUFFER_EOS,this.onBufferEos,this),e.on(y.BUFFER_FLUSHING,this.onBufferFlushing,this),e.on(y.LEVEL_UPDATED,this.onLevelUpdated,this),e.on(y.FRAG_PARSED,this.onFragParsed,this),e.on(y.FRAG_CHANGED,this.onFragChanged,this)},t.unregisterListeners=function(){var e=this.hls
+e.off(y.MEDIA_ATTACHING,this.onMediaAttaching,this),e.off(y.MEDIA_DETACHING,this.onMediaDetaching,this),e.off(y.MANIFEST_LOADING,this.onManifestLoading,this),e.off(y.MANIFEST_PARSED,this.onManifestParsed,this),e.off(y.BUFFER_RESET,this.onBufferReset,this),e.off(y.BUFFER_APPENDING,this.onBufferAppending,this),e.off(y.BUFFER_CODECS,this.onBufferCodecs,this),e.off(y.BUFFER_EOS,this.onBufferEos,this),e.off(y.BUFFER_FLUSHING,this.onBufferFlushing,this),e.off(y.LEVEL_UPDATED,this.onLevelUpdated,this),e.off(y.FRAG_PARSED,this.onFragParsed,this),e.off(y.FRAG_CHANGED,this.onFragChanged,this)},t._initSourceBuffer=function(){this.sourceBuffer={},this.operationQueue=new sn(this.sourceBuffer),this.listeners={audio:[],video:[],audiovideo:[]},this.lastMpegAudioChunk=null},t.onManifestLoading=function(){this.bufferCodecEventsExpected=this._bufferCodecEventsTotal=0,this.details=null},t.onManifestParsed=function(e,t){var r=2;(t.audio&&!t.video||!t.altAudio)&&(r=1),this.bufferCodecEventsExpected=this._bufferCodecEventsTotal=r,O.log(this.bufferCodecEventsExpected+" bufferCodec event(s) expected")},t.onMediaAttaching=function(e,t){var r=this.media=t.media
+if(r&&on){var i=this.mediaSource=new on
 i.addEventListener("sourceopen",this._onMediaSourceOpen),i.addEventListener("sourceended",this._onMediaSourceEnded),i.addEventListener("sourceclose",this._onMediaSourceClose),r.src=self.URL.createObjectURL(i),this._objectUrl=r.src,r.addEventListener("emptied",this._onMediaEmptied)}},t.onMediaDetaching=function(){var e=this.media,t=this.mediaSource,r=this._objectUrl
-if(t){if(S.log("[buffer-controller]: media source detaching"),"open"===t.readyState)try{t.endOfStream()}catch(e){S.warn("[buffer-controller]: onMediaDetaching: "+e.message+" while calling endOfStream")}this.onBufferReset(),t.removeEventListener("sourceopen",this._onMediaSourceOpen),t.removeEventListener("sourceended",this._onMediaSourceEnded),t.removeEventListener("sourceclose",this._onMediaSourceClose),e&&(e.removeEventListener("emptied",this._onMediaEmptied),r&&self.URL.revokeObjectURL(r),e.src===r?(e.removeAttribute("src"),e.load()):S.warn("[buffer-controller]: media.src was changed by a third party - skip cleanup")),this.mediaSource=null,this.media=null,this._objectUrl=null,this.bufferCodecEventsExpected=this._bufferCodecEventsTotal,this.pendingTracks={},this.tracks={}}this.hls.trigger(b.MEDIA_DETACHED,void 0)},t.onBufferReset=function(){var e=this
+if(t){if(O.log("[buffer-controller]: media source detaching"),"open"===t.readyState)try{t.endOfStream()}catch(e){O.warn("[buffer-controller]: onMediaDetaching: "+e.message+" while calling endOfStream")}this.onBufferReset(),t.removeEventListener("sourceopen",this._onMediaSourceOpen),t.removeEventListener("sourceended",this._onMediaSourceEnded),t.removeEventListener("sourceclose",this._onMediaSourceClose),e&&(e.removeEventListener("emptied",this._onMediaEmptied),r&&self.URL.revokeObjectURL(r),e.src===r?(e.removeAttribute("src"),e.load()):O.warn("[buffer-controller]: media.src was changed by a third party - skip cleanup")),this.mediaSource=null,this.media=null,this._objectUrl=null,this.bufferCodecEventsExpected=this._bufferCodecEventsTotal,this.pendingTracks={},this.tracks={}}this.hls.trigger(y.MEDIA_DETACHED,void 0)},t.onBufferReset=function(){var e=this
 this.getSourceBufferTypes().forEach((function(t){var r=e.sourceBuffer[t]
-try{r&&(e.removeBufferListeners(t),e.mediaSource&&e.mediaSource.removeSourceBuffer(r),e.sourceBuffer[t]=void 0)}catch(e){S.warn("[buffer-controller]: Failed to reset the "+t+" buffer",e)}})),this._initSourceBuffer()},t.onBufferCodecs=function(e,t){var r=this,i=this.getSourceBufferTypes().length
+try{r&&(e.removeBufferListeners(t),e.mediaSource&&e.mediaSource.removeSourceBuffer(r),e.sourceBuffer[t]=void 0)}catch(e){O.warn("[buffer-controller]: Failed to reset the "+t+" buffer",e)}})),this._initSourceBuffer()},t.onBufferCodecs=function(e,t){var r=this,i=this.getSourceBufferTypes().length
 Object.keys(t).forEach((function(e){if(i){var n=r.tracks[e]
-if(n&&"function"==typeof n.buffer.changeType){var a=t[e],s=a.id,o=a.codec,l=a.levelCodec,u=a.container,c=a.metadata,d=(n.levelCodec||n.codec).replace(sn,"$1"),h=(l||o).replace(sn,"$1")
+if(n&&"function"==typeof n.buffer.changeType){var a=t[e],s=a.id,o=a.codec,l=a.levelCodec,u=a.container,c=a.metadata,d=(n.levelCodec||n.codec).replace(ln,"$1"),h=(l||o).replace(ln,"$1")
 if(d!==h){var f=u+";codecs="+(l||o)
-r.appendChangeType(e,f),S.log("[buffer-controller]: switching codec "+d+" to "+h),r.tracks[e]={buffer:n.buffer,codec:o,container:u,levelCodec:l,metadata:c,id:s}}}}else r.pendingTracks[e]=t[e]})),i||(this.bufferCodecEventsExpected=Math.max(this.bufferCodecEventsExpected-1,0),this.mediaSource&&"open"===this.mediaSource.readyState&&this.checkPendingTracks())},t.appendChangeType=function(e,t){var r=this,i=this.operationQueue,n={execute:function(){var n=r.sourceBuffer[e]
-n&&(S.log("[buffer-controller]: changing "+e+" sourceBuffer type to "+t),n.changeType(t)),i.shiftAndExecuteNext(e)},onStart:function(){},onComplete:function(){},onError:function(t){S.warn("[buffer-controller]: Failed to change "+e+" SourceBuffer type",t)}}
+r.appendChangeType(e,f),O.log("[buffer-controller]: switching codec "+d+" to "+h),r.tracks[e]={buffer:n.buffer,codec:o,container:u,levelCodec:l,metadata:c,id:s}}}}else r.pendingTracks[e]=t[e]})),i||(this.bufferCodecEventsExpected=Math.max(this.bufferCodecEventsExpected-1,0),this.mediaSource&&"open"===this.mediaSource.readyState&&this.checkPendingTracks())},t.appendChangeType=function(e,t){var r=this,i=this.operationQueue,n={execute:function(){var n=r.sourceBuffer[e]
+n&&(O.log("[buffer-controller]: changing "+e+" sourceBuffer type to "+t),n.changeType(t)),i.shiftAndExecuteNext(e)},onStart:function(){},onComplete:function(){},onError:function(t){O.warn("[buffer-controller]: Failed to change "+e+" SourceBuffer type",t)}}
 i.append(n,e)},t.onBufferAppending=function(e,t){var r=this,i=this.hls,n=this.operationQueue,a=this.tracks,s=t.data,o=t.type,l=t.frag,u=t.part,c=t.chunkMeta,d=c.buffering[o],h=self.performance.now()
 d.start=h
 var f=l.stats.buffering,p=u?u.stats.buffering:null
 0===f.start&&(f.start=h),p&&0===p.start&&(p.start=h)
 var m=a.audio,g=!1
 "audio"===o&&"audio/mpeg"===(null==m?void 0:m.container)&&(g=!this.lastMpegAudioChunk||1===c.id||this.lastMpegAudioChunk.sn!==c.sn,this.lastMpegAudioChunk=c)
-var v=l.start,w={execute:function(){if(d.executeStart=self.performance.now(),g){var e=r.sourceBuffer[o]
+var v=l.start,b={execute:function(){if(d.executeStart=self.performance.now(),g){var e=r.sourceBuffer[o]
 if(e){var t=v-e.timestampOffset
-Math.abs(t)>=.1&&(S.log("[buffer-controller]: Updating audio SourceBuffer timestampOffset to "+v+" (delta: "+t+") sn: "+l.sn+")"),e.timestampOffset=v)}}r.appendExecutor(s,o)},onStart:function(){},onComplete:function(){var e=self.performance.now()
+Math.abs(t)>=.1&&(O.log("[buffer-controller]: Updating audio SourceBuffer timestampOffset to "+v+" (delta: "+t+") sn: "+l.sn+")"),e.timestampOffset=v)}}r.appendExecutor(s,o)},onStart:function(){},onComplete:function(){var e=self.performance.now()
 d.executeEnd=d.end=e,0===f.first&&(f.first=e),p&&0===p.first&&(p.first=e)
 var t=r.sourceBuffer,i={}
-for(var n in t)i[n]=lr.getBuffered(t[n])
-r.appendError=0,r.hls.trigger(b.BUFFER_APPENDED,{type:o,frag:l,part:u,chunkMeta:c,parent:l.type,timeRanges:i})},onError:function(e){S.error("[buffer-controller]: Error encountered while trying to append to the "+o+" SourceBuffer",e)
-var t={type:y.MEDIA_ERROR,parent:l.type,details:_.BUFFER_APPEND_ERROR,frag:l,part:u,chunkMeta:c,error:e,err:e,fatal:!1}
-e.code===DOMException.QUOTA_EXCEEDED_ERR?t.details=_.BUFFER_FULL_ERROR:(r.appendError++,t.details=_.BUFFER_APPEND_ERROR,r.appendError>i.config.appendErrorMaxRetry&&(S.error("[buffer-controller]: Failed "+i.config.appendErrorMaxRetry+" times to append segment in sourceBuffer"),t.fatal=!0)),i.trigger(b.ERROR,t)}}
-n.append(w,o)},t.onBufferFlushing=function(e,t){var r=this,i=this.operationQueue,n=function(e){return{execute:r.removeExecutor.bind(r,e,t.startOffset,t.endOffset),onStart:function(){},onComplete:function(){r.hls.trigger(b.BUFFER_FLUSHED,{type:e})},onError:function(t){S.warn("[buffer-controller]: Failed to remove from "+e+" SourceBuffer",t)}}}
+for(var n in t)i[n]=dr.getBuffered(t[n])
+r.appendError=0,r.hls.trigger(y.BUFFER_APPENDED,{type:o,frag:l,part:u,chunkMeta:c,parent:l.type,timeRanges:i})},onError:function(e){O.error("[buffer-controller]: Error encountered while trying to append to the "+o+" SourceBuffer",e)
+var t={type:_.MEDIA_ERROR,parent:l.type,details:w.BUFFER_APPEND_ERROR,frag:l,part:u,chunkMeta:c,error:e,err:e,fatal:!1}
+e.code===DOMException.QUOTA_EXCEEDED_ERR?t.details=w.BUFFER_FULL_ERROR:(r.appendError++,t.details=w.BUFFER_APPEND_ERROR,r.appendError>i.config.appendErrorMaxRetry&&(O.error("[buffer-controller]: Failed "+i.config.appendErrorMaxRetry+" times to append segment in sourceBuffer"),t.fatal=!0)),i.trigger(y.ERROR,t)}}
+n.append(b,o)},t.onBufferFlushing=function(e,t){var r=this,i=this.operationQueue,n=function(e){return{execute:r.removeExecutor.bind(r,e,t.startOffset,t.endOffset),onStart:function(){},onComplete:function(){r.hls.trigger(y.BUFFER_FLUSHED,{type:e})},onError:function(t){O.warn("[buffer-controller]: Failed to remove from "+e+" SourceBuffer",t)}}}
 t.type?i.append(n(t.type),t.type):this.getSourceBufferTypes().forEach((function(e){i.append(n(e),e)}))},t.onFragParsed=function(e,t){var r=this,i=t.frag,n=t.part,a=[],s=n?n.elementaryStreams:i.elementaryStreams
-s[I]?a.push("audiovideo"):(s[D]&&a.push("audio"),s[M]&&a.push("video")),0===a.length&&S.warn("Fragments must have at least one ElementaryStreamType set. type: "+i.type+" level: "+i.level+" sn: "+i.sn),this.blockBuffers((function(){var e=self.performance.now()
+s[L]?a.push("audiovideo"):(s[M]&&a.push("audio"),s[I]&&a.push("video")),0===a.length&&O.warn("Fragments must have at least one ElementaryStreamType set. type: "+i.type+" level: "+i.level+" sn: "+i.sn),this.blockBuffers((function(){var e=self.performance.now()
 i.stats.buffering.end=e,n&&(n.stats.buffering.end=e)
 var t=n?n.stats:i.stats
-r.hls.trigger(b.FRAG_BUFFERED,{frag:i,part:n,stats:t,id:i.type})}),a)},t.onFragChanged=function(e,t){this.flushBackBuffer()},t.onBufferEos=function(e,t){var r=this
+r.hls.trigger(y.FRAG_BUFFERED,{frag:i,part:n,stats:t,id:i.type})}),a)},t.onFragChanged=function(e,t){this.flushBackBuffer()},t.onBufferEos=function(e,t){var r=this
 this.getSourceBufferTypes().reduce((function(e,i){var n=r.sourceBuffer[i]
-return!n||t.type&&t.type!==i||(n.ending=!0,n.ended||(n.ended=!0,S.log("[buffer-controller]: "+i+" sourceBuffer now EOS"))),e&&!(n&&!n.ended)}),!0)&&(S.log("[buffer-controller]: Queueing mediaSource.endOfStream()"),this.blockBuffers((function(){r.getSourceBufferTypes().forEach((function(e){var t=r.sourceBuffer[e]
+return!n||t.type&&t.type!==i||(n.ending=!0,n.ended||(n.ended=!0,O.log("[buffer-controller]: "+i+" sourceBuffer now EOS"))),e&&!(n&&!n.ended)}),!0)&&(O.log("[buffer-controller]: Queueing mediaSource.endOfStream()"),this.blockBuffers((function(){r.getSourceBufferTypes().forEach((function(e){var t=r.sourceBuffer[e]
 t&&(t.ending=!1)}))
 var e=r.mediaSource
-e&&"open"===e.readyState?(S.log("[buffer-controller]: Calling mediaSource.endOfStream()"),e.endOfStream()):e&&S.info("[buffer-controller]: Could not call mediaSource.endOfStream(). mediaSource.readyState: "+e.readyState)})))},t.onLevelUpdated=function(e,t){var r=t.details
+e&&"open"===e.readyState?(O.log("[buffer-controller]: Calling mediaSource.endOfStream()"),e.endOfStream()):e&&O.info("[buffer-controller]: Could not call mediaSource.endOfStream(). mediaSource.readyState: "+e.readyState)})))},t.onLevelUpdated=function(e,t){var r=t.details
 r.fragments.length&&(this.details=r,this.getSourceBufferTypes().length?this.blockBuffers(this.updateMediaElementDuration.bind(this)):this.updateMediaElementDuration())},t.flushBackBuffer=function(){var e=this.hls,t=this.details,r=this.media,i=this.sourceBuffer
 if(r&&null!==t){var n=this.getSourceBufferTypes()
 if(n.length){var a=t.live&&null!==e.config.liveBackBufferLength?e.config.liveBackBufferLength:e.config.backBufferLength
-if(v(a)&&!(a<0)){var s=r.currentTime,o=t.levelTargetDuration,l=Math.max(a,o),u=Math.floor(s/o)*o-l
+if(b(a)&&!(a<0)){var s=r.currentTime,o=t.levelTargetDuration,l=Math.max(a,o),u=Math.floor(s/o)*o-l
 n.forEach((function(r){var n=i[r]
-if(n){var a=lr.getBuffered(n)
-if(a.length>0&&u>a.start(0)){if(e.trigger(b.BACK_BUFFER_REACHED,{bufferEnd:u}),t.live)e.trigger(b.LIVE_BACK_BUFFER_REACHED,{bufferEnd:u})
-else if(n.ended&&a.end(a.length-1)-s<2*o)return void S.info("[buffer-controller]: Cannot flush "+r+" back buffer while SourceBuffer is in ended state")
-e.trigger(b.BUFFER_FLUSHING,{startOffset:0,endOffset:u,type:r})}}}))}}}},t.updateMediaElementDuration=function(){if(this.details&&this.media&&this.mediaSource&&"open"===this.mediaSource.readyState){var e=this.details,t=this.hls,r=this.media,i=this.mediaSource,n=e.fragments[0].start+e.totalduration,a=r.duration,s=v(i.duration)?i.duration:0
-e.live&&t.config.liveDurationInfinity?(S.log("[buffer-controller]: Media Source duration is set to Infinity"),i.duration=1/0,this.updateSeekableRange(e)):(n>s&&n>a||!v(a))&&(S.log("[buffer-controller]: Updating Media Source duration to "+n.toFixed(3)),i.duration=n)}},t.updateSeekableRange=function(e){var t=this.mediaSource,r=e.fragments
+if(n){var a=dr.getBuffered(n)
+if(a.length>0&&u>a.start(0)){if(e.trigger(y.BACK_BUFFER_REACHED,{bufferEnd:u}),t.live)e.trigger(y.LIVE_BACK_BUFFER_REACHED,{bufferEnd:u})
+else if(n.ended&&a.end(a.length-1)-s<2*o)return void O.info("[buffer-controller]: Cannot flush "+r+" back buffer while SourceBuffer is in ended state")
+e.trigger(y.BUFFER_FLUSHING,{startOffset:0,endOffset:u,type:r})}}}))}}}},t.updateMediaElementDuration=function(){if(this.details&&this.media&&this.mediaSource&&"open"===this.mediaSource.readyState){var e=this.details,t=this.hls,r=this.media,i=this.mediaSource,n=e.fragments[0].start+e.totalduration,a=r.duration,s=b(i.duration)?i.duration:0
+e.live&&t.config.liveDurationInfinity?(O.log("[buffer-controller]: Media Source duration is set to Infinity"),i.duration=1/0,this.updateSeekableRange(e)):(n>s&&n>a||!b(a))&&(O.log("[buffer-controller]: Updating Media Source duration to "+n.toFixed(3)),i.duration=n)}},t.updateSeekableRange=function(e){var t=this.mediaSource,r=e.fragments
 if(r.length&&e.live&&null!=t&&t.setLiveSeekableRange){var i=Math.max(0,r[0].start),n=Math.max(i,i+e.totalduration)
 t.setLiveSeekableRange(i,n)}},t.checkPendingTracks=function(){var e=this.bufferCodecEventsExpected,t=this.operationQueue,r=this.pendingTracks,i=Object.keys(r).length
 if(i&&!e||2===i){this.createSourceBuffers(r),this.pendingTracks={}
 var n=this.getSourceBufferTypes()
-if(n.length)this.hls.trigger(b.BUFFER_CREATED,{tracks:this.tracks}),n.forEach((function(e){t.executeNext(e)}))
+if(n.length)this.hls.trigger(y.BUFFER_CREATED,{tracks:this.tracks}),n.forEach((function(e){t.executeNext(e)}))
 else{var a=new Error("could not create source buffer for media codec(s)")
-this.hls.trigger(b.ERROR,{type:y.MEDIA_ERROR,details:_.BUFFER_INCOMPATIBLE_CODECS_ERROR,fatal:!0,error:a,reason:a.message})}}},t.createSourceBuffers=function(e){var t=this.sourceBuffer,r=this.mediaSource
+this.hls.trigger(y.ERROR,{type:_.MEDIA_ERROR,details:w.BUFFER_INCOMPATIBLE_CODECS_ERROR,fatal:!0,error:a,reason:a.message})}}},t.createSourceBuffers=function(e){var t=this.sourceBuffer,r=this.mediaSource
 if(!r)throw Error("createSourceBuffers called when mediaSource was null")
 for(var i in e)if(!t[i]){var n=e[i]
 if(!n)throw Error("source buffer exists for track "+i+", however track does not")
 var a=n.levelCodec||n.codec,s=n.container+";codecs="+a
-S.log("[buffer-controller]: creating sourceBuffer("+s+")")
+O.log("[buffer-controller]: creating sourceBuffer("+s+")")
 try{var o=t[i]=r.addSourceBuffer(s),l=i
-this.addBufferListener(l,"updatestart",this._onSBUpdateStart),this.addBufferListener(l,"updateend",this._onSBUpdateEnd),this.addBufferListener(l,"error",this._onSBUpdateError),this.tracks[i]={buffer:o,codec:a,container:n.container,levelCodec:n.levelCodec,metadata:n.metadata,id:n.id}}catch(e){S.error("[buffer-controller]: error while trying to add sourceBuffer: "+e.message),this.hls.trigger(b.ERROR,{type:y.MEDIA_ERROR,details:_.BUFFER_ADD_CODEC_ERROR,fatal:!1,error:e,mimeType:s})}}},t._onSBUpdateStart=function(e){this.operationQueue.current(e).onStart()},t._onSBUpdateEnd=function(e){var t=this.operationQueue
+this.addBufferListener(l,"updatestart",this._onSBUpdateStart),this.addBufferListener(l,"updateend",this._onSBUpdateEnd),this.addBufferListener(l,"error",this._onSBUpdateError),this.tracks[i]={buffer:o,codec:a,container:n.container,levelCodec:n.levelCodec,metadata:n.metadata,id:n.id}}catch(e){O.error("[buffer-controller]: error while trying to add sourceBuffer: "+e.message),this.hls.trigger(y.ERROR,{type:_.MEDIA_ERROR,details:w.BUFFER_ADD_CODEC_ERROR,fatal:!1,error:e,mimeType:s})}}},t._onSBUpdateStart=function(e){this.operationQueue.current(e).onStart()},t._onSBUpdateEnd=function(e){var t=this.operationQueue
 t.current(e).onComplete(),t.shiftAndExecuteNext(e)},t._onSBUpdateError=function(e,t){var r=new Error(e+" SourceBuffer error")
-S.error("[buffer-controller]: "+r,t),this.hls.trigger(b.ERROR,{type:y.MEDIA_ERROR,details:_.BUFFER_APPENDING_ERROR,error:r,fatal:!1})
+O.error("[buffer-controller]: "+r,t),this.hls.trigger(y.ERROR,{type:_.MEDIA_ERROR,details:w.BUFFER_APPENDING_ERROR,error:r,fatal:!1})
 var i=this.operationQueue.current(e)
 i&&i.onError(t)},t.removeExecutor=function(e,t,r){var i=this.media,n=this.mediaSource,a=this.operationQueue,s=this.sourceBuffer[e]
-if(!i||!n||!s)return S.warn("[buffer-controller]: Attempting to remove from the "+e+" SourceBuffer, but it does not exist"),void a.shiftAndExecuteNext(e)
-var o=v(i.duration)?i.duration:1/0,l=v(n.duration)?n.duration:1/0,u=Math.max(0,t),c=Math.min(r,o,l)
-c>u&&!s.ending?(s.ended=!1,S.log("[buffer-controller]: Removing ["+u+","+c+"] from the "+e+" SourceBuffer"),s.remove(u,c)):a.shiftAndExecuteNext(e)},t.appendExecutor=function(e,t){var r=this.operationQueue,i=this.sourceBuffer[t]
-if(!i)return S.warn("[buffer-controller]: Attempting to append to the "+t+" SourceBuffer, but it does not exist"),void r.shiftAndExecuteNext(t)
+if(!i||!n||!s)return O.warn("[buffer-controller]: Attempting to remove from the "+e+" SourceBuffer, but it does not exist"),void a.shiftAndExecuteNext(e)
+var o=b(i.duration)?i.duration:1/0,l=b(n.duration)?n.duration:1/0,u=Math.max(0,t),c=Math.min(r,o,l)
+c>u&&!s.ending?(s.ended=!1,O.log("[buffer-controller]: Removing ["+u+","+c+"] from the "+e+" SourceBuffer"),s.remove(u,c)):a.shiftAndExecuteNext(e)},t.appendExecutor=function(e,t){var r=this.operationQueue,i=this.sourceBuffer[t]
+if(!i)return O.warn("[buffer-controller]: Attempting to append to the "+t+" SourceBuffer, but it does not exist"),void r.shiftAndExecuteNext(t)
 i.ended=!1,i.appendBuffer(e)},t.blockBuffers=function(e,t){var r=this
-if(void 0===t&&(t=this.getSourceBufferTypes()),!t.length)return S.log("[buffer-controller]: Blocking operation requested, but no SourceBuffers exist"),void Promise.resolve().then(e)
+if(void 0===t&&(t=this.getSourceBufferTypes()),!t.length)return O.log("[buffer-controller]: Blocking operation requested, but no SourceBuffers exist"),void Promise.resolve().then(e)
 var i=this.operationQueue,n=t.map((function(e){return i.appendBlocker(e)}))
 Promise.all(n).then((function(){e(),t.forEach((function(e){var t=r.sourceBuffer[e]
 null!=t&&t.updating||i.shiftAndExecuteNext(e)}))}))},t.getSourceBufferTypes=function(){return Object.keys(this.sourceBuffer)},t.addBufferListener=function(e,t,r){var i=this.sourceBuffer[e]
 if(i){var n=r.bind(this,e)
 this.listeners[e].push({event:t,listener:n}),i.addEventListener(t,n)}},t.removeBufferListeners=function(e){var t=this.sourceBuffer[e]
-t&&this.listeners[e].forEach((function(e){t.removeEventListener(e.event,e.listener)}))},e}(),ln={42:225,92:233,94:237,95:243,96:250,123:231,124:247,125:209,126:241,127:9608,128:174,129:176,130:189,131:191,132:8482,133:162,134:163,135:9834,136:224,137:32,138:232,139:226,140:234,141:238,142:244,143:251,144:193,145:201,146:211,147:218,148:220,149:252,150:8216,151:161,152:42,153:8217,154:9473,155:169,156:8480,157:8226,158:8220,159:8221,160:192,161:194,162:199,163:200,164:202,165:203,166:235,167:206,168:207,169:239,170:212,171:217,172:249,173:219,174:171,175:187,176:195,177:227,178:205,179:204,180:236,181:210,182:242,183:213,184:245,185:123,186:125,187:92,188:94,189:95,190:124,191:8764,192:196,193:228,194:214,195:246,196:223,197:165,198:164,199:9475,200:197,201:229,202:216,203:248,204:9487,205:9491,206:9495,207:9499},un=function(e){var t=e
-return ln.hasOwnProperty(e)&&(t=ln[e]),String.fromCharCode(t)},cn=15,dn=100,hn={17:1,18:3,21:5,22:7,23:9,16:11,19:12,20:14},fn={17:2,18:4,21:6,22:8,23:10,19:13,20:15},pn={25:1,26:3,29:5,30:7,31:9,24:11,27:12,28:14},mn={25:2,26:4,29:6,30:8,31:10,27:13,28:15},gn=["white","green","blue","cyan","red","yellow","magenta","black","transparent"],vn=function(){function e(){this.time=null,this.verboseLevel=0}return e.prototype.log=function(e,t){if(this.verboseLevel>=e){var r="function"==typeof t?t():t
-S.log(this.time+" ["+e+"] "+r)}},e}(),bn=function(e){for(var t=[],r=0;r<e.length;r++)t.push(e[r].toString(16))
-return t},yn=function(){function e(e,t,r,i,n){this.foreground=void 0,this.underline=void 0,this.italics=void 0,this.background=void 0,this.flash=void 0,this.foreground=e||"white",this.underline=t||!1,this.italics=r||!1,this.background=i||"black",this.flash=n||!1}var t=e.prototype
+t&&this.listeners[e].forEach((function(e){t.removeEventListener(e.event,e.listener)}))},e}(),cn={42:225,92:233,94:237,95:243,96:250,123:231,124:247,125:209,126:241,127:9608,128:174,129:176,130:189,131:191,132:8482,133:162,134:163,135:9834,136:224,137:32,138:232,139:226,140:234,141:238,142:244,143:251,144:193,145:201,146:211,147:218,148:220,149:252,150:8216,151:161,152:42,153:8217,154:9473,155:169,156:8480,157:8226,158:8220,159:8221,160:192,161:194,162:199,163:200,164:202,165:203,166:235,167:206,168:207,169:239,170:212,171:217,172:249,173:219,174:171,175:187,176:195,177:227,178:205,179:204,180:236,181:210,182:242,183:213,184:245,185:123,186:125,187:92,188:94,189:95,190:124,191:8764,192:196,193:228,194:214,195:246,196:223,197:165,198:164,199:9475,200:197,201:229,202:216,203:248,204:9487,205:9491,206:9495,207:9499},dn=function(e){var t=e
+return cn.hasOwnProperty(e)&&(t=cn[e]),String.fromCharCode(t)},hn=15,fn=100,pn={17:1,18:3,21:5,22:7,23:9,16:11,19:12,20:14},mn={17:2,18:4,21:6,22:8,23:10,19:13,20:15},gn={25:1,26:3,29:5,30:7,31:9,24:11,27:12,28:14},vn={25:2,26:4,29:6,30:8,31:10,27:13,28:15},bn=["white","green","blue","cyan","red","yellow","magenta","black","transparent"],yn=function(){function e(){this.time=null,this.verboseLevel=0}return e.prototype.log=function(e,t){if(this.verboseLevel>=e){var r="function"==typeof t?t():t
+O.log(this.time+" ["+e+"] "+r)}},e}(),_n=function(e){for(var t=[],r=0;r<e.length;r++)t.push(e[r].toString(16))
+return t},wn=function(){function e(e,t,r,i,n){this.foreground=void 0,this.underline=void 0,this.italics=void 0,this.background=void 0,this.flash=void 0,this.foreground=e||"white",this.underline=t||!1,this.italics=r||!1,this.background=i||"black",this.flash=n||!1}var t=e.prototype
 return t.reset=function(){this.foreground="white",this.underline=!1,this.italics=!1,this.background="black",this.flash=!1},t.setStyles=function(e){for(var t=["foreground","underline","italics","background","flash"],r=0;r<t.length;r++){var i=t[r]
-e.hasOwnProperty(i)&&(this[i]=e[i])}},t.isDefault=function(){return"white"===this.foreground&&!this.underline&&!this.italics&&"black"===this.background&&!this.flash},t.equals=function(e){return this.foreground===e.foreground&&this.underline===e.underline&&this.italics===e.italics&&this.background===e.background&&this.flash===e.flash},t.copy=function(e){this.foreground=e.foreground,this.underline=e.underline,this.italics=e.italics,this.background=e.background,this.flash=e.flash},t.toString=function(){return"color="+this.foreground+", underline="+this.underline+", italics="+this.italics+", background="+this.background+", flash="+this.flash},e}(),_n=function(){function e(e,t,r,i,n,a){this.uchar=void 0,this.penState=void 0,this.uchar=e||" ",this.penState=new yn(t,r,i,n,a)}var t=e.prototype
-return t.reset=function(){this.uchar=" ",this.penState.reset()},t.setChar=function(e,t){this.uchar=e,this.penState.copy(t)},t.setPenState=function(e){this.penState.copy(e)},t.equals=function(e){return this.uchar===e.uchar&&this.penState.equals(e.penState)},t.copy=function(e){this.uchar=e.uchar,this.penState.copy(e.penState)},t.isEmpty=function(){return" "===this.uchar&&this.penState.isDefault()},e}(),wn=function(){function e(e){this.chars=void 0,this.pos=void 0,this.currPenState=void 0,this.cueStartTime=void 0,this.logger=void 0,this.chars=[]
-for(var t=0;t<dn;t++)this.chars.push(new _n)
-this.logger=e,this.pos=0,this.currPenState=new yn}var t=e.prototype
-return t.equals=function(e){for(var t=!0,r=0;r<dn;r++)if(!this.chars[r].equals(e.chars[r])){t=!1
-break}return t},t.copy=function(e){for(var t=0;t<dn;t++)this.chars[t].copy(e.chars[t])},t.isEmpty=function(){for(var e=!0,t=0;t<dn;t++)if(!this.chars[t].isEmpty()){e=!1
-break}return e},t.setCursor=function(e){this.pos!==e&&(this.pos=e),this.pos<0?(this.logger.log(3,"Negative cursor position "+this.pos),this.pos=0):this.pos>dn&&(this.logger.log(3,"Too large cursor position "+this.pos),this.pos=dn)},t.moveCursor=function(e){var t=this.pos+e
+e.hasOwnProperty(i)&&(this[i]=e[i])}},t.isDefault=function(){return"white"===this.foreground&&!this.underline&&!this.italics&&"black"===this.background&&!this.flash},t.equals=function(e){return this.foreground===e.foreground&&this.underline===e.underline&&this.italics===e.italics&&this.background===e.background&&this.flash===e.flash},t.copy=function(e){this.foreground=e.foreground,this.underline=e.underline,this.italics=e.italics,this.background=e.background,this.flash=e.flash},t.toString=function(){return"color="+this.foreground+", underline="+this.underline+", italics="+this.italics+", background="+this.background+", flash="+this.flash},e}(),En=function(){function e(e,t,r,i,n,a){this.uchar=void 0,this.penState=void 0,this.uchar=e||" ",this.penState=new wn(t,r,i,n,a)}var t=e.prototype
+return t.reset=function(){this.uchar=" ",this.penState.reset()},t.setChar=function(e,t){this.uchar=e,this.penState.copy(t)},t.setPenState=function(e){this.penState.copy(e)},t.equals=function(e){return this.uchar===e.uchar&&this.penState.equals(e.penState)},t.copy=function(e){this.uchar=e.uchar,this.penState.copy(e.penState)},t.isEmpty=function(){return" "===this.uchar&&this.penState.isDefault()},e}(),Tn=function(){function e(e){this.chars=void 0,this.pos=void 0,this.currPenState=void 0,this.cueStartTime=void 0,this.logger=void 0,this.chars=[]
+for(var t=0;t<fn;t++)this.chars.push(new En)
+this.logger=e,this.pos=0,this.currPenState=new wn}var t=e.prototype
+return t.equals=function(e){for(var t=!0,r=0;r<fn;r++)if(!this.chars[r].equals(e.chars[r])){t=!1
+break}return t},t.copy=function(e){for(var t=0;t<fn;t++)this.chars[t].copy(e.chars[t])},t.isEmpty=function(){for(var e=!0,t=0;t<fn;t++)if(!this.chars[t].isEmpty()){e=!1
+break}return e},t.setCursor=function(e){this.pos!==e&&(this.pos=e),this.pos<0?(this.logger.log(3,"Negative cursor position "+this.pos),this.pos=0):this.pos>fn&&(this.logger.log(3,"Too large cursor position "+this.pos),this.pos=fn)},t.moveCursor=function(e){var t=this.pos+e
 if(e>1)for(var r=this.pos+1;r<t+1;r++)this.chars[r].setPenState(this.currPenState)
 this.setCursor(t)},t.backSpace=function(){this.moveCursor(-1),this.chars[this.pos].setChar(" ",this.currPenState)},t.insertChar=function(e){var t=this
 e>=144&&this.backSpace()
-var r=un(e)
-this.pos>=dn?this.logger.log(0,(function(){return"Cannot insert "+e.toString(16)+" ("+r+") at position "+t.pos+". Skipping it!"})):(this.chars[this.pos].setChar(r,this.currPenState),this.moveCursor(1))},t.clearFromPos=function(e){var t
-for(t=e;t<dn;t++)this.chars[t].reset()},t.clear=function(){this.clearFromPos(0),this.pos=0,this.currPenState.reset()},t.clearToEndOfRow=function(){this.clearFromPos(this.pos)},t.getTextString=function(){for(var e=[],t=!0,r=0;r<dn;r++){var i=this.chars[r].uchar
-" "!==i&&(t=!1),e.push(i)}return t?"":e.join("")},t.setPenStyles=function(e){this.currPenState.setStyles(e),this.chars[this.pos].setPenState(this.currPenState)},e}(),En=function(){function e(e){this.rows=void 0,this.currRow=void 0,this.nrRollUpRows=void 0,this.lastOutputScreen=void 0,this.logger=void 0,this.rows=[]
-for(var t=0;t<cn;t++)this.rows.push(new wn(e))
+var r=dn(e)
+this.pos>=fn?this.logger.log(0,(function(){return"Cannot insert "+e.toString(16)+" ("+r+") at position "+t.pos+". Skipping it!"})):(this.chars[this.pos].setChar(r,this.currPenState),this.moveCursor(1))},t.clearFromPos=function(e){var t
+for(t=e;t<fn;t++)this.chars[t].reset()},t.clear=function(){this.clearFromPos(0),this.pos=0,this.currPenState.reset()},t.clearToEndOfRow=function(){this.clearFromPos(this.pos)},t.getTextString=function(){for(var e=[],t=!0,r=0;r<fn;r++){var i=this.chars[r].uchar
+" "!==i&&(t=!1),e.push(i)}return t?"":e.join("")},t.setPenStyles=function(e){this.currPenState.setStyles(e),this.chars[this.pos].setPenState(this.currPenState)},e}(),kn=function(){function e(e){this.rows=void 0,this.currRow=void 0,this.nrRollUpRows=void 0,this.lastOutputScreen=void 0,this.logger=void 0,this.rows=[]
+for(var t=0;t<hn;t++)this.rows.push(new Tn(e))
 this.logger=e,this.currRow=14,this.nrRollUpRows=null,this.lastOutputScreen=null,this.reset()}var t=e.prototype
-return t.reset=function(){for(var e=0;e<cn;e++)this.rows[e].clear()
-this.currRow=14},t.equals=function(e){for(var t=!0,r=0;r<cn;r++)if(!this.rows[r].equals(e.rows[r])){t=!1
-break}return t},t.copy=function(e){for(var t=0;t<cn;t++)this.rows[t].copy(e.rows[t])},t.isEmpty=function(){for(var e=!0,t=0;t<cn;t++)if(!this.rows[t].isEmpty()){e=!1
+return t.reset=function(){for(var e=0;e<hn;e++)this.rows[e].clear()
+this.currRow=14},t.equals=function(e){for(var t=!0,r=0;r<hn;r++)if(!this.rows[r].equals(e.rows[r])){t=!1
+break}return t},t.copy=function(e){for(var t=0;t<hn;t++)this.rows[t].copy(e.rows[t])},t.isEmpty=function(){for(var e=!0,t=0;t<hn;t++)if(!this.rows[t].isEmpty()){e=!1
 break}return e},t.backSpace=function(){this.rows[this.currRow].backSpace()},t.clearToEndOfRow=function(){this.rows[this.currRow].clearToEndOfRow()},t.insertChar=function(e){this.rows[this.currRow].insertChar(e)},t.setPen=function(e){this.rows[this.currRow].setPenStyles(e)},t.moveCursor=function(e){this.rows[this.currRow].moveCursor(e)},t.setCursor=function(e){this.logger.log(2,"setCursor: "+e),this.rows[this.currRow].setCursor(e)},t.setPAC=function(e){this.logger.log(2,(function(){return"pacData = "+JSON.stringify(e)}))
 var t=e.row-1
-if(this.nrRollUpRows&&t<this.nrRollUpRows-1&&(t=this.nrRollUpRows-1),this.nrRollUpRows&&this.currRow!==t){for(var r=0;r<cn;r++)this.rows[r].clear()
+if(this.nrRollUpRows&&t<this.nrRollUpRows-1&&(t=this.nrRollUpRows-1),this.nrRollUpRows&&this.currRow!==t){for(var r=0;r<hn;r++)this.rows[r].clear()
 var i=this.currRow+1-this.nrRollUpRows,n=this.lastOutputScreen
 if(n){var a=n.rows[i].cueStartTime,s=this.logger.time
 if(a&&null!==s&&a<s)for(var o=0;o<this.nrRollUpRows;o++)this.rows[t-this.nrRollUpRows+o+1].copy(n.rows[i+o])}}this.currRow=t
@@ -5895,8 +5908,8 @@ this.setPen(d)},t.setBkgData=function(e){this.logger.log(2,(function(){return"bk
 if(null!==this.nrRollUpRows){this.logger.log(1,(function(){return e.getDisplayText()}))
 var t=this.currRow+1-this.nrRollUpRows,r=this.rows.splice(t,1)[0]
 r.clear(),this.rows.splice(this.currRow,0,r),this.logger.log(2,"Rolling up")}else this.logger.log(3,"roll_up but nrRollUpRows not set yet")},t.getDisplayText=function(e){e=e||!1
-for(var t=[],r="",i=-1,n=0;n<cn;n++){var a=this.rows[n].getTextString()
-a&&(i=n+1,e?t.push("Row "+i+": '"+a+"'"):t.push(a.trim()))}return t.length>0&&(r=e?"["+t.join(" | ")+"]":t.join("\n")),r},t.getTextAndFormat=function(){return this.rows},e}(),Tn=function(){function e(e,t,r){this.chNr=void 0,this.outputFilter=void 0,this.mode=void 0,this.verbose=void 0,this.displayedMemory=void 0,this.nonDisplayedMemory=void 0,this.lastOutputScreen=void 0,this.currRollUpRow=void 0,this.writeScreen=void 0,this.cueStartTime=void 0,this.logger=void 0,this.chNr=e,this.outputFilter=t,this.mode=null,this.verbose=0,this.displayedMemory=new En(r),this.nonDisplayedMemory=new En(r),this.lastOutputScreen=new En(r),this.currRollUpRow=this.displayedMemory.rows[14],this.writeScreen=this.displayedMemory,this.mode=null,this.cueStartTime=null,this.logger=r}var t=e.prototype
+for(var t=[],r="",i=-1,n=0;n<hn;n++){var a=this.rows[n].getTextString()
+a&&(i=n+1,e?t.push("Row "+i+": '"+a+"'"):t.push(a.trim()))}return t.length>0&&(r=e?"["+t.join(" | ")+"]":t.join("\n")),r},t.getTextAndFormat=function(){return this.rows},e}(),Sn=function(){function e(e,t,r){this.chNr=void 0,this.outputFilter=void 0,this.mode=void 0,this.verbose=void 0,this.displayedMemory=void 0,this.nonDisplayedMemory=void 0,this.lastOutputScreen=void 0,this.currRollUpRow=void 0,this.writeScreen=void 0,this.cueStartTime=void 0,this.logger=void 0,this.chNr=e,this.outputFilter=t,this.mode=null,this.verbose=0,this.displayedMemory=new kn(r),this.nonDisplayedMemory=new kn(r),this.lastOutputScreen=new kn(r),this.currRollUpRow=this.displayedMemory.rows[14],this.writeScreen=this.displayedMemory,this.mode=null,this.cueStartTime=null,this.logger=r}var t=e.prototype
 return t.reset=function(){this.mode=null,this.displayedMemory.reset(),this.nonDisplayedMemory.reset(),this.lastOutputScreen.reset(),this.outputFilter.reset(),this.currRollUpRow=this.displayedMemory.rows[14],this.writeScreen=this.displayedMemory,this.mode=null,this.cueStartTime=null},t.getHandler=function(){return this.outputFilter},t.setHandler=function(e){this.outputFilter=e},t.setPAC=function(e){this.writeScreen.setPAC(e)},t.setBkgData=function(e){this.writeScreen.setBkgData(e)},t.setMode=function(e){e!==this.mode&&(this.mode=e,this.logger.log(2,(function(){return"MODE="+e})),"MODE_POP-ON"===this.mode?this.writeScreen=this.nonDisplayedMemory:(this.writeScreen=this.displayedMemory,this.writeScreen.reset()),"MODE_ROLL-UP"!==this.mode&&(this.displayedMemory.nrRollUpRows=null,this.nonDisplayedMemory.nrRollUpRows=null),this.mode=e)},t.insertChars=function(e){for(var t=this,r=0;r<e.length;r++)this.writeScreen.insertChar(e[r])
 var i=this.writeScreen===this.displayedMemory?"DISP":"NON_DISP"
 this.logger.log(2,(function(){return i+": "+t.writeScreen.getDisplayText(!0)})),"MODE_PAINT-ON"!==this.mode&&"MODE_ROLL-UP"!==this.mode||(this.logger.log(1,(function(){return"DISPLAYED: "+t.displayedMemory.getDisplayText(!0)})),this.outputDataUpdate())},t.ccRCL=function(){this.logger.log(2,"RCL - Resume Caption Loading"),this.setMode("MODE_POP-ON")},t.ccBS=function(){this.logger.log(2,"BS - BackSpace"),"MODE_TEXT"!==this.mode&&(this.writeScreen.backSpace(),this.writeScreen===this.displayedMemory&&this.outputDataUpdate())},t.ccAOF=function(){},t.ccAON=function(){},t.ccDER=function(){this.logger.log(2,"DER- Delete to End of Row"),this.writeScreen.clearToEndOfRow(),this.outputDataUpdate()},t.ccRU=function(e){this.logger.log(2,"RU("+e+") - Roll Up"),this.writeScreen=this.displayedMemory,this.setMode("MODE_ROLL-UP"),this.writeScreen.setRollUpRows(e)},t.ccFON=function(){this.logger.log(2,"FON - Flash On"),this.writeScreen.setPen({flash:!0})},t.ccRDC=function(){this.logger.log(2,"RDC - Resume Direct Captioning"),this.setMode("MODE_PAINT-ON")},t.ccTR=function(){this.logger.log(2,"TR"),this.setMode("MODE_TEXT")},t.ccRTD=function(){this.logger.log(2,"RTD"),this.setMode("MODE_TEXT")},t.ccEDM=function(){this.logger.log(2,"EDM - Erase Displayed Memory"),this.displayedMemory.reset(),this.outputDataUpdate(!0)},t.ccCR=function(){this.logger.log(2,"CR - Carriage Return"),this.writeScreen.rollUp(),this.outputDataUpdate(!0)},t.ccENM=function(){this.logger.log(2,"ENM - Erase Non-displayed Memory"),this.nonDisplayedMemory.reset()},t.ccEOC=function(){var e=this
@@ -5906,38 +5919,38 @@ if(t.underline=e%2==1,t.italics=e>=46,t.italics)t.foreground="white"
 else{var r=Math.floor(e/2)-16
 t.foreground=["white","green","blue","cyan","red","yellow","magenta"][r]}this.logger.log(2,"MIDROW: "+JSON.stringify(t)),this.writeScreen.setPen(t)},t.outputDataUpdate=function(e){void 0===e&&(e=!1)
 var t=this.logger.time
-null!==t&&this.outputFilter&&(null!==this.cueStartTime||this.displayedMemory.isEmpty()?this.displayedMemory.equals(this.lastOutputScreen)||(this.outputFilter.newCue(this.cueStartTime,t,this.lastOutputScreen),e&&this.outputFilter.dispatchCue&&this.outputFilter.dispatchCue(),this.cueStartTime=this.displayedMemory.isEmpty()?null:t):this.cueStartTime=t,this.lastOutputScreen.copy(this.displayedMemory))},t.cueSplitAtTime=function(e){this.outputFilter&&(this.displayedMemory.isEmpty()||(this.outputFilter.newCue&&this.outputFilter.newCue(this.cueStartTime,e,this.displayedMemory),this.cueStartTime=e))},e}(),kn=function(){function e(e,t,r){this.channels=void 0,this.currentChannel=0,this.cmdHistory=void 0,this.logger=void 0
-var i=new vn
-this.channels=[null,new Tn(e,t,i),new Tn(e+1,r,i)],this.cmdHistory={a:null,b:null},this.logger=i}var t=e.prototype
+null!==t&&this.outputFilter&&(null!==this.cueStartTime||this.displayedMemory.isEmpty()?this.displayedMemory.equals(this.lastOutputScreen)||(this.outputFilter.newCue(this.cueStartTime,t,this.lastOutputScreen),e&&this.outputFilter.dispatchCue&&this.outputFilter.dispatchCue(),this.cueStartTime=this.displayedMemory.isEmpty()?null:t):this.cueStartTime=t,this.lastOutputScreen.copy(this.displayedMemory))},t.cueSplitAtTime=function(e){this.outputFilter&&(this.displayedMemory.isEmpty()||(this.outputFilter.newCue&&this.outputFilter.newCue(this.cueStartTime,e,this.displayedMemory),this.cueStartTime=e))},e}(),On=function(){function e(e,t,r){this.channels=void 0,this.currentChannel=0,this.cmdHistory=void 0,this.logger=void 0
+var i=new yn
+this.channels=[null,new Sn(e,t,i),new Sn(e+1,r,i)],this.cmdHistory={a:null,b:null},this.logger=i}var t=e.prototype
 return t.getHandler=function(e){return this.channels[e].getHandler()},t.setHandler=function(e,t){this.channels[e].setHandler(t)},t.addData=function(e,t){var r,i,n,a=!1
 this.logger.time=e
-for(var s=0;s<t.length;s+=2)if(i=127&t[s],n=127&t[s+1],0!==i||0!==n){if(this.logger.log(3,"["+bn([t[s],t[s+1]])+"] -> ("+bn([i,n])+")"),(r=this.parseCmd(i,n))||(r=this.parseMidrow(i,n)),r||(r=this.parsePAC(i,n)),r||(r=this.parseBackgroundAttributes(i,n)),!r&&(a=this.parseChars(i,n))){var o=this.currentChannel
-o&&o>0?this.channels[o].insertChars(a):this.logger.log(2,"No channel found yet. TEXT-MODE?")}r||a||this.logger.log(2,"Couldn't parse cleaned data "+bn([i,n])+" orig: "+bn([t[s],t[s+1]]))}},t.parseCmd=function(e,t){var r=this.cmdHistory
+for(var s=0;s<t.length;s+=2)if(i=127&t[s],n=127&t[s+1],0!==i||0!==n){if(this.logger.log(3,"["+_n([t[s],t[s+1]])+"] -> ("+_n([i,n])+")"),(r=this.parseCmd(i,n))||(r=this.parseMidrow(i,n)),r||(r=this.parsePAC(i,n)),r||(r=this.parseBackgroundAttributes(i,n)),!r&&(a=this.parseChars(i,n))){var o=this.currentChannel
+o&&o>0?this.channels[o].insertChars(a):this.logger.log(2,"No channel found yet. TEXT-MODE?")}r||a||this.logger.log(2,"Couldn't parse cleaned data "+_n([i,n])+" orig: "+_n([t[s],t[s+1]]))}},t.parseCmd=function(e,t){var r=this.cmdHistory
 if(!((20===e||28===e||21===e||29===e)&&t>=32&&t<=47||(23===e||31===e)&&t>=33&&t<=35))return!1
-if(On(e,t,r))return Sn(null,null,r),this.logger.log(3,"Repeated command ("+bn([e,t])+") is dropped"),!0
+if(Pn(e,t,r))return xn(null,null,r),this.logger.log(3,"Repeated command ("+_n([e,t])+") is dropped"),!0
 var i=20===e||21===e||23===e?1:2,n=this.channels[i]
-return 20===e||21===e||28===e||29===e?32===t?n.ccRCL():33===t?n.ccBS():34===t?n.ccAOF():35===t?n.ccAON():36===t?n.ccDER():37===t?n.ccRU(2):38===t?n.ccRU(3):39===t?n.ccRU(4):40===t?n.ccFON():41===t?n.ccRDC():42===t?n.ccTR():43===t?n.ccRTD():44===t?n.ccEDM():45===t?n.ccCR():46===t?n.ccENM():47===t&&n.ccEOC():n.ccTO(t-32),Sn(e,t,r),this.currentChannel=i,!0},t.parseMidrow=function(e,t){var r=0
+return 20===e||21===e||28===e||29===e?32===t?n.ccRCL():33===t?n.ccBS():34===t?n.ccAOF():35===t?n.ccAON():36===t?n.ccDER():37===t?n.ccRU(2):38===t?n.ccRU(3):39===t?n.ccRU(4):40===t?n.ccFON():41===t?n.ccRDC():42===t?n.ccTR():43===t?n.ccRTD():44===t?n.ccEDM():45===t?n.ccCR():46===t?n.ccENM():47===t&&n.ccEOC():n.ccTO(t-32),xn(e,t,r),this.currentChannel=i,!0},t.parseMidrow=function(e,t){var r=0
 if((17===e||25===e)&&t>=32&&t<=47){if((r=17===e?1:2)!==this.currentChannel)return this.logger.log(0,"Mismatch channel in midrow parsing"),!1
 var i=this.channels[r]
-return!!i&&(i.ccMIDROW(t),this.logger.log(3,"MIDROW ("+bn([e,t])+")"),!0)}return!1},t.parsePAC=function(e,t){var r,i=this.cmdHistory
+return!!i&&(i.ccMIDROW(t),this.logger.log(3,"MIDROW ("+_n([e,t])+")"),!0)}return!1},t.parsePAC=function(e,t){var r,i=this.cmdHistory
 if(!((e>=17&&e<=23||e>=25&&e<=31)&&t>=64&&t<=127||(16===e||24===e)&&t>=64&&t<=95))return!1
-if(On(e,t,i))return Sn(null,null,i),!0
+if(Pn(e,t,i))return xn(null,null,i),!0
 var n=e<=23?1:2
-r=t>=64&&t<=95?1===n?hn[e]:pn[e]:1===n?fn[e]:mn[e]
+r=t>=64&&t<=95?1===n?pn[e]:gn[e]:1===n?mn[e]:vn[e]
 var a=this.channels[n]
-return!!a&&(a.setPAC(this.interpretPAC(r,t)),Sn(e,t,i),this.currentChannel=n,!0)},t.interpretPAC=function(e,t){var r,i={color:null,italics:!1,indent:null,underline:!1,row:e}
+return!!a&&(a.setPAC(this.interpretPAC(r,t)),xn(e,t,i),this.currentChannel=n,!0)},t.interpretPAC=function(e,t){var r,i={color:null,italics:!1,indent:null,underline:!1,row:e}
 return r=t>95?t-96:t-64,i.underline=1==(1&r),r<=13?i.color=["white","green","blue","cyan","red","yellow","magenta","white"][Math.floor(r/2)]:r<=15?(i.italics=!0,i.color="white"):i.indent=4*Math.floor((r-16)/2),i},t.parseChars=function(e,t){var r,i,n=null,a=null
-if(e>=25?(r=2,a=e-8):(r=1,a=e),a>=17&&a<=19?(i=17===a?t+80:18===a?t+112:t+144,this.logger.log(2,"Special char '"+un(i)+"' in channel "+r),n=[i]):e>=32&&e<=127&&(n=0===t?[e]:[e,t]),n){var s=bn(n)
-this.logger.log(3,"Char codes =  "+s.join(",")),Sn(e,t,this.cmdHistory)}return n},t.parseBackgroundAttributes=function(e,t){var r
+if(e>=25?(r=2,a=e-8):(r=1,a=e),a>=17&&a<=19?(i=17===a?t+80:18===a?t+112:t+144,this.logger.log(2,"Special char '"+dn(i)+"' in channel "+r),n=[i]):e>=32&&e<=127&&(n=0===t?[e]:[e,t]),n){var s=_n(n)
+this.logger.log(3,"Char codes =  "+s.join(",")),xn(e,t,this.cmdHistory)}return n},t.parseBackgroundAttributes=function(e,t){var r
 if(!((16===e||24===e)&&t>=32&&t<=47||(23===e||31===e)&&t>=45&&t<=47))return!1
 var i={}
-16===e||24===e?(r=Math.floor((t-32)/2),i.background=gn[r],t%2==1&&(i.background=i.background+"_semi")):45===t?i.background="transparent":(i.foreground="black",47===t&&(i.underline=!0))
+16===e||24===e?(r=Math.floor((t-32)/2),i.background=bn[r],t%2==1&&(i.background=i.background+"_semi")):45===t?i.background="transparent":(i.foreground="black",47===t&&(i.underline=!0))
 var n=e<=23?1:2
-return this.channels[n].setBkgData(i),Sn(e,t,this.cmdHistory),!0},t.reset=function(){for(var e=0;e<Object.keys(this.channels).length;e++){var t=this.channels[e]
+return this.channels[n].setBkgData(i),xn(e,t,this.cmdHistory),!0},t.reset=function(){for(var e=0;e<Object.keys(this.channels).length;e++){var t=this.channels[e]
 t&&t.reset()}this.cmdHistory={a:null,b:null}},t.cueSplitAtTime=function(e){for(var t=0;t<this.channels.length;t++){var r=this.channels[t]
 r&&r.cueSplitAtTime(e)}},e}()
-function Sn(e,t,r){r.a=e,r.b=t}function On(e,t,r){return r.a===e&&r.b===t}var xn=function(){function e(e,t){this.timelineController=void 0,this.cueRanges=[],this.trackName=void 0,this.startTime=null,this.endTime=null,this.screen=null,this.timelineController=e,this.trackName=t}var t=e.prototype
-return t.dispatchCue=function(){null!==this.startTime&&(this.timelineController.addCues(this.trackName,this.startTime,this.endTime,this.screen,this.cueRanges),this.startTime=null)},t.newCue=function(e,t,r){(null===this.startTime||this.startTime>e)&&(this.startTime=e),this.endTime=t,this.screen=r,this.timelineController.createCaptionsTrack(this.trackName)},t.reset=function(){this.cueRanges=[],this.startTime=null},e}(),Pn=function(){if("undefined"!=typeof self&&self.VTTCue)return self.VTTCue
+function xn(e,t,r){r.a=e,r.b=t}function Pn(e,t,r){return r.a===e&&r.b===t}var An=function(){function e(e,t){this.timelineController=void 0,this.cueRanges=[],this.trackName=void 0,this.startTime=null,this.endTime=null,this.screen=null,this.timelineController=e,this.trackName=t}var t=e.prototype
+return t.dispatchCue=function(){null!==this.startTime&&(this.timelineController.addCues(this.trackName,this.startTime,this.endTime,this.screen,this.cueRanges),this.startTime=null)},t.newCue=function(e,t,r){(null===this.startTime||this.startTime>e)&&(this.startTime=e),this.endTime=t,this.screen=r,this.timelineController.createCaptionsTrack(this.trackName)},t.reset=function(){this.cueRanges=[],this.startTime=null},e}(),Rn=function(){if("undefined"!=typeof self&&self.VTTCue)return self.VTTCue
 var e=["","lr","rl"],t=["start","middle","end","left","right"]
 function r(e,t){if("string"!=typeof t)return!1
 if(!Array.isArray(e))return!1
@@ -5960,41 +5973,41 @@ if(!t)throw new SyntaxError("An invalid or illegal string was specified.")
 _=t,this.hasBeenReset=!0}})),Object.defineProperty(o,"size",n({},l,{get:function(){return w},set:function(e){if(e<0||e>100)throw new Error("Size must be between 0 and 100.")
 w=e,this.hasBeenReset=!0}})),Object.defineProperty(o,"align",n({},l,{get:function(){return E},set:function(e){var t=i(e)
 if(!t)throw new SyntaxError("An invalid or illegal string was specified.")
-E=t,this.hasBeenReset=!0}})),o.displayState=void 0}return a.prototype.getCueAsHTML=function(){return self.WebVTT.convertCueToDOMTree(self,this.text)},a}(),An=function(){function e(){}return e.prototype.decode=function(e,t){if(!e)return""
+E=t,this.hasBeenReset=!0}})),o.displayState=void 0}return a.prototype.getCueAsHTML=function(){return self.WebVTT.convertCueToDOMTree(self,this.text)},a}(),Cn=function(){function e(){}return e.prototype.decode=function(e,t){if(!e)return""
 if("string"!=typeof e)throw new Error("Error - expected string data.")
 return decodeURIComponent(encodeURIComponent(e))},e}()
-function Rn(e){function t(e,t,r,i){return 3600*(0|e)+60*(0|t)+(0|r)+parseFloat(i||0)}var r=e.match(/^(?:(\d+):)?(\d{2}):(\d{2})(\.\d+)?/)
-return r?parseFloat(r[2])>59?t(r[2],r[3],0,r[4]):t(r[1],r[2],r[3],r[4]):null}var Cn=function(){function e(){this.values=Object.create(null)}var t=e.prototype
+function Dn(e){function t(e,t,r,i){return 3600*(0|e)+60*(0|t)+(0|r)+parseFloat(i||0)}var r=e.match(/^(?:(\d+):)?(\d{2}):(\d{2})(\.\d+)?/)
+return r?parseFloat(r[2])>59?t(r[2],r[3],0,r[4]):t(r[1],r[2],r[3],r[4]):null}var Mn=function(){function e(){this.values=Object.create(null)}var t=e.prototype
 return t.set=function(e,t){this.get(e)||""===t||(this.values[e]=t)},t.get=function(e,t,r){return r?this.has(e)?this.values[e]:t[r]:this.has(e)?this.values[e]:t},t.has=function(e){return e in this.values},t.alt=function(e,t,r){for(var i=0;i<r.length;++i)if(t===r[i]){this.set(e,t)
 break}},t.integer=function(e,t){/^-?\d+$/.test(t)&&this.set(e,parseInt(t,10))},t.percent=function(e,t){if(/^([\d]{1,3})(\.[\d]*)?%$/.test(t)){var r=parseFloat(t)
 if(r>=0&&r<=100)return this.set(e,r),!0}return!1},e}()
-function Dn(e,t,r,i){var n=i?e.split(i):[e]
+function In(e,t,r,i){var n=i?e.split(i):[e]
 for(var a in n)if("string"==typeof n[a]){var s=n[a].split(r)
-2===s.length&&t(s[0],s[1])}}var Mn=new Pn(0,0,""),In="middle"===Mn.align?"middle":"center"
-function Ln(e,t,r){var i=e
-function n(){var t=Rn(e)
+2===s.length&&t(s[0],s[1])}}var Ln=new Rn(0,0,""),jn="middle"===Ln.align?"middle":"center"
+function Fn(e,t,r){var i=e
+function n(){var t=Dn(e)
 if(null===t)throw new Error("Malformed timestamp: "+i)
 return e=e.replace(/^[^\sa-zA-Z-]+/,""),t}function a(){e=e.replace(/^\s+/,"")}if(a(),t.startTime=n(),a(),"--\x3e"!==e.slice(0,3))throw new Error("Malformed time stamp (time stamps must be separated by '--\x3e'): "+i)
-e=e.slice(3),a(),t.endTime=n(),a(),function(e,t){var i=new Cn
-Dn(e,(function(e,t){var n
+e=e.slice(3),a(),t.endTime=n(),a(),function(e,t){var i=new Mn
+In(e,(function(e,t){var n
 switch(e){case"region":for(var a=r.length-1;a>=0;a--)if(r[a].id===t){i.set(e,r[a].region)
 break}break
 case"vertical":i.alt(e,t,["rl","lr"])
 break
-case"line":n=t.split(","),i.integer(e,n[0]),i.percent(e,n[0])&&i.set("snapToLines",!1),i.alt(e,n[0],["auto"]),2===n.length&&i.alt("lineAlign",n[1],["start",In,"end"])
+case"line":n=t.split(","),i.integer(e,n[0]),i.percent(e,n[0])&&i.set("snapToLines",!1),i.alt(e,n[0],["auto"]),2===n.length&&i.alt("lineAlign",n[1],["start",jn,"end"])
 break
-case"position":n=t.split(","),i.percent(e,n[0]),2===n.length&&i.alt("positionAlign",n[1],["start",In,"end","line-left","line-right","auto"])
+case"position":n=t.split(","),i.percent(e,n[0]),2===n.length&&i.alt("positionAlign",n[1],["start",jn,"end","line-left","line-right","auto"])
 break
 case"size":i.percent(e,t)
 break
-case"align":i.alt(e,t,["start",In,"end","left","right"])}}),/:/,/\s/),t.region=i.get("region",null),t.vertical=i.get("vertical","")
+case"align":i.alt(e,t,["start",jn,"end","left","right"])}}),/:/,/\s/),t.region=i.get("region",null),t.vertical=i.get("vertical","")
 var n=i.get("line","auto")
-"auto"===n&&-1===Mn.line&&(n=-1),t.line=n,t.lineAlign=i.get("lineAlign","start"),t.snapToLines=i.get("snapToLines",!0),t.size=i.get("size",100),t.align=i.get("align",In)
+"auto"===n&&-1===Ln.line&&(n=-1),t.line=n,t.lineAlign=i.get("lineAlign","start"),t.snapToLines=i.get("snapToLines",!0),t.size=i.get("size",100),t.align=i.get("align",jn)
 var a=i.get("position","auto")
-"auto"===a&&50===Mn.position&&(a="start"===t.align||"left"===t.align?0:"end"===t.align||"right"===t.align?100:50),t.position=a}(e,t)}function jn(e){return e.replace(/<br(?: \/)?>/gi,"\n")}var Fn=function(){function e(){this.state="INITIAL",this.buffer="",this.decoder=new An,this.regionList=[],this.cue=null,this.oncue=void 0,this.onparsingerror=void 0,this.onflush=void 0}var t=e.prototype
+"auto"===a&&50===Ln.position&&(a="start"===t.align||"left"===t.align?0:"end"===t.align||"right"===t.align?100:50),t.position=a}(e,t)}function Nn(e){return e.replace(/<br(?: \/)?>/gi,"\n")}var zn=function(){function e(){this.state="INITIAL",this.buffer="",this.decoder=new Cn,this.regionList=[],this.cue=null,this.oncue=void 0,this.onparsingerror=void 0,this.onflush=void 0}var t=e.prototype
 return t.parse=function(e){var t=this
 function r(){var e=t.buffer,r=0
-for(e=jn(e);r<e.length&&"\r"!==e[r]&&"\n"!==e[r];)++r
+for(e=Nn(e);r<e.length&&"\r"!==e[r]&&"\n"!==e[r];)++r
 var i=e.slice(0,r)
 return"\r"===e[r]&&++r,"\n"===e[r]&&++r,t.buffer=e.slice(r),i}e&&(t.buffer+=t.decoder.decode(e,{stream:!0}))
 try{var i=""
@@ -6002,15 +6015,15 @@ if("INITIAL"===t.state){if(!/\r\n|\n/.test(t.buffer))return this
 var n=(i=r()).match(/^(ï»¿)?WEBVTT([ \t].*)?$/)
 if(null==n||!n[0])throw new Error("Malformed WebVTT signature.")
 t.state="HEADER"}for(var a=!1;t.buffer;){if(!/\r\n|\n/.test(t.buffer))return this
-switch(a?a=!1:i=r(),t.state){case"HEADER":/:/.test(i)?Dn(i,(function(e,t){}),/:/):i||(t.state="ID")
+switch(a?a=!1:i=r(),t.state){case"HEADER":/:/.test(i)?In(i,(function(e,t){}),/:/):i||(t.state="ID")
 continue
 case"NOTE":i||(t.state="ID")
 continue
 case"ID":if(/^NOTE($|[ \t])/.test(i)){t.state="NOTE"
 break}if(!i)continue
-if(t.cue=new Pn(0,0,""),t.state="CUE",-1===i.indexOf("--\x3e")){t.cue.id=i
+if(t.cue=new Rn(0,0,""),t.state="CUE",-1===i.indexOf("--\x3e")){t.cue.id=i
 continue}case"CUE":if(!t.cue){t.state="BADCUE"
-continue}try{Ln(i,t.cue,t.regionList)}catch(e){t.cue=null,t.state="BADCUE"
+continue}try{Fn(i,t.cue,t.regionList)}catch(e){t.cue=null,t.state="BADCUE"
 continue}t.state="CUETEXT"
 continue
 case"CUETEXT":var s=-1!==i.indexOf("--\x3e")
@@ -6019,108 +6032,108 @@ continue}if(null===t.cue)continue
 t.cue.text&&(t.cue.text+="\n"),t.cue.text+=i
 continue
 case"BADCUE":i||(t.state="ID")}}}catch(e){"CUETEXT"===t.state&&t.cue&&t.oncue&&t.oncue(t.cue),t.cue=null,t.state="INITIAL"===t.state?"BADWEBVTT":"BADCUE"}return this},t.flush=function(){var e=this
-try{if((e.cue||"HEADER"===e.state)&&(e.buffer+="\n\n",e.parse()),"INITIAL"===e.state||"BADWEBVTT"===e.state)throw new Error("Malformed WebVTT signature.")}catch(t){e.onparsingerror&&e.onparsingerror(t)}return e.onflush&&e.onflush(),this},e}(),Nn=/\r\n|\n\r|\n|\r/g,zn=function(e,t,r){return void 0===r&&(r=0),e.slice(r,r+t.length)===t},Un=function(e){for(var t=5381,r=e.length;r;)t=33*t^e.charCodeAt(--r)
+try{if((e.cue||"HEADER"===e.state)&&(e.buffer+="\n\n",e.parse()),"INITIAL"===e.state||"BADWEBVTT"===e.state)throw new Error("Malformed WebVTT signature.")}catch(t){e.onparsingerror&&e.onparsingerror(t)}return e.onflush&&e.onflush(),this},e}(),Un=/\r\n|\n\r|\n|\r/g,Bn=function(e,t,r){return void 0===r&&(r=0),e.slice(r,r+t.length)===t},Hn=function(e){for(var t=5381,r=e.length;r;)t=33*t^e.charCodeAt(--r)
 return(t>>>0).toString()}
-function Bn(e,t,r){return Un(e.toString())+Un(t.toString())+Un(r)}var Hn="stpp.ttml.im1t",Vn=/^(\d{2,}):(\d{2}):(\d{2}):(\d{2})\.?(\d+)?$/,$n=/^(\d*(?:\.\d*)?)(h|m|s|ms|f|t)$/,qn={left:"start",center:"center",right:"end",start:"start",end:"end"}
-function Gn(e,t,r,i){var n=Ee(new Uint8Array(e),["mdat"])
-if(0!==n.length){var a,s,l,u=n.map((function(e){return he(e)})),c=(a=t.baseTime,1,void 0===(s=t.timescale)&&(s=1),void 0===l&&(l=!1),vi(a,1,1/s,l))
+function Vn(e,t,r){return Hn(e.toString())+Hn(t.toString())+Hn(r)}var $n="stpp.ttml.im1t",qn=/^(\d{2,}):(\d{2}):(\d{2}):(\d{2})\.?(\d+)?$/,Gn=/^(\d*(?:\.\d*)?)(h|m|s|ms|f|t)$/,Kn={left:"start",center:"center",right:"end",start:"start",end:"end"}
+function Wn(e,t,r,i){var n=Te(new Uint8Array(e),["mdat"])
+if(0!==n.length){var a,s,l,u=n.map((function(e){return fe(e)})),c=(a=t.baseTime,1,void 0===(s=t.timescale)&&(s=1),void 0===l&&(l=!1),yi(a,1,1/s,l))
 try{u.forEach((function(e){return r(function(e,t){var r=(new DOMParser).parseFromString(e,"text/xml").getElementsByTagName("tt")[0]
 if(!r)throw new Error("Invalid ttml")
-var i={frameRate:30,subFrameRate:1,frameRateMultiplier:0,tickRate:0},n=Object.keys(i).reduce((function(e,t){return e[t]=r.getAttribute("ttp:"+t)||i[t],e}),{}),a="preserve"!==r.getAttribute("xml:space"),s=Wn(Kn(r,"styling","style")),l=Wn(Kn(r,"layout","region")),u=Kn(r,"body","[begin]")
-return[].map.call(u,(function(e){var r=Yn(e,a)
+var i={frameRate:30,subFrameRate:1,frameRateMultiplier:0,tickRate:0},n=Object.keys(i).reduce((function(e,t){return e[t]=r.getAttribute("ttp:"+t)||i[t],e}),{}),a="preserve"!==r.getAttribute("xml:space"),s=Qn(Yn(r,"styling","style")),l=Qn(Yn(r,"layout","region")),u=Yn(r,"body","[begin]")
+return[].map.call(u,(function(e){var r=Xn(e,a)
 if(!r||!e.hasAttribute("begin"))return null
-var i=Jn(e.getAttribute("begin"),n),u=Jn(e.getAttribute("dur"),n),c=Jn(e.getAttribute("end"),n)
-if(null===i)throw Xn(e)
-if(null===c){if(null===u)throw Xn(e)
-c=i+u}var d=new Pn(i-t,c-t,r)
-d.id=Bn(d.startTime,d.endTime,d.text)
+var i=ea(e.getAttribute("begin"),n),u=ea(e.getAttribute("dur"),n),c=ea(e.getAttribute("end"),n)
+if(null===i)throw Zn(e)
+if(null===c){if(null===u)throw Zn(e)
+c=i+u}var d=new Rn(i-t,c-t,r)
+d.id=Vn(d.startTime,d.endTime,d.text)
 var h=function(e,t,r){var i="http://www.w3.org/ns/ttml#styling",n=null,a=null!=e&&e.hasAttribute("style")?e.getAttribute("style"):null
-return a&&r.hasOwnProperty(a)&&(n=r[a]),["displayAlign","textAlign","color","backgroundColor","fontSize","fontFamily"].reduce((function(r,a){var s=Qn(t,i,a)||Qn(e,i,a)||Qn(n,i,a)
+return a&&r.hasOwnProperty(a)&&(n=r[a]),["displayAlign","textAlign","color","backgroundColor","fontSize","fontFamily"].reduce((function(r,a){var s=Jn(t,i,a)||Jn(e,i,a)||Jn(n,i,a)
 return s&&(r[a]=s),r}),{})}(l[e.getAttribute("region")],s[e.getAttribute("style")],s),f=h.textAlign
-if(f){var p=qn[f]
-p&&(d.lineAlign=p),d.align=f}return o(d,h),d})).filter((function(e){return null!==e}))}(e,c))}))}catch(e){i(e)}}else i(new Error("Could not parse IMSC1 mdat"))}function Kn(e,t,r){var i=e.getElementsByTagName(t)[0]
-return i?[].slice.call(i.querySelectorAll(r)):[]}function Wn(e){return e.reduce((function(e,t){var r=t.getAttribute("xml:id")
-return r&&(e[r]=t),e}),{})}function Yn(e,t){return[].slice.call(e.childNodes).reduce((function(e,r,i){var n
-return"br"===r.nodeName&&i?e+"\n":null!=(n=r.childNodes)&&n.length?Yn(r,t):t?e+r.textContent.trim().replace(/\s+/g," "):e+r.textContent}),"")}function Qn(e,t,r){return e&&e.hasAttributeNS(t,r)?e.getAttributeNS(t,r):null}function Xn(e){return new Error("Could not parse ttml timestamp "+e)}function Jn(e,t){if(!e)return null
-var r=Rn(e)
-return null===r&&(Vn.test(e)?r=function(e,t){var r=Vn.exec(e),i=(0|r[4])+(0|r[5])/t.subFrameRate
-return 3600*(0|r[1])+60*(0|r[2])+(0|r[3])+i/t.frameRate}(e,t):$n.test(e)&&(r=function(e,t){var r=$n.exec(e),i=Number(r[1])
+if(f){var p=Kn[f]
+p&&(d.lineAlign=p),d.align=f}return o(d,h),d})).filter((function(e){return null!==e}))}(e,c))}))}catch(e){i(e)}}else i(new Error("Could not parse IMSC1 mdat"))}function Yn(e,t,r){var i=e.getElementsByTagName(t)[0]
+return i?[].slice.call(i.querySelectorAll(r)):[]}function Qn(e){return e.reduce((function(e,t){var r=t.getAttribute("xml:id")
+return r&&(e[r]=t),e}),{})}function Xn(e,t){return[].slice.call(e.childNodes).reduce((function(e,r,i){var n
+return"br"===r.nodeName&&i?e+"\n":null!=(n=r.childNodes)&&n.length?Xn(r,t):t?e+r.textContent.trim().replace(/\s+/g," "):e+r.textContent}),"")}function Jn(e,t,r){return e&&e.hasAttributeNS(t,r)?e.getAttributeNS(t,r):null}function Zn(e){return new Error("Could not parse ttml timestamp "+e)}function ea(e,t){if(!e)return null
+var r=Dn(e)
+return null===r&&(qn.test(e)?r=function(e,t){var r=qn.exec(e),i=(0|r[4])+(0|r[5])/t.subFrameRate
+return 3600*(0|r[1])+60*(0|r[2])+(0|r[3])+i/t.frameRate}(e,t):Gn.test(e)&&(r=function(e,t){var r=Gn.exec(e),i=Number(r[1])
 switch(r[2]){case"h":return 3600*i
 case"m":return 60*i
 case"ms":return 1e3*i
 case"f":return i/t.frameRate
-case"t":return i/t.tickRate}return i}(e,t))),r}var Zn=function(){function e(e){if(this.hls=void 0,this.media=null,this.config=void 0,this.enabled=!0,this.Cues=void 0,this.textTracks=[],this.tracks=[],this.initPTS=[],this.unparsedVttFrags=[],this.captionsTracks={},this.nonNativeCaptionsTracks={},this.cea608Parser1=void 0,this.cea608Parser2=void 0,this.lastSn=-1,this.lastPartIndex=-1,this.prevCC=-1,this.vttCCs={ccOffset:0,presentationOffset:0,0:{start:0,prevCC:-1,new:!0}},this.captionsProperties=void 0,this.hls=e,this.config=e.config,this.Cues=e.config.cueHandler,this.captionsProperties={textTrack1:{label:this.config.captionsTextTrack1Label,languageCode:this.config.captionsTextTrack1LanguageCode},textTrack2:{label:this.config.captionsTextTrack2Label,languageCode:this.config.captionsTextTrack2LanguageCode},textTrack3:{label:this.config.captionsTextTrack3Label,languageCode:this.config.captionsTextTrack3LanguageCode},textTrack4:{label:this.config.captionsTextTrack4Label,languageCode:this.config.captionsTextTrack4LanguageCode}},this.config.enableCEA708Captions){var t=new xn(this,"textTrack1"),r=new xn(this,"textTrack2"),i=new xn(this,"textTrack3"),n=new xn(this,"textTrack4")
-this.cea608Parser1=new kn(1,t,r),this.cea608Parser2=new kn(3,i,n)}e.on(b.MEDIA_ATTACHING,this.onMediaAttaching,this),e.on(b.MEDIA_DETACHING,this.onMediaDetaching,this),e.on(b.MANIFEST_LOADING,this.onManifestLoading,this),e.on(b.MANIFEST_LOADED,this.onManifestLoaded,this),e.on(b.SUBTITLE_TRACKS_UPDATED,this.onSubtitleTracksUpdated,this),e.on(b.FRAG_LOADING,this.onFragLoading,this),e.on(b.FRAG_LOADED,this.onFragLoaded,this),e.on(b.FRAG_PARSING_USERDATA,this.onFragParsingUserdata,this),e.on(b.FRAG_DECRYPTED,this.onFragDecrypted,this),e.on(b.INIT_PTS_FOUND,this.onInitPtsFound,this),e.on(b.SUBTITLE_TRACKS_CLEARED,this.onSubtitleTracksCleared,this),e.on(b.BUFFER_FLUSHING,this.onBufferFlushing,this)}var t=e.prototype
+case"t":return i/t.tickRate}return i}(e,t))),r}var ta=function(){function e(e){if(this.hls=void 0,this.media=null,this.config=void 0,this.enabled=!0,this.Cues=void 0,this.textTracks=[],this.tracks=[],this.initPTS=[],this.unparsedVttFrags=[],this.captionsTracks={},this.nonNativeCaptionsTracks={},this.cea608Parser1=void 0,this.cea608Parser2=void 0,this.lastSn=-1,this.lastPartIndex=-1,this.prevCC=-1,this.vttCCs={ccOffset:0,presentationOffset:0,0:{start:0,prevCC:-1,new:!0}},this.captionsProperties=void 0,this.hls=e,this.config=e.config,this.Cues=e.config.cueHandler,this.captionsProperties={textTrack1:{label:this.config.captionsTextTrack1Label,languageCode:this.config.captionsTextTrack1LanguageCode},textTrack2:{label:this.config.captionsTextTrack2Label,languageCode:this.config.captionsTextTrack2LanguageCode},textTrack3:{label:this.config.captionsTextTrack3Label,languageCode:this.config.captionsTextTrack3LanguageCode},textTrack4:{label:this.config.captionsTextTrack4Label,languageCode:this.config.captionsTextTrack4LanguageCode}},this.config.enableCEA708Captions){var t=new An(this,"textTrack1"),r=new An(this,"textTrack2"),i=new An(this,"textTrack3"),n=new An(this,"textTrack4")
+this.cea608Parser1=new On(1,t,r),this.cea608Parser2=new On(3,i,n)}e.on(y.MEDIA_ATTACHING,this.onMediaAttaching,this),e.on(y.MEDIA_DETACHING,this.onMediaDetaching,this),e.on(y.MANIFEST_LOADING,this.onManifestLoading,this),e.on(y.MANIFEST_LOADED,this.onManifestLoaded,this),e.on(y.SUBTITLE_TRACKS_UPDATED,this.onSubtitleTracksUpdated,this),e.on(y.FRAG_LOADING,this.onFragLoading,this),e.on(y.FRAG_LOADED,this.onFragLoaded,this),e.on(y.FRAG_PARSING_USERDATA,this.onFragParsingUserdata,this),e.on(y.FRAG_DECRYPTED,this.onFragDecrypted,this),e.on(y.INIT_PTS_FOUND,this.onInitPtsFound,this),e.on(y.SUBTITLE_TRACKS_CLEARED,this.onSubtitleTracksCleared,this),e.on(y.BUFFER_FLUSHING,this.onBufferFlushing,this)}var t=e.prototype
 return t.destroy=function(){var e=this.hls
-e.off(b.MEDIA_ATTACHING,this.onMediaAttaching,this),e.off(b.MEDIA_DETACHING,this.onMediaDetaching,this),e.off(b.MANIFEST_LOADING,this.onManifestLoading,this),e.off(b.MANIFEST_LOADED,this.onManifestLoaded,this),e.off(b.SUBTITLE_TRACKS_UPDATED,this.onSubtitleTracksUpdated,this),e.off(b.FRAG_LOADING,this.onFragLoading,this),e.off(b.FRAG_LOADED,this.onFragLoaded,this),e.off(b.FRAG_PARSING_USERDATA,this.onFragParsingUserdata,this),e.off(b.FRAG_DECRYPTED,this.onFragDecrypted,this),e.off(b.INIT_PTS_FOUND,this.onInitPtsFound,this),e.off(b.SUBTITLE_TRACKS_CLEARED,this.onSubtitleTracksCleared,this),e.off(b.BUFFER_FLUSHING,this.onBufferFlushing,this),this.hls=this.config=this.cea608Parser1=this.cea608Parser2=null},t.addCues=function(e,t,r,i,n){for(var a,s,o,l,u=!1,c=n.length;c--;){var d=n[c],h=(a=d[0],s=d[1],o=t,l=r,Math.min(s,l)-Math.max(a,o))
+e.off(y.MEDIA_ATTACHING,this.onMediaAttaching,this),e.off(y.MEDIA_DETACHING,this.onMediaDetaching,this),e.off(y.MANIFEST_LOADING,this.onManifestLoading,this),e.off(y.MANIFEST_LOADED,this.onManifestLoaded,this),e.off(y.SUBTITLE_TRACKS_UPDATED,this.onSubtitleTracksUpdated,this),e.off(y.FRAG_LOADING,this.onFragLoading,this),e.off(y.FRAG_LOADED,this.onFragLoaded,this),e.off(y.FRAG_PARSING_USERDATA,this.onFragParsingUserdata,this),e.off(y.FRAG_DECRYPTED,this.onFragDecrypted,this),e.off(y.INIT_PTS_FOUND,this.onInitPtsFound,this),e.off(y.SUBTITLE_TRACKS_CLEARED,this.onSubtitleTracksCleared,this),e.off(y.BUFFER_FLUSHING,this.onBufferFlushing,this),this.hls=this.config=this.cea608Parser1=this.cea608Parser2=null},t.addCues=function(e,t,r,i,n){for(var a,s,o,l,u=!1,c=n.length;c--;){var d=n[c],h=(a=d[0],s=d[1],o=t,l=r,Math.min(s,l)-Math.max(a,o))
 if(h>=0&&(d[0]=Math.min(d[0],t),d[1]=Math.max(d[1],r),u=!0,h/(r-t)>.5))return}if(u||n.push([t,r]),this.config.renderTextTracksNatively){var f=this.captionsTracks[e]
 this.Cues.newCue(f,t,r,i)}else{var p=this.Cues.newCue(null,t,r,i)
-this.hls.trigger(b.CUES_PARSED,{type:"captions",cues:p,track:e})}},t.onInitPtsFound=function(e,t){var r=this,i=t.frag,n=t.id,a=t.initPTS,s=t.timescale,o=this.unparsedVttFrags
-"main"===n&&(this.initPTS[i.cc]={baseTime:a,timescale:s}),o.length&&(this.unparsedVttFrags=[],o.forEach((function(e){r.onFragLoaded(b.FRAG_LOADED,e)})))},t.getExistingTrack=function(e){var t=this.media
+this.hls.trigger(y.CUES_PARSED,{type:"captions",cues:p,track:e})}},t.onInitPtsFound=function(e,t){var r=this,i=t.frag,n=t.id,a=t.initPTS,s=t.timescale,o=this.unparsedVttFrags
+"main"===n&&(this.initPTS[i.cc]={baseTime:a,timescale:s}),o.length&&(this.unparsedVttFrags=[],o.forEach((function(e){r.onFragLoaded(y.FRAG_LOADED,e)})))},t.getExistingTrack=function(e){var t=this.media
 if(t)for(var r=0;r<t.textTracks.length;r++){var i=t.textTracks[r]
 if(i[e])return i}return null},t.createCaptionsTrack=function(e){this.config.renderTextTracksNatively?this.createNativeTrack(e):this.createNonNativeTrack(e)},t.createNativeTrack=function(e){if(!this.captionsTracks[e]){var t=this.captionsProperties,r=this.captionsTracks,i=this.media,n=t[e],a=n.label,s=n.languageCode,o=this.getExistingTrack(e)
-if(o)r[e]=o,ft(r[e]),dt(r[e],i)
+if(o)r[e]=o,gt(r[e]),pt(r[e],i)
 else{var l=this.createTextTrack("captions",a,s)
 l&&(l[e]=!0,r[e]=l)}}},t.createNonNativeTrack=function(e){if(!this.nonNativeCaptionsTracks[e]){var t=this.captionsProperties[e]
 if(t){var r={_id:e,label:t.label,kind:"captions",default:!!t.media&&!!t.media.default,closedCaptions:t.media}
-this.nonNativeCaptionsTracks[e]=r,this.hls.trigger(b.NON_NATIVE_TEXT_TRACKS_FOUND,{tracks:[r]})}}},t.createTextTrack=function(e,t,r){var i=this.media
+this.nonNativeCaptionsTracks[e]=r,this.hls.trigger(y.NON_NATIVE_TEXT_TRACKS_FOUND,{tracks:[r]})}}},t.createTextTrack=function(e,t,r){var i=this.media
 if(i)return i.addTextTrack(e,t,r)},t.onMediaAttaching=function(e,t){this.media=t.media,this._cleanTracks()},t.onMediaDetaching=function(){var e=this.captionsTracks
-Object.keys(e).forEach((function(t){ft(e[t]),delete e[t]})),this.nonNativeCaptionsTracks={}},t.onManifestLoading=function(){this.lastSn=-1,this.lastPartIndex=-1,this.prevCC=-1,this.vttCCs={ccOffset:0,presentationOffset:0,0:{start:0,prevCC:-1,new:!0}},this._cleanTracks(),this.tracks=[],this.captionsTracks={},this.nonNativeCaptionsTracks={},this.textTracks=[],this.unparsedVttFrags=this.unparsedVttFrags||[],this.initPTS=[],this.cea608Parser1&&this.cea608Parser2&&(this.cea608Parser1.reset(),this.cea608Parser2.reset())},t._cleanTracks=function(){var e=this.media
+Object.keys(e).forEach((function(t){gt(e[t]),delete e[t]})),this.nonNativeCaptionsTracks={}},t.onManifestLoading=function(){this.lastSn=-1,this.lastPartIndex=-1,this.prevCC=-1,this.vttCCs={ccOffset:0,presentationOffset:0,0:{start:0,prevCC:-1,new:!0}},this._cleanTracks(),this.tracks=[],this.captionsTracks={},this.nonNativeCaptionsTracks={},this.textTracks=[],this.unparsedVttFrags=this.unparsedVttFrags||[],this.initPTS=[],this.cea608Parser1&&this.cea608Parser2&&(this.cea608Parser1.reset(),this.cea608Parser2.reset())},t._cleanTracks=function(){var e=this.media
 if(e){var t=e.textTracks
-if(t)for(var r=0;r<t.length;r++)ft(t[r])}},t.onSubtitleTracksUpdated=function(e,t){var r=this,i=t.subtitleTracks||[],n=i.some((function(e){return e.textCodec===Hn}))
-if(this.config.enableWebVTT||n&&this.config.enableIMSC1){if(Xi(this.tracks,i))return void(this.tracks=i)
+if(t)for(var r=0;r<t.length;r++)gt(t[r])}},t.onSubtitleTracksUpdated=function(e,t){var r=this,i=t.subtitleTracks||[],n=i.some((function(e){return e.textCodec===$n}))
+if(this.config.enableWebVTT||n&&this.config.enableIMSC1){if(Zi(this.tracks,i))return void(this.tracks=i)
 if(this.textTracks=[],this.tracks=i,this.config.renderTextTracksNatively){var a=this.media?this.media.textTracks:null
 this.tracks.forEach((function(e,t){var i
-if(a&&t<a.length){for(var n=null,s=0;s<a.length;s++)if(ea(a[s],e)){n=a[s]
-break}n&&(i=n)}if(i)ft(i)
+if(a&&t<a.length){for(var n=null,s=0;s<a.length;s++)if(ra(a[s],e)){n=a[s]
+break}n&&(i=n)}if(i)gt(i)
 else{var o=r._captionsOrSubtitlesFromCharacteristics(e);(i=r.createTextTrack(o,e.name,e.lang))&&(i.mode="disabled")}i&&(i.groupId=e.groupId,r.textTracks.push(i))}))}else if(this.tracks.length){var s=this.tracks.map((function(e){return{label:e.name,kind:e.type.toLowerCase(),default:e.default,subtitleTrack:e}}))
-this.hls.trigger(b.NON_NATIVE_TEXT_TRACKS_FOUND,{tracks:s})}}},t._captionsOrSubtitlesFromCharacteristics=function(e){if(e.attrs.CHARACTERISTICS){var t=/transcribes-spoken-dialog/gi.test(e.attrs.CHARACTERISTICS),r=/describes-music-and-sound/gi.test(e.attrs.CHARACTERISTICS)
+this.hls.trigger(y.NON_NATIVE_TEXT_TRACKS_FOUND,{tracks:s})}}},t._captionsOrSubtitlesFromCharacteristics=function(e){if(e.attrs.CHARACTERISTICS){var t=/transcribes-spoken-dialog/gi.test(e.attrs.CHARACTERISTICS),r=/describes-music-and-sound/gi.test(e.attrs.CHARACTERISTICS)
 if(t&&r)return"captions"}return"subtitles"},t.onManifestLoaded=function(e,t){var r=this
 this.config.enableCEA708Captions&&t.captions&&t.captions.forEach((function(e){var t=/(?:CC|SERVICE)([1-4])/.exec(e.instreamId)
 if(t){var i="textTrack"+t[1],n=r.captionsProperties[i]
 n&&(n.label=e.name,e.lang&&(n.languageCode=e.lang),n.media=e)}}))},t.closedCaptionsForLevel=function(e){var t=this.hls.levels[e.level]
 return null==t?void 0:t.attrs["CLOSED-CAPTIONS"]},t.onFragLoading=function(e,t){var r=this.cea608Parser1,i=this.cea608Parser2,n=this.lastSn,a=this.lastPartIndex
-if(this.enabled&&r&&i&&t.frag.type===at){var s,o,l=t.frag.sn,u=null!=(s=null==t||null==(o=t.part)?void 0:o.index)?s:-1
+if(this.enabled&&r&&i&&t.frag.type===lt){var s,o,l=t.frag.sn,u=null!=(s=null==t||null==(o=t.part)?void 0:o.index)?s:-1
 l===n+1||l===n&&u===a+1||(r.reset(),i.reset()),this.lastSn=l,this.lastPartIndex=u}},t.onFragLoaded=function(e,t){var r=t.frag,i=t.payload,n=this.initPTS,a=this.unparsedVttFrags
-if(r.type===ot)if(i.byteLength){if(!n[r.cc])return a.push(t),void(n.length&&this.hls.trigger(b.SUBTITLE_FRAG_PROCESSED,{success:!1,frag:r,error:new Error("Missing initial subtitle PTS")}))
+if(r.type===ct)if(i.byteLength){if(!n[r.cc])return a.push(t),void(n.length&&this.hls.trigger(y.SUBTITLE_FRAG_PROCESSED,{success:!1,frag:r,error:new Error("Missing initial subtitle PTS")}))
 var s=r.decryptdata,o="stats"in t
 if(null==s||!s.encrypted||o){var l=this.tracks[r.level],u=this.vttCCs
-u[r.cc]||(u[r.cc]={start:r.start,prevCC:this.prevCC,new:!0},this.prevCC=r.cc),l&&l.textCodec===Hn?this._parseIMSC1(r,i):this._parseVTTs(r,i,u)}}else this.hls.trigger(b.SUBTITLE_FRAG_PROCESSED,{success:!1,frag:r,error:new Error("Empty subtitle payload")})},t._parseIMSC1=function(e,t){var r=this,i=this.hls
-Gn(t,this.initPTS[e.cc],(function(t){r._appendCues(t,e.level),i.trigger(b.SUBTITLE_FRAG_PROCESSED,{success:!0,frag:e})}),(function(t){S.log("Failed to parse IMSC1: "+t),i.trigger(b.SUBTITLE_FRAG_PROCESSED,{success:!1,frag:e,error:t})}))},t._parseVTTs=function(e,t,r){var i,n=this,a=this.hls;(function(e,t,r,i,n,a,s){var o,l,u,c=new Fn,d=he(new Uint8Array(e)).trim().replace(Nn,"\n").split("\n"),h=[],f=(o=t.baseTime,void 0===(l=t.timescale)&&(l=1),vi(o,9e4,1/l)),p="00:00.000",m=0,g=0,b=!0
+u[r.cc]||(u[r.cc]={start:r.start,prevCC:this.prevCC,new:!0},this.prevCC=r.cc),l&&l.textCodec===$n?this._parseIMSC1(r,i):this._parseVTTs(r,i,u)}}else this.hls.trigger(y.SUBTITLE_FRAG_PROCESSED,{success:!1,frag:r,error:new Error("Empty subtitle payload")})},t._parseIMSC1=function(e,t){var r=this,i=this.hls
+Wn(t,this.initPTS[e.cc],(function(t){r._appendCues(t,e.level),i.trigger(y.SUBTITLE_FRAG_PROCESSED,{success:!0,frag:e})}),(function(t){O.log("Failed to parse IMSC1: "+t),i.trigger(y.SUBTITLE_FRAG_PROCESSED,{success:!1,frag:e,error:t})}))},t._parseVTTs=function(e,t,r){var i,n=this,a=this.hls;(function(e,t,r,i,n,a,s){var o,l,u,c=new zn,d=fe(new Uint8Array(e)).trim().replace(Un,"\n").split("\n"),h=[],f=(o=t.baseTime,void 0===(l=t.timescale)&&(l=1),yi(o,9e4,1/l)),p="00:00.000",m=0,g=0,v=!0
 c.oncue=function(e){var t=r[i],a=r.ccOffset,s=(m-f)/9e4
 null!=t&&t.new&&(void 0!==g?a=r.ccOffset=t.start:function(e,t,r){var i=e[t],n=e[i.prevCC]
 if(!n||!n.new&&i.new)return e.ccOffset=e.presentationOffset=i.start,void(i.new=!1)
 for(;null!=(a=n)&&a.new;){var a
 e.ccOffset+=i.start-n.start,i.new=!1,n=e[(i=n).prevCC]}e.presentationOffset=r}(r,i,s)),s&&(a=s-r.presentationOffset)
-var o=e.endTime-e.startTime,l=Ei(9e4*(e.startTime+a-g),9e4*n)/9e4
+var o=e.endTime-e.startTime,l=ki(9e4*(e.startTime+a-g),9e4*n)/9e4
 e.startTime=Math.max(l,0),e.endTime=Math.max(l+o,0)
 var u=e.text.trim()
-e.text=decodeURIComponent(encodeURIComponent(u)),e.id||(e.id=Bn(e.startTime,e.endTime,u)),e.endTime>0&&h.push(e)},c.onparsingerror=function(e){u=e},c.onflush=function(){u?s(u):a(h)},d.forEach((function(e){if(b){if(zn(e,"X-TIMESTAMP-MAP=")){b=!1,e.slice(16).split(",").forEach((function(e){zn(e,"LOCAL:")?p=e.slice(6):zn(e,"MPEGTS:")&&(m=parseInt(e.slice(7)))}))
+e.text=decodeURIComponent(encodeURIComponent(u)),e.id||(e.id=Vn(e.startTime,e.endTime,u)),e.endTime>0&&h.push(e)},c.onparsingerror=function(e){u=e},c.onflush=function(){u?s(u):a(h)},d.forEach((function(e){if(v){if(Bn(e,"X-TIMESTAMP-MAP=")){v=!1,e.slice(16).split(",").forEach((function(e){Bn(e,"LOCAL:")?p=e.slice(6):Bn(e,"MPEGTS:")&&(m=parseInt(e.slice(7)))}))
 try{g=function(e){var t=parseInt(e.slice(-3)),r=parseInt(e.slice(-6,-4)),i=parseInt(e.slice(-9,-7)),n=e.length>9?parseInt(e.substring(0,e.indexOf(":"))):0
-if(!(v(t)&&v(r)&&v(i)&&v(n)))throw Error("Malformed X-TIMESTAMP-MAP: Local:"+e)
-return t+=1e3*r,(t+=6e4*i)+36e5*n}(p)/1e3}catch(e){u=e}return}""===e&&(b=!1)}c.parse(e+"\n")})),c.flush()})(null!=(i=e.initSegment)&&i.data?xe(e.initSegment.data,new Uint8Array(t)):t,this.initPTS[e.cc],r,e.cc,e.start,(function(t){n._appendCues(t,e.level),a.trigger(b.SUBTITLE_FRAG_PROCESSED,{success:!0,frag:e})}),(function(r){n._fallbackToIMSC1(e,t),S.log("Failed to parse VTT cue: "+r),a.trigger(b.SUBTITLE_FRAG_PROCESSED,{success:!1,frag:e,error:r})}))},t._fallbackToIMSC1=function(e,t){var r=this,i=this.tracks[e.level]
-i.textCodec||Gn(t,this.initPTS[e.cc],(function(){i.textCodec=Hn,r._parseIMSC1(e,t)}),(function(){i.textCodec="wvtt"}))},t._appendCues=function(e,t){var r=this.hls
+if(!(b(t)&&b(r)&&b(i)&&b(n)))throw Error("Malformed X-TIMESTAMP-MAP: Local:"+e)
+return t+=1e3*r,(t+=6e4*i)+36e5*n}(p)/1e3}catch(e){u=e}return}""===e&&(v=!1)}c.parse(e+"\n")})),c.flush()})(null!=(i=e.initSegment)&&i.data?Pe(e.initSegment.data,new Uint8Array(t)):t,this.initPTS[e.cc],r,e.cc,e.start,(function(t){n._appendCues(t,e.level),a.trigger(y.SUBTITLE_FRAG_PROCESSED,{success:!0,frag:e})}),(function(r){n._fallbackToIMSC1(e,t),O.log("Failed to parse VTT cue: "+r),a.trigger(y.SUBTITLE_FRAG_PROCESSED,{success:!1,frag:e,error:r})}))},t._fallbackToIMSC1=function(e,t){var r=this,i=this.tracks[e.level]
+i.textCodec||Wn(t,this.initPTS[e.cc],(function(){i.textCodec=$n,r._parseIMSC1(e,t)}),(function(){i.textCodec="wvtt"}))},t._appendCues=function(e,t){var r=this.hls
 if(this.config.renderTextTracksNatively){var i=this.textTracks[t]
 if(!i||"disabled"===i.mode)return
-e.forEach((function(e){return ht(i,e)}))}else{var n=this.tracks[t]
+e.forEach((function(e){return mt(i,e)}))}else{var n=this.tracks[t]
 if(!n)return
 var a=n.default?"default":"subtitles"+t
-r.trigger(b.CUES_PARSED,{type:"subtitles",cues:e,track:a})}},t.onFragDecrypted=function(e,t){var r=t.frag
-if(r.type===ot){if(!this.initPTS[r.cc])return void this.unparsedVttFrags.push(t)
-this.onFragLoaded(b.FRAG_LOADED,t)}},t.onSubtitleTracksCleared=function(){this.tracks=[],this.captionsTracks={}},t.onFragParsingUserdata=function(e,t){var r=this.cea608Parser1,i=this.cea608Parser2
+r.trigger(y.CUES_PARSED,{type:"subtitles",cues:e,track:a})}},t.onFragDecrypted=function(e,t){var r=t.frag
+if(r.type===ct){if(!this.initPTS[r.cc])return void this.unparsedVttFrags.push(t)
+this.onFragLoaded(y.FRAG_LOADED,t)}},t.onSubtitleTracksCleared=function(){this.tracks=[],this.captionsTracks={}},t.onFragParsingUserdata=function(e,t){var r=this.cea608Parser1,i=this.cea608Parser2
 if(this.enabled&&r&&i){var n=t.frag,a=t.samples
-if(n.type!==at||"NONE"!==this.closedCaptionsForLevel(n))for(var s=0;s<a.length;s++){var o=a[s].bytes
+if(n.type!==lt||"NONE"!==this.closedCaptionsForLevel(n))for(var s=0;s<a.length;s++){var o=a[s].bytes
 if(o){var l=this.extractCea608Data(o)
 r.addData(a[s].pts,l[0]),i.addData(a[s].pts,l[1])}}}},t.onBufferFlushing=function(e,t){var r=t.startOffset,i=t.endOffset,n=t.endOffsetSubtitles,a=t.type,s=this.media
 if(s&&!(s.currentTime<i)){if(!a||"video"===a){var o=this.captionsTracks
-Object.keys(o).forEach((function(e){return pt(o[e],r,i)}))}if(this.config.renderTextTracksNatively&&0===r&&void 0!==n){var l=this.textTracks
-Object.keys(l).forEach((function(e){return pt(l[e],r,n)}))}}},t.extractCea608Data=function(e){for(var t=[[],[]],r=31&e[0],i=2,n=0;n<r;n++){var a=e[i++],s=127&e[i++],o=127&e[i++]
+Object.keys(o).forEach((function(e){return vt(o[e],r,i)}))}if(this.config.renderTextTracksNatively&&0===r&&void 0!==n){var l=this.textTracks
+Object.keys(l).forEach((function(e){return vt(l[e],r,n)}))}}},t.extractCea608Data=function(e){for(var t=[[],[]],r=31&e[0],i=2,n=0;n<r;n++){var a=e[i++],s=127&e[i++],o=127&e[i++]
 if((0!==s||0!==o)&&0!=(4&a)){var l=3&a
 0!==l&&1!==l||(t[l].push(s),t[l].push(o))}}return t},e}()
-function ea(e,t){return!!e&&e.label===t.name&&!(e.textTrack1||e.textTrack2)}var ta=function(){function e(e){this.hls=void 0,this.autoLevelCapping=void 0,this.firstLevel=void 0,this.media=void 0,this.restrictedLevels=void 0,this.timer=void 0,this.clientRect=void 0,this.streamController=void 0,this.hls=e,this.autoLevelCapping=Number.POSITIVE_INFINITY,this.firstLevel=-1,this.media=null,this.restrictedLevels=[],this.timer=void 0,this.clientRect=null,this.registerListeners()}var t=e.prototype
+function ra(e,t){return!!e&&e.label===t.name&&!(e.textTrack1||e.textTrack2)}var ia=function(){function e(e){this.hls=void 0,this.autoLevelCapping=void 0,this.firstLevel=void 0,this.media=void 0,this.restrictedLevels=void 0,this.timer=void 0,this.clientRect=void 0,this.streamController=void 0,this.hls=e,this.autoLevelCapping=Number.POSITIVE_INFINITY,this.firstLevel=-1,this.media=null,this.restrictedLevels=[],this.timer=void 0,this.clientRect=null,this.registerListeners()}var t=e.prototype
 return t.setStreamController=function(e){this.streamController=e},t.destroy=function(){this.unregisterListener(),this.hls.config.capLevelToPlayerSize&&this.stopCapping(),this.media=null,this.clientRect=null,this.hls=this.streamController=null},t.registerListeners=function(){var e=this.hls
-e.on(b.FPS_DROP_LEVEL_CAPPING,this.onFpsDropLevelCapping,this),e.on(b.MEDIA_ATTACHING,this.onMediaAttaching,this),e.on(b.MANIFEST_PARSED,this.onManifestParsed,this),e.on(b.BUFFER_CODECS,this.onBufferCodecs,this),e.on(b.MEDIA_DETACHING,this.onMediaDetaching,this)},t.unregisterListener=function(){var e=this.hls
-e.off(b.FPS_DROP_LEVEL_CAPPING,this.onFpsDropLevelCapping,this),e.off(b.MEDIA_ATTACHING,this.onMediaAttaching,this),e.off(b.MANIFEST_PARSED,this.onManifestParsed,this),e.off(b.BUFFER_CODECS,this.onBufferCodecs,this),e.off(b.MEDIA_DETACHING,this.onMediaDetaching,this)},t.onFpsDropLevelCapping=function(e,t){var r=this.hls.levels[t.droppedLevel]
+e.on(y.FPS_DROP_LEVEL_CAPPING,this.onFpsDropLevelCapping,this),e.on(y.MEDIA_ATTACHING,this.onMediaAttaching,this),e.on(y.MANIFEST_PARSED,this.onManifestParsed,this),e.on(y.BUFFER_CODECS,this.onBufferCodecs,this),e.on(y.MEDIA_DETACHING,this.onMediaDetaching,this)},t.unregisterListener=function(){var e=this.hls
+e.off(y.FPS_DROP_LEVEL_CAPPING,this.onFpsDropLevelCapping,this),e.off(y.MEDIA_ATTACHING,this.onMediaAttaching,this),e.off(y.MANIFEST_PARSED,this.onManifestParsed,this),e.off(y.BUFFER_CODECS,this.onBufferCodecs,this),e.off(y.MEDIA_DETACHING,this.onMediaDetaching,this)},t.onFpsDropLevelCapping=function(e,t){var r=this.hls.levels[t.droppedLevel]
 this.isLevelAllowed(r)&&this.restrictedLevels.push({bitrate:r.bitrate,height:r.height,width:r.width})},t.onMediaAttaching=function(e,t){this.media=t.media instanceof HTMLVideoElement?t.media:null,this.clientRect=null},t.onManifestParsed=function(e,t){var r=this.hls
 this.restrictedLevels=[],this.firstLevel=t.firstLevel,r.config.capLevelToPlayerSize&&t.video&&this.startCapping()},t.onBufferCodecs=function(e,t){this.hls.config.capLevelToPlayerSize&&t.video&&this.startCapping()},t.onMediaDetaching=function(){this.stopCapping()},t.detectPlayerSize=function(){if(this.media&&this.mediaHeight>0&&this.mediaWidth>0){var e=this.hls.levels
 if(e.length){var t=this.hls
@@ -6134,32 +6147,32 @@ t.width=r.width,t.height=r.height,t.width||t.height||(t.width=r.right-r.left||e.
 for(var i,n,a=e.length-1,s=0;s<e.length;s+=1){var o=e[s]
 if((o.width>=t||o.height>=r)&&(i=o,!(n=e[s+1])||i.width!==n.width||i.height!==n.height)){a=s
 break}}return a},a(e,[{key:"mediaWidth",get:function(){return this.getDimensions().width*this.contentScaleFactor}},{key:"mediaHeight",get:function(){return this.getDimensions().height*this.contentScaleFactor}},{key:"contentScaleFactor",get:function(){var e=1
-if(!this.hls.config.ignoreDevicePixelRatio)try{e=self.devicePixelRatio}catch(e){}return e}}]),e}(),ra=function(){function e(e){this.hls=void 0,this.isVideoPlaybackQualityAvailable=!1,this.timer=void 0,this.media=null,this.lastTime=void 0,this.lastDroppedFrames=0,this.lastDecodedFrames=0,this.streamController=void 0,this.hls=e,this.registerListeners()}var t=e.prototype
-return t.setStreamController=function(e){this.streamController=e},t.registerListeners=function(){this.hls.on(b.MEDIA_ATTACHING,this.onMediaAttaching,this)},t.unregisterListeners=function(){this.hls.off(b.MEDIA_ATTACHING,this.onMediaAttaching,this)},t.destroy=function(){this.timer&&clearInterval(this.timer),this.unregisterListeners(),this.isVideoPlaybackQualityAvailable=!1,this.media=null},t.onMediaAttaching=function(e,t){var r=this.hls.config
+if(!this.hls.config.ignoreDevicePixelRatio)try{e=self.devicePixelRatio}catch(e){}return e}}]),e}(),na=function(){function e(e){this.hls=void 0,this.isVideoPlaybackQualityAvailable=!1,this.timer=void 0,this.media=null,this.lastTime=void 0,this.lastDroppedFrames=0,this.lastDecodedFrames=0,this.streamController=void 0,this.hls=e,this.registerListeners()}var t=e.prototype
+return t.setStreamController=function(e){this.streamController=e},t.registerListeners=function(){this.hls.on(y.MEDIA_ATTACHING,this.onMediaAttaching,this)},t.unregisterListeners=function(){this.hls.off(y.MEDIA_ATTACHING,this.onMediaAttaching,this)},t.destroy=function(){this.timer&&clearInterval(this.timer),this.unregisterListeners(),this.isVideoPlaybackQualityAvailable=!1,this.media=null},t.onMediaAttaching=function(e,t){var r=this.hls.config
 if(r.capLevelOnFPSDrop){var i=t.media instanceof self.HTMLVideoElement?t.media:null
 this.media=i,i&&"function"==typeof i.getVideoPlaybackQuality&&(this.isVideoPlaybackQualityAvailable=!0),self.clearInterval(this.timer),this.timer=self.setInterval(this.checkFPSInterval.bind(this),r.fpsDroppedMonitoringPeriod)}},t.checkFPS=function(e,t,r){var i=performance.now()
 if(t){if(this.lastTime){var n=i-this.lastTime,a=r-this.lastDroppedFrames,s=t-this.lastDecodedFrames,o=1e3*a/n,l=this.hls
-if(l.trigger(b.FPS_DROP,{currentDropped:a,currentDecoded:s,totalDroppedFrames:r}),o>0&&a>l.config.fpsDroppedMonitoringThreshold*s){var u=l.currentLevel
-S.warn("drop FPS ratio greater than max allowed value for currentLevel: "+u),u>0&&(-1===l.autoLevelCapping||l.autoLevelCapping>=u)&&(u-=1,l.trigger(b.FPS_DROP_LEVEL_CAPPING,{level:u,droppedLevel:l.currentLevel}),l.autoLevelCapping=u,this.streamController.nextLevelSwitch())}}this.lastTime=i,this.lastDroppedFrames=r,this.lastDecodedFrames=t}},t.checkFPSInterval=function(){var e=this.media
+if(l.trigger(y.FPS_DROP,{currentDropped:a,currentDecoded:s,totalDroppedFrames:r}),o>0&&a>l.config.fpsDroppedMonitoringThreshold*s){var u=l.currentLevel
+O.warn("drop FPS ratio greater than max allowed value for currentLevel: "+u),u>0&&(-1===l.autoLevelCapping||l.autoLevelCapping>=u)&&(u-=1,l.trigger(y.FPS_DROP_LEVEL_CAPPING,{level:u,droppedLevel:l.currentLevel}),l.autoLevelCapping=u,this.streamController.nextLevelSwitch())}}this.lastTime=i,this.lastDroppedFrames=r,this.lastDecodedFrames=t}},t.checkFPSInterval=function(){var e=this.media
 if(e)if(this.isVideoPlaybackQualityAvailable){var t=e.getVideoPlaybackQuality()
-this.checkFPS(e,t.totalVideoFrames,t.droppedVideoFrames)}else this.checkFPS(e,e.webkitDecodedFrameCount,e.webkitDroppedFrameCount)},e}(),ia="[eme]",na=function(){function e(t){this.hls=void 0,this.config=void 0,this.media=null,this.keyFormatPromise=null,this.keySystemAccessPromises={},this._requestLicenseFailureCount=0,this.mediaKeySessions=[],this.keyIdToKeySessionPromise={},this.setMediaKeysQueue=e.CDMCleanupPromise?[e.CDMCleanupPromise]:[],this.onMediaEncrypted=this._onMediaEncrypted.bind(this),this.onWaitingForKey=this._onWaitingForKey.bind(this),this.debug=S.debug.bind(S,ia),this.log=S.log.bind(S,ia),this.warn=S.warn.bind(S,ia),this.error=S.error.bind(S,ia),this.hls=t,this.config=t.config,this.registerListeners()}var t=e.prototype
+this.checkFPS(e,t.totalVideoFrames,t.droppedVideoFrames)}else this.checkFPS(e,e.webkitDecodedFrameCount,e.webkitDroppedFrameCount)},e}(),aa="[eme]",sa=function(){function e(t){this.hls=void 0,this.config=void 0,this.media=null,this.keyFormatPromise=null,this.keySystemAccessPromises={},this._requestLicenseFailureCount=0,this.mediaKeySessions=[],this.keyIdToKeySessionPromise={},this.setMediaKeysQueue=e.CDMCleanupPromise?[e.CDMCleanupPromise]:[],this.onMediaEncrypted=this._onMediaEncrypted.bind(this),this.onWaitingForKey=this._onWaitingForKey.bind(this),this.debug=O.debug.bind(O,aa),this.log=O.log.bind(O,aa),this.warn=O.warn.bind(O,aa),this.error=O.error.bind(O,aa),this.hls=t,this.config=t.config,this.registerListeners()}var t=e.prototype
 return t.destroy=function(){this.unregisterListeners(),this.onMediaDetached()
 var e=this.config
-e.requestMediaKeySystemAccessFunc=null,e.licenseXhrSetup=e.licenseResponseCallback=void 0,e.drmSystems=e.drmSystemOptions={},this.hls=this.onMediaEncrypted=this.onWaitingForKey=this.keyIdToKeySessionPromise=null,this.config=null},t.registerListeners=function(){this.hls.on(b.MEDIA_ATTACHED,this.onMediaAttached,this),this.hls.on(b.MEDIA_DETACHED,this.onMediaDetached,this),this.hls.on(b.MANIFEST_LOADED,this.onManifestLoaded,this)},t.unregisterListeners=function(){this.hls.off(b.MEDIA_ATTACHED,this.onMediaAttached,this),this.hls.off(b.MEDIA_DETACHED,this.onMediaDetached,this),this.hls.off(b.MANIFEST_LOADED,this.onManifestLoaded,this)},t.getLicenseServerUrl=function(e){var t=this.config,r=t.drmSystems,i=t.widevineLicenseUrl,n=r[e]
+e.requestMediaKeySystemAccessFunc=null,e.licenseXhrSetup=e.licenseResponseCallback=void 0,e.drmSystems=e.drmSystemOptions={},this.hls=this.onMediaEncrypted=this.onWaitingForKey=this.keyIdToKeySessionPromise=null,this.config=null},t.registerListeners=function(){this.hls.on(y.MEDIA_ATTACHED,this.onMediaAttached,this),this.hls.on(y.MEDIA_DETACHED,this.onMediaDetached,this),this.hls.on(y.MANIFEST_LOADING,this.onManifestLoading,this),this.hls.on(y.MANIFEST_LOADED,this.onManifestLoaded,this)},t.unregisterListeners=function(){this.hls.off(y.MEDIA_ATTACHED,this.onMediaAttached,this),this.hls.off(y.MEDIA_DETACHED,this.onMediaDetached,this),this.hls.off(y.MANIFEST_LOADING,this.onManifestLoading,this),this.hls.off(y.MANIFEST_LOADED,this.onManifestLoaded,this)},t.getLicenseServerUrl=function(e){var t=this.config,r=t.drmSystems,i=t.widevineLicenseUrl,n=r[e]
 if(n)return n.licenseUrl
-if(e===B.WIDEVINE&&i)return i
+if(e===H.WIDEVINE&&i)return i
 throw new Error('no license server URL configured for key-system "'+e+'"')},t.getServerCertificateUrl=function(e){var t=this.config.drmSystems[e]
 if(t)return t.serverCertificateUrl
 this.log('No Server Certificate in config.drmSystems["'+e+'"]')},t.attemptKeySystemAccess=function(e){var t=this,r=this.hls.levels,i=function(e,t,r){return!!e&&r.indexOf(e)===t},n=r.map((function(e){return e.audioCodec})).filter(i),a=r.map((function(e){return e.videoCodec})).filter(i)
 return n.length+a.length===0&&a.push("avc1.42e01e"),new Promise((function(r,i){!function e(s){var o=s.shift()
-t.getMediaKeysPromise(o,n,a).then((function(e){return r({keySystem:o,mediaKeys:e})})).catch((function(t){s.length?e(s):i(t instanceof aa?t:new aa({type:y.KEY_SYSTEM_ERROR,details:_.KEY_SYSTEM_NO_ACCESS,error:t,fatal:!0},t.message))}))}(e)}))},t.requestMediaKeySystemAccess=function(e,t){var r=this.config.requestMediaKeySystemAccessFunc
+t.getMediaKeysPromise(o,n,a).then((function(e){return r({keySystem:o,mediaKeys:e})})).catch((function(t){s.length?e(s):i(t instanceof oa?t:new oa({type:_.KEY_SYSTEM_ERROR,details:w.KEY_SYSTEM_NO_ACCESS,error:t,fatal:!0},t.message))}))}(e)}))},t.requestMediaKeySystemAccess=function(e,t){var r=this.config.requestMediaKeySystemAccessFunc
 if("function"!=typeof r){var i="Configured requestMediaKeySystemAccess is not a function "+r
-return null===Q&&"http:"===self.location.protocol&&(i="navigator.requestMediaKeySystemAccess is not available over insecure protocol "+location.protocol),Promise.reject(new Error(i))}return r(e,t)},t.getMediaKeysPromise=function(e,t,r){var i=this,n=function(e,t,r,i){var n
-switch(e){case B.FAIRPLAY:n=["cenc","sinf"]
+return null===X&&"http:"===self.location.protocol&&(i="navigator.requestMediaKeySystemAccess is not available over insecure protocol "+location.protocol),Promise.reject(new Error(i))}return r(e,t)},t.getMediaKeysPromise=function(e,t,r){var i=this,n=function(e,t,r,i){var n
+switch(e){case H.FAIRPLAY:n=["cenc","sinf"]
 break
-case B.WIDEVINE:case B.PLAYREADY:n=["cenc"]
+case H.WIDEVINE:case H.PLAYREADY:n=["cenc"]
 break
-case B.CLEARKEY:n=["cenc","keyids"]
+case H.CLEARKEY:n=["cenc","keyids"]
 break
 default:throw new Error("Unknown key-system: "+e)}return function(e,t,r,i){return[{initDataTypes:e,persistentState:i.persistentState||"not-allowed",distinctiveIdentifier:i.distinctiveIdentifier||"not-allowed",sessionTypes:i.sessionTypes||[i.sessionType||"temporary"],audioCapabilities:t.map((function(e){return{contentType:'audio/mp4; codecs="'+e+'"',robustness:i.audioRobustness||"",encryptionScheme:i.audioEncryptionScheme||null}})),videoCapabilities:r.map((function(e){return{contentType:'video/mp4; codecs="'+e+'"',robustness:i.videoRobustness||"",encryptionScheme:i.videoEncryptionScheme||null}}))}]}(n,t,r,i)}(e,t,r,this.config.drmSystemOptions),a=this.keySystemAccessPromises[e],s=null==a?void 0:a.keySystemAccess
 if(!s){this.log('Requesting encrypted media "'+e+'" key-system access with config: '+JSON.stringify(n)),s=this.requestMediaKeySystemAccess(e,n)
@@ -6167,50 +6180,50 @@ var o=this.keySystemAccessPromises[e]={keySystemAccess:s}
 return s.catch((function(t){i.log('Failed to obtain access to key-system "'+e+'": '+t)})),s.then((function(t){i.log('Access for key-system "'+t.keySystem+'" obtained')
 var r=i.fetchServerCertificate(e)
 return i.log('Create media-keys for "'+e+'"'),o.mediaKeys=t.createMediaKeys().then((function(t){return i.log('Media-keys created for "'+e+'"'),r.then((function(r){return r?i.setMediaKeysServerCertificate(t,e,r):t}))})),o.mediaKeys.catch((function(t){i.error('Failed to create media-keys for "'+e+'"}: '+t)})),o.mediaKeys}))}return s.then((function(){return a.mediaKeys}))},t.createMediaKeySessionContext=function(e){var t=e.decryptdata,r=e.keySystem,i=e.mediaKeys
-this.log('Creating key-system session "'+r+'" keyId: '+fe(t.keyId||[]))
+this.log('Creating key-system session "'+r+'" keyId: '+pe(t.keyId||[]))
 var n=i.createSession(),a={decryptdata:t,keySystem:r,mediaKeys:i,mediaKeysSession:n,keyStatus:"status-pending"}
 return this.mediaKeySessions.push(a),a},t.renewKeySession=function(e){var t=e.decryptdata
 if(t.pssh){var r=this.createMediaKeySessionContext(e),i=this.getKeyIdString(t)
 this.keyIdToKeySessionPromise[i]=this.generateRequestWithPreferredKeySession(r,"cenc",t.pssh,"expired")}else this.warn("Could not renew expired session. Missing pssh initData.")
 this.removeSession(e)},t.getKeyIdString=function(e){if(!e)throw new Error("Could not read keyId of undefined decryptdata")
 if(null===e.keyId)throw new Error("keyId is null")
-return fe(e.keyId)},t.updateKeySession=function(e,t){var r,i=e.mediaKeysSession
-return this.log('Updating key-session "'+i.sessionId+'" for keyID '+fe((null==(r=e.decryptdata)?void 0:r.keyId)||[])+"\n      } (data length: "+(t?t.byteLength:t)+")"),i.update(t)},t.selectKeySystemFormat=function(e){var t=Object.keys(e.levelkeys||{})
+return pe(e.keyId)},t.updateKeySession=function(e,t){var r,i=e.mediaKeysSession
+return this.log('Updating key-session "'+i.sessionId+'" for keyID '+pe((null==(r=e.decryptdata)?void 0:r.keyId)||[])+"\n      } (data length: "+(t?t.byteLength:t)+")"),i.update(t)},t.selectKeySystemFormat=function(e){var t=Object.keys(e.levelkeys||{})
 return this.keyFormatPromise||(this.log("Selecting key-system from fragment (sn: "+e.sn+" "+e.type+": "+e.level+") key formats "+t.join(", ")),this.keyFormatPromise=this.getKeyFormatPromise(t)),this.keyFormatPromise},t.getKeyFormatPromise=function(e){var t=this
-return new Promise((function(r,i){var n=Y(t.config),a=e.map(G).filter((function(e){return!!e&&-1!==n.indexOf(e)}))
-return t.getKeySystemSelectionPromise(a).then((function(e){var t=e.keySystem,n=W(t)
+return new Promise((function(r,i){var n=Q(t.config),a=e.map(K).filter((function(e){return!!e&&-1!==n.indexOf(e)}))
+return t.getKeySystemSelectionPromise(a).then((function(e){var t=e.keySystem,n=Y(t)
 n?r(n):i(new Error('Unable to find format for key-system "'+t+'"'))})).catch(i)}))},t.loadKey=function(e){var t=this,r=e.keyInfo.decryptdata,i=this.getKeyIdString(r),n="(keyId: "+i+' format: "'+r.keyFormat+'" method: '+r.method+" uri: "+r.uri+")"
 this.log("Starting session for key "+n)
 var a=this.keyIdToKeySessionPromise[i]
 return a||(a=this.keyIdToKeySessionPromise[i]=this.getKeySystemForKeyPromise(r).then((function(i){var a=i.keySystem,s=i.mediaKeys
 return t.throwIfDestroyed(),t.log("Handle encrypted media sn: "+e.frag.sn+" "+e.frag.type+": "+e.frag.level+" using key "+n),t.attemptSetMediaKeys(a,s).then((function(){t.throwIfDestroyed()
 var e=t.createMediaKeySessionContext({keySystem:a,mediaKeys:s,decryptdata:r})
-return t.generateRequestWithPreferredKeySession(e,"cenc",r.pssh,"playlist-key")}))}))).catch((function(e){return t.handleError(e)})),a},t.throwIfDestroyed=function(e){if(!this.hls)throw new Error("invalid state")},t.handleError=function(e){this.hls&&(this.error(e.message),e instanceof aa?this.hls.trigger(b.ERROR,e.data):this.hls.trigger(b.ERROR,{type:y.KEY_SYSTEM_ERROR,details:_.KEY_SYSTEM_NO_KEYS,error:e,fatal:!0}))},t.getKeySystemForKeyPromise=function(e){var t=this.getKeyIdString(e),r=this.keyIdToKeySessionPromise[t]
-if(!r){var i=G(e.keyFormat),n=i?[i]:Y(this.config)
-return this.attemptKeySystemAccess(n)}return r},t.getKeySystemSelectionPromise=function(e){if(e.length||(e=Y(this.config)),0===e.length)throw new aa({type:y.KEY_SYSTEM_ERROR,details:_.KEY_SYSTEM_NO_CONFIGURED_LICENSE,fatal:!0},"Missing key-system license configuration options "+JSON.stringify({drmSystems:this.config.drmSystems}))
+return t.generateRequestWithPreferredKeySession(e,"cenc",r.pssh,"playlist-key")}))}))).catch((function(e){return t.handleError(e)})),a},t.throwIfDestroyed=function(e){if(!this.hls)throw new Error("invalid state")},t.handleError=function(e){this.hls&&(this.error(e.message),e instanceof oa?this.hls.trigger(y.ERROR,e.data):this.hls.trigger(y.ERROR,{type:_.KEY_SYSTEM_ERROR,details:w.KEY_SYSTEM_NO_KEYS,error:e,fatal:!0}))},t.getKeySystemForKeyPromise=function(e){var t=this.getKeyIdString(e),r=this.keyIdToKeySessionPromise[t]
+if(!r){var i=K(e.keyFormat),n=i?[i]:Q(this.config)
+return this.attemptKeySystemAccess(n)}return r},t.getKeySystemSelectionPromise=function(e){if(e.length||(e=Q(this.config)),0===e.length)throw new oa({type:_.KEY_SYSTEM_ERROR,details:w.KEY_SYSTEM_NO_CONFIGURED_LICENSE,fatal:!0},"Missing key-system license configuration options "+JSON.stringify({drmSystems:this.config.drmSystems}))
 return this.attemptKeySystemAccess(e)},t._onMediaEncrypted=function(e){var t=this,r=e.initDataType,i=e.initData
 if(this.debug('"'+e.type+'" event: init data type: "'+r+'"'),null!==i){var n,a
-if("sinf"===r&&this.config.drmSystems[B.FAIRPLAY]){var s=ve(new Uint8Array(i))
-try{var o=z(JSON.parse(s).sinf),l=Se(new Uint8Array(o))
+if("sinf"===r&&this.config.drmSystems[H.FAIRPLAY]){var s=be(new Uint8Array(i))
+try{var o=U(JSON.parse(s).sinf),l=Oe(new Uint8Array(o))
 if(!l)return
-n=l.subarray(8,24),a=B.FAIRPLAY}catch(e){return void this.warn('Failed to parse sinf "encrypted" event message initData')}}else{var u=function(e){if(!(e instanceof ArrayBuffer)||e.byteLength<32)return null
+n=l.subarray(8,24),a=H.FAIRPLAY}catch(e){return void this.warn('Failed to parse sinf "encrypted" event message initData')}}else{var u=function(e){if(!(e instanceof ArrayBuffer)||e.byteLength<32)return null
 var t={version:0,systemId:"",kids:null,data:null},r=new DataView(e),i=r.getUint32(0)
 if(e.byteLength!==i&&i>44)return null
 if(1886614376!==r.getUint32(4))return null
 if(t.version=r.getUint32(8)>>>24,t.version>1)return null
-t.systemId=fe(new Uint8Array(e,12,16))
+t.systemId=pe(new Uint8Array(e,12,16))
 var n=r.getUint32(28)
 if(0===t.version){if(i-32<n)return null
 t.data=new Uint8Array(e,32,n)}else if(1===t.version){t.kids=[]
 for(var a=0;a<n;a++)t.kids.push(new Uint8Array(e,32+16*a,16))}return t}(i)
 if(null===u)return
-0===u.version&&u.systemId===K&&u.data&&(n=u.data.subarray(8,24)),a=function(e){if(e===K)return B.WIDEVINE}(u.systemId)}if(a&&n){for(var c=fe(n),d=this.keyIdToKeySessionPromise,h=this.mediaKeySessions,f=d[c],p=function(){var e=h[m],a=e.decryptdata
+0===u.version&&u.systemId===W&&u.data&&(n=u.data.subarray(8,24)),a=function(e){if(e===W)return H.WIDEVINE}(u.systemId)}if(a&&n){for(var c=pe(n),d=this.keyIdToKeySessionPromise,h=this.mediaKeySessions,f=d[c],p=function(){var e=h[m],a=e.decryptdata
 if(a.pssh||!a.keyId)return"continue"
-var s=fe(a.keyId)
+var s=pe(a.keyId)
 return c===s||-1!==a.uri.replace(/-/g,"").indexOf(c)?(f=d[s],delete d[s],a.pssh=new Uint8Array(i),a.keyId=n,f=d[c]=f.then((function(){return t.generateRequestWithPreferredKeySession(e,r,i,"encrypted-event-key-match")})),"break"):void 0},m=0;m<h.length;m++){var g=p()
 if("continue"!==g&&"break"===g)break}f||(f=d[c]=this.getKeySystemSelectionPromise([a]).then((function(e){var a,s=e.keySystem,o=e.mediaKeys
 t.throwIfDestroyed()
-var l=new Me("ISO-23001-7",c,null!=(a=W(s))?a:"")
+var l=new Ie("ISO-23001-7",c,null!=(a=Y(s))?a:"")
 return l.pssh=new Uint8Array(i),l.keyId=n,t.attemptSetMediaKeys(s,o).then((function(){t.throwIfDestroyed()
 var e=t.createMediaKeySessionContext({decryptdata:l,keySystem:s,mediaKeys:o})
 return t.generateRequestWithPreferredKeySession(e,r,i,"encrypted-event-no-match")}))}))),f.catch((function(e){return t.handleError(e)}))}}},t._onWaitingForKey=function(e){this.log('"'+e.type+'" event')},t.attemptSetMediaKeys=function(e,t){var r=this,i=this.setMediaKeysQueue.slice()
@@ -6224,20 +6237,20 @@ t=l.initDataType,r=e.decryptdata.pssh=l.initData?new Uint8Array(l.initData):null
 if(this.warn(e.message),null!=(u=this.hls)&&u.config.debug)throw e}if(null===r)return this.log('Skipping key-session request for "'+i+'" (no initData)'),Promise.resolve(e)
 var c=this.getKeyIdString(e.decryptdata)
 this.log('Generating key-session request for "'+i+'": '+c+" (init data type: "+t+" length: "+(r?r.byteLength:null)+")")
-var d=new Fi
+var d=new zi
 e.mediaKeysSession.onmessage=function(t){var r=e.mediaKeysSession
 if(r){var i=t.messageType,n=t.message
-s.log('"'+i+'" message event for session "'+r.sessionId+'" message size: '+n.byteLength),"license-request"===i||"license-renewal"===i?s.renewLicense(e,n).catch((function(e){s.handleError(e),d.emit("error",e)})):"license-release"===i?e.keySystem===B.FAIRPLAY&&(s.updateKeySession(e,U("acknowledged")),s.removeSession(e)):s.warn('unhandled media key message type "'+i+'"')}else d.emit("error",new Error("invalid state"))},e.mediaKeysSession.onkeystatuseschange=function(t){if(e.mediaKeysSession){s.onKeyStatusChange(e)
+s.log('"'+i+'" message event for session "'+r.sessionId+'" message size: '+n.byteLength),"license-request"===i||"license-renewal"===i?s.renewLicense(e,n).catch((function(e){s.handleError(e),d.emit("error",e)})):"license-release"===i?e.keySystem===H.FAIRPLAY&&(s.updateKeySession(e,B("acknowledged")),s.removeSession(e)):s.warn('unhandled media key message type "'+i+'"')}else d.emit("error",new Error("invalid state"))},e.mediaKeysSession.onkeystatuseschange=function(t){if(e.mediaKeysSession){s.onKeyStatusChange(e)
 var r=e.keyStatus
 d.emit("keyStatus",r),"expired"===r&&(s.warn(e.keySystem+" expired for key "+c),s.renewKeySession(e))}else d.emit("error",new Error("invalid state"))}
-var h=new Promise((function(e,t){d.on("error",t),d.on("keyStatus",(function(r){r.startsWith("usable")?e():"output-restricted"===r?t(new aa({type:y.KEY_SYSTEM_ERROR,details:_.KEY_SYSTEM_STATUS_OUTPUT_RESTRICTED,fatal:!1},"HDCP level output restricted")):"internal-error"===r?t(new aa({type:y.KEY_SYSTEM_ERROR,details:_.KEY_SYSTEM_STATUS_INTERNAL_ERROR,fatal:!0},'key status changed to "'+r+'"')):"expired"===r?t(new Error("key expired while generating request")):s.warn('unhandled key status change "'+r+'"')}))}))
+var h=new Promise((function(e,t){d.on("error",t),d.on("keyStatus",(function(r){r.startsWith("usable")?e():"output-restricted"===r?t(new oa({type:_.KEY_SYSTEM_ERROR,details:w.KEY_SYSTEM_STATUS_OUTPUT_RESTRICTED,fatal:!1},"HDCP level output restricted")):"internal-error"===r?t(new oa({type:_.KEY_SYSTEM_ERROR,details:w.KEY_SYSTEM_STATUS_INTERNAL_ERROR,fatal:!0},'key status changed to "'+r+'"')):"expired"===r?t(new Error("key expired while generating request")):s.warn('unhandled key status change "'+r+'"')}))}))
 return e.mediaKeysSession.generateRequest(t,r).then((function(){var t
-s.log('Request generated for key-session "'+(null==(t=e.mediaKeysSession)?void 0:t.sessionId)+'" keyId: '+c)})).catch((function(e){throw new aa({type:y.KEY_SYSTEM_ERROR,details:_.KEY_SYSTEM_NO_SESSION,error:e,fatal:!1},"Error generating key-session request: "+e)})).then((function(){return h})).catch((function(t){throw d.removeAllListeners(),s.removeSession(e),t})).then((function(){return d.removeAllListeners(),e}))},t.onKeyStatusChange=function(e){var t=this
-e.mediaKeysSession.keyStatuses.forEach((function(r,i){t.log('key status change "'+r+'" for keyStatuses keyId: '+fe("buffer"in i?new Uint8Array(i.buffer,i.byteOffset,i.byteLength):new Uint8Array(i))+" session keyId: "+fe(new Uint8Array(e.decryptdata.keyId||[]))+" uri: "+e.decryptdata.uri),e.keyStatus=r}))},t.fetchServerCertificate=function(e){var t=this.config,r=new(0,t.loader)(t),n=this.getServerCertificateUrl(e)
-return n?(this.log('Fetching serverCertificate for "'+e+'"'),new Promise((function(a,s){var o={responseType:"arraybuffer",url:n},l=t.certLoadPolicy.default,u={loadPolicy:l,timeout:l.maxLoadTimeMs,maxRetry:0,retryDelay:0,maxRetryDelay:0},c={onSuccess:function(e,t,r,i){a(e.data)},onError:function(t,r,a,l){s(new aa({type:y.KEY_SYSTEM_ERROR,details:_.KEY_SYSTEM_SERVER_CERTIFICATE_REQUEST_FAILED,fatal:!0,networkDetails:a,response:i({url:o.url,data:void 0},t)},'"'+e+'" certificate request failed ('+n+"). Status: "+t.code+" ("+t.text+")"))},onTimeout:function(t,r,i){s(new aa({type:y.KEY_SYSTEM_ERROR,details:_.KEY_SYSTEM_SERVER_CERTIFICATE_REQUEST_FAILED,fatal:!0,networkDetails:i,response:{url:o.url,data:void 0}},'"'+e+'" certificate request timed out ('+n+")"))},onAbort:function(e,t,r){s(new Error("aborted"))}}
+s.log('Request generated for key-session "'+(null==(t=e.mediaKeysSession)?void 0:t.sessionId)+'" keyId: '+c)})).catch((function(e){throw new oa({type:_.KEY_SYSTEM_ERROR,details:w.KEY_SYSTEM_NO_SESSION,error:e,fatal:!1},"Error generating key-session request: "+e)})).then((function(){return h})).catch((function(t){throw d.removeAllListeners(),s.removeSession(e),t})).then((function(){return d.removeAllListeners(),e}))},t.onKeyStatusChange=function(e){var t=this
+e.mediaKeysSession.keyStatuses.forEach((function(r,i){t.log('key status change "'+r+'" for keyStatuses keyId: '+pe("buffer"in i?new Uint8Array(i.buffer,i.byteOffset,i.byteLength):new Uint8Array(i))+" session keyId: "+pe(new Uint8Array(e.decryptdata.keyId||[]))+" uri: "+e.decryptdata.uri),e.keyStatus=r}))},t.fetchServerCertificate=function(e){var t=this.config,r=new(0,t.loader)(t),n=this.getServerCertificateUrl(e)
+return n?(this.log('Fetching serverCertificate for "'+e+'"'),new Promise((function(a,s){var o={responseType:"arraybuffer",url:n},l=t.certLoadPolicy.default,u={loadPolicy:l,timeout:l.maxLoadTimeMs,maxRetry:0,retryDelay:0,maxRetryDelay:0},c={onSuccess:function(e,t,r,i){a(e.data)},onError:function(t,r,a,l){s(new oa({type:_.KEY_SYSTEM_ERROR,details:w.KEY_SYSTEM_SERVER_CERTIFICATE_REQUEST_FAILED,fatal:!0,networkDetails:a,response:i({url:o.url,data:void 0},t)},'"'+e+'" certificate request failed ('+n+"). Status: "+t.code+" ("+t.text+")"))},onTimeout:function(t,r,i){s(new oa({type:_.KEY_SYSTEM_ERROR,details:w.KEY_SYSTEM_SERVER_CERTIFICATE_REQUEST_FAILED,fatal:!0,networkDetails:i,response:{url:o.url,data:void 0}},'"'+e+'" certificate request timed out ('+n+")"))},onAbort:function(e,t,r){s(new Error("aborted"))}}
 r.load(o,u,c)}))):Promise.resolve()},t.setMediaKeysServerCertificate=function(e,t,r){var i=this
-return new Promise((function(n,a){e.setServerCertificate(r).then((function(a){i.log("setServerCertificate "+(a?"success":"not supported by CDM")+" ("+(null==r?void 0:r.byteLength)+') on "'+t+'"'),n(e)})).catch((function(e){a(new aa({type:y.KEY_SYSTEM_ERROR,details:_.KEY_SYSTEM_SERVER_CERTIFICATE_UPDATE_FAILED,error:e,fatal:!0},e.message))}))}))},t.renewLicense=function(e,t){var r=this
-return this.requestLicense(e,new Uint8Array(t)).then((function(t){return r.updateKeySession(e,new Uint8Array(t)).catch((function(e){throw new aa({type:y.KEY_SYSTEM_ERROR,details:_.KEY_SYSTEM_SESSION_UPDATE_FAILED,error:e,fatal:!0},e.message)}))}))},t.setupLicenseXHR=function(e,t,r,i){var n=this,a=this.config.licenseXhrSetup
+return new Promise((function(n,a){e.setServerCertificate(r).then((function(a){i.log("setServerCertificate "+(a?"success":"not supported by CDM")+" ("+(null==r?void 0:r.byteLength)+') on "'+t+'"'),n(e)})).catch((function(e){a(new oa({type:_.KEY_SYSTEM_ERROR,details:w.KEY_SYSTEM_SERVER_CERTIFICATE_UPDATE_FAILED,error:e,fatal:!0},e.message))}))}))},t.renewLicense=function(e,t){var r=this
+return this.requestLicense(e,new Uint8Array(t)).then((function(t){return r.updateKeySession(e,new Uint8Array(t)).catch((function(e){throw new oa({type:_.KEY_SYSTEM_ERROR,details:w.KEY_SYSTEM_SESSION_UPDATE_FAILED,error:e,fatal:!0},e.message)}))}))},t.setupLicenseXHR=function(e,t,r,i){var n=this,a=this.config.licenseXhrSetup
 return a?Promise.resolve().then((function(){if(!r.decryptdata)throw new Error("Key removed")
 return a.call(n.hls,e,t,r,i)})).catch((function(s){if(!r.decryptdata)throw s
 return e.open("POST",t,!0),a.call(n.hls,e,t,r,i)})).then((function(r){return e.readyState||e.open("POST",t,!0),{xhr:e,licenseChallenge:r||i}})):(e.open("POST",t,!0),Promise.resolve({xhr:e,licenseChallenge:i}))},t.requestLicense=function(e,t){var r=this,i=this.config.keyLoadPolicy.default
@@ -6250,43 +6263,43 @@ var l=o.response
 r.log("License received "+(l instanceof ArrayBuffer?l.byteLength:l))
 var u=r.config.licenseResponseCallback
 if(u)try{l=u.call(r.hls,o,s,e)}catch(e){r.error(e)}n(l)}else{var c=i.errorRetry,d=c?c.maxNumRetry:0
-if(r._requestLicenseFailureCount++,r._requestLicenseFailureCount>d||o.status>=400&&o.status<500)a(new aa({type:y.KEY_SYSTEM_ERROR,details:_.KEY_SYSTEM_LICENSE_REQUEST_FAILED,fatal:!0,networkDetails:o,response:{url:s,data:void 0,code:o.status,text:o.statusText}},"License Request XHR failed ("+s+"). Status: "+o.status+" ("+o.statusText+")"))
+if(r._requestLicenseFailureCount++,r._requestLicenseFailureCount>d||o.status>=400&&o.status<500)a(new oa({type:_.KEY_SYSTEM_ERROR,details:w.KEY_SYSTEM_LICENSE_REQUEST_FAILED,fatal:!0,networkDetails:o,response:{url:s,data:void 0,code:o.status,text:o.statusText}},"License Request XHR failed ("+s+"). Status: "+o.status+" ("+o.statusText+")"))
 else{var h=d-r._requestLicenseFailureCount+1
 r.warn("Retrying license request, "+h+" attempts left"),r.requestLicense(e,t).then(n,a)}}},e.licenseXhr&&e.licenseXhr.readyState!==XMLHttpRequest.DONE&&e.licenseXhr.abort(),e.licenseXhr=o,r.setupLicenseXHR(o,s,e,t).then((function(e){var t=e.xhr,r=e.licenseChallenge
 t.send(r)}))}))},t.onMediaAttached=function(e,t){if(this.config.emeEnabled){var r=t.media
 this.media=r,r.addEventListener("encrypted",this.onMediaEncrypted),r.addEventListener("waitingforkey",this.onWaitingForKey)}},t.onMediaDetached=function(){var t=this,r=this.media,i=this.mediaKeySessions
-r&&(r.removeEventListener("encrypted",this.onMediaEncrypted),r.removeEventListener("waitingforkey",this.onWaitingForKey),this.media=null),this._requestLicenseFailureCount=0,this.setMediaKeysQueue=[],this.mediaKeySessions=[],this.keyIdToKeySessionPromise={},Me.clearKeyUriToKeyIdMap()
+r&&(r.removeEventListener("encrypted",this.onMediaEncrypted),r.removeEventListener("waitingforkey",this.onWaitingForKey),this.media=null),this._requestLicenseFailureCount=0,this.setMediaKeysQueue=[],this.mediaKeySessions=[],this.keyIdToKeySessionPromise={},Ie.clearKeyUriToKeyIdMap()
 var n=i.length
-e.CDMCleanupPromise=Promise.all(i.map((function(e){return t.removeSession(e)})).concat(null==r?void 0:r.setMediaKeys(null).catch((function(e){t.log("Could not clear media keys: "+e+". media.src: "+(null==r?void 0:r.src))})))).then((function(){n&&(t.log("finished closing key sessions and clearing media keys"),i.length=0)})).catch((function(e){t.log("Could not close sessions and clear media keys: "+e+". media.src: "+(null==r?void 0:r.src))}))},t.onManifestLoaded=function(e,t){var r=t.sessionKeys
+e.CDMCleanupPromise=Promise.all(i.map((function(e){return t.removeSession(e)})).concat(null==r?void 0:r.setMediaKeys(null).catch((function(e){t.log("Could not clear media keys: "+e+". media.src: "+(null==r?void 0:r.src))})))).then((function(){n&&(t.log("finished closing key sessions and clearing media keys"),i.length=0)})).catch((function(e){t.log("Could not close sessions and clear media keys: "+e+". media.src: "+(null==r?void 0:r.src))}))},t.onManifestLoading=function(){this.keyFormatPromise=null},t.onManifestLoaded=function(e,t){var r=t.sessionKeys
 if(r&&this.config.emeEnabled&&!this.keyFormatPromise){var i=r.reduce((function(e,t){return-1===e.indexOf(t.keyFormat)&&e.push(t.keyFormat),e}),[])
 this.log("Selecting key-system from session-keys "+i.join(", ")),this.keyFormatPromise=this.getKeyFormatPromise(i)}},t.removeSession=function(e){var t=this,r=e.mediaKeysSession,i=e.licenseXhr
 if(r){this.log("Remove licenses and keys and close session "+r.sessionId),r.onmessage=null,r.onkeystatuseschange=null,i&&i.readyState!==XMLHttpRequest.DONE&&i.abort(),e.mediaKeysSession=e.decryptdata=e.licenseXhr=void 0
 var n=this.mediaKeySessions.indexOf(e)
 return n>-1&&this.mediaKeySessions.splice(n,1),r.remove().catch((function(e){t.log("Could not remove session: "+e)})).then((function(){return r.close()})).catch((function(e){t.log("Could not close session: "+e)}))}},e}()
-na.CDMCleanupPromise=void 0
-var aa=function(e){function t(t,r){var i
-return(i=e.call(this,r)||this).data=void 0,t.error||(t.error=new Error(r)),i.data=t,t.err=t.error,i}return l(t,e),t}(h(Error)),sa="a",oa="av",la=function(){function e(t){var r=this
-this.hls=void 0,this.config=void 0,this.media=void 0,this.sid=void 0,this.cid=void 0,this.useHeaders=!1,this.initialized=!1,this.starved=!1,this.buffering=!0,this.audioBuffer=void 0,this.videoBuffer=void 0,this.onWaiting=function(){r.initialized&&(r.starved=!0),r.buffering=!0},this.onPlaying=function(){r.initialized||(r.initialized=!0),r.buffering=!1},this.applyPlaylistData=function(e){try{r.apply(e,{ot:"m",su:!r.initialized})}catch(e){S.warn("Could not generate manifest CMCD data.",e)}},this.applyFragmentData=function(e){try{var t=e.frag,i=r.hls.levels[t.level],n=r.getObjectType(t),a={d:1e3*t.duration,ot:n}
-"v"!==n&&n!==sa&&n!=oa||(a.br=i.bitrate/1e3,a.tb=r.getTopBandwidth(n)/1e3,a.bl=r.getBufferLength(n)),r.apply(e,a)}catch(e){S.warn("Could not generate segment CMCD data.",e)}},this.hls=t
+sa.CDMCleanupPromise=void 0
+var oa=function(e){function t(t,r){var i
+return(i=e.call(this,r)||this).data=void 0,t.error||(t.error=new Error(r)),i.data=t,t.err=t.error,i}return l(t,e),t}(h(Error)),la="a",ua="av",ca=function(){function e(t){var r=this
+this.hls=void 0,this.config=void 0,this.media=void 0,this.sid=void 0,this.cid=void 0,this.useHeaders=!1,this.initialized=!1,this.starved=!1,this.buffering=!0,this.audioBuffer=void 0,this.videoBuffer=void 0,this.onWaiting=function(){r.initialized&&(r.starved=!0),r.buffering=!0},this.onPlaying=function(){r.initialized||(r.initialized=!0),r.buffering=!1},this.applyPlaylistData=function(e){try{r.apply(e,{ot:"m",su:!r.initialized})}catch(e){O.warn("Could not generate manifest CMCD data.",e)}},this.applyFragmentData=function(e){try{var t=e.frag,i=r.hls.levels[t.level],n=r.getObjectType(t),a={d:1e3*t.duration,ot:n}
+"v"!==n&&n!==la&&n!=ua||(a.br=i.bitrate/1e3,a.tb=r.getTopBandwidth(n)/1e3,a.bl=r.getBufferLength(n)),r.apply(e,a)}catch(e){O.warn("Could not generate segment CMCD data.",e)}},this.hls=t
 var i=this.config=t.config,n=i.cmcd
 null!=n&&(i.pLoader=this.createPlaylistLoader(),i.fLoader=this.createFragmentLoader(),this.sid=n.sessionId||e.uuid(),this.cid=n.contentId,this.useHeaders=!0===n.useHeaders,this.registerListeners())}var t=e.prototype
 return t.registerListeners=function(){var e=this.hls
-e.on(b.MEDIA_ATTACHED,this.onMediaAttached,this),e.on(b.MEDIA_DETACHED,this.onMediaDetached,this),e.on(b.BUFFER_CREATED,this.onBufferCreated,this)},t.unregisterListeners=function(){var e=this.hls
-e.off(b.MEDIA_ATTACHED,this.onMediaAttached,this),e.off(b.MEDIA_DETACHED,this.onMediaDetached,this),e.off(b.BUFFER_CREATED,this.onBufferCreated,this)},t.destroy=function(){this.unregisterListeners(),this.onMediaDetached(),this.hls=this.config=this.audioBuffer=this.videoBuffer=null},t.onMediaAttached=function(e,t){this.media=t.media,this.media.addEventListener("waiting",this.onWaiting),this.media.addEventListener("playing",this.onPlaying)},t.onMediaDetached=function(){this.media&&(this.media.removeEventListener("waiting",this.onWaiting),this.media.removeEventListener("playing",this.onPlaying),this.media=null)},t.onBufferCreated=function(e,t){var r,i
+e.on(y.MEDIA_ATTACHED,this.onMediaAttached,this),e.on(y.MEDIA_DETACHED,this.onMediaDetached,this),e.on(y.BUFFER_CREATED,this.onBufferCreated,this)},t.unregisterListeners=function(){var e=this.hls
+e.off(y.MEDIA_ATTACHED,this.onMediaAttached,this),e.off(y.MEDIA_DETACHED,this.onMediaDetached,this),e.off(y.BUFFER_CREATED,this.onBufferCreated,this)},t.destroy=function(){this.unregisterListeners(),this.onMediaDetached(),this.hls=this.config=this.audioBuffer=this.videoBuffer=null},t.onMediaAttached=function(e,t){this.media=t.media,this.media.addEventListener("waiting",this.onWaiting),this.media.addEventListener("playing",this.onPlaying)},t.onMediaDetached=function(){this.media&&(this.media.removeEventListener("waiting",this.onWaiting),this.media.removeEventListener("playing",this.onPlaying),this.media=null)},t.onBufferCreated=function(e,t){var r,i
 this.audioBuffer=null==(r=t.tracks.audio)?void 0:r.buffer,this.videoBuffer=null==(i=t.tracks.video)?void 0:i.buffer},t.createData=function(){var e
 return{v:1,sf:"h",sid:this.sid,cid:this.cid,pr:null==(e=this.media)?void 0:e.playbackRate,mtp:this.hls.bandwidthEstimate/1e3}},t.apply=function(t,r){void 0===r&&(r={}),o(r,this.createData())
-var i="i"===r.ot||"v"===r.ot||r.ot===oa
+var i="i"===r.ot||"v"===r.ot||r.ot===ua
 if(this.starved&&i&&(r.bs=!0,r.su=!0,this.starved=!1),null==r.su&&(r.su=this.buffering),this.useHeaders){var n=e.toHeaders(r)
 if(!Object.keys(n).length)return
 t.headers||(t.headers={}),o(t.headers,n)}else{var a=e.toQuery(r)
 if(!a)return
 t.url=e.appendQueryToUri(t.url,a)}},t.getObjectType=function(e){var t=e.type
-return"subtitle"===t?"tt":"initSegment"===e.sn?"i":"audio"===t?sa:"main"===t?this.hls.audioTracks.length?"v":oa:void 0},t.getTopBandwidth=function(e){var t,r=0,i=this.hls
-if(e===sa)t=i.audioTracks
+return"subtitle"===t?"tt":"initSegment"===e.sn?"i":"audio"===t?la:"main"===t?this.hls.audioTracks.length?"v":ua:void 0},t.getTopBandwidth=function(e){var t,r=0,i=this.hls
+if(e===la)t=i.audioTracks
 else{var n=i.maxAutoLevel,a=n>-1?n+1:i.levels.length
 t=i.levels.slice(0,a)}for(var s,o=p(t);!(s=o()).done;){var l=s.value
-l.bitrate>r&&(r=l.bitrate)}return r>0?r:NaN},t.getBufferLength=function(e){var t=this.hls.media,r=e===sa?this.audioBuffer:this.videoBuffer
-return r&&t?1e3*lr.bufferInfo(r,t.currentTime,this.config.maxBufferHole).len:NaN},t.createPlaylistLoader=function(){var e=this.config.pLoader,t=this.applyPlaylistData,r=e||this.config.loader
+l.bitrate>r&&(r=l.bitrate)}return r>0?r:NaN},t.getBufferLength=function(e){var t=this.hls.media,r=e===la?this.audioBuffer:this.videoBuffer
+return r&&t?1e3*dr.bufferInfo(r,t.currentTime,this.config.maxBufferHole).len:NaN},t.createPlaylistLoader=function(){var e=this.config.pLoader,t=this.applyPlaylistData,r=e||this.config.loader
 return function(){function e(e){this.loader=void 0,this.loader=new r(e)}var i=e.prototype
 return i.destroy=function(){this.loader.destroy()},i.abort=function(){this.loader.abort()},i.load=function(e,r,i){t(e),this.loader.load(e,r,i)},a(e,[{key:"stats",get:function(){return this.loader.stats}},{key:"context",get:function(){return this.loader.context}}]),e}()},t.createFragmentLoader=function(){var e=this.config.fLoader,t=this.applyFragmentData,r=e||this.config.loader
 return function(){function e(e){this.loader=void 0,this.loader=new r(e)}var i=e.prototype
@@ -6299,10 +6312,10 @@ d="ot"===l||"sf"===l||"st"===l?l+"="+u:"boolean"===h?l:"number"===h?l+"="+u:l+"=
 n[null!=a[l]?a[l]:1][l]=t[l]}for(var u=0;u<n.length;u++){var c=e.serialize(n[u])
 c&&(r["CMCD-"+i[u]]=c)}return r},e.toQuery=function(t){return"CMCD="+encodeURIComponent(e.serialize(t))},e.appendQueryToUri=function(e,t){if(!t)return e
 var r=e.includes("?")?"&":"?"
-return""+e+r+t},e}(),ua=function(){function e(e){this.hls=void 0,this.log=void 0,this.loader=null,this.uri=null,this.pathwayId=".",this.pathwayPriority=null,this.timeToLoad=300,this.reloadTimer=-1,this.updated=0,this.started=!1,this.enabled=!0,this.levels=null,this.audioTracks=null,this.subtitleTracks=null,this.penalizedPathways={},this.hls=e,this.log=S.log.bind(S,"[content-steering]:"),this.registerListeners()}var t=e.prototype
+return""+e+r+t},e}(),da=function(){function e(e){this.hls=void 0,this.log=void 0,this.loader=null,this.uri=null,this.pathwayId=".",this.pathwayPriority=null,this.timeToLoad=300,this.reloadTimer=-1,this.updated=0,this.started=!1,this.enabled=!0,this.levels=null,this.audioTracks=null,this.subtitleTracks=null,this.penalizedPathways={},this.hls=e,this.log=O.log.bind(O,"[content-steering]:"),this.registerListeners()}var t=e.prototype
 return t.registerListeners=function(){var e=this.hls
-e.on(b.MANIFEST_LOADING,this.onManifestLoading,this),e.on(b.MANIFEST_LOADED,this.onManifestLoaded,this),e.on(b.MANIFEST_PARSED,this.onManifestParsed,this),e.on(b.ERROR,this.onError,this)},t.unregisterListeners=function(){var e=this.hls
-e&&(e.off(b.MANIFEST_LOADING,this.onManifestLoading,this),e.off(b.MANIFEST_LOADED,this.onManifestLoaded,this),e.off(b.MANIFEST_PARSED,this.onManifestParsed,this),e.off(b.ERROR,this.onError,this))},t.startLoad=function(){if(this.started=!0,self.clearTimeout(this.reloadTimer),this.enabled&&this.uri)if(this.updated){var e=Math.max(1e3*this.timeToLoad-(performance.now()-this.updated),0)
+e.on(y.MANIFEST_LOADING,this.onManifestLoading,this),e.on(y.MANIFEST_LOADED,this.onManifestLoaded,this),e.on(y.MANIFEST_PARSED,this.onManifestParsed,this),e.on(y.ERROR,this.onError,this)},t.unregisterListeners=function(){var e=this.hls
+e&&(e.off(y.MANIFEST_LOADING,this.onManifestLoading,this),e.off(y.MANIFEST_LOADED,this.onManifestLoaded,this),e.off(y.MANIFEST_PARSED,this.onManifestParsed,this),e.off(y.ERROR,this.onError,this))},t.startLoad=function(){if(this.started=!0,self.clearTimeout(this.reloadTimer),this.enabled&&this.uri)if(this.updated){var e=Math.max(1e3*this.timeToLoad-(performance.now()-this.updated),0)
 this.scheduleRefresh(this.uri,e)}else this.loadSteeringManifest(this.uri)},t.stopLoad=function(){this.started=!1,this.loader&&(this.loader.destroy(),this.loader=null),self.clearTimeout(this.reloadTimer)},t.destroy=function(){this.unregisterListeners(),this.stopLoad(),this.hls=null,this.levels=this.audioTracks=this.subtitleTracks=null},t.removeLevel=function(e){var t=this.levels
 t&&(this.levels=t.filter((function(t){return t!==e})))},t.onManifestLoading=function(){this.stopLoad(),this.enabled=!0,this.timeToLoad=300,this.updated=0,this.uri=null,this.pathwayId=".",this.levels=this.audioTracks=this.subtitleTracks=null},t.onManifestLoaded=function(e,t){var r=t.contentSteering
 null!==r&&(this.pathwayId=r.pathwayId,this.uri=r.uri,this.started&&this.startLoad())},t.onManifestParsed=function(e,t){this.audioTracks=t.audioTracks,this.subtitleTracks=t.subtitleTracks},t.onError=function(e,t){var r=t.errorAction
@@ -6317,21 +6330,21 @@ Object.keys(r).forEach((function(e){i-r[e]>3e5&&delete r[e]}))
 for(var n=0;n<e.length;n++){var a=e[n]
 if(!r[a]){if(a===this.pathwayId)return
 var s=this.hls.nextLoadLevel,o=this.hls.levels[s]
-if((t=this.getLevelsForPathway(a)).length>0){this.log('Setting Pathway to "'+a+'"'),this.pathwayId=a,this.hls.trigger(b.LEVELS_UPDATED,{levels:t})
+if((t=this.getLevelsForPathway(a)).length>0){this.log('Setting Pathway to "'+a+'"'),this.pathwayId=a,this.hls.trigger(y.LEVELS_UPDATED,{levels:t})
 var l=this.hls.levels[s]
 o&&l&&this.levels&&(l.attrs["STABLE-VARIANT-ID"]!==o.attrs["STABLE-VARIANT-ID"]&&l.bitrate!==o.bitrate&&this.log("Unstable Pathways change from bitrate "+o.bitrate+" to "+l.bitrate),this.hls.nextLoadLevel=s)
 break}}}},t.clonePathways=function(e){var t=this,r=this.levels
 if(r){var i={},n={}
 e.forEach((function(e){var a=e.ID,s=e["BASE-ID"],l=e["URI-REPLACEMENT"]
 if(!r.some((function(e){return e.pathwayId===a}))){var u=t.getLevelsForPathway(s).map((function(e){var t=o({},e)
-t.details=void 0,t.url=da(e.uri,e.attrs["STABLE-VARIANT-ID"],"PER-VARIANT-URIS",l)
-var r=new P(e.attrs)
+t.details=void 0,t.url=fa(e.uri,e.attrs["STABLE-VARIANT-ID"],"PER-VARIANT-URIS",l)
+var r=new A(e.attrs)
 r["PATHWAY-ID"]=a
 var s=r.AUDIO&&r.AUDIO+"_clone_"+a,u=r.SUBTITLES&&r.SUBTITLES+"_clone_"+a
 s&&(i[r.AUDIO]=s,r.AUDIO=s),u&&(n[r.SUBTITLES]=u,r.SUBTITLES=u),t.attrs=r
-var c=new kt(t)
-return qt(c,"audio",s),qt(c,"text",u),c}))
-r.push.apply(r,u),ca(t.audioTracks,i,l,a),ca(t.subtitleTracks,n,l,a)}}))}},t.loadSteeringManifest=function(e){var t,r=this,i=this.hls.config,n=i.loader
+var c=new xt(t)
+return Wt(c,"audio",s),Wt(c,"text",u),c}))
+r.push.apply(r,u),ha(t.audioTracks,i,l,a),ha(t.subtitleTracks,n,l,a)}}))}},t.loadSteeringManifest=function(e){var t,r=this,i=this.hls.config,n=i.loader
 this.loader&&this.loader.destroy(),this.loader=new n(i)
 try{t=new self.URL(e)}catch(t){return this.enabled=!1,void this.log("Failed to parse Steering Manifest URI: "+e)}if("data:"!==t.protocol){var a=0|(this.hls.bandwidthEstimate||i.abrEwmaDefaultEstimate)
 t.searchParams.set("_HLS_pathway",this.pathwayId),t.searchParams.set("_HLS_throughput",""+a)}var s={responseType:"json",url:t.href},o=i.steeringManifestLoadPolicy.default,l=o.errorRetry||o.timeoutRetry||{},u={loadPolicy:o,timeout:o.maxLoadTimeMs,maxRetry:l.maxNumRetry||0,retryDelay:l.retryDelayMs||0,maxRetryDelay:l.maxRetryDelayMs||0},c={onSuccess:function(e,i,n,a){r.log('Loaded steering manifest: "'+t+'"')
@@ -6346,12 +6359,12 @@ if("function"==typeof(null==s?void 0:s.getResponseHeader)){var o=s.getResponseHe
 o&&(a=1e3*parseFloat(o))}r.log("Steering manifest "+t.url+" rate limited")}},onTimeout:function(e,t,i){r.log("Timeout loading steering manifest ("+t.url+")"),r.scheduleRefresh(r.uri||t.url)}}
 this.log("Requesting steering manifest: "+t),this.loader.load(s,u,c)},t.scheduleRefresh=function(e,t){var r=this
 void 0===t&&(t=1e3*this.timeToLoad),self.clearTimeout(this.reloadTimer),this.reloadTimer=self.setTimeout((function(){r.loadSteeringManifest(e)}),t)},e}()
-function ca(e,t,r,i){e&&Object.keys(t).forEach((function(n){var a=e.filter((function(e){return e.groupId===n})).map((function(e){var a=o({},e)
-return a.details=void 0,a.attrs=new P(a.attrs),a.url=a.attrs.URI=da(e.url,e.attrs["STABLE-RENDITION-ID"],"PER-RENDITION-URIS",r),a.groupId=a.attrs["GROUP-ID"]=t[n],a.attrs["PATHWAY-ID"]=i,a}))
-e.push.apply(e,a)}))}function da(e,t,r,i){var n,a=i.HOST,s=i.PARAMS,o=i[r]
+function ha(e,t,r,i){e&&Object.keys(t).forEach((function(n){var a=e.filter((function(e){return e.groupId===n})).map((function(e){var a=o({},e)
+return a.details=void 0,a.attrs=new A(a.attrs),a.url=a.attrs.URI=fa(e.url,e.attrs["STABLE-RENDITION-ID"],"PER-RENDITION-URIS",r),a.groupId=a.attrs["GROUP-ID"]=t[n],a.attrs["PATHWAY-ID"]=i,a}))
+e.push.apply(e,a)}))}function fa(e,t,r,i){var n,a=i.HOST,s=i.PARAMS,o=i[r]
 t&&(n=null==o?void 0:o[t])&&(e=n)
 var l=new self.URL(e)
-return a&&!n&&(l.host=a),s&&Object.keys(s).sort().forEach((function(e){e&&l.searchParams.set(e,s[e])})),l.href}var ha=/^age:\s*[\d.]+\s*$/im,fa=function(){function e(e){this.xhrSetup=void 0,this.requestTimeout=void 0,this.retryTimeout=void 0,this.retryDelay=void 0,this.config=null,this.callbacks=null,this.context=void 0,this.loader=null,this.stats=void 0,this.xhrSetup=e&&e.xhrSetup||null,this.stats=new C,this.retryDelay=0}var t=e.prototype
+return a&&!n&&(l.host=a),s&&Object.keys(s).sort().forEach((function(e){e&&l.searchParams.set(e,s[e])})),l.href}var pa=/^age:\s*[\d.]+\s*$/im,ma=function(){function e(e){this.xhrSetup=void 0,this.requestTimeout=void 0,this.retryTimeout=void 0,this.retryDelay=void 0,this.config=null,this.callbacks=null,this.context=void 0,this.loader=null,this.stats=void 0,this.xhrSetup=e&&e.xhrSetup||null,this.stats=new D,this.retryDelay=0}var t=e.prototype
 return t.destroy=function(){this.callbacks=null,this.abortInternal(),this.loader=null,this.config=null},t.abortInternal=function(){var e=this.loader
 self.clearTimeout(this.requestTimeout),self.clearTimeout(this.retryTimeout),e&&(e.onreadystatechange=null,e.onprogress=null,4!==e.readyState&&(this.stats.aborted=!0,e.abort()))},t.abort=function(){var e
 this.abortInternal(),null!=(e=this.callbacks)&&e.onAbort&&this.callbacks.onAbort(this.stats,this.context,this.loader)},t.load=function(e,t,r){if(this.stats.loading.start)throw new Error("Loader can only be used once.")
@@ -6362,7 +6375,7 @@ var a=this.xhrSetup
 a?Promise.resolve().then((function(){if(!e.stats.aborted)return a(i,r.url)})).catch((function(e){return i.open("GET",r.url,!0),a(i,r.url)})).then((function(){e.stats.aborted||e.openAndSendXhr(i,r,t)})).catch((function(t){e.callbacks.onError({code:i.status,text:t.message},r,i,n)})):this.openAndSendXhr(i,r,t)}},t.openAndSendXhr=function(e,t,r){e.readyState||e.open("GET",t.url,!0)
 var i=this.context.headers,n=r.loadPolicy,a=n.maxTimeToFirstByteMs,s=n.maxLoadTimeMs
 if(i)for(var o in i)e.setRequestHeader(o,i[o])
-t.rangeEnd&&e.setRequestHeader("Range","bytes="+t.rangeStart+"-"+(t.rangeEnd-1)),e.onreadystatechange=this.readystatechange.bind(this),e.onprogress=this.loadprogress.bind(this),e.responseType=t.responseType,self.clearTimeout(this.requestTimeout),r.timeout=a&&v(a)?a:s,this.requestTimeout=self.setTimeout(this.loadtimeout.bind(this),r.timeout),e.send()},t.readystatechange=function(){var e=this.context,t=this.loader,r=this.stats
+t.rangeEnd&&e.setRequestHeader("Range","bytes="+t.rangeStart+"-"+(t.rangeEnd-1)),e.onreadystatechange=this.readystatechange.bind(this),e.onprogress=this.loadprogress.bind(this),e.responseType=t.responseType,self.clearTimeout(this.requestTimeout),r.timeout=a&&b(a)?a:s,this.requestTimeout=self.setTimeout(this.loadtimeout.bind(this),r.timeout),e.send()},t.readystatechange=function(){var e=this.context,t=this.loader,r=this.stats
 if(e&&t){var i=t.readyState,n=this.config
 if(!r.aborted&&i>=2&&(0===r.loading.first&&(r.loading.first=Math.max(self.performance.now(),r.loading.start),n.timeout!==n.loadPolicy.maxLoadTimeMs&&(self.clearTimeout(this.requestTimeout),n.timeout=n.loadPolicy.maxLoadTimeMs,this.requestTimeout=self.setTimeout(this.loadtimeout.bind(this),n.loadPolicy.maxLoadTimeMs-(r.loading.first-r.loading.start)))),4===i)){self.clearTimeout(this.requestTimeout),t.onreadystatechange=null,t.onprogress=null
 var a=t.status,s="text"!==t.responseType
@@ -6373,15 +6386,15 @@ var u=this.callbacks.onProgress
 if(u&&u(r,e,o,t),!this.callbacks)return
 var c={url:t.responseURL,data:o,code:a}
 this.callbacks.onSuccess(c,r,e,t)}else{var d=n.loadPolicy.errorRetry
-jt(d,r.retry,!1,a)?this.retry(d):(S.error(a+" while loading "+e.url),this.callbacks.onError({code:a,text:t.statusText},e,t,r))}}}},t.loadtimeout=function(){var e,t=null==(e=this.config)?void 0:e.loadPolicy.timeoutRetry
-if(jt(t,this.stats.retry,!0))this.retry(t)
-else{S.warn("timeout while loading "+this.context.url)
+zt(d,r.retry,!1,a)?this.retry(d):(O.error(a+" while loading "+e.url),this.callbacks.onError({code:a,text:t.statusText},e,t,r))}}}},t.loadtimeout=function(){var e,t=null==(e=this.config)?void 0:e.loadPolicy.timeoutRetry
+if(zt(t,this.stats.retry,!0))this.retry(t)
+else{O.warn("timeout while loading "+this.context.url)
 var r=this.callbacks
 r&&(this.abortInternal(),r.onTimeout(this.stats,this.context,this.loader))}},t.retry=function(e){var t=this.context,r=this.stats
-this.retryDelay=It(e,r.retry),r.retry++,S.warn((status?"HTTP Status "+status:"Timeout")+" while loading "+t.url+", retrying "+r.retry+"/"+e.maxNumRetry+" in "+this.retryDelay+"ms"),this.abortInternal(),this.loader=null,self.clearTimeout(this.retryTimeout),this.retryTimeout=self.setTimeout(this.loadInternal.bind(this),this.retryDelay)},t.loadprogress=function(e){var t=this.stats
+this.retryDelay=Ft(e,r.retry),r.retry++,O.warn((status?"HTTP Status "+status:"Timeout")+" while loading "+t.url+", retrying "+r.retry+"/"+e.maxNumRetry+" in "+this.retryDelay+"ms"),this.abortInternal(),this.loader=null,self.clearTimeout(this.retryTimeout),this.retryTimeout=self.setTimeout(this.loadInternal.bind(this),this.retryDelay)},t.loadprogress=function(e){var t=this.stats
 t.loaded=e.loaded,e.lengthComputable&&(t.total=e.total)},t.getCacheAge=function(){var e=null
-if(this.loader&&ha.test(this.loader.getAllResponseHeaders())){var t=this.loader.getResponseHeader("age")
-e=t?parseFloat(t):null}return e},t.getResponseHeader=function(e){return this.loader&&new RegExp("^"+e+":\\s*[\\d.]+\\s*$","im").test(this.loader.getAllResponseHeaders())?this.loader.getResponseHeader(e):null},e}(),pa=/(\d+)-(\d+)\/(\d+)/,ma=function(){function e(e){this.fetchSetup=void 0,this.requestTimeout=void 0,this.request=void 0,this.response=void 0,this.controller=void 0,this.context=void 0,this.config=null,this.callbacks=null,this.stats=void 0,this.loader=null,this.fetchSetup=e.fetchSetup||ga,this.controller=new self.AbortController,this.stats=new C}var t=e.prototype
+if(this.loader&&pa.test(this.loader.getAllResponseHeaders())){var t=this.loader.getResponseHeader("age")
+e=t?parseFloat(t):null}return e},t.getResponseHeader=function(e){return this.loader&&new RegExp("^"+e+":\\s*[\\d.]+\\s*$","im").test(this.loader.getAllResponseHeaders())?this.loader.getResponseHeader(e):null},e}(),ga=/(\d+)-(\d+)\/(\d+)/,va=function(){function e(e){this.fetchSetup=void 0,this.requestTimeout=void 0,this.request=void 0,this.response=void 0,this.controller=void 0,this.context=void 0,this.config=null,this.callbacks=null,this.stats=void 0,this.loader=null,this.fetchSetup=e.fetchSetup||ba,this.controller=new self.AbortController,this.stats=new D}var t=e.prototype
 return t.destroy=function(){this.loader=this.callbacks=null,this.abortInternal()},t.abortInternal=function(){var e=this.response
 null!=e&&e.ok||(this.stats.aborted=!0,this.controller.abort())},t.abort=function(){var e
 this.abortInternal(),null!=(e=this.callbacks)&&e.onAbort&&this.callbacks.onAbort(this.stats,this.context,this.response)},t.load=function(e,t,r){var i=this,n=this.stats
@@ -6389,36 +6402,36 @@ if(n.loading.start)throw new Error("Loader can only be used once.")
 n.loading.start=self.performance.now()
 var a=function(e,t){var r={method:"GET",mode:"cors",credentials:"same-origin",signal:t,headers:new self.Headers(o({},e.headers))}
 return e.rangeEnd&&r.headers.set("Range","bytes="+e.rangeStart+"-"+String(e.rangeEnd-1)),r}(e,this.controller.signal),s=r.onProgress,l="arraybuffer"===e.responseType,u=l?"byteLength":"length",c=t.loadPolicy,d=c.maxTimeToFirstByteMs,h=c.maxLoadTimeMs
-this.context=e,this.config=t,this.callbacks=r,this.request=this.fetchSetup(e,a),self.clearTimeout(this.requestTimeout),t.timeout=d&&v(d)?d:h,this.requestTimeout=self.setTimeout((function(){i.abortInternal(),r.onTimeout(n,e,i.response)}),t.timeout),self.fetch(this.request).then((function(a){i.response=i.loader=a
+this.context=e,this.config=t,this.callbacks=r,this.request=this.fetchSetup(e,a),self.clearTimeout(this.requestTimeout),t.timeout=d&&b(d)?d:h,this.requestTimeout=self.setTimeout((function(){i.abortInternal(),r.onTimeout(n,e,i.response)}),t.timeout),self.fetch(this.request).then((function(a){i.response=i.loader=a
 var o=Math.max(self.performance.now(),n.loading.start)
 if(self.clearTimeout(i.requestTimeout),t.timeout=h,i.requestTimeout=self.setTimeout((function(){i.abortInternal(),r.onTimeout(n,e,i.response)}),h-(o-n.loading.start)),!a.ok){var u=a.status,c=a.statusText
-throw new va(c||"fetch, bad network response",u,a)}return n.loading.first=o,n.total=function(e){var t=e.get("Content-Range")
-if(t){var r=function(e){var t=pa.exec(e)
+throw new ya(c||"fetch, bad network response",u,a)}return n.loading.first=o,n.total=function(e){var t=e.get("Content-Range")
+if(t){var r=function(e){var t=ga.exec(e)
 if(t)return parseInt(t[2])-parseInt(t[1])+1}(t)
-if(v(r))return r}var i=e.get("Content-Length")
-if(i)return parseInt(i)}(a.headers)||n.total,s&&v(t.highWaterMark)?i.loadProgressively(a,n,e,t.highWaterMark,s):l?a.arrayBuffer():"json"===e.responseType?a.json():a.text()})).then((function(a){var o=i.response
+if(b(r))return r}var i=e.get("Content-Length")
+if(i)return parseInt(i)}(a.headers)||n.total,s&&b(t.highWaterMark)?i.loadProgressively(a,n,e,t.highWaterMark,s):l?a.arrayBuffer():"json"===e.responseType?a.json():a.text()})).then((function(a){var o=i.response
 self.clearTimeout(i.requestTimeout),n.loading.end=Math.max(self.performance.now(),n.loading.first)
 var l=a[u]
 l&&(n.loaded=n.total=l)
 var c={url:o.url,data:a,code:o.status}
-s&&!v(t.highWaterMark)&&s(n,e,a,o),r.onSuccess(c,n,e,o)})).catch((function(t){if(self.clearTimeout(i.requestTimeout),!n.aborted){var a=t&&t.code||0,s=t?t.message:null
+s&&!b(t.highWaterMark)&&s(n,e,a,o),r.onSuccess(c,n,e,o)})).catch((function(t){if(self.clearTimeout(i.requestTimeout),!n.aborted){var a=t&&t.code||0,s=t?t.message:null
 r.onError({code:a,text:s},e,t?t.details:null,n)}}))},t.getCacheAge=function(){var e=null
 if(this.response){var t=this.response.headers.get("age")
 e=t?parseFloat(t):null}return e},t.getResponseHeader=function(e){return this.response?this.response.headers.get(e):null},t.loadProgressively=function(e,t,r,i,n){void 0===i&&(i=0)
-var a=new Wi,s=e.body.getReader()
+var a=new Qi,s=e.body.getReader()
 return function o(){return s.read().then((function(s){if(s.done)return a.dataLength&&n(t,r,a.flush(),e),Promise.resolve(new ArrayBuffer(0))
 var l=s.value,u=l.length
 return t.loaded+=u,u<i||a.dataLength?(a.push(l),a.dataLength>=i&&n(t,r,a.flush(),e)):n(t,r,l,e),o()})).catch((function(){return Promise.reject()}))}()},e}()
-function ga(e,t){return new self.Request(e.url,t)}var va=function(e){function t(t,r,i){var n
-return(n=e.call(this,t)||this).code=void 0,n.details=void 0,n.code=r,n.details=i,n}return l(t,e),t}(h(Error)),ba=/\s/,ya=i(i({autoStartLoad:!0,startPosition:-1,defaultAudioCodec:void 0,debug:!1,capLevelOnFPSDrop:!1,capLevelToPlayerSize:!1,ignoreDevicePixelRatio:!1,initialLiveManifestSize:1,maxBufferLength:30,backBufferLength:1/0,maxBufferSize:6e7,maxBufferHole:.1,highBufferWatchdogPeriod:2,nudgeOffset:.1,nudgeMaxRetry:3,maxFragLookUpTolerance:.25,liveSyncDurationCount:3,liveMaxLatencyDurationCount:1/0,liveSyncDuration:void 0,liveMaxLatencyDuration:void 0,maxLiveSyncPlaybackRate:1,liveDurationInfinity:!1,liveBackBufferLength:null,maxMaxBufferLength:600,enableWorker:!0,workerPath:null,enableSoftwareAES:!0,startLevel:void 0,startFragPrefetch:!1,fpsDroppedMonitoringPeriod:5e3,fpsDroppedMonitoringThreshold:.2,appendErrorMaxRetry:3,loader:fa,fLoader:void 0,pLoader:void 0,xhrSetup:void 0,licenseXhrSetup:void 0,licenseResponseCallback:void 0,abrController:Ki,bufferController:on,capLevelController:ta,errorController:Ht,fpsController:ra,stretchShortVideoTrack:!1,maxAudioFramesDrift:1,forceKeyFrameOnDiscontinuity:!0,abrEwmaFastLive:3,abrEwmaSlowLive:9,abrEwmaFastVoD:3,abrEwmaSlowVoD:9,abrEwmaDefaultEstimate:5e5,abrBandWidthFactor:.95,abrBandWidthUpFactor:.7,abrMaxWithRealBitrate:!1,maxStarvationDelay:4,maxLoadingDelay:4,minAutoBitrate:0,emeEnabled:!1,widevineLicenseUrl:void 0,drmSystems:{},drmSystemOptions:{},requestMediaKeySystemAccessFunc:Q,testBandwidth:!0,progressive:!1,lowLatencyMode:!0,cmcd:void 0,enableDateRangeMetadataCues:!0,enableEmsgMetadataCues:!0,enableID3MetadataCues:!0,certLoadPolicy:{default:{maxTimeToFirstByteMs:8e3,maxLoadTimeMs:2e4,timeoutRetry:null,errorRetry:null}},keyLoadPolicy:{default:{maxTimeToFirstByteMs:8e3,maxLoadTimeMs:2e4,timeoutRetry:{maxNumRetry:1,retryDelayMs:1e3,maxRetryDelayMs:2e4,backoff:"linear"},errorRetry:{maxNumRetry:8,retryDelayMs:1e3,maxRetryDelayMs:2e4,backoff:"linear"}}},manifestLoadPolicy:{default:{maxTimeToFirstByteMs:1/0,maxLoadTimeMs:2e4,timeoutRetry:{maxNumRetry:2,retryDelayMs:0,maxRetryDelayMs:0},errorRetry:{maxNumRetry:1,retryDelayMs:1e3,maxRetryDelayMs:8e3}}},playlistLoadPolicy:{default:{maxTimeToFirstByteMs:1e4,maxLoadTimeMs:2e4,timeoutRetry:{maxNumRetry:2,retryDelayMs:0,maxRetryDelayMs:0},errorRetry:{maxNumRetry:2,retryDelayMs:1e3,maxRetryDelayMs:8e3}}},fragLoadPolicy:{default:{maxTimeToFirstByteMs:1e4,maxLoadTimeMs:12e4,timeoutRetry:{maxNumRetry:4,retryDelayMs:0,maxRetryDelayMs:0},errorRetry:{maxNumRetry:6,retryDelayMs:1e3,maxRetryDelayMs:8e3}}},steeringManifestLoadPolicy:{default:{maxTimeToFirstByteMs:1e4,maxLoadTimeMs:2e4,timeoutRetry:{maxNumRetry:2,retryDelayMs:0,maxRetryDelayMs:0},errorRetry:{maxNumRetry:1,retryDelayMs:1e3,maxRetryDelayMs:8e3}}},manifestLoadingTimeOut:1e4,manifestLoadingMaxRetry:1,manifestLoadingRetryDelay:1e3,manifestLoadingMaxRetryTimeout:64e3,levelLoadingTimeOut:1e4,levelLoadingMaxRetry:4,levelLoadingRetryDelay:1e3,levelLoadingMaxRetryTimeout:64e3,fragLoadingTimeOut:2e4,fragLoadingMaxRetry:6,fragLoadingRetryDelay:1e3,fragLoadingMaxRetryTimeout:64e3},{cueHandler:{newCue:function(e,t,r,i){for(var n,a,s,o,l,u=[],c=self.VTTCue||self.TextTrackCue,d=0;d<i.rows.length;d++)if(s=!0,o=0,l="",!(n=i.rows[d]).isEmpty()){for(var h,f=0;f<n.chars.length;f++)ba.test(n.chars[f].uchar)&&s?o++:(l+=n.chars[f].uchar,s=!1)
+function ba(e,t){return new self.Request(e.url,t)}var ya=function(e){function t(t,r,i){var n
+return(n=e.call(this,t)||this).code=void 0,n.details=void 0,n.code=r,n.details=i,n}return l(t,e),t}(h(Error)),_a=/\s/,wa=i(i({autoStartLoad:!0,startPosition:-1,defaultAudioCodec:void 0,debug:!1,capLevelOnFPSDrop:!1,capLevelToPlayerSize:!1,ignoreDevicePixelRatio:!1,initialLiveManifestSize:1,maxBufferLength:30,backBufferLength:1/0,maxBufferSize:6e7,maxBufferHole:.1,highBufferWatchdogPeriod:2,nudgeOffset:.1,nudgeMaxRetry:3,maxFragLookUpTolerance:.25,liveSyncDurationCount:3,liveMaxLatencyDurationCount:1/0,liveSyncDuration:void 0,liveMaxLatencyDuration:void 0,maxLiveSyncPlaybackRate:1,liveDurationInfinity:!1,liveBackBufferLength:null,maxMaxBufferLength:600,enableWorker:!0,workerPath:null,enableSoftwareAES:!0,startLevel:void 0,startFragPrefetch:!1,fpsDroppedMonitoringPeriod:5e3,fpsDroppedMonitoringThreshold:.2,appendErrorMaxRetry:3,loader:ma,fLoader:void 0,pLoader:void 0,xhrSetup:void 0,licenseXhrSetup:void 0,licenseResponseCallback:void 0,abrController:Yi,bufferController:un,capLevelController:ia,errorController:qt,fpsController:na,stretchShortVideoTrack:!1,maxAudioFramesDrift:1,forceKeyFrameOnDiscontinuity:!0,abrEwmaFastLive:3,abrEwmaSlowLive:9,abrEwmaFastVoD:3,abrEwmaSlowVoD:9,abrEwmaDefaultEstimate:5e5,abrBandWidthFactor:.95,abrBandWidthUpFactor:.7,abrMaxWithRealBitrate:!1,maxStarvationDelay:4,maxLoadingDelay:4,minAutoBitrate:0,emeEnabled:!1,widevineLicenseUrl:void 0,drmSystems:{},drmSystemOptions:{},requestMediaKeySystemAccessFunc:X,testBandwidth:!0,progressive:!1,lowLatencyMode:!0,cmcd:void 0,enableDateRangeMetadataCues:!0,enableEmsgMetadataCues:!0,enableID3MetadataCues:!0,certLoadPolicy:{default:{maxTimeToFirstByteMs:8e3,maxLoadTimeMs:2e4,timeoutRetry:null,errorRetry:null}},keyLoadPolicy:{default:{maxTimeToFirstByteMs:8e3,maxLoadTimeMs:2e4,timeoutRetry:{maxNumRetry:1,retryDelayMs:1e3,maxRetryDelayMs:2e4,backoff:"linear"},errorRetry:{maxNumRetry:8,retryDelayMs:1e3,maxRetryDelayMs:2e4,backoff:"linear"}}},manifestLoadPolicy:{default:{maxTimeToFirstByteMs:1/0,maxLoadTimeMs:2e4,timeoutRetry:{maxNumRetry:2,retryDelayMs:0,maxRetryDelayMs:0},errorRetry:{maxNumRetry:1,retryDelayMs:1e3,maxRetryDelayMs:8e3}}},playlistLoadPolicy:{default:{maxTimeToFirstByteMs:1e4,maxLoadTimeMs:2e4,timeoutRetry:{maxNumRetry:2,retryDelayMs:0,maxRetryDelayMs:0},errorRetry:{maxNumRetry:2,retryDelayMs:1e3,maxRetryDelayMs:8e3}}},fragLoadPolicy:{default:{maxTimeToFirstByteMs:1e4,maxLoadTimeMs:12e4,timeoutRetry:{maxNumRetry:4,retryDelayMs:0,maxRetryDelayMs:0},errorRetry:{maxNumRetry:6,retryDelayMs:1e3,maxRetryDelayMs:8e3}}},steeringManifestLoadPolicy:{default:{maxTimeToFirstByteMs:1e4,maxLoadTimeMs:2e4,timeoutRetry:{maxNumRetry:2,retryDelayMs:0,maxRetryDelayMs:0},errorRetry:{maxNumRetry:1,retryDelayMs:1e3,maxRetryDelayMs:8e3}}},manifestLoadingTimeOut:1e4,manifestLoadingMaxRetry:1,manifestLoadingRetryDelay:1e3,manifestLoadingMaxRetryTimeout:64e3,levelLoadingTimeOut:1e4,levelLoadingMaxRetry:4,levelLoadingRetryDelay:1e3,levelLoadingMaxRetryTimeout:64e3,fragLoadingTimeOut:2e4,fragLoadingMaxRetry:6,fragLoadingRetryDelay:1e3,fragLoadingMaxRetryTimeout:64e3},{cueHandler:{newCue:function(e,t,r,i){for(var n,a,s,o,l,u=[],c=self.VTTCue||self.TextTrackCue,d=0;d<i.rows.length;d++)if(s=!0,o=0,l="",!(n=i.rows[d]).isEmpty()){for(var h,f=0;f<n.chars.length;f++)_a.test(n.chars[f].uchar)&&s?o++:(l+=n.chars[f].uchar,s=!1)
 n.cueStartTime=t,t===r&&(r+=1e-4),o>=16?o--:o++
-var p=jn(l.trim()),m=Bn(t,r,p)
-null!=e&&null!=(h=e.cues)&&h.getCueById(m)||((a=new c(t,r,p)).id=m,a.line=d+1,a.align="left",a.position=10+Math.min(80,10*Math.floor(8*o/32)),u.push(a))}return e&&u.length&&(u.sort((function(e,t){return"auto"===e.line||"auto"===t.line?0:e.line>8&&t.line>8?t.line-e.line:e.line-t.line})),u.forEach((function(t){return ht(e,t)}))),u}},enableWebVTT:!0,enableIMSC1:!0,enableCEA708Captions:!0,captionsTextTrack1Label:"English",captionsTextTrack1LanguageCode:"en",captionsTextTrack2Label:"Spanish",captionsTextTrack2LanguageCode:"es",captionsTextTrack3Label:"Unknown CC",captionsTextTrack3LanguageCode:"",captionsTextTrack4Label:"Unknown CC",captionsTextTrack4LanguageCode:"",renderTextTracksNatively:!0}),{},{subtitleStreamController:Zi,subtitleTrackController:tn,timelineController:Zn,audioStreamController:Yi,audioTrackController:Qi,emeController:na,cmcdController:la,contentSteeringController:ua})
-function _a(e){return e&&"object"==typeof e?Array.isArray(e)?e.map(_a):Object.keys(e).reduce((function(t,r){return t[r]=_a(e[r]),t}),{}):e}var wa=function(){function e(t){void 0===t&&(t={}),this.config=void 0,this.userConfig=void 0,this.coreComponents=void 0,this.networkControllers=void 0,this._emitter=new Fi,this._autoLevelCapping=void 0,this._maxHdcpLevel=null,this.abrController=void 0,this.bufferController=void 0,this.capLevelController=void 0,this.latencyController=void 0,this.levelController=void 0,this.streamController=void 0,this.audioTrackController=void 0,this.subtitleTrackController=void 0,this.emeController=void 0,this.cmcdController=void 0,this._media=null,this.url=null,k(t.debug||!1,"Hls instance")
+var p=Nn(l.trim()),m=Vn(t,r,p)
+null!=e&&null!=(h=e.cues)&&h.getCueById(m)||((a=new c(t,r,p)).id=m,a.line=d+1,a.align="left",a.position=10+Math.min(80,10*Math.floor(8*o/32)),u.push(a))}return e&&u.length&&(u.sort((function(e,t){return"auto"===e.line||"auto"===t.line?0:e.line>8&&t.line>8?t.line-e.line:e.line-t.line})),u.forEach((function(t){return mt(e,t)}))),u}},enableWebVTT:!0,enableIMSC1:!0,enableCEA708Captions:!0,captionsTextTrack1Label:"English",captionsTextTrack1LanguageCode:"en",captionsTextTrack2Label:"Spanish",captionsTextTrack2LanguageCode:"es",captionsTextTrack3Label:"Unknown CC",captionsTextTrack3LanguageCode:"",captionsTextTrack4Label:"Unknown CC",captionsTextTrack4LanguageCode:"",renderTextTracksNatively:!0}),{},{subtitleStreamController:tn,subtitleTrackController:nn,timelineController:ta,audioStreamController:Xi,audioTrackController:Ji,emeController:sa,cmcdController:ca,contentSteeringController:da})
+function Ea(e){return e&&"object"==typeof e?Array.isArray(e)?e.map(Ea):Object.keys(e).reduce((function(t,r){return t[r]=Ea(e[r]),t}),{}):e}var Ta=function(){function e(t){void 0===t&&(t={}),this.config=void 0,this.userConfig=void 0,this.coreComponents=void 0,this.networkControllers=void 0,this._emitter=new zi,this._autoLevelCapping=void 0,this._maxHdcpLevel=null,this.abrController=void 0,this.bufferController=void 0,this.capLevelController=void 0,this.latencyController=void 0,this.levelController=void 0,this.streamController=void 0,this.audioTrackController=void 0,this.subtitleTrackController=void 0,this.emeController=void 0,this.cmcdController=void 0,this._media=null,this.url=null,S(t.debug||!1,"Hls instance")
 var r=this.config=function(e,t){if((t.liveSyncDurationCount||t.liveMaxLatencyDurationCount)&&(t.liveSyncDuration||t.liveMaxLatencyDuration))throw new Error("Illegal hls.js config: don't mix up liveSyncDurationCount/liveMaxLatencyDurationCount and liveSyncDuration/liveMaxLatencyDuration")
 if(void 0!==t.liveMaxLatencyDurationCount&&(void 0===t.liveSyncDurationCount||t.liveMaxLatencyDurationCount<=t.liveSyncDurationCount))throw new Error('Illegal hls.js config: "liveMaxLatencyDurationCount" must be greater than "liveSyncDurationCount"')
 if(void 0!==t.liveMaxLatencyDuration&&(void 0===t.liveSyncDuration||t.liveMaxLatencyDuration<=t.liveSyncDuration))throw new Error('Illegal hls.js config: "liveMaxLatencyDuration" must be greater than "liveSyncDuration"')
-var r=_a(e),n=["TimeOut","MaxRetry","RetryDelay","MaxRetryTimeout"]
+var r=Ea(e),n=["TimeOut","MaxRetry","RetryDelay","MaxRetryTimeout"]
 return["manifest","level","frag"].forEach((function(e){var i=("level"===e?"playlist":e)+"LoadPolicy",a=void 0===t[i],s=[]
 n.forEach((function(n){var o=e+"Loading"+n,l=t[o]
 if(void 0!==l&&a){s.push(o)
@@ -6429,37 +6442,37 @@ case"MaxRetry":u.errorRetry.maxNumRetry=l,u.timeoutRetry.maxNumRetry=l
 break
 case"RetryDelay":u.errorRetry.retryDelayMs=l,u.timeoutRetry.retryDelayMs=l
 break
-case"MaxRetryTimeout":u.errorRetry.maxRetryDelayMs=l,u.timeoutRetry.maxRetryDelayMs=l}}})),s.length&&S.warn('hls.js config: "'+s.join('", "')+'" setting(s) are deprecated, use "'+i+'": '+JSON.stringify(t[i]))})),i(i({},r),t)}(e.DefaultConfig,t)
+case"MaxRetryTimeout":u.errorRetry.maxRetryDelayMs=l,u.timeoutRetry.maxRetryDelayMs=l}}})),s.length&&O.warn('hls.js config: "'+s.join('", "')+'" setting(s) are deprecated, use "'+i+'": '+JSON.stringify(t[i]))})),i(i({},r),t)}(e.DefaultConfig,t)
 this.userConfig=t,this._autoLevelCapping=-1,r.progressive&&function(e){var t=e.loader
-t!==ma&&t!==fa?(S.log("[config]: Custom loader detected, cannot enable progressive streaming"),e.progressive=!1):function(){if(self.fetch&&self.AbortController&&self.ReadableStream&&self.Request)try{return new self.ReadableStream({}),!0}catch(e){}return!1}()&&(e.loader=ma,e.progressive=!0,e.enableSoftwareAES=!0,S.log("[config]: Progressive streaming enabled, using FetchLoader"))}(r)
-var n=r.abrController,a=r.bufferController,s=r.capLevelController,o=r.errorController,l=r.fpsController,u=new o(this),c=this.abrController=new n(this),d=this.bufferController=new a(this),h=this.capLevelController=new s(this),f=new l(this),p=new ct(this),m=new _t(this),g=r.contentSteeringController,v=g?new g(this):null,y=this.levelController=new $t(this,v),_=new Xt(this),w=new ar(this.config),E=this.streamController=new $i(this,_,w)
+t!==va&&t!==ma?(O.log("[config]: Custom loader detected, cannot enable progressive streaming"),e.progressive=!1):function(){if(self.fetch&&self.AbortController&&self.ReadableStream&&self.Request)try{return new self.ReadableStream({}),!0}catch(e){}return!1}()&&(e.loader=va,e.progressive=!0,e.enableSoftwareAES=!0,O.log("[config]: Progressive streaming enabled, using FetchLoader"))}(r)
+var n=r.abrController,a=r.bufferController,s=r.capLevelController,o=r.errorController,l=r.fpsController,u=new o(this),c=this.abrController=new n(this),d=this.bufferController=new a(this),h=this.capLevelController=new s(this),f=new l(this),p=new ft(this),m=new Tt(this),g=r.contentSteeringController,v=g?new g(this):null,b=this.levelController=new Kt(this,v),_=new er(this),w=new lr(this.config),E=this.streamController=new Gi(this,_,w)
 h.setStreamController(E),f.setStreamController(E)
-var T=[p,y,E]
+var T=[p,b,E]
 v&&T.splice(1,0,v),this.networkControllers=T
-var O=[c,d,h,f,m,_]
+var k=[c,d,h,f,m,_]
 this.audioTrackController=this.createController(r.audioTrackController,T)
 var x=r.audioStreamController
 x&&T.push(new x(this,_,w)),this.subtitleTrackController=this.createController(r.subtitleTrackController,T)
 var P=r.subtitleStreamController
-P&&T.push(new P(this,_,w)),this.createController(r.timelineController,O),w.emeController=this.emeController=this.createController(r.emeController,O),this.cmcdController=this.createController(r.cmcdController,O),this.latencyController=this.createController(wt,O),this.coreComponents=O,T.push(u)
+P&&T.push(new P(this,_,w)),this.createController(r.timelineController,k),w.emeController=this.emeController=this.createController(r.emeController,k),this.cmcdController=this.createController(r.cmcdController,k),this.latencyController=this.createController(kt,k),this.coreComponents=k,T.push(u)
 var A=u.onErrorOut
-"function"==typeof A&&this.on(b.ERROR,A,u)}e.isSupported=function(){return function(){var e=Cr()
+"function"==typeof A&&this.on(y.ERROR,A,u)}e.isSupported=function(){return function(){var e=Be()
 if(!e)return!1
-var t=Dr(),r=e&&"function"==typeof e.isTypeSupported&&e.isTypeSupported('video/mp4; codecs="avc1.42E01E,mp4a.40.2"'),i=!t||t.prototype&&"function"==typeof t.prototype.appendBuffer&&"function"==typeof t.prototype.remove
+var t=Ir(),r=e&&"function"==typeof e.isTypeSupported&&e.isTypeSupported('video/mp4; codecs="avc1.42E01E,mp4a.40.2"'),i=!t||t.prototype&&"function"==typeof t.prototype.appendBuffer&&"function"==typeof t.prototype.remove
 return!!r&&!!i}()}
 var t=e.prototype
 return t.createController=function(e,t){if(e){var r=new e(this)
 return t&&t.push(r),r}return null},t.on=function(e,t,r){void 0===r&&(r=this),this._emitter.on(e,t,r)},t.once=function(e,t,r){void 0===r&&(r=this),this._emitter.once(e,t,r)},t.removeAllListeners=function(e){this._emitter.removeAllListeners(e)},t.off=function(e,t,r,i){void 0===r&&(r=this),this._emitter.off(e,t,r,i)},t.listeners=function(e){return this._emitter.listeners(e)},t.emit=function(e,t,r){return this._emitter.emit(e,t,r)},t.trigger=function(e,t){if(this.config.debug)return this.emit(e,e,t)
-try{return this.emit(e,e,t)}catch(t){S.error("An internal error happened while handling event "+e+'. Error message: "'+t.message+'". Here is a stacktrace:',t),this.trigger(b.ERROR,{type:y.OTHER_ERROR,details:_.INTERNAL_EXCEPTION,fatal:!1,event:e,error:t})}return!1},t.listenerCount=function(e){return this._emitter.listenerCount(e)},t.destroy=function(){S.log("destroy"),this.trigger(b.DESTROYING,void 0),this.detachMedia(),this.removeAllListeners(),this._autoLevelCapping=-1,this.url=null,this.networkControllers.forEach((function(e){return e.destroy()})),this.networkControllers.length=0,this.coreComponents.forEach((function(e){return e.destroy()})),this.coreComponents.length=0
+try{return this.emit(e,e,t)}catch(t){O.error("An internal error happened while handling event "+e+'. Error message: "'+t.message+'". Here is a stacktrace:',t),this.trigger(y.ERROR,{type:_.OTHER_ERROR,details:w.INTERNAL_EXCEPTION,fatal:!1,event:e,error:t})}return!1},t.listenerCount=function(e){return this._emitter.listenerCount(e)},t.destroy=function(){O.log("destroy"),this.trigger(y.DESTROYING,void 0),this.detachMedia(),this.removeAllListeners(),this._autoLevelCapping=-1,this.url=null,this.networkControllers.forEach((function(e){return e.destroy()})),this.networkControllers.length=0,this.coreComponents.forEach((function(e){return e.destroy()})),this.coreComponents.length=0
 var e=this.config
-e.xhrSetup=e.fetchSetup=void 0,this.userConfig=null},t.attachMedia=function(e){S.log("attachMedia"),this._media=e,this.trigger(b.MEDIA_ATTACHING,{media:e})},t.detachMedia=function(){S.log("detachMedia"),this.trigger(b.MEDIA_DETACHING,void 0),this._media=null},t.loadSource=function(e){this.stopLoad()
-var t=this.media,r=this.url,i=this.url=g.buildAbsoluteURL(self.location.href,e,{alwaysNormalize:!0})
-S.log("loadSource:"+i),t&&r&&r!==i&&this.bufferController.hasSourceTypes()&&(this.detachMedia(),this.attachMedia(t)),this.trigger(b.MANIFEST_LOADING,{url:e})},t.startLoad=function(e){void 0===e&&(e=-1),S.log("startLoad("+e+")"),this.networkControllers.forEach((function(t){t.startLoad(e)}))},t.stopLoad=function(){S.log("stopLoad"),this.networkControllers.forEach((function(e){e.stopLoad()}))},t.swapAudioCodec=function(){S.log("swapAudioCodec"),this.streamController.swapAudioCodec()},t.recoverMediaError=function(){S.log("recoverMediaError")
+e.xhrSetup=e.fetchSetup=void 0,this.userConfig=null},t.attachMedia=function(e){O.log("attachMedia"),this._media=e,this.trigger(y.MEDIA_ATTACHING,{media:e})},t.detachMedia=function(){O.log("detachMedia"),this.trigger(y.MEDIA_DETACHING,void 0),this._media=null},t.loadSource=function(e){this.stopLoad()
+var t=this.media,r=this.url,i=this.url=v.buildAbsoluteURL(self.location.href,e,{alwaysNormalize:!0})
+O.log("loadSource:"+i),t&&r&&(r!==i||this.bufferController.hasSourceTypes())&&(this.detachMedia(),this.attachMedia(t)),this.trigger(y.MANIFEST_LOADING,{url:e})},t.startLoad=function(e){void 0===e&&(e=-1),O.log("startLoad("+e+")"),this.networkControllers.forEach((function(t){t.startLoad(e)}))},t.stopLoad=function(){O.log("stopLoad"),this.networkControllers.forEach((function(e){e.stopLoad()}))},t.swapAudioCodec=function(){O.log("swapAudioCodec"),this.streamController.swapAudioCodec()},t.recoverMediaError=function(){O.log("recoverMediaError")
 var e=this._media
-this.detachMedia(),e&&this.attachMedia(e)},t.removeLevel=function(e,t){void 0===t&&(t=0),this.levelController.removeLevel(e,t)},a(e,[{key:"levels",get:function(){return this.levelController.levels||[]}},{key:"currentLevel",get:function(){return this.streamController.currentLevel},set:function(e){S.log("set currentLevel:"+e),this.loadLevel=e,this.abrController.clearTimer(),this.streamController.immediateLevelSwitch()}},{key:"nextLevel",get:function(){return this.streamController.nextLevel},set:function(e){S.log("set nextLevel:"+e),this.levelController.manualLevel=e,this.streamController.nextLevelSwitch()}},{key:"loadLevel",get:function(){return this.levelController.level},set:function(e){S.log("set loadLevel:"+e),this.levelController.manualLevel=e}},{key:"nextLoadLevel",get:function(){return this.levelController.nextLoadLevel},set:function(e){this.levelController.nextLoadLevel=e}},{key:"firstLevel",get:function(){return Math.max(this.levelController.firstLevel,this.minAutoLevel)},set:function(e){S.log("set firstLevel:"+e),this.levelController.firstLevel=e}},{key:"startLevel",get:function(){return this.levelController.startLevel},set:function(e){S.log("set startLevel:"+e),-1!==e&&(e=Math.max(e,this.minAutoLevel)),this.levelController.startLevel=e}},{key:"capLevelToPlayerSize",get:function(){return this.config.capLevelToPlayerSize},set:function(e){var t=!!e
-t!==this.config.capLevelToPlayerSize&&(t?this.capLevelController.startCapping():(this.capLevelController.stopCapping(),this.autoLevelCapping=-1,this.streamController.nextLevelSwitch()),this.config.capLevelToPlayerSize=t)}},{key:"autoLevelCapping",get:function(){return this._autoLevelCapping},set:function(e){this._autoLevelCapping!==e&&(S.log("set autoLevelCapping:"+e),this._autoLevelCapping=e)}},{key:"bandwidthEstimate",get:function(){var e=this.abrController.bwEstimator
+this.detachMedia(),e&&this.attachMedia(e)},t.removeLevel=function(e,t){void 0===t&&(t=0),this.levelController.removeLevel(e,t)},a(e,[{key:"levels",get:function(){return this.levelController.levels||[]}},{key:"currentLevel",get:function(){return this.streamController.currentLevel},set:function(e){O.log("set currentLevel:"+e),this.loadLevel=e,this.abrController.clearTimer(),this.streamController.immediateLevelSwitch()}},{key:"nextLevel",get:function(){return this.streamController.nextLevel},set:function(e){O.log("set nextLevel:"+e),this.levelController.manualLevel=e,this.streamController.nextLevelSwitch()}},{key:"loadLevel",get:function(){return this.levelController.level},set:function(e){O.log("set loadLevel:"+e),this.levelController.manualLevel=e}},{key:"nextLoadLevel",get:function(){return this.levelController.nextLoadLevel},set:function(e){this.levelController.nextLoadLevel=e}},{key:"firstLevel",get:function(){return Math.max(this.levelController.firstLevel,this.minAutoLevel)},set:function(e){O.log("set firstLevel:"+e),this.levelController.firstLevel=e}},{key:"startLevel",get:function(){return this.levelController.startLevel},set:function(e){O.log("set startLevel:"+e),-1!==e&&(e=Math.max(e,this.minAutoLevel)),this.levelController.startLevel=e}},{key:"capLevelToPlayerSize",get:function(){return this.config.capLevelToPlayerSize},set:function(e){var t=!!e
+t!==this.config.capLevelToPlayerSize&&(t?this.capLevelController.startCapping():(this.capLevelController.stopCapping(),this.autoLevelCapping=-1,this.streamController.nextLevelSwitch()),this.config.capLevelToPlayerSize=t)}},{key:"autoLevelCapping",get:function(){return this._autoLevelCapping},set:function(e){this._autoLevelCapping!==e&&(O.log("set autoLevelCapping:"+e),this._autoLevelCapping=e)}},{key:"bandwidthEstimate",get:function(){var e=this.abrController.bwEstimator
 return e?e.getEstimate():NaN}},{key:"ttfbEstimate",get:function(){var e=this.abrController.bwEstimator
-return e?e.getEstimateTTFB():NaN}},{key:"maxHdcpLevel",get:function(){return this._maxHdcpLevel},set:function(e){Et.indexOf(e)>-1&&(this._maxHdcpLevel=e)}},{key:"autoLevelEnabled",get:function(){return-1===this.levelController.manualLevel}},{key:"manualLevel",get:function(){return this.levelController.manualLevel}},{key:"minAutoLevel",get:function(){var e=this.levels,t=this.config.minAutoBitrate
+return e?e.getEstimateTTFB():NaN}},{key:"maxHdcpLevel",get:function(){return this._maxHdcpLevel},set:function(e){St.indexOf(e)>-1&&(this._maxHdcpLevel=e)}},{key:"autoLevelEnabled",get:function(){return-1===this.levelController.manualLevel}},{key:"manualLevel",get:function(){return this.levelController.manualLevel}},{key:"minAutoLevel",get:function(){var e=this.levels,t=this.config.minAutoBitrate
 if(!e)return 0
 for(var r=e.length,i=0;i<r;i++)if(e[i].maxBitrate>=t)return i
 return 0}},{key:"maxAutoLevel",get:function(){var e,t=this.levels,r=this.autoLevelCapping,i=this.maxHdcpLevel
@@ -6472,8 +6485,8 @@ return e?e.subtitleTracks:[]}},{key:"subtitleTrack",get:function(){var e=this.su
 return e?e.subtitleTrack:-1},set:function(e){var t=this.subtitleTrackController
 t&&(t.subtitleTrack=e)}},{key:"media",get:function(){return this._media}},{key:"subtitleDisplay",get:function(){var e=this.subtitleTrackController
 return!!e&&e.subtitleDisplay},set:function(e){var t=this.subtitleTrackController
-t&&(t.subtitleDisplay=e)}},{key:"lowLatencyMode",get:function(){return this.config.lowLatencyMode},set:function(e){this.config.lowLatencyMode=e}},{key:"liveSyncPosition",get:function(){return this.latencyController.liveSyncPosition}},{key:"latency",get:function(){return this.latencyController.latency}},{key:"maxLatency",get:function(){return this.latencyController.maxLatency}},{key:"targetLatency",get:function(){return this.latencyController.targetLatency}},{key:"drift",get:function(){return this.latencyController.drift}},{key:"forceStartLoad",get:function(){return this.streamController.forceStartLoad}}],[{key:"version",get:function(){return"1.4.0"}},{key:"Events",get:function(){return b}},{key:"ErrorTypes",get:function(){return y}},{key:"ErrorDetails",get:function(){return _}},{key:"DefaultConfig",get:function(){return e.defaultConfig?e.defaultConfig:ya},set:function(t){e.defaultConfig=t}}]),e}()
-return wa.defaultConfig=void 0,wa},"object"==typeof exports&&"undefined"!=typeof module?module.exports=i():"function"==typeof define&&define.amd?define(i):(r="undefined"!=typeof globalThis?globalThis:r||self).Hls=i()}(!1),function(){var e
+t&&(t.subtitleDisplay=e)}},{key:"lowLatencyMode",get:function(){return this.config.lowLatencyMode},set:function(e){this.config.lowLatencyMode=e}},{key:"liveSyncPosition",get:function(){return this.latencyController.liveSyncPosition}},{key:"latency",get:function(){return this.latencyController.latency}},{key:"maxLatency",get:function(){return this.latencyController.maxLatency}},{key:"targetLatency",get:function(){return this.latencyController.targetLatency}},{key:"drift",get:function(){return this.latencyController.drift}},{key:"forceStartLoad",get:function(){return this.streamController.forceStartLoad}}],[{key:"version",get:function(){return"1.4.3"}},{key:"Events",get:function(){return y}},{key:"ErrorTypes",get:function(){return _}},{key:"ErrorDetails",get:function(){return w}},{key:"DefaultConfig",get:function(){return e.defaultConfig?e.defaultConfig:wa},set:function(t){e.defaultConfig=t}}]),e}()
+return Ta.defaultConfig=void 0,Ta},"object"==typeof exports&&"undefined"!=typeof module?module.exports=i():"function"==typeof define&&define.amd?define(i):(r="undefined"!=typeof globalThis?globalThis:r||self).Hls=i()}(!1),function(){var e
 e={default:Hls},define("hls",[],(function(){"use strict"
 return e}))}(),"undefined"==typeof FastBoot){var preferNative=!1;(function(e){define("fetch",["exports","ember","rsvp"],(function(t,r,i){"use strict"
 var n="default"in r?r.default:r,a=("default"in i?i.default:i).Promise,s=["FormData","FileReader","Blob","URLSearchParams","Symbol","ArrayBuffer"],o=s
@@ -6486,61 +6499,61 @@ for(let i=0,n=t.length;i<n;i++){const n=t[i]
 try{n.callback.call(this,e)}catch(r){a.resolve().then((()=>{throw r}))}n.options&&n.options.once&&this.removeEventListener(e.type,n.callback)}return!e.defaultPrevented}}class t extends e{constructor(){super(),this.listeners||e.call(this),Object.defineProperty(this,"aborted",{value:!1,writable:!0,configurable:!0}),Object.defineProperty(this,"onabort",{value:null,writable:!0,configurable:!0}),Object.defineProperty(this,"reason",{value:void 0,writable:!0,configurable:!0})}toString(){return"[object AbortSignal]"}dispatchEvent(e){"abort"===e.type&&(this.aborted=!0,"function"==typeof this.onabort&&this.onabort.call(this,e)),super.dispatchEvent(e)}}class r{constructor(){Object.defineProperty(this,"signal",{value:new t,writable:!0,configurable:!0})}abort(e){let t
 try{t=new Event("abort")}catch(i){"undefined"!=typeof document?document.createEvent?(t=document.createEvent("Event"),t.initEvent("abort",!1,!1)):(t=document.createEventObject(),t.type="abort"):t={type:"abort",bubbles:!1,cancelable:!1}}let r=e
 if(void 0===r)if("undefined"==typeof document)r=new Error("This operation was aborted"),r.name="AbortError"
-else try{r=new DOMException("signal is aborted without reason")}catch(n){r=new Error("This operation was aborted"),r.name="AbortError"}this.signal.reason=r,this.signal.dispatchEvent(t)}toString(){return"[object AbortController]"}}"undefined"!=typeof Symbol&&Symbol.toStringTag&&(r.prototype[Symbol.toStringTag]="AbortController",t.prototype[Symbol.toStringTag]="AbortSignal"),function(e){(function(e){return e.__FORCE_INSTALL_ABORTCONTROLLER_POLYFILL?(console.log("__FORCE_INSTALL_ABORTCONTROLLER_POLYFILL=true is set, will force install polyfill"),!0):"function"==typeof e.Request&&!e.Request.prototype.hasOwnProperty("signal")||!e.AbortController})(e)&&(e.AbortController=r,e.AbortSignal=t)}(void 0!==u?u:global)})();(function(e){var t=void 0!==l&&l||void 0!==u&&u||void 0!==t&&t,r={searchParams:"URLSearchParams"in t,iterable:"Symbol"in t&&"iterator"in Symbol,blob:"FileReader"in t&&"Blob"in t&&function(){try{return new Blob,!0}catch(e){return!1}}(),formData:"FormData"in t,arrayBuffer:"ArrayBuffer"in t}
-if(r.arrayBuffer)var i=["[object Int8Array]","[object Uint8Array]","[object Uint8ClampedArray]","[object Int16Array]","[object Uint16Array]","[object Int32Array]","[object Uint32Array]","[object Float32Array]","[object Float64Array]"],n=ArrayBuffer.isView||function(e){return e&&i.indexOf(Object.prototype.toString.call(e))>-1}
-function s(e){if("string"!=typeof e&&(e=String(e)),/[^a-z0-9\-#$%&'*+.^_`|~!]/i.test(e)||""===e)throw new TypeError('Invalid character in header field name: "'+e+'"')
-return e.toLowerCase()}function o(e){return"string"!=typeof e&&(e=String(e)),e}function c(e){var t={next:function(){var t=e.shift()
+else try{r=new DOMException("signal is aborted without reason")}catch(n){r=new Error("This operation was aborted"),r.name="AbortError"}this.signal.reason=r,this.signal.dispatchEvent(t)}toString(){return"[object AbortController]"}}"undefined"!=typeof Symbol&&Symbol.toStringTag&&(r.prototype[Symbol.toStringTag]="AbortController",t.prototype[Symbol.toStringTag]="AbortSignal"),function(e){(function(e){return e.__FORCE_INSTALL_ABORTCONTROLLER_POLYFILL?(console.log("__FORCE_INSTALL_ABORTCONTROLLER_POLYFILL=true is set, will force install polyfill"),!0):"function"==typeof e.Request&&!e.Request.prototype.hasOwnProperty("signal")||!e.AbortController})(e)&&(e.AbortController=r,e.AbortSignal=t)}(void 0!==u?u:global)})();(function(e){var t=void 0!==l&&l||void 0!==u&&u||void 0!==t&&t,r="URLSearchParams"in t,i="Symbol"in t&&"iterator"in Symbol,n="FileReader"in t&&"Blob"in t&&function(){try{return new Blob,!0}catch(e){return!1}}(),s="FormData"in t,o="ArrayBuffer"in t
+if(o)var c=["[object Int8Array]","[object Uint8Array]","[object Uint8ClampedArray]","[object Int16Array]","[object Uint16Array]","[object Int32Array]","[object Uint32Array]","[object Float32Array]","[object Float64Array]"],d=ArrayBuffer.isView||function(e){return e&&c.indexOf(Object.prototype.toString.call(e))>-1}
+function h(e){if("string"!=typeof e&&(e=String(e)),/[^a-z0-9\-#$%&'*+.^_`|~!]/i.test(e)||""===e)throw new TypeError('Invalid character in header field name: "'+e+'"')
+return e.toLowerCase()}function f(e){return"string"!=typeof e&&(e=String(e)),e}function p(e){var t={next:function(){var t=e.shift()
 return{done:void 0===t,value:t}}}
-return r.iterable&&(t[Symbol.iterator]=function(){return t}),t}function d(e){this.map={},e instanceof d?e.forEach((function(e,t){this.append(t,e)}),this):Array.isArray(e)?e.forEach((function(e){this.append(e[0],e[1])}),this):e&&Object.getOwnPropertyNames(e).forEach((function(t){this.append(t,e[t])}),this)}function h(e){if(e.bodyUsed)return a.reject(new TypeError("Already read"))
-e.bodyUsed=!0}function f(e){return new a((function(t,r){e.onload=function(){t(e.result)},e.onerror=function(){r(e.error)}}))}function p(e){var t=new FileReader,r=f(t)
-return t.readAsArrayBuffer(e),r}function m(e){if(e.slice)return e.slice(0)
+return i&&(t[Symbol.iterator]=function(){return t}),t}function m(e){this.map={},e instanceof m?e.forEach((function(e,t){this.append(t,e)}),this):Array.isArray(e)?e.forEach((function(e){this.append(e[0],e[1])}),this):e&&Object.getOwnPropertyNames(e).forEach((function(t){this.append(t,e[t])}),this)}function g(e){if(e.bodyUsed)return a.reject(new TypeError("Already read"))
+e.bodyUsed=!0}function v(e){return new a((function(t,r){e.onload=function(){t(e.result)},e.onerror=function(){r(e.error)}}))}function b(e){var t=new FileReader,r=v(t)
+return t.readAsArrayBuffer(e),r}function y(e){if(e.slice)return e.slice(0)
 var t=new Uint8Array(e.byteLength)
-return t.set(new Uint8Array(e)),t.buffer}function g(){return this.bodyUsed=!1,this._initBody=function(e){var t
-this.bodyUsed=this.bodyUsed,this._bodyInit=e,e?"string"==typeof e?this._bodyText=e:r.blob&&Blob.prototype.isPrototypeOf(e)?this._bodyBlob=e:r.formData&&FormData.prototype.isPrototypeOf(e)?this._bodyFormData=e:r.searchParams&&URLSearchParams.prototype.isPrototypeOf(e)?this._bodyText=e.toString():r.arrayBuffer&&r.blob&&((t=e)&&DataView.prototype.isPrototypeOf(t))?(this._bodyArrayBuffer=m(e.buffer),this._bodyInit=new Blob([this._bodyArrayBuffer])):r.arrayBuffer&&(ArrayBuffer.prototype.isPrototypeOf(e)||n(e))?this._bodyArrayBuffer=m(e):this._bodyText=e=Object.prototype.toString.call(e):this._bodyText="",this.headers.get("content-type")||("string"==typeof e?this.headers.set("content-type","text/plain;charset=UTF-8"):this._bodyBlob&&this._bodyBlob.type?this.headers.set("content-type",this._bodyBlob.type):r.searchParams&&URLSearchParams.prototype.isPrototypeOf(e)&&this.headers.set("content-type","application/x-www-form-urlencoded;charset=UTF-8"))},r.blob&&(this.blob=function(){var e=h(this)
+return t.set(new Uint8Array(e)),t.buffer}function _(){return this.bodyUsed=!1,this._initBody=function(e){var t
+this.bodyUsed=this.bodyUsed,this._bodyInit=e,e?"string"==typeof e?this._bodyText=e:n&&Blob.prototype.isPrototypeOf(e)?this._bodyBlob=e:s&&FormData.prototype.isPrototypeOf(e)?this._bodyFormData=e:r&&URLSearchParams.prototype.isPrototypeOf(e)?this._bodyText=e.toString():o&&n&&((t=e)&&DataView.prototype.isPrototypeOf(t))?(this._bodyArrayBuffer=y(e.buffer),this._bodyInit=new Blob([this._bodyArrayBuffer])):o&&(ArrayBuffer.prototype.isPrototypeOf(e)||d(e))?this._bodyArrayBuffer=y(e):this._bodyText=e=Object.prototype.toString.call(e):this._bodyText="",this.headers.get("content-type")||("string"==typeof e?this.headers.set("content-type","text/plain;charset=UTF-8"):this._bodyBlob&&this._bodyBlob.type?this.headers.set("content-type",this._bodyBlob.type):r&&URLSearchParams.prototype.isPrototypeOf(e)&&this.headers.set("content-type","application/x-www-form-urlencoded;charset=UTF-8"))},n&&(this.blob=function(){var e=g(this)
 if(e)return e
 if(this._bodyBlob)return a.resolve(this._bodyBlob)
 if(this._bodyArrayBuffer)return a.resolve(new Blob([this._bodyArrayBuffer]))
 if(this._bodyFormData)throw new Error("could not read FormData body as blob")
-return a.resolve(new Blob([this._bodyText]))},this.arrayBuffer=function(){if(this._bodyArrayBuffer){var e=h(this)
-return e||(ArrayBuffer.isView(this._bodyArrayBuffer)?a.resolve(this._bodyArrayBuffer.buffer.slice(this._bodyArrayBuffer.byteOffset,this._bodyArrayBuffer.byteOffset+this._bodyArrayBuffer.byteLength)):a.resolve(this._bodyArrayBuffer))}return this.blob().then(p)}),this.text=function(){var e,t,r,i=h(this)
+return a.resolve(new Blob([this._bodyText]))},this.arrayBuffer=function(){if(this._bodyArrayBuffer){var e=g(this)
+return e||(ArrayBuffer.isView(this._bodyArrayBuffer)?a.resolve(this._bodyArrayBuffer.buffer.slice(this._bodyArrayBuffer.byteOffset,this._bodyArrayBuffer.byteOffset+this._bodyArrayBuffer.byteLength)):a.resolve(this._bodyArrayBuffer))}return this.blob().then(b)}),this.text=function(){var e,t,r,i=g(this)
 if(i)return i
-if(this._bodyBlob)return e=this._bodyBlob,t=new FileReader,r=f(t),t.readAsText(e),r
+if(this._bodyBlob)return e=this._bodyBlob,t=new FileReader,r=v(t),t.readAsText(e),r
 if(this._bodyArrayBuffer)return a.resolve(function(e){for(var t=new Uint8Array(e),r=new Array(t.length),i=0;i<t.length;i++)r[i]=String.fromCharCode(t[i])
 return r.join("")}(this._bodyArrayBuffer))
 if(this._bodyFormData)throw new Error("could not read FormData body as text")
-return a.resolve(this._bodyText)},r.formData&&(this.formData=function(){return this.text().then(y)}),this.json=function(){return this.text().then(JSON.parse)},this}d.prototype.append=function(e,t){e=s(e),t=o(t)
+return a.resolve(this._bodyText)},s&&(this.formData=function(){return this.text().then(T)}),this.json=function(){return this.text().then(JSON.parse)},this}m.prototype.append=function(e,t){e=h(e),t=f(t)
 var r=this.map[e]
-this.map[e]=r?r+", "+t:t},d.prototype.delete=function(e){delete this.map[s(e)]},d.prototype.get=function(e){return e=s(e),this.has(e)?this.map[e]:null},d.prototype.has=function(e){return this.map.hasOwnProperty(s(e))},d.prototype.set=function(e,t){this.map[s(e)]=o(t)},d.prototype.forEach=function(e,t){for(var r in this.map)this.map.hasOwnProperty(r)&&e.call(t,this.map[r],r,this)},d.prototype.keys=function(){var e=[]
-return this.forEach((function(t,r){e.push(r)})),c(e)},d.prototype.values=function(){var e=[]
-return this.forEach((function(t){e.push(t)})),c(e)},d.prototype.entries=function(){var e=[]
-return this.forEach((function(t,r){e.push([r,t])})),c(e)},r.iterable&&(d.prototype[Symbol.iterator]=d.prototype.entries)
-var v=["DELETE","GET","HEAD","OPTIONS","POST","PUT"]
-function b(e,t){if(!(this instanceof b))throw new TypeError('Please use the "new" operator, this DOM object constructor cannot be called as a function.')
+this.map[e]=r?r+", "+t:t},m.prototype.delete=function(e){delete this.map[h(e)]},m.prototype.get=function(e){return e=h(e),this.has(e)?this.map[e]:null},m.prototype.has=function(e){return this.map.hasOwnProperty(h(e))},m.prototype.set=function(e,t){this.map[h(e)]=f(t)},m.prototype.forEach=function(e,t){for(var r in this.map)this.map.hasOwnProperty(r)&&e.call(t,this.map[r],r,this)},m.prototype.keys=function(){var e=[]
+return this.forEach((function(t,r){e.push(r)})),p(e)},m.prototype.values=function(){var e=[]
+return this.forEach((function(t){e.push(t)})),p(e)},m.prototype.entries=function(){var e=[]
+return this.forEach((function(t,r){e.push([r,t])})),p(e)},i&&(m.prototype[Symbol.iterator]=m.prototype.entries)
+var w=["DELETE","GET","HEAD","OPTIONS","POST","PUT"]
+function E(e,t){if(!(this instanceof E))throw new TypeError('Please use the "new" operator, this DOM object constructor cannot be called as a function.')
 var r,i,n=(t=t||{}).body
-if(e instanceof b){if(e.bodyUsed)throw new TypeError("Already read")
-this.url=e.url,this.credentials=e.credentials,t.headers||(this.headers=new d(e.headers)),this.method=e.method,this.mode=e.mode,this.signal=e.signal,n||null==e._bodyInit||(n=e._bodyInit,e.bodyUsed=!0)}else this.url=String(e)
-if(this.credentials=t.credentials||this.credentials||"same-origin",!t.headers&&this.headers||(this.headers=new d(t.headers)),this.method=(r=t.method||this.method||"GET",i=r.toUpperCase(),v.indexOf(i)>-1?i:r),this.mode=t.mode||this.mode||null,this.signal=t.signal||this.signal,this.referrer=null,("GET"===this.method||"HEAD"===this.method)&&n)throw new TypeError("Body not allowed for GET or HEAD requests")
+if(e instanceof E){if(e.bodyUsed)throw new TypeError("Already read")
+this.url=e.url,this.credentials=e.credentials,t.headers||(this.headers=new m(e.headers)),this.method=e.method,this.mode=e.mode,this.signal=e.signal,n||null==e._bodyInit||(n=e._bodyInit,e.bodyUsed=!0)}else this.url=String(e)
+if(this.credentials=t.credentials||this.credentials||"same-origin",!t.headers&&this.headers||(this.headers=new m(t.headers)),this.method=(r=t.method||this.method||"GET",i=r.toUpperCase(),w.indexOf(i)>-1?i:r),this.mode=t.mode||this.mode||null,this.signal=t.signal||this.signal,this.referrer=null,("GET"===this.method||"HEAD"===this.method)&&n)throw new TypeError("Body not allowed for GET or HEAD requests")
 if(this._initBody(n),!("GET"!==this.method&&"HEAD"!==this.method||"no-store"!==t.cache&&"no-cache"!==t.cache)){var a=/([?&])_=[^&]*/
 if(a.test(this.url))this.url=this.url.replace(a,"$1_="+(new Date).getTime())
-else{this.url+=(/\?/.test(this.url)?"&":"?")+"_="+(new Date).getTime()}}}function y(e){var t=new FormData
+else{this.url+=(/\?/.test(this.url)?"&":"?")+"_="+(new Date).getTime()}}}function T(e){var t=new FormData
 return e.trim().split("&").forEach((function(e){if(e){var r=e.split("="),i=r.shift().replace(/\+/g," "),n=r.join("=").replace(/\+/g," ")
-t.append(decodeURIComponent(i),decodeURIComponent(n))}})),t}function _(e,t){if(!(this instanceof _))throw new TypeError('Please use the "new" operator, this DOM object constructor cannot be called as a function.')
-t||(t={}),this.type="default",this.status=void 0===t.status?200:t.status,this.ok=this.status>=200&&this.status<300,this.statusText=void 0===t.statusText?"":""+t.statusText,this.headers=new d(t.headers),this.url=t.url||"",this._initBody(e)}b.prototype.clone=function(){return new b(this,{body:this._bodyInit})},g.call(b.prototype),g.call(_.prototype),_.prototype.clone=function(){return new _(this._bodyInit,{status:this.status,statusText:this.statusText,headers:new d(this.headers),url:this.url})},_.error=function(){var e=new _(null,{status:0,statusText:""})
+t.append(decodeURIComponent(i),decodeURIComponent(n))}})),t}function k(e,t){if(!(this instanceof k))throw new TypeError('Please use the "new" operator, this DOM object constructor cannot be called as a function.')
+t||(t={}),this.type="default",this.status=void 0===t.status?200:t.status,this.ok=this.status>=200&&this.status<300,this.statusText=void 0===t.statusText?"":""+t.statusText,this.headers=new m(t.headers),this.url=t.url||"",this._initBody(e)}E.prototype.clone=function(){return new E(this,{body:this._bodyInit})},_.call(E.prototype),_.call(k.prototype),k.prototype.clone=function(){return new k(this._bodyInit,{status:this.status,statusText:this.statusText,headers:new m(this.headers),url:this.url})},k.error=function(){var e=new k(null,{status:0,statusText:""})
 return e.type="error",e}
-var w=[301,302,303,307,308]
-_.redirect=function(e,t){if(-1===w.indexOf(t))throw new RangeError("Invalid status code")
-return new _(null,{status:t,headers:{location:e}})},e.DOMException=t.DOMException
-try{new e.DOMException}catch(T){e.DOMException=function(e,t){this.message=e,this.name=t
+var S=[301,302,303,307,308]
+k.redirect=function(e,t){if(-1===S.indexOf(t))throw new RangeError("Invalid status code")
+return new k(null,{status:t,headers:{location:e}})},e.DOMException=t.DOMException
+try{new e.DOMException}catch(x){e.DOMException=function(e,t){this.message=e,this.name=t
 var r=Error(e)
-this.stack=r.stack},e.DOMException.prototype=Object.create(Error.prototype),e.DOMException.prototype.constructor=e.DOMException}function E(i,n){return new a((function(a,s){var l=new b(i,n)
+this.stack=r.stack},e.DOMException.prototype=Object.create(Error.prototype),e.DOMException.prototype.constructor=e.DOMException}function O(r,i){return new a((function(a,s){var l=new E(r,i)
 if(l.signal&&l.signal.aborted)return s(new e.DOMException("Aborted","AbortError"))
 var u=new XMLHttpRequest
-function c(){u.abort()}u.onload=function(){var e,t,r={status:u.status,statusText:u.statusText,headers:(e=u.getAllResponseHeaders()||"",t=new d,e.replace(/\r?\n[\t ]+/g," ").split("\r").map((function(e){return 0===e.indexOf("\n")?e.substr(1,e.length):e})).forEach((function(e){var r=e.split(":"),i=r.shift().trim()
+function c(){u.abort()}u.onload=function(){var e,t,r={status:u.status,statusText:u.statusText,headers:(e=u.getAllResponseHeaders()||"",t=new m,e.replace(/\r?\n[\t ]+/g," ").split("\r").map((function(e){return 0===e.indexOf("\n")?e.substr(1,e.length):e})).forEach((function(e){var r=e.split(":"),i=r.shift().trim()
 if(i){var n=r.join(":").trim()
 t.append(i,n)}})),t)}
 r.url="responseURL"in u?u.responseURL:r.headers.get("X-Request-URL")
 var i="response"in u?u.response:u.responseText
-setTimeout((function(){a(new _(i,r))}),0)},u.onerror=function(){setTimeout((function(){s(new TypeError("Network request failed"))}),0)},u.ontimeout=function(){setTimeout((function(){s(new TypeError("Network request failed"))}),0)},u.onabort=function(){setTimeout((function(){s(new e.DOMException("Aborted","AbortError"))}),0)},u.open(l.method,function(e){try{return""===e&&t.location.href?t.location.href:e}catch(r){return e}}(l.url),!0),"include"===l.credentials?u.withCredentials=!0:"omit"===l.credentials&&(u.withCredentials=!1),"responseType"in u&&(r.blob?u.responseType="blob":r.arrayBuffer&&l.headers.get("Content-Type")&&-1!==l.headers.get("Content-Type").indexOf("application/octet-stream")&&(u.responseType="arraybuffer")),!n||"object"!=typeof n.headers||n.headers instanceof d?l.headers.forEach((function(e,t){u.setRequestHeader(t,e)})):Object.getOwnPropertyNames(n.headers).forEach((function(e){u.setRequestHeader(e,o(n.headers[e]))})),l.signal&&(l.signal.addEventListener("abort",c),u.onreadystatechange=function(){4===u.readyState&&l.signal.removeEventListener("abort",c)}),u.send(void 0===l._bodyInit?null:l._bodyInit)}))}E.polyfill=!0,t.fetch||(t.fetch=E,t.Headers=d,t.Request=b,t.Response=_),e.Headers=d,e.Request=b,e.Response=_,e.fetch=E})({})
+setTimeout((function(){a(new k(i,r))}),0)},u.onerror=function(){setTimeout((function(){s(new TypeError("Network request failed"))}),0)},u.ontimeout=function(){setTimeout((function(){s(new TypeError("Network request failed"))}),0)},u.onabort=function(){setTimeout((function(){s(new e.DOMException("Aborted","AbortError"))}),0)},u.open(l.method,function(e){try{return""===e&&t.location.href?t.location.href:e}catch(r){return e}}(l.url),!0),"include"===l.credentials?u.withCredentials=!0:"omit"===l.credentials&&(u.withCredentials=!1),"responseType"in u&&(n?u.responseType="blob":o&&l.headers.get("Content-Type")&&-1!==l.headers.get("Content-Type").indexOf("application/octet-stream")&&(u.responseType="arraybuffer")),!i||"object"!=typeof i.headers||i.headers instanceof m?l.headers.forEach((function(e,t){u.setRequestHeader(t,e)})):Object.getOwnPropertyNames(i.headers).forEach((function(e){u.setRequestHeader(e,f(i.headers[e]))})),l.signal&&(l.signal.addEventListener("abort",c),u.onreadystatechange=function(){4===u.readyState&&l.signal.removeEventListener("abort",c)}),u.send(void 0===l._bodyInit?null:l._bodyInit)}))}O.polyfill=!0,t.fetch||(t.fetch=O,t.Headers=m,t.Request=E,t.Response=k),e.Headers=m,e.Request=E,e.Response=k,e.fetch=O})({})
 if(!l.fetch)throw new Error("fetch is not defined - maybe your browser targets are not covering everything you need?")
 var c=0
 function d(e){return c--,e}n.Test?(n.Test.registerWaiter((function(){return 0===c})),t.default=function(){return c++,t.fetch.apply(e,arguments).then((function(e){return e.clone().blob().then(d,d),e}),(function(e){throw d(e),e}))}):t.default=t.fetch,s.forEach((function(e){delete t[e]}))}))})("undefined"!=typeof window&&window||"undefined"!=typeof globalThis&&globalThis||"undefined"!=typeof self&&self||"undefined"!=typeof global&&global)}(function(e){(function(){var t,r,i,n,a,s,o,l,u,c,d,h,f,p,m,g,v,b,y,_,w,E,T,k,S,O,x,P,A,R,C,D=function(e){var t=new D.Builder
@@ -8257,7 +8270,26 @@ const E=new m
 var T=E
 function k(){d.isResolved&&(d=x(u),h=d.promise.then((()=>{let e=p.beginAsync()
 return new s.Promise((e=>{(0,i.schedule)("afterRender",null,(()=>{requestAnimationFrame((()=>{requestAnimationFrame(e)}))}))})).finally((()=>{p.endAsync(e),P("appSchedulerEnd"),function(e,t,r){try{performance.measure(e,t,r)}catch(i){console.warn(`performance.measure could not be executed because of ${i.message}`)}}("appScheduler","appSchedulerStart","appSchedulerEnd")}))})),E.isIdle=!1)}function S(){d.resolve(),E.isIdle=!0,P("appSchedulerStart")}function O(){d=x(u),h=d.promise.then(),p.reset(),f||d.resolve()}function x(e){let t,r,i=!1
-return{promise:new s.Promise(((e,n)=>{t=()=>{i=!0,e()},r=n}),e),resolve:t,reject:r,get isResolved(){return i}}}function P(e){try{performance.mark(e)}catch(t){console.warn(`performance.mark could not be executed because of ${t.message}`)}}e.default=T})),define("ember-cached-decorator-polyfill/index",["exports","@glimmer/tracking/primitives/cache","@ember/debug"],(function(e,t,r){"use strict"
+return{promise:new s.Promise(((e,n)=>{t=()=>{i=!0,e()},r=n}),e),resolve:t,reject:r,get isResolved(){return i}}}function P(e){try{performance.mark(e)}catch(t){console.warn(`performance.mark could not be executed because of ${t.message}`)}}e.default=T})),define("ember-arg-types/-private/closest-string",["exports"],(function(e){"use strict"
+let t
+Object.defineProperty(e,"__esModule",{value:!0}),e.closest=void 0,e.closest=t,e.closest=t=()=>{throw new Error("closest() is not available in production")}})),define("ember-arg-types/-private/is-element-descriptor",["exports"],(function(e){"use strict"
+Object.defineProperty(e,"__esModule",{value:!0}),e.default=function(){for(var e=arguments.length,t=new Array(e),r=0;r<e;r++)t[r]=arguments[r]
+const[i,n,a]=t
+return 3===t.length&&("function"==typeof i||"object"==typeof i&&null!==i)&&"string"==typeof n&&("object"==typeof a&&null!==a&&"enumerable"in a&&"configurable"in a||void 0===a)}})),define("ember-arg-types/-private/throw-console-error",["exports"],(function(e){"use strict"
+let t
+Object.defineProperty(e,"__esModule",{value:!0}),e.default=void 0,t=()=>{throw new Error("throwConsoleError() is not available in production")}
+var r=t
+e.default=r})),define("ember-arg-types/decorator",["exports","ember-arg-types/-private/is-element-descriptor","ember-arg-types/-private/throw-console-error","prop-types","ember-get-config","@ember/utils","ember-arg-types/-private/closest-string"],(function(e,t,r,i,n,a,s){"use strict"
+Object.defineProperty(e,"__esModule",{value:!0}),e.default=function(){for(var e=arguments.length,r=new Array(e),i=0;i<e;i++)r[i]=arguments[i]
+if((0,t.default)(...r))return o(...r)
+const[n]=r
+return function(){for(var e=arguments.length,t=new Array(e),r=0;r<e;r++)t[r]=arguments[r]
+return o(...t,n)}},e.forbidExtraArgs=function(e){return e}
+Symbol("args")
+function o(e,t,r,i){const n=r.initializer||r.get||(()=>{})
+return{get(){const e=this.args[t]
+return void 0!==e?e:n.call(this)}}}})),define("ember-arg-types/index",["exports","ember-arg-types/decorator"],(function(e,t){"use strict"
+Object.defineProperty(e,"__esModule",{value:!0}),Object.defineProperty(e,"arg",{enumerable:!0,get:function(){return t.default}}),Object.defineProperty(e,"forbidExtraArgs",{enumerable:!0,get:function(){return t.forbidExtraArgs}})})),define("ember-cached-decorator-polyfill/index",["exports","@glimmer/tracking/primitives/cache","@ember/debug"],(function(e,t,r){"use strict"
 Object.defineProperty(e,"__esModule",{value:!0}),e.cached=function(){for(var e=arguments.length,r=new Array(e),i=0;i<e;i++)r[i]=arguments[i]
 const[n,a,s]=r
 const o=new WeakMap,l=s.get
@@ -8271,7 +8303,8 @@ throw new TypeError("@@toPrimitive must return a primitive value.")}return("stri
 return"symbol"==typeof t?t:String(t)}(t))in e?Object.defineProperty(e,t,{value:r,enumerable:!0,configurable:!0,writable:!0}):e[t]=r,e}Object.defineProperty(e,"__esModule",{value:!0}),e.default=void 0
 class a extends t.default{constructor(){super(...arguments),n(this,"defaultSerializer","-addon-docs")}get namespace(){return`${(0,i.getRootURL)(this).replace(/\/$/,"")}/docs`}shouldBackgroundReloadAll(){return!1}shouldBackgroundReloadRecord(){return!1}findRecord(e,t,i,n){return"project"===t.modelName?(0,r.default)(`${this.namespace}/${i}.json`).then((e=>e.json())):e.peekRecord(t.modelName,i)}}e.default=a})),define("ember-cli-addon-docs/adapters/class",["exports","ember-cli-addon-docs/adapters/-addon-docs"],(function(e,t){"use strict"
 Object.defineProperty(e,"__esModule",{value:!0}),Object.defineProperty(e,"default",{enumerable:!0,get:function(){return t.default}})})),define("ember-cli-addon-docs/adapters/component",["exports","ember-cli-addon-docs/adapters/-addon-docs"],(function(e,t){"use strict"
-Object.defineProperty(e,"__esModule",{value:!0}),Object.defineProperty(e,"default",{enumerable:!0,get:function(){return t.default}})})),define("ember-cli-addon-docs/adapters/module",["exports","ember-cli-addon-docs/adapters/-addon-docs"],(function(e,t){"use strict"
+Object.defineProperty(e,"__esModule",{value:!0}),Object.defineProperty(e,"default",{enumerable:!0,get:function(){return t.default}})}))
+define("ember-cli-addon-docs/adapters/module",["exports","ember-cli-addon-docs/adapters/-addon-docs"],(function(e,t){"use strict"
 Object.defineProperty(e,"__esModule",{value:!0}),Object.defineProperty(e,"default",{enumerable:!0,get:function(){return t.default}})})),define("ember-cli-addon-docs/adapters/project",["exports","ember-cli-addon-docs/adapters/-addon-docs"],(function(e,t){"use strict"
 Object.defineProperty(e,"__esModule",{value:!0}),Object.defineProperty(e,"default",{enumerable:!0,get:function(){return t.default}})})),define("ember-cli-addon-docs/addon-files",["exports"],(function(e){"use strict"
 Object.defineProperty(e,"__esModule",{value:!0}),e.default=void 0
@@ -8279,8 +8312,7 @@ e.default=["-private/helpers/action-helper.js","-private/helpers/is-helper.js","
 Object.defineProperty(e,"__esModule",{value:!0}),e.default=void 0
 e.default=["app.js","components/.gitkeep","components/cached-sounds.hbs","components/cached-sounds.js","components/component-label.hbs","components/debug-details.hbs","components/debug-details/section.hbs","components/diagnostic-controls.hbs","components/diagnostic-controls.js","components/docs/attention-getter.hbs","components/docs/autoplay-checking.hbs","components/docs/autoplay-checking.js","components/docs/autoplay-gotchas.hbs","components/docs/autoplay-gotchas.js","components/docs/current-browser.hbs","components/docs/current-browser.js","components/docs/current-os.hbs","components/docs/current-os.js","components/docs/custom-metadata.hbs","components/docs/custom-position-control.hbs","components/docs/event-display.hbs","components/docs/other-browser.hbs","components/docs/other-browser.js","components/docs/play-button-no-status.hbs","components/docs/play-button-with-status.hbs","components/docs/proxy-example.hbs","components/docs/proxy-example.js","components/docs/service-errors-silence-error.hbs","components/docs/service-errors-silence-error.js","components/docs/service-errors-throw-error.hbs","components/docs/service-errors-throw-error.js","components/docs/service-errors-try-catch.hbs","components/docs/service-errors-try-catch.js","components/docs/service-errors-try-then.hbs","components/docs/service-errors-try-then.js","components/docs/service-example.hbs","components/docs/service-example.js","components/docs/stereo-player-audio-debug.hbs","components/docs/stereo-player-audio-debug.js","components/docs/stereo-player-changer.hbs","components/docs/stereo-player-changer.js","components/docs/stereo-player-example.hbs","components/docs/stereo-player-example.js","components/docs/stereo-player-modifiers.hbs","components/docs/stereo-player.hbs","components/docs/stereo-simple-example.hbs","components/docs/stereo-volume-example.hbs","components/docs/strategy-breakdown.hbs","components/docs/template-errors-example.hbs","components/docs/try-multiple-urls.hbs","components/docs/try-multiple-urls.js","components/event-display.hbs","components/event-display.js","components/play-button.hbs","components/play-button.js","components/service-display.hbs","components/service-display.js","components/sound-display.hbs","components/sound-display.js","components/sound-display/controls.hbs","components/sound-display/position.hbs","components/sound-display/position.js","components/sound-display/volume.hbs","components/sound-display/volume.js","components/sound-properties.hbs","components/sound-properties/prop.hbs","components/strategy-breakdown.hbs","components/strategy-breakdown.js","components/strategy-breakdown/connection.hbs","controllers/.gitkeep","controllers/docs.js","controllers/docs/playing-sounds.js","helpers/.gitkeep","helpers/strategy-status.js","index.html","models/.gitkeep","router.js","routes/.gitkeep","routes/autoplay-test.js","routes/autoplay.js","routes/diagnostic.js","routes/diagnostic/index.js","routes/diagnostic/players.js","routes/diagnostic/sync.js","routes/docs/testing.js","routes/docs/volume.js","routes/index.js","services/audio.js","stereo-connections/local-dummy-connection.js","styles/app.css","styles/components/_autoplay.css","styles/components/_stereo-player.css","styles/tailwind.config.js","styles/theme.config.js","templates/application.hbs","templates/autoplay-test.hbs","templates/diagnostic.hbs","templates/diagnostic/index.hbs","templates/diagnostic/players.hbs","templates/diagnostic/sync.hbs","templates/docs.hbs","templates/docs/audio-format.md","templates/docs/autoplay.md","templates/docs/custom-position-controls.md","templates/docs/error-handling.md","templates/docs/event-monitoring.md","templates/docs/index.md","templates/docs/metadata.md","templates/docs/overview.md","templates/docs/playing-sounds.md","templates/docs/testing.md","templates/docs/upgrading.md","templates/docs/volume.md","templates/docs/waiting-for-sounds.md","templates/index.hbs","templates/not-found.hbs","utils/test-sounds.js","utils/touch-utils.js"]})),define("ember-cli-addon-docs/breakpoints",["exports"],(function(e){"use strict"
 Object.defineProperty(e,"__esModule",{value:!0}),e.default=void 0
-e.default={mobile:"(max-width: 767px)",tablet:"(min-width: 768px) and (max-width: 991px)",desktop:"(min-width: 992px) and (max-width: 1200px)"}}))
-define("ember-cli-addon-docs/components/api/x-class/index",["exports","@ember/component","@ember/template-factory","@glimmer/component","@glimmer/tracking","@ember/object/computed","@ember/string","ember-cli-addon-docs/utils/computed","ember-cli-addon-docs/-private/config"],(function(e,t,r,i,n,a,s,o,l){"use strict"
+e.default={mobile:"(max-width: 767px)",tablet:"(min-width: 768px) and (max-width: 991px)",desktop:"(min-width: 992px) and (max-width: 1200px)"}})),define("ember-cli-addon-docs/components/api/x-class/index",["exports","@ember/component","@ember/template-factory","@glimmer/component","@glimmer/tracking","@ember/object/computed","@ember/string","ember-cli-addon-docs/utils/computed","ember-cli-addon-docs/-private/config"],(function(e,t,r,i,n,a,s,o,l){"use strict"
 var u,c,d,h,f,p,m,g,v,b,y,_,w,E
 function T(e,t,r,i){r&&Object.defineProperty(e,t,{enumerable:r.enumerable,configurable:r.configurable,writable:r.writable,value:r.initializer?r.initializer.call(i):void 0})}function k(e,t,r,i,n){var a={}
 return Object.keys(i).forEach((function(e){a[e]=i[e]})),a.enumerable=!!a.enumerable,a.configurable=!!a.configurable,("value"in a||a.initializer)&&(a.writable=!0),a=r.slice().reverse().reduce((function(r,i){return i(e,t,r)||r}),a),n&&void 0!==a.initializer&&(a.value=a.initializer?a.initializer.call(n):void 0,a.initializer=void 0),void 0===a.initializer&&(Object.defineProperty(e,t,a),a=null),a}Object.defineProperty(e,"__esModule",{value:!0}),e.default=void 0
@@ -8414,15 +8446,15 @@ e.model=r.peekRecord(t.type,t.item.id)}return e}))}gotoSelectedItem(){if(null!==
 "template"===e.document.type?this.router.transitionTo(e.document.route):this.router.transitionTo("docs.api.item",e.model.routingId)}this.args.onVisit?.()}nextSearchResult(){let e=this.searchResults.length,t=this.selectedIndex+1===this.searchResults.length
 e&&!t&&(this.selectedIndex=this.selectedIndex+1)}previousSearchResult(){let e=this.searchResults.length,t=0===this.selectedIndex
 e&&!t&&(this.selectedIndex=this.selectedIndex-1)}selectResult(e){this.selectedIndex=e}},v=k(g.prototype,"docsSearch",[i.inject],{configurable:!0,enumerable:!0,writable:!0,initializer:null}),b=k(g.prototype,"router",[i.inject],{configurable:!0,enumerable:!0,writable:!0,initializer:null}),y=k(g.prototype,"store",[i.inject],{configurable:!0,enumerable:!0,writable:!0,initializer:null}),_=k(g.prototype,"selectedIndex",[a.tracked],{configurable:!0,enumerable:!0,writable:!0,initializer:function(){return null}}),w=k(g.prototype,"rawSearchResults",[a.tracked],{configurable:!0,enumerable:!0,writable:!0,initializer:function(){return[]}}),E=k(g.prototype,"config",[u.addonDocsConfig],{configurable:!0,enumerable:!0,writable:!0,initializer:null}),k(g.prototype,"search",[l.restartableTask],Object.getOwnPropertyDescriptor(g.prototype,"search"),g.prototype),k(g.prototype,"gotoSelectedItem",[c],Object.getOwnPropertyDescriptor(g.prototype,"gotoSelectedItem"),g.prototype),k(g.prototype,"nextSearchResult",[d,h],Object.getOwnPropertyDescriptor(g.prototype,"nextSearchResult"),g.prototype),k(g.prototype,"previousSearchResult",[f,p],Object.getOwnPropertyDescriptor(g.prototype,"previousSearchResult"),g.prototype),k(g.prototype,"selectResult",[s.action],Object.getOwnPropertyDescriptor(g.prototype,"selectResult"),g.prototype),m=g))||m)
-e.default=O,(0,t.setComponentTemplate)(S,O)})),define("ember-cli-addon-docs/components/docs-header/version-selector/index",["exports","@ember/component","@ember/template-factory","@glimmer/component","@ember/service","@ember/object/computed","@ember/object","@ember/array","ember-cli-addon-docs/-private/config"],(function(e,t,r,i,n,a,s,o,l){"use strict"
-var u,c,d,h,f
-function p(e,t,r,i){r&&Object.defineProperty(e,t,{enumerable:r.enumerable,configurable:r.configurable,writable:r.writable,value:r.initializer?r.initializer.call(i):void 0})}function m(e,t,r,i,n){var a={}
+e.default=O,(0,t.setComponentTemplate)(S,O)})),define("ember-cli-addon-docs/components/docs-header/version-selector/index",["exports","@ember/component","@ember/template-factory","@glimmer/component","@ember/service","@ember/object/computed","@ember/object","@ember/array","tracked-toolbox","ember-cli-addon-docs/-private/config"],(function(e,t,r,i,n,a,s,o,l,u){"use strict"
+var c,d,h,f,p
+function m(e,t,r,i){r&&Object.defineProperty(e,t,{enumerable:r.enumerable,configurable:r.configurable,writable:r.writable,value:r.initializer?r.initializer.call(i):void 0})}function g(e,t,r,i,n){var a={}
 return Object.keys(i).forEach((function(e){a[e]=i[e]})),a.enumerable=!!a.enumerable,a.configurable=!!a.configurable,("value"in a||a.initializer)&&(a.writable=!0),a=r.slice().reverse().reduce((function(r,i){return i(e,t,r)||r}),a),n&&void 0!==a.initializer&&(a.value=a.initializer?a.initializer.call(n):void 0,a.initializer=void 0),void 0===a.initializer&&(Object.defineProperty(e,t,a),a=null),a}Object.defineProperty(e,"__esModule",{value:!0}),e.default=void 0
-const g=(0,r.createTemplateFactory)({id:"uShGQMT3",block:'[[[8,[39,0],[[17,1]],[["@tetherTarget","@attachment","@clickOutsideToClose","@onClose","@targetAttachment"],["[data-version-selector]","top right",true,[30,2],"bottom right"]],[["default"],[[[[1,"\\n  "],[10,"ul"],[14,0,"docs-mt-2 docs-bg-white docs-shadow-md docs-text-xs docs-rounded docs-z-10"],[12],[1,"\\n"],[42,[28,[37,2],[[28,[37,2],[[30,0,["sortedVersions"]]],null]],null],null,[[[1,"      "],[10,"li"],[14,"data-test-id","version"],[12],[1,"\\n        "],[11,3],[24,6,"#"],[16,0,[28,[37,3],["docs-text-black docs-no-underline docs-flex docs-items-center\\n            docs-px-4 docs-py-3 hover:docs-bg-brand hover:docs-text-white group ",[52,[28,[37,5],[[30,3],[30,0,["sortedVersions","firstObject"]]],null],"docs-rounded-t"],[52,[28,[37,5],[[30,3],[30,0,["sortedVersions","lastObject"]]],null],"docs-rounded-b"]],null]],[4,[38,6],["click",[28,[37,7],[[30,0,["changeVersion"]],[30,3]],null]],null],[12],[1,"\\n          "],[10,1],[14,0,"flex docs-w-6"],[12],[1,"\\n"],[41,[28,[37,5],[[30,3,["key"]],[30,0,["currentVersion","key"]]],null],[[[1,"              "],[1,[28,[35,8],["check"],[["height","width"],[16,16]]]],[1,"\\n"]],[]],null],[1,"          "],[13],[1,"\\n          "],[10,1],[14,0,"docs-font-medium"],[12],[1,"\\n            "],[1,[30,3,["name"]]],[1,"\\n          "],[13],[1,"\\n\\n          "],[10,1],[14,0,"docs-ml-auto docs-pl-8 docs-flex docs-items-center docs-opacity-50 group-hover:docs-opacity-100"],[12],[1,"\\n"],[41,[28,[37,9],[[28,[37,5],[[30,3,["key"]],[30,0,["config","latestVersionName"]]],null],[28,[37,5],[[30,3,["key"]],[30,0,["config","primaryBranch"]]],null]],null],[[[1,"              "],[1,[28,[35,8],[[52,[30,3,["tag"]],"git-tag","git-sha"]],[["height","width"],[16,16]]]],[1,"\\n"]],[]],[[[1,"              "],[1,[28,[35,8],["git-sha"],[["height","width"],[16,16]]]],[1,"\\n"]],[]]],[1,"\\n            "],[10,1],[14,0,"docs-text-xxs docs-font-mono docs-pl-1"],[12],[1,"\\n"],[41,[28,[37,9],[[28,[37,5],[[30,3,["key"]],[30,0,["config","latestVersionName"]]],null],[28,[37,5],[[30,3,["key"]],[30,0,["config","primaryBranch"]]],null]],null],[[[41,[30,3,["tag"]],[[[1,"                  "],[1,[30,3,["tag"]]],[1,"\\n"]],[]],[[[1,"                  "],[1,[30,3,["truncatedSha"]]],[1,"\\n"]],[]]]],[]],[[[1,"                "],[1,[30,3,["truncatedSha"]]],[1,"\\n"]],[]]],[1,"            "],[13],[1,"\\n          "],[13],[1,"\\n        "],[13],[1,"\\n      "],[13],[1,"\\n"]],[3]],null],[1,"  "],[13],[1,"\\n"]],[]]]]]],["&attrs","@onClose","version"],false,["modal-dialog","each","-track-array","concat","if","eq","on","fn","svg-jar","or"]]',moduleName:"ember-cli-addon-docs/components/docs-header/version-selector/index.hbs",isStrictMode:!1})
-let v=(u=(0,a.reads)("projectVersion.currentVersion"),c=class extends i.default{constructor(){super(...arguments),p(this,"projectVersion",d,this),p(this,"config",h,this),p(this,"currentVersion",f,this)}get sortedVersions(){let e=(0,o.A)(this.projectVersion.versions),t=e.findBy("key",this.config.latestVersionName),r=e.findBy("key",this.config.primaryBranch),i=e.reject((e=>[t,r].includes(e))).sort(((e,t)=>{let r=e.key,i=t.key
+const v=(0,r.createTemplateFactory)({id:"19KWgC6G",block:'[[[8,[39,0],[[17,1]],[["@tetherTarget","@attachment","@clickOutsideToClose","@onClose","@targetAttachment"],["[data-version-selector]","top right",true,[30,2],"bottom right"]],[["default"],[[[[1,"\\n  "],[10,"ul"],[14,0,"docs-mt-2 docs-bg-white docs-shadow-md docs-text-xs docs-rounded docs-z-10"],[12],[1,"\\n"],[42,[28,[37,2],[[28,[37,2],[[30,0,["sortedVersions"]]],null]],null],null,[[[1,"      "],[10,"li"],[14,"data-test-id","version"],[12],[1,"\\n        "],[11,3],[24,6,"#"],[16,0,[28,[37,3],["docs-text-black docs-no-underline docs-flex docs-items-center\\n            docs-px-4 docs-py-3 hover:docs-bg-brand hover:docs-text-white group ",[52,[28,[37,5],[[30,4],0],null],"docs-rounded-t"],[52,[28,[37,5],[[30,3],[30,0,["lastVersion"]]],null],"docs-rounded-b"]],null]],[4,[38,6],["click",[28,[37,7],[[30,0,["changeVersion"]],[30,3]],null]],null],[12],[1,"\\n          "],[10,1],[14,0,"flex docs-w-6"],[12],[1,"\\n"],[41,[28,[37,5],[[30,3,["key"]],[30,0,["currentVersion","key"]]],null],[[[1,"              "],[1,[28,[35,8],["check"],[["height","width"],[16,16]]]],[1,"\\n"]],[]],null],[1,"          "],[13],[1,"\\n          "],[10,1],[14,0,"docs-font-medium"],[12],[1,"\\n            "],[1,[30,3,["name"]]],[1,"\\n          "],[13],[1,"\\n\\n          "],[10,1],[14,0,"docs-ml-auto docs-pl-8 docs-flex docs-items-center docs-opacity-50 group-hover:docs-opacity-100"],[12],[1,"\\n"],[41,[28,[37,9],[[28,[37,5],[[30,3,["key"]],[30,0,["config","latestVersionName"]]],null],[28,[37,5],[[30,3,["key"]],[30,0,["config","primaryBranch"]]],null]],null],[[[1,"              "],[1,[28,[35,8],[[52,[30,3,["tag"]],"git-tag","git-sha"]],[["height","width"],[16,16]]]],[1,"\\n"]],[]],[[[1,"              "],[1,[28,[35,8],["git-sha"],[["height","width"],[16,16]]]],[1,"\\n"]],[]]],[1,"\\n            "],[10,1],[14,0,"docs-text-xxs docs-font-mono docs-pl-1"],[12],[1,"\\n"],[41,[28,[37,9],[[28,[37,5],[[30,3,["key"]],[30,0,["config","latestVersionName"]]],null],[28,[37,5],[[30,3,["key"]],[30,0,["config","primaryBranch"]]],null]],null],[[[41,[30,3,["tag"]],[[[1,"                  "],[1,[30,3,["tag"]]],[1,"\\n"]],[]],[[[1,"                  "],[1,[30,3,["truncatedSha"]]],[1,"\\n"]],[]]]],[]],[[[1,"                "],[1,[30,3,["truncatedSha"]]],[1,"\\n"]],[]]],[1,"            "],[13],[1,"\\n          "],[13],[1,"\\n        "],[13],[1,"\\n      "],[13],[1,"\\n"]],[3,4]],null],[1,"  "],[13],[1,"\\n"]],[]]]]]],["&attrs","@onClose","version","index"],false,["modal-dialog","each","-track-array","concat","if","eq","on","fn","svg-jar","or"]]',moduleName:"ember-cli-addon-docs/components/docs-header/version-selector/index.hbs",isStrictMode:!1})
+let b=(c=(0,a.reads)("projectVersion.currentVersion"),d=class extends i.default{constructor(){super(...arguments),m(this,"projectVersion",h,this),m(this,"config",f,this),m(this,"currentVersion",p,this)}get sortedVersions(){let e=(0,o.A)(this.projectVersion.versions),t=e.findBy("key",this.config.latestVersionName),r=e.findBy("key",this.config.primaryBranch),i=e.reject((e=>[t,r].includes(e))).sort(((e,t)=>{let r=e.key,i=t.key
 return r>i?-1:r<i?1:0}))
-return[t,r,...i].filter(Boolean)}changeVersion(e){this.projectVersion.redirectTo(e)}},d=m(c.prototype,"projectVersion",[n.inject],{configurable:!0,enumerable:!0,writable:!0,initializer:null}),h=m(c.prototype,"config",[l.addonDocsConfig],{configurable:!0,enumerable:!0,writable:!0,initializer:null}),f=m(c.prototype,"currentVersion",[u],{configurable:!0,enumerable:!0,writable:!0,initializer:null}),m(c.prototype,"changeVersion",[s.action],Object.getOwnPropertyDescriptor(c.prototype,"changeVersion"),c.prototype),c)
-e.default=v,(0,t.setComponentTemplate)(g,v)})),define("ember-cli-addon-docs/components/docs-hero/index",["exports","@ember/component","@ember/template-factory","@glimmer/component","ember-cli-addon-docs/utils/computed","@ember/string","ember-cli-addon-docs/-private/config"],(function(e,t,r,i,n,a,s){"use strict"
+return[t,r,...i].filter(Boolean)}get lastVersion(){return this.sortedVersions[this.sortedVersions.length-1]}changeVersion(e){this.projectVersion.redirectTo(e)}},h=g(d.prototype,"projectVersion",[n.inject],{configurable:!0,enumerable:!0,writable:!0,initializer:null}),f=g(d.prototype,"config",[u.addonDocsConfig],{configurable:!0,enumerable:!0,writable:!0,initializer:null}),p=g(d.prototype,"currentVersion",[c],{configurable:!0,enumerable:!0,writable:!0,initializer:null}),g(d.prototype,"sortedVersions",[l.cached],Object.getOwnPropertyDescriptor(d.prototype,"sortedVersions"),d.prototype),g(d.prototype,"changeVersion",[s.action],Object.getOwnPropertyDescriptor(d.prototype,"changeVersion"),d.prototype),d)
+e.default=b,(0,t.setComponentTemplate)(v,b)})),define("ember-cli-addon-docs/components/docs-hero/index",["exports","@ember/component","@ember/template-factory","@glimmer/component","ember-cli-addon-docs/utils/computed","@ember/string","ember-cli-addon-docs/-private/config"],(function(e,t,r,i,n,a,s){"use strict"
 var o,l
 Object.defineProperty(e,"__esModule",{value:!0}),e.default=void 0
 const u=(0,r.createTemplateFactory)({id:"/tV4kgYF",block:'[[[11,0],[24,0,"\\n  docs-bg-brand docs-text-white\\n  docs-px-4 docs-py-16 docs-text-center\\n"],[17,1],[12],[1,"\\n  "],[10,0],[14,0,"docs-max-w-sm docs-mx-auto"],[12],[1,"\\n    "],[10,"h1"],[14,0,"\\n      docs-font-title docs-font-normal docs-text-jumbo-1 md:docs-text-jumbo-2 xl:docs-text-jumbo-3\\n      docs-leading-none docs-tracking-tight\\n    "],[12],[1,"\\n"],[41,[30,0,["prefix"]],[[[1,"        "],[10,1],[14,0,"docs-block docs-text-large-5 md:docs-text-large-6 xl:docs-text-large-7"],[12],[1,"\\n          "],[1,[30,0,["prefix"]]],[1,"\\n        "],[13],[1,"\\n"]],[]],null],[1,"\\n      "],[1,[30,0,["heading"]]],[1,"\\n    "],[13],[1,"\\n\\n    "],[10,2],[14,0,"\\n      docs-mt-4 xl:docs-mt-6 docs-mb-2 docs-leading-small docs-mx-auto docs-tracking-tight\\n      docs-text-large-1 md:docs-text-large-2 xl:docs-text-large-3\\n    "],[12],[1,"\\n      "],[1,[30,0,["byline"]]],[1,"\\n    "],[13],[1,"\\n\\n    "],[10,0],[14,0,"docs-mt-8"],[12],[1,"\\n      "],[8,[39,1],[[24,0,"\\n        docs-no-underline docs-bg-white docs-text-brand docs-text-xs docs-px-3 docs-py-2\\n        docs-rounded docs-mt-4 docs-shadow-md hover:docs-shadow-lg\\n        docs-transition hover:docs-nudge-t docs-font-bold docs-inline-block docs-uppercase\\n      "]],[["@route"],["docs"]],[["default"],[[[[1,"\\n        Read the docs\\n      "]],[]]]]],[1,"\\n    "],[13],[1,"\\n\\n    "],[18,2,null],[1,"\\n  "],[13],[1,"\\n"],[13],[1,"\\n"]],["&attrs","&default"],false,["if","link-to","yield"]]',moduleName:"ember-cli-addon-docs/components/docs-hero/index.hbs",isStrictMode:!1})
@@ -8449,7 +8481,7 @@ e.default=y,(0,t.setComponentTemplate)(b,y)})),define("ember-cli-addon-docs/comp
 var a,s,o,l,u
 function c(e,t,r,i){r&&Object.defineProperty(e,t,{enumerable:r.enumerable,configurable:r.configurable,writable:r.writable,value:r.initializer?r.initializer.call(i):void 0})}function d(e,t,r,i,n){var a={}
 return Object.keys(i).forEach((function(e){a[e]=i[e]})),a.enumerable=!!a.enumerable,a.configurable=!!a.configurable,("value"in a||a.initializer)&&(a.writable=!0),a=r.slice().reverse().reduce((function(r,i){return i(e,t,r)||r}),a),n&&void 0!==a.initializer&&(a.value=a.initializer?a.initializer.call(n):void 0,a.initializer=void 0),void 0===a.initializer&&(Object.defineProperty(e,t,a),a=null),a}Object.defineProperty(e,"__esModule",{value:!0}),e.default=void 0
-const h=(0,r.createTemplateFactory)({id:"VjqVEv/s",block:'[[[41,[30,1],[[[1,"  "],[10,0],[14,0,"\\n    docs-bg-black docs-text-grey-lighter docs-text-xs\\n    docs-font-medium docs-py-2 docs-px-4 docs-rounded-t\\n    docs-border-b docs-border-grey-darkest\\n    docs-subpixel-antialiased\\n  "],[12],[1,"\\n    "],[1,[30,1]],[1,"\\n  "],[13],[1,"\\n"]],[]],null],[1,"\\n"],[11,0],[16,0,[29,["\\n    docs-text-xs docs-px-2 docs-py-1 docs-bg-code-base\\n    docs-relative docs-subpixel-antialiased\\n    ",[52,[30,1],"docs-rounded-b","docs-rounded"],"\\n  "]]],[16,"data-test-id",[28,[37,1],[[30,2],[30,3]],null]],[17,4],[12],[1,"\\n"],[44,[[28,[37,3],[[30,3]],[["unindent"],[[30,0,["unindent"]]]]]],[[[41,[30,0,["showCopy"]],[[[1,"      "],[8,[39,4],[[24,0,"\\n          docs-absolute docs-top-0 docs-right-0 docs-bg-transparent hover:docs-bg-transparent\\n          docs-border-none docs-opacity-50 hover:docs-opacity-100 docs-p-3 docs-text-white\\n        "]],[["@clipboardText","@title"],[[30,5,["source"]],"copy to clipboard"]],[["default"],[[[[1,"\\n        Copy\\n      "]],[]]]]],[1,"\\n"]],[]],null],[1,"\\n    "],[8,[39,5],null,[["@language"],[[30,6]]],[["default"],[[[[1,[30,5,["source"]]]],[]]]]],[1,"\\n"]],[5]]],[13],[1,"\\n"]],["@title","@data-test-id","@name","&attrs","snippet","@language"],false,["if","or","let","get-code-snippet","copy-button","docs-code-highlight"]]',moduleName:"ember-cli-addon-docs/components/docs-snippet/index.hbs",isStrictMode:!1})
+const h=(0,r.createTemplateFactory)({id:"bka6l7A/",block:'[[[41,[30,1],[[[1,"  "],[10,0],[14,0,"\\n    docs-bg-black docs-text-grey-lighter docs-text-xs\\n    docs-font-medium docs-py-2 docs-px-4 docs-rounded-t\\n    docs-border-b docs-border-grey-darkest\\n    docs-subpixel-antialiased\\n  "],[12],[1,"\\n    "],[1,[30,1]],[1,"\\n  "],[13],[1,"\\n"]],[]],null],[1,"\\n"],[11,0],[16,0,[29,["\\n    docs-text-xs docs-px-2 docs-py-1 docs-bg-code-base\\n    docs-relative docs-subpixel-antialiased\\n    ",[52,[30,1],"docs-rounded-b","docs-rounded"],"\\n  "]]],[16,"data-test-id",[28,[37,1],[[30,2],[30,3]],null]],[17,4],[12],[1,"\\n"],[44,[[28,[37,3],[[30,3]],[["unindent"],[[30,0,["unindent"]]]]]],[[[41,[30,0,["showCopy"]],[[[1,"      "],[8,[39,4],[[24,"title","copy to clipboard"],[24,0,"\\n          docs-absolute docs-top-0 docs-right-0 docs-bg-transparent hover:docs-bg-transparent\\n          docs-border-none docs-opacity-50 hover:docs-opacity-100 docs-p-3 docs-text-white\\n        "]],[["@text"],[[30,5,["source"]]]],[["default"],[[[[1,"\\n        Copy\\n      "]],[]]]]],[1,"\\n"]],[]],null],[1,"\\n    "],[8,[39,5],null,[["@language"],[[30,6]]],[["default"],[[[[1,[30,5,["source"]]]],[]]]]],[1,"\\n"]],[5]]],[13],[1,"\\n"]],["@title","@data-test-id","@name","&attrs","snippet","@language"],false,["if","or","let","get-code-snippet","copy-button","docs-code-highlight"]]',moduleName:"ember-cli-addon-docs/components/docs-snippet/index.hbs",isStrictMode:!1})
 let f=(a=(0,n.localCopy)("args.showCopy",!0),s=(0,n.localCopy)("args.unindent",!0),o=class extends i.default{constructor(){super(...arguments),c(this,"showCopy",l,this),c(this,"unindent",u,this)}},l=d(o.prototype,"showCopy",[a],{configurable:!0,enumerable:!0,writable:!0,initializer:null}),u=d(o.prototype,"unindent",[s],{configurable:!0,enumerable:!0,writable:!0,initializer:null}),o)
 e.default=f,(0,t.setComponentTemplate)(h,f)})),define("ember-cli-addon-docs/components/docs-viewer/index",["exports","@ember/component","@ember/template-factory","@ember/service","@glimmer/component","@glimmer/tracking","ember-keyboard","ember-cli-addon-docs/keyboard-config"],(function(e,t,r,i,n,a,s,o){"use strict"
 var l,u,c,d,h,f,p,m,g
@@ -8459,7 +8491,8 @@ const y=(0,r.createTemplateFactory)({id:"hCeY4DvT",block:'[[[11,0],[24,0,"docs-v
 let _=(l=(0,s.onKey)("KeyJ"),u=(0,s.onKey)("ArrowRight"),c=(0,s.onKey)("KeyK"),d=(0,s.onKey)("ArrowLeft"),(0,s.keyResponder)((f=class extends n.default{constructor(){super(...arguments),v(this,"docsRoutes",p,this),v(this,"router",m,this),v(this,"pageIndex",g,this),this.docsRoutes.resetState()}nextPage(){if(!(0,o.formElementHasFocus)()&&this.docsRoutes.next){const{route:e,model:t}=this.docsRoutes.next
 this.router.transitionTo(e,t)}}previousPage(){if(!(0,o.formElementHasFocus)()&&this.docsRoutes.previous){const{route:e,model:t}=this.docsRoutes.previous
 this.router.transitionTo(e,t)}}},p=b(f.prototype,"docsRoutes",[i.inject],{configurable:!0,enumerable:!0,writable:!0,initializer:null}),m=b(f.prototype,"router",[i.inject],{configurable:!0,enumerable:!0,writable:!0,initializer:null}),g=b(f.prototype,"pageIndex",[a.tracked],{configurable:!0,enumerable:!0,writable:!0,initializer:null}),b(f.prototype,"nextPage",[l,u],Object.getOwnPropertyDescriptor(f.prototype,"nextPage"),f.prototype),b(f.prototype,"previousPage",[c,d],Object.getOwnPropertyDescriptor(f.prototype,"previousPage"),f.prototype),h=f))||h)
-e.default=_,(0,t.setComponentTemplate)(y,_)})),define("ember-cli-addon-docs/components/docs-viewer/x-autogenerated-api-docs/index",["exports","@ember/component","@ember/template-factory","@ember/service","@ember/object/computed","@glimmer/component","lodash"],(function(e,t,r,i,n,a,s){"use strict"
+e.default=_,(0,t.setComponentTemplate)(y,_)}))
+define("ember-cli-addon-docs/components/docs-viewer/x-autogenerated-api-docs/index",["exports","@ember/component","@ember/template-factory","@ember/service","@ember/object/computed","@glimmer/component","lodash"],(function(e,t,r,i,n,a,s){"use strict"
 var o,l,u,c
 function d(e,t,r,i){r&&Object.defineProperty(e,t,{enumerable:r.enumerable,configurable:r.configurable,writable:r.writable,value:r.initializer?r.initializer.call(i):void 0})}function h(e,t,r,i,n){var a={}
 return Object.keys(i).forEach((function(e){a[e]=i[e]})),a.enumerable=!!a.enumerable,a.configurable=!!a.configurable,("value"in a||a.initializer)&&(a.writable=!0),a=r.slice().reverse().reduce((function(r,i){return i(e,t,r)||r}),a),n&&void 0!==a.initializer&&(a.value=a.initializer?a.initializer.call(n):void 0,a.initializer=void 0),void 0===a.initializer&&(Object.defineProperty(e,t,a),a=null),a}Object.defineProperty(e,"__esModule",{value:!0}),e.default=void 0
@@ -8501,8 +8534,7 @@ super(...arguments),e=this,t="docsRoutes",i=this,(r=o)&&Object.defineProperty(e,
 let n=this.args.model
 "string"==typeof n&&n.includes("#")||(0,a.next)((()=>{this.docsRoutes.items.addObject(this)}))}willDestroy(){super.willDestroy(...arguments),this.docsRoutes.items.removeObject(this)}},c=s.prototype,d="docsRoutes",h=[i.inject],f={configurable:!0,enumerable:!0,writable:!0,initializer:null},m={},Object.keys(f).forEach((function(e){m[e]=f[e]})),m.enumerable=!!m.enumerable,m.configurable=!!m.configurable,("value"in m||m.initializer)&&(m.writable=!0),m=h.slice().reverse().reduce((function(e,t){return t(c,d,e)||e}),m),p&&void 0!==m.initializer&&(m.value=m.initializer?m.initializer.call(p):void 0,m.initializer=void 0),void 0===m.initializer&&(Object.defineProperty(c,d,m),m=null),o=m,s)
 var c,d,h,f,p,m
-e.default=u,(0,t.setComponentTemplate)(l,u)}))
-define("ember-cli-addon-docs/components/docs-viewer/x-nav-list/index",["exports","@ember/component","@ember/template-factory","@ember/component/template-only"],(function(e,t,r,i){"use strict"
+e.default=u,(0,t.setComponentTemplate)(l,u)})),define("ember-cli-addon-docs/components/docs-viewer/x-nav-list/index",["exports","@ember/component","@ember/template-factory","@ember/component/template-only"],(function(e,t,r,i){"use strict"
 Object.defineProperty(e,"__esModule",{value:!0}),e.default=void 0
 const n=(0,r.createTemplateFactory)({id:"Bjfn/ei7",block:'[[[11,"ul"],[17,1],[12],[1,"\\n  "],[18,2,[[28,[37,1],null,[["item"],[[50,"docs-viewer/x-nav-item",0,null,null]]]]]],[1,"\\n"],[13]],["&attrs","&default"],false,["yield","hash","component"]]',moduleName:"ember-cli-addon-docs/components/docs-viewer/x-nav-list/index.hbs",isStrictMode:!1})
 var a=(0,t.setComponentTemplate)(n,(0,i.default)())
@@ -8644,7 +8676,7 @@ return"ADDON_DOCS_DEPLOY_VERSION"===e&&(e={key:this.config.latestVersionName,nam
 e.default=d})),define("ember-cli-addon-docs/styles/tailwind.config",[],(function(){"use strict"
 let e={xxs:"12px",xs:"14px",sm:"15px",base:"16px","large-1":"18px","large-2":"20px","large-3":"22px","large-4":"24px","large-5":"30px","large-6":"36px","large-7":"42px","jumbo-1":"60px","jumbo-2":"74px","jumbo-3":"86px"},t=Object.keys(e).reduce(((t,r)=>{let i=+e[r].replace("px","")/16+"rem"
 return t[r]=i,t}),{})
-module.exports={prefix:"docs-",theme:{colors:{transparent:"transparent",inherit:"inherit",black:"#22292f","grey-darkest":"#3d4852","grey-darker":"#606f7b","grey-dark":"#8795a1",grey:"#b8c2cc","grey-light":"#dae1e7","grey-lighter":"#f1f5f8","grey-lightest":"#f8fafc",white:"white",yellow:"#ffed4a","code-base":"#282c34","brand-var":"var(--brand-primary, #E04E39)"},screens:{sm:"576px",md:"768px",lg:"992px",xl:"1200px"},fontFamily:{title:['"Crimson Text"',"serif"],sans:["system-ui","BlinkMacSystemFont","-apple-system","Segoe UI","Roboto","Oxygen","Ubuntu","Cantarell","Fira Sans","Droid Sans","Helvetica Neue","sans-serif"],serif:["Constantia","Lucida Bright","Lucidabright","Lucida Serif","Lucida","DejaVu Serif","Bitstream Vera Serif","Liberation Serif","Georgia","serif"],mono:["Menlo","Monaco","Consolas","Liberation Mono","Courier New","monospace"]},fontSize:t,fontWeight:{hairline:100,thin:200,light:300,normal:400,medium:500,semibold:600,bold:700,extrabold:800,black:900},lineHeight:{none:1,tight:1.25,small:1.45,normal:1.625,loose:2},letterSpacing:{tight:"-0.2px",normal:"0",wide:"0.05em"},textColor:e=>e("colors"),backgroundColor:e=>e("colors"),backgroundSize:{auto:"auto",cover:"cover",contain:"contain"},borderWidth:{default:"1px",0:"0",2:"2px",4:"4px",8:"8px"},borderColor:e=>({default:e("colors.grey-light"),...e("colors")}),borderRadius:{none:"0",sm:".125rem",default:".25rem",lg:".5rem",full:"9999px"},width:{"site-container":"1400px",auto:"auto",px:"1px",1:"0.25rem",2:"0.5rem",3:"0.75rem",4:"1rem",6:"1.5rem",8:"2rem",10:"2.5rem",12:"3rem",16:"4rem",24:"6rem",32:"8rem",48:"12rem",56:"14rem",64:"16rem",72:"18rem",76:"19rem","1/2":"50%","1/3":"33.33333%","2/3":"66.66667%","1/4":"25%","3/4":"75%","1/5":"20%","2/5":"40%","3/5":"60%","4/5":"80%","1/6":"16.66667%","5/6":"83.33333%","90%":"90%",full:"100%",screen:"100vw"},height:{auto:"auto",px:"1px",1:"0.25rem",2:"0.5rem",3:"0.75rem",4:"1rem",6:"1.5rem",8:"2rem",10:"2.5rem",12:"3rem",16:"4rem",24:"6rem",32:"8rem",48:"12rem",64:"16rem",full:"100%",screen:"100vh"},minWidth:{0:"0",full:"100%"},minHeight:{0:"0",full:"100%",screen:"100vh"},maxWidth:{"site-container":"1400px","measure-byline":"12rem",none:"none",xxs:"17rem",xs:"20rem",sm:"30rem",md:"40rem",lg:"50rem",xl:"60rem","2xl":"70rem","3xl":"80rem","4xl":"90rem","5xl":"100rem",full:"100%","2/3":"66.67%"},maxHeight:{full:"100%",screen:"100vh"},padding:{px:"1px",0:"0",1:"0.25rem",2:"0.5rem",3:"0.75rem",4:"1rem",5:"1.25rem",6:"1.5rem",8:"2rem",16:"4rem",20:"5rem"},margin:{auto:"auto",px:"1px",0:"0",1:"0.25rem",2:"0.5rem",3:"0.75rem",4:"1rem",6:"1.5rem",8:"2rem",12:"3rem",16:"4rem",20:"5rem","-px":"-1px","-2px":"-2px","-0":"-0","-1":"-0.25rem","-2":"-0.5rem","-3":"-0.75rem","-4":"-1rem","-6":"-1.5rem","-8":"-2rem","-16":"-4rem","-20":"-5rem"},boxShadow:{sm:"0 1px 1px 0 rgba(116, 129, 141, 0.1)",default:"0 2px 4px 0 rgba(0,0,0,0.10)",md:"0 4px 8px 0 rgba(0,0,0,0.12), 0 2px 4px 0 rgba(0,0,0,0.08)",lg:"0 15px 30px 0 rgba(0,0,0,0.11), 0 5px 15px 0 rgba(0,0,0,0.08)",inner:"inset 0 2px 4px 0 rgba(0,0,0,0.06)",none:"none"},zIndex:{auto:"auto",0:0,10:10,20:20,30:30,40:40,50:50},fill:{current:"currentColor"},stroke:{current:"currentColor"}},variants:{appearance:["responsive"],backgroundAttachment:["responsive"],backgroundColor:["responsive","hover","focus"],backgroundPosition:["responsive"],backgroundRepeat:["responsive"],backgroundSize:["responsive"],borderColor:["responsive","hover"],borderRadius:["responsive"],borderStyle:["responsive"],borderWidth:["responsive"],cursor:["responsive"],display:["responsive"],flexDirection:["responsive"],flexWrap:["responsive"],alignItems:["responsive"],alignSelf:["responsive"],justifyContent:["responsive"],alignContent:["responsive"],flex:["responsive"],flexGrow:["responsive"],flexShrink:["responsive"],float:["responsive"],fonts:["responsive"],fontWeight:["responsive","hover"],height:["responsive"],lineHeight:["responsive"],listStylePosition:["responsive"],listStyleType:["responsive"],margin:["responsive"],maxHeight:["responsive"],maxWidth:["responsive"],minHeight:["responsive"],minWidth:["responsive"],negativeMargin:["responsive"],opacity:["responsive","hover","group-hover"],overflow:["responsive"],padding:["responsive"],pointerEvents:["responsive"],position:["responsive"],inset:["responsive"],resize:["responsive"],tableLayout:["responsive","hover","focus"],boxShadow:["responsive","hover"],fill:[],stroke:[],textAlign:["responsive"],textColor:["responsive","hover"],fontSize:["responsive"],fontStyle:["responsive","hover"],fontSmoothing:["responsive","hover"],textDecoration:["responsive","hover"],textTransform:["responsive","hover"],letterSpacing:["responsive"],userSelect:["responsive"],verticalAlign:["responsive"],visibility:["responsive"],whitespace:["responsive"],wordBreak:["responsive"],width:["responsive"],zIndex:["responsive"]},plugins:[],corePlugins:{container:!1}}})),define("ember-cli-addon-docs/utils/compile-markdown",["exports","marked","node-html-parser","@handlebars/parser","line-column","highlight.js/lib/core","highlight.js/lib/languages/javascript","highlight.js/lib/languages/css","highlight.js/lib/languages/handlebars","highlight.js/lib/languages/json","highlight.js/lib/languages/xml","highlight.js/lib/languages/diff","highlight.js/lib/languages/shell","highlight.js/lib/languages/typescript"],(function(e,t,r,i,n,a,s,o,l,u,c,d,h,f){"use strict"
+module.exports={prefix:"docs-",theme:{colors:{transparent:"transparent",inherit:"inherit",black:"#22292f","grey-darkest":"#3d4852","grey-darker":"#606f7b","grey-dark":"#8795a1",grey:"#b8c2cc","grey-light":"#dae1e7","grey-lighter":"#f1f5f8","grey-lightest":"#f8fafc",white:"white",yellow:"#ffed4a","code-base":"#282c34","brand-var":"var(--brand-primary, #E04E39)"},screens:{sm:"576px",md:"768px",lg:"992px",xl:"1200px"},fontFamily:{title:['"Iowan Old Style"','"Palentino Linotype"','"URW Palladio L"','"P052"',"serif"],sans:["system-ui","BlinkMacSystemFont","-apple-system","Segoe UI","Roboto","Oxygen","Ubuntu","Cantarell","Fira Sans","Droid Sans","Helvetica Neue","sans-serif"],serif:["Constantia","Lucida Bright","Lucidabright","Lucida Serif","Lucida","DejaVu Serif","Bitstream Vera Serif","Liberation Serif","Georgia","serif"],mono:["Menlo","Monaco","Consolas","Liberation Mono","Courier New","monospace"]},fontSize:t,fontWeight:{hairline:100,thin:200,light:300,normal:400,medium:500,semibold:600,bold:700,extrabold:800,black:900},lineHeight:{none:1,tight:1.25,small:1.45,normal:1.625,loose:2},letterSpacing:{tight:"-0.2px",normal:"0",wide:"0.05em"},textColor:e=>e("colors"),backgroundColor:e=>e("colors"),backgroundSize:{auto:"auto",cover:"cover",contain:"contain"},borderWidth:{default:"1px",0:"0",2:"2px",4:"4px",8:"8px"},borderColor:e=>({default:e("colors.grey-light"),...e("colors")}),borderRadius:{none:"0",sm:".125rem",default:".25rem",lg:".5rem",full:"9999px"},width:{"site-container":"1400px",auto:"auto",px:"1px",1:"0.25rem",2:"0.5rem",3:"0.75rem",4:"1rem",6:"1.5rem",8:"2rem",10:"2.5rem",12:"3rem",16:"4rem",24:"6rem",32:"8rem",48:"12rem",56:"14rem",64:"16rem",72:"18rem",76:"19rem","1/2":"50%","1/3":"33.33333%","2/3":"66.66667%","1/4":"25%","3/4":"75%","1/5":"20%","2/5":"40%","3/5":"60%","4/5":"80%","1/6":"16.66667%","5/6":"83.33333%","90%":"90%",full:"100%",screen:"100vw"},height:{auto:"auto",px:"1px",1:"0.25rem",2:"0.5rem",3:"0.75rem",4:"1rem",6:"1.5rem",8:"2rem",10:"2.5rem",12:"3rem",16:"4rem",24:"6rem",32:"8rem",48:"12rem",64:"16rem",full:"100%",screen:"100vh"},minWidth:{0:"0",full:"100%"},minHeight:{0:"0",full:"100%",screen:"100vh"},maxWidth:{"site-container":"1400px","measure-byline":"12rem",none:"none",xxs:"17rem",xs:"20rem",sm:"30rem",md:"40rem",lg:"50rem",xl:"60rem","2xl":"70rem","3xl":"80rem","4xl":"90rem","5xl":"100rem",full:"100%","2/3":"66.67%"},maxHeight:{full:"100%",screen:"100vh"},padding:{px:"1px",0:"0",1:"0.25rem",2:"0.5rem",3:"0.75rem",4:"1rem",5:"1.25rem",6:"1.5rem",8:"2rem",16:"4rem",20:"5rem"},margin:{auto:"auto",px:"1px",0:"0",1:"0.25rem",2:"0.5rem",3:"0.75rem",4:"1rem",6:"1.5rem",8:"2rem",12:"3rem",16:"4rem",20:"5rem","-px":"-1px","-2px":"-2px","-0":"-0","-1":"-0.25rem","-2":"-0.5rem","-3":"-0.75rem","-4":"-1rem","-6":"-1.5rem","-8":"-2rem","-16":"-4rem","-20":"-5rem"},boxShadow:{sm:"0 1px 1px 0 rgba(116, 129, 141, 0.1)",default:"0 2px 4px 0 rgba(0,0,0,0.10)",md:"0 4px 8px 0 rgba(0,0,0,0.12), 0 2px 4px 0 rgba(0,0,0,0.08)",lg:"0 15px 30px 0 rgba(0,0,0,0.11), 0 5px 15px 0 rgba(0,0,0,0.08)",inner:"inset 0 2px 4px 0 rgba(0,0,0,0.06)",none:"none"},zIndex:{auto:"auto",0:0,10:10,20:20,30:30,40:40,50:50},fill:{current:"currentColor"},stroke:{current:"currentColor"}},variants:{appearance:["responsive"],backgroundAttachment:["responsive"],backgroundColor:["responsive","hover","focus"],backgroundPosition:["responsive"],backgroundRepeat:["responsive"],backgroundSize:["responsive"],borderColor:["responsive","hover"],borderRadius:["responsive"],borderStyle:["responsive"],borderWidth:["responsive"],cursor:["responsive"],display:["responsive"],flexDirection:["responsive"],flexWrap:["responsive"],alignItems:["responsive"],alignSelf:["responsive"],justifyContent:["responsive"],alignContent:["responsive"],flex:["responsive"],flexGrow:["responsive"],flexShrink:["responsive"],float:["responsive"],fonts:["responsive"],fontWeight:["responsive","hover"],height:["responsive"],lineHeight:["responsive"],listStylePosition:["responsive"],listStyleType:["responsive"],margin:["responsive"],maxHeight:["responsive"],maxWidth:["responsive"],minHeight:["responsive"],minWidth:["responsive"],negativeMargin:["responsive"],opacity:["responsive","hover","group-hover"],overflow:["responsive"],padding:["responsive"],pointerEvents:["responsive"],position:["responsive"],inset:["responsive"],resize:["responsive"],tableLayout:["responsive","hover","focus"],boxShadow:["responsive","hover"],fill:[],stroke:[],textAlign:["responsive"],textColor:["responsive","hover"],fontSize:["responsive"],fontStyle:["responsive","hover"],fontSmoothing:["responsive","hover"],textDecoration:["responsive","hover"],textTransform:["responsive","hover"],letterSpacing:["responsive"],userSelect:["responsive"],verticalAlign:["responsive"],visibility:["responsive"],whitespace:["responsive"],wordBreak:["responsive"],width:["responsive"],zIndex:["responsive"]},plugins:[],corePlugins:{container:!1}}})),define("ember-cli-addon-docs/utils/compile-markdown",["exports","marked","node-html-parser","@handlebars/parser","line-column","highlight.js/lib/core","highlight.js/lib/languages/javascript","highlight.js/lib/languages/css","highlight.js/lib/languages/handlebars","highlight.js/lib/languages/json","highlight.js/lib/languages/xml","highlight.js/lib/languages/diff","highlight.js/lib/languages/shell","highlight.js/lib/languages/typescript"],(function(e,t,r,i,n,a,s,o,l,u,c,d,h,f){"use strict"
 Object.defineProperty(e,"__esModule",{value:!0}),e.default=function(e,r){let i={highlight:g,renderer:new v(r)}
 return`<div class="docs-md">${t.marked.parse(e,i)}</div>`},e.highlightCode=g,a.default.registerLanguage("javascript",s.default),a.default.registerLanguage("js",s.default),a.default.registerLanguage("css",o.default),a.default.registerLanguage("handlebars",l.default),a.default.registerLanguage("hbs",l.default),a.default.registerLanguage("htmlbars",l.default),a.default.registerLanguage("json",u.default),a.default.registerLanguage("xml",c.default),a.default.registerLanguage("diff",d.default),a.default.registerLanguage("shell",h.default),a.default.registerLanguage("sh",h.default),a.default.registerLanguage("typescript",f.default),a.default.registerLanguage("ts",f.default)
 const p={name:"htmlComponent",level:"block",start(e){let t=e.match(/\n<[^/^\s>]/)
@@ -8660,7 +8692,8 @@ function g(e,t){return a.default.getLanguage(t)?a.default.highlight(e,{language:
 class v extends t.marked.Renderer{constructor(e){super(),this.config=e||{}}codespan(){return this._processCode(super.codespan.apply(this,arguments))}code(){return this._processCode(super.code.apply(this,arguments)).replace(/^<pre>/,'<pre class="docs-md__code">')}text(){let e=super.text.apply(this,arguments)
 return this.config.targetHandlebars&&(e=e.replace(/&amp;/g,"&").replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&quot;|&#34;/g,'"').replace(/&apos;|&#39;/g,"'")),e}_processCode(e){return this.config.targetHandlebars&&(e=this._escapeCurlies(e)),e}_escapeCurlies(e){return e.replace(/{{/g,"&#123;&#123;").replace(/}}/g,"&#125;&#125;")}heading(e,t){let r=e.toLowerCase().replace(/<\/?.*?>/g,"").replace(/[^\w]+/g,"-")
 return`\n      <h${t} id="${r}" class="docs-md__h${t}">${1===t?e:`<a href="#${r}" class="heading-anchor">${e}</a>`}</h${t}>\n    `}list(e,t){return t?`\n        <ol class="docs-list-decimal">${e}</ol>\n      `:`\n        <ul class="docs-list-disc">${e}</ul>\n      `}table(e,t){return t&&(t="<tbody>"+t+"</tbody>"),'<table class="docs-table-auto">\n<thead>\n'+e+"</thead>\n"+t+"</table>\n"}tablerow(e){return'<tr class="docs-table-row">\n'+e+"</tr>\n"}tablecell(e,t){let r=t.header?"th":"td"
-return(t.align?"<"+r+' align="'+t.align+'" class="docs-border docs-px-4 docs-py-2">':"<"+r+' class="docs-border docs-px-4 docs-py-2">')+e+"</"+r+">\n"}hr(){return'<hr class="docs-md__hr">'}blockquote(e){return`<blockquote class="docs-md__blockquote">${e}</blockquote>`}link(e,t,r){return`<a href="${e}" ${t?`title="${t}"`:""} class="docs-md__a">${r}</a>`}}})),define("ember-cli-addon-docs/utils/computed",["exports","@ember/object","@ember/string"],(function(e,t,r){"use strict"
+return(t.align?"<"+r+' align="'+t.align+'" class="docs-border docs-px-4 docs-py-2">':"<"+r+' class="docs-border docs-px-4 docs-py-2">')+e+"</"+r+">\n"}hr(){return'<hr class="docs-md__hr">'}blockquote(e){return`<blockquote class="docs-md__blockquote">${e}</blockquote>`}link(e,t,r){return`<a href="${e}" ${t?`title="${t}"`:""} class="docs-md__a">${r}</a>`}}}))
+define("ember-cli-addon-docs/utils/computed",["exports","@ember/object","@ember/string"],(function(e,t,r){"use strict"
 function i(e,t){return e.isStatic&&!t.isStatic?-1:t.isStatic&&!e.isStatic?1:"public"===e.access&&"public"!==t.access||"private"===t.access&&"private"!==e.access?-1:"private"===e.access&&"private"!==t.access||"public"===t.access&&"public"!==e.access?1:e.name.localeCompare(t.name)}function n(e){let t
 return t=e.match(/ember-cli/)?"ember-cli":e.match(/ember-data/)?"ember-data":"ember",t}Object.defineProperty(e,"__esModule",{value:!0}),e.addonLogo=n,e.addonPrefix=function(e){return a[n(e)]},e.hasMemberType=function(){for(var e=arguments.length,r=new Array(e),i=0;i<e;i++)r[i]=arguments[i]
 let n=r.pop()
@@ -8673,34 +8706,34 @@ let a={}
 for(let e of i)a[e.name]=e
 for(let e of n)a[e.name]=e
 return Object.values(a)}))},e.unprefixedAddonName=function(e){return e.replace(/ember-(cli-|data-)?/,"")}
-let a={"ember-cli":"EmberCLI","ember-data":"EmberData",ember:"Ember"}})),define("ember-cli-clipboard/components/copy-button",["exports","@ember/component","@ember/object","@ember/object/internals","ember-cli-clipboard/templates/components/copy-button","clipboard"],(function(e,t,r,i,n,a){"use strict"
-var s
-function o(e,t,r){return(t=function(e){var t=function(e,t){if("object"!=typeof e||null===e)return e
+let a={"ember-cli":"EmberCLI","ember-data":"EmberData",ember:"Ember"}})),define("ember-cli-clipboard/components/copy-button",["exports","@ember/component","@ember/template-factory","@glimmer/component","@ember/object/internals","ember-arg-types","prop-types"],(function(e,t,r,i,n,a,s){"use strict"
+var o,l,u,c,d,h,f,p,m,g,v,b,y,_,w,E,T,k
+function S(e,t,r,i){r&&Object.defineProperty(e,t,{enumerable:r.enumerable,configurable:r.configurable,writable:r.writable,value:r.initializer?r.initializer.call(i):void 0})}function O(e,t,r){return(t=function(e){var t=function(e,t){if("object"!=typeof e||null===e)return e
 var r=e[Symbol.toPrimitive]
 if(void 0!==r){var i=r.call(e,t||"default")
 if("object"!=typeof i)return i
 throw new TypeError("@@toPrimitive must return a primitive value.")}return("string"===t?String:Number)(e)}(e,"string")
-return"symbol"==typeof t?t:String(t)}(t))in e?Object.defineProperty(e,t,{value:r,enumerable:!0,configurable:!0,writable:!0}):e[t]=r,e}function l(e,t,r,i,n){var a={}
+return"symbol"==typeof t?t:String(t)}(t))in e?Object.defineProperty(e,t,{value:r,enumerable:!0,configurable:!0,writable:!0}):e[t]=r,e}function x(e,t,r,i,n){var a={}
 return Object.keys(i).forEach((function(e){a[e]=i[e]})),a.enumerable=!!a.enumerable,a.configurable=!!a.configurable,("value"in a||a.initializer)&&(a.writable=!0),a=r.slice().reverse().reduce((function(r,i){return i(e,t,r)||r}),a),n&&void 0!==a.initializer&&(a.value=a.initializer?a.initializer.call(n):void 0,a.initializer=void 0),void 0===a.initializer&&(Object.defineProperty(e,t,a),a=null),a}Object.defineProperty(e,"__esModule",{value:!0}),e.default=void 0
-const u=["success","error"]
-let c=(s=class extends t.default{constructor(){super(...arguments),o(this,"layout",n.default),o(this,"tagName",""),o(this,"delegateClickEvent",!0)}setupElement(e){e.id=(0,i.guidFor)(this),this._buttonElement=e}registerClipboard(){this.clipboard&&this.clipboard.destroy()
-const e=this._createClipboard()
-this._registerActions(e),this.clipboard=e}destroyClipboard(){this.clipboard&&this.clipboard.destroy()}_createClipboard(){const{clipboardText:e,container:t,delegateClickEvent:r}=this,i=!1===r?this._buttonElement:`#${this._buttonElement.id}`
-return new a.default(i,{text:"function"==typeof e?e:void 0,container:"string"==typeof t?document.querySelector(t):t})}_registerActions(e){u.forEach((t=>{e.on(t,(()=>{if(!this._buttonElement.disabled){const e=this[t]
-"string"==typeof e?this.sendAction(e,...arguments):e&&e(...arguments)}}))}))}},l(s.prototype,"setupElement",[r.action],Object.getOwnPropertyDescriptor(s.prototype,"setupElement"),s.prototype),l(s.prototype,"registerClipboard",[r.action],Object.getOwnPropertyDescriptor(s.prototype,"registerClipboard"),s.prototype),l(s.prototype,"destroyClipboard",[r.action],Object.getOwnPropertyDescriptor(s.prototype,"destroyClipboard"),s.prototype),s)
-e.default=c})),define("ember-cli-clipboard/helpers/is-clipboard-supported",["exports","@ember/component/helper","clipboard","@ember/application"],(function(e,t,r,i){"use strict"
+const P=(0,r.createTemplateFactory)({id:"A3kMFDBj",block:'[[[11,"button"],[24,0,"copy-btn"],[16,4,[30,0,["buttonType"]]],[16,"data-clipboard-id",[30,0,["guid"]]],[17,1],[4,[38,0],null,[["text","target","action","delegateClickEvent","container","onError","onSuccess"],[[30,0,["text"]],[30,0,["target"]],[30,0,["action"]],[30,0,["delegateClickEvent"]],[30,0,["container"]],[30,0,["onError"]],[30,0,["onSuccess"]]]]],[12],[1,"\\n  "],[18,2,null],[1,"\\n"],[13]],["&attrs","&default"],false,["clipboard","yield"]]',moduleName:"ember-cli-clipboard/components/copy-button.hbs",isStrictMode:!1})
+let A=(o=(0,a.arg)((0,s.oneOfType)([s.string,s.func])),l=(0,a.arg)((0,s.oneOfType)([s.string,s.func])),u=(0,a.arg)((0,s.oneOf)(["copy","cut"])),c=(0,a.arg)(s.boolean),d=(0,a.arg)((0,s.oneOfType)([s.string,s.element])),h=(0,a.arg)(s.string),f=(0,a.arg)(s.boolean),p=(0,a.arg)(s.boolean),(0,a.forbidExtraArgs)((g=class extends i.default{constructor(){super(...arguments),O(this,"guid",(0,n.guidFor)(this)),S(this,"text",v,this),S(this,"target",b,this),S(this,"action",y,this),S(this,"delegateClickEvent",_,this),S(this,"container",w,this),S(this,"buttonType",E,this),S(this,"onError",T,this),S(this,"onSuccess",k,this)}},v=x(g.prototype,"text",[o],{configurable:!0,enumerable:!0,writable:!0,initializer:null}),b=x(g.prototype,"target",[l],{configurable:!0,enumerable:!0,writable:!0,initializer:null}),y=x(g.prototype,"action",[u],{configurable:!0,enumerable:!0,writable:!0,initializer:null}),_=x(g.prototype,"delegateClickEvent",[c],{configurable:!0,enumerable:!0,writable:!0,initializer:null}),w=x(g.prototype,"container",[d],{configurable:!0,enumerable:!0,writable:!0,initializer:null}),E=x(g.prototype,"buttonType",[h],{configurable:!0,enumerable:!0,writable:!0,initializer:function(){return"button"}}),T=x(g.prototype,"onError",[f],{configurable:!0,enumerable:!0,writable:!0,initializer:null}),k=x(g.prototype,"onSuccess",[p],{configurable:!0,enumerable:!0,writable:!0,initializer:null}),m=g))||m)
+e.default=A,(0,t.setComponentTemplate)(P,A)})),define("ember-cli-clipboard/helpers/is-clipboard-supported",["exports","@ember/component/helper","clipboard","@ember/application"],(function(e,t,r,i){"use strict"
 Object.defineProperty(e,"__esModule",{value:!0}),e.default=void 0
 class n extends t.default{constructor(){super(...arguments)
 const e=(0,i.getOwner)(this).lookup("service:fastboot")
 this.isFastBoot=!!e&&e.isFastBoot}compute(e){let[t]=e
 const{isFastBoot:i}=this
-return!i&&r.default.isSupported(t)}}e.default=n})),define("ember-cli-clipboard/templates/components/copy-button",["exports","@ember/template-factory"],(function(e,t){"use strict"
+return!i&&r.default.isSupported(t)}}e.default=n})),define("ember-cli-clipboard/modifiers/clipboard",["exports","ember-modifier","clipboard","@ember/utils","@ember/string","@ember/object/internals"],(function(e,t,r,i,n,a){"use strict"
 Object.defineProperty(e,"__esModule",{value:!0}),e.default=void 0
-var r=(0,t.createTemplateFactory)({id:"l0+5fOt1",block:'[[[11,"button"],[16,"aria-label",[30,1]],[16,0,[29,["copy-btn ",[30,2]," ",[30,3]]]],[16,"disabled",[30,4]],[16,"title",[30,5]],[16,4,[52,[30,6],[30,6],"button"]],[17,7],[16,"data-clipboard-text",[30,8]],[16,"data-clipboard-target",[30,9]],[16,"data-clipboard-action",[30,10]],[4,[38,1],[[30,0,["setupElement"]]],null],[4,[38,1],[[30,0,["registerClipboard"]]],null],[4,[38,2],[[30,0,["registerClipboard"]]],null],[4,[38,3],[[30,0,["destroyClipboard"]]],null],[12],[1,"\\n  "],[18,11,null],[1,"\\n"],[13]],["@aria-label","@class","@classNames","@disabled","@title","@buttonType","&attrs","@clipboardText","@clipboardTarget","@clipboardAction","&default"],false,["if","did-insert","did-update","will-destroy","yield"]]',moduleName:"ember-cli-clipboard/templates/components/copy-button.hbs",isStrictMode:!1})
-e.default=r})),define("ember-cli-string-helpers/-private/create-string-helper",["exports","@ember/template"],(function(e,t){"use strict"
+const s=["success","error"]
+var o=(0,t.modifier)((function(e,t,o){const{action:l="copy",container:u,delegateClickEvent:c=!0,target:d,text:h}=o
+e.setAttribute("data-clipboard-action",l),(0,i.isBlank)(h)||e.setAttribute("data-clipboard-text",h),(0,i.isBlank)(d)||e.setAttribute("data-clipboard-target",d),(0,i.isBlank)(e.dataset.clipboardId)&&e.setAttribute("data-clipboard-id",(0,a.guidFor)(e))
+const f=!1===c?e:`[data-clipboard-id=${e.dataset.clipboardId}]`,p=new r.default(f,{text:"function"==typeof h?h:void 0,container:"string"==typeof u?document.querySelector(u):u,target:d})
+return s.forEach((t=>{p.on(t,(()=>{if(!e.disabled){const e=o[`on${(0,n.capitalize)(t)}`]
+e?.(...arguments)}}))})),()=>p.destroy()}))
+e.default=o})),define("ember-cli-string-helpers/-private/create-string-helper",["exports","@ember/template"],(function(e,t){"use strict"
 Object.defineProperty(e,"__esModule",{value:!0}),e.default=function(e){return function(r){let[i]=r
-return(0,t.isHTMLSafe)(i)&&(i=i.string),i=i||"",e(i)}}}))
-define("ember-cli-string-helpers/helpers/camelize",["exports","@ember/component/helper","@ember/string","ember-cli-string-helpers/-private/create-string-helper"],(function(e,t,r,i){"use strict"
+return(0,t.isHTMLSafe)(i)&&(i=i.string),i=i||"",e(i)}}})),define("ember-cli-string-helpers/helpers/camelize",["exports","@ember/component/helper","@ember/string","ember-cli-string-helpers/-private/create-string-helper"],(function(e,t,r,i){"use strict"
 Object.defineProperty(e,"__esModule",{value:!0}),e.default=e.camelize=void 0
 const n=(0,i.default)(r.camelize)
 e.camelize=n
@@ -8810,7 +8843,8 @@ const{__loader:r}=t.default
 let i={ACTION:null}
 "ember-htmlbars/keywords/closure-action"in r.registry?i=r.require("ember-htmlbars/keywords/closure-action"):"ember-routing-htmlbars/keywords/closure-action"in r.registry&&(i=r.require("ember-routing-htmlbars/keywords/closure-action"))
 var n=i.ACTION
-e.default=n})),define("ember-composable-helpers/-private/get-value-array-and-use-deep-equal-from-params",["exports"],(function(e){"use strict"
+e.default=n}))
+define("ember-composable-helpers/-private/get-value-array-and-use-deep-equal-from-params",["exports"],(function(e){"use strict"
 Object.defineProperty(e,"__esModule",{value:!0}),e.default=function(e){let t,r=e[0],i=!1
 2===e.length?t=e[1]:(i=e[1],t=e[2])
 return{currentValue:r,array:t,useDeepEqual:i}}})),define("ember-composable-helpers/helpers/append",["exports","@ember/component/helper"],(function(e,t){"use strict"
@@ -8834,8 +8868,7 @@ e.default=o})),define("ember-composable-helpers/helpers/compact",["exports","@em
 function n(e){let t,[n]=e
 return t=Array.isArray(n)||(0,i.isArray)(n)?n:[n],t.filter((e=>(0,r.isPresent)(e)))}Object.defineProperty(e,"__esModule",{value:!0}),e.compact=n,e.default=void 0
 var a=(0,t.helper)(n)
-e.default=a}))
-define("ember-composable-helpers/helpers/compute",["exports","@ember/component/helper"],(function(e,t){"use strict"
+e.default=a})),define("ember-composable-helpers/helpers/compute",["exports","@ember/component/helper"],(function(e,t){"use strict"
 function r(e){let[t,...r]=e
 return t(...r)}Object.defineProperty(e,"__esModule",{value:!0}),e.compute=r,e.default=void 0
 var i=(0,t.helper)(r)
@@ -8946,7 +8979,8 @@ return function(e){let n=(0,r.get)(e,t)
 if(!i)return n
 i(n)}}Object.defineProperty(e,"__esModule",{value:!0}),e.default=void 0,e.pick=i
 var n=(0,t.helper)(i)
-e.default=n})),define("ember-composable-helpers/helpers/pipe-action",["exports","@ember/component/helper","ember-composable-helpers/helpers/pipe","ember-composable-helpers/-private/closure-action"],(function(e,t,r,i){"use strict"
+e.default=n}))
+define("ember-composable-helpers/helpers/pipe-action",["exports","@ember/component/helper","ember-composable-helpers/helpers/pipe","ember-composable-helpers/-private/closure-action"],(function(e,t,r,i){"use strict"
 Object.defineProperty(e,"__esModule",{value:!0}),e.default=void 0
 const n=r.pipe
 i.default&&(n[i.default]=!0)
@@ -8974,8 +9008,7 @@ if(t<n){let e=a?i.lte:i.lt
 for(let r=t;e(r,n);r++)s.push(r)}if(t>n){let e=a?i.gte:i.gt
 for(let r=t;e(r,n);r--)s.push(r)}return t===n&&a&&s.push(n),s}Object.defineProperty(e,"__esModule",{value:!0}),e.default=void 0,e.range=n
 var a=(0,t.helper)(n)
-e.default=a}))
-define("ember-composable-helpers/helpers/reduce",["exports","@ember/component/helper","@ember/utils","ember-composable-helpers/utils/as-array"],(function(e,t,r,i){"use strict"
+e.default=a})),define("ember-composable-helpers/helpers/reduce",["exports","@ember/component/helper","@ember/utils","ember-composable-helpers/utils/as-array"],(function(e,t,r,i){"use strict"
 function n(e){let[t,n,a]=e
 return(0,r.isEmpty)(t)?[]:(0,i.default)(a).reduce(t,n)}Object.defineProperty(e,"__esModule",{value:!0}),e.default=void 0,e.reduce=n
 var a=(0,t.helper)(n)
@@ -9115,7 +9148,8 @@ e.DEFAULT_ENVIRONMENT=r})),define("ember-concurrency/-private/external/generator
 Object.defineProperty(e,"__esModule",{value:!0}),e.GeneratorStepResult=e.GeneratorState=void 0
 class t{constructor(e,t,r){this.value=e,this.done=t,this.errored=r}}e.GeneratorStepResult=t
 e.GeneratorState=class{constructor(e){this.done=!1,this.generatorFactory=e,this.iterator=null}step(e,r){try{let i=this.getIterator(),{value:n,done:a}=i[r](e)
-return a?this.finalize(n,!1):new t(n,!1,!1)}catch(i){return this.finalize(i,!0)}}getIterator(){return this.iterator||this.done||(this.iterator=this.generatorFactory()),this.iterator}finalize(e,r){return this.done=!0,this.iterator=null,new t(e,!0,r)}}})),define("ember-concurrency/-private/external/scheduler/policies/bounded-policy",["exports"],(function(e){"use strict"
+return a?this.finalize(n,!1):new t(n,!1,!1)}catch(i){return this.finalize(i,!0)}}getIterator(){return this.iterator||this.done||(this.iterator=this.generatorFactory()),this.iterator}finalize(e,r){return this.done=!0,this.iterator=null,new t(e,!0,r)}}}))
+define("ember-concurrency/-private/external/scheduler/policies/bounded-policy",["exports"],(function(e){"use strict"
 Object.defineProperty(e,"__esModule",{value:!0}),e.default=void 0
 var t=class{constructor(e){this.maxConcurrency=e||1}}
 e.default=t})),define("ember-concurrency/-private/external/scheduler/policies/drop-policy",["exports","ember-concurrency/-private/external/scheduler/policies/bounded-policy","ember-concurrency/-private/external/scheduler/policies/execution-states"],(function(e,t,r){"use strict"
@@ -9142,8 +9176,7 @@ Object.defineProperty(e,"__esModule",{value:!0}),e.default=void 0
 const i=(0,r.makeCancelState)("it belongs to a 'keepLatest' Task that was already running")
 class n{constructor(e,t){this.remainingSlots=e,this.numToCancel=t}step(){return this.remainingSlots>0?(this.remainingSlots--,r.STARTED):this.numToCancel>0?(this.numToCancel--,i):r.QUEUED}}class a extends t.default{makeReducer(e,t){let r=e+t
 return new n(this.maxConcurrency,r-this.maxConcurrency-1)}}var s=a
-e.default=s}))
-define("ember-concurrency/-private/external/scheduler/policies/restartable-policy",["exports","ember-concurrency/-private/external/scheduler/policies/bounded-policy","ember-concurrency/-private/external/scheduler/policies/execution-states"],(function(e,t,r){"use strict"
+e.default=s})),define("ember-concurrency/-private/external/scheduler/policies/restartable-policy",["exports","ember-concurrency/-private/external/scheduler/policies/bounded-policy","ember-concurrency/-private/external/scheduler/policies/execution-states"],(function(e,t,r){"use strict"
 Object.defineProperty(e,"__esModule",{value:!0}),e.default=void 0
 const i=(0,r.makeCancelState)("it belongs to a 'restartable' Task that was .perform()ed again")
 class n{constructor(e){this.numToCancel=e}step(){return this.numToCancel>0?(this.numToCancel--,i):r.STARTED}}class a extends t.default{makeReducer(e,t){return new n(e+t-this.maxConcurrency)}}var s=a
@@ -9373,7 +9406,8 @@ return"object"==typeof this.taskDefinition?new o.EncapsulatedTask(Object.assign(
 return new u.TaskGroup(t)}addCancelEvents(){return this._cancelEventNames=this._cancelEventNames||[],this._cancelEventNames.push(...arguments),this}addObserverKeys(){return this._observes=this._observes||[],this._observes.push(...arguments),this}addPerformEvents(){return this._eventNames=this._eventNames||[],this._eventNames.push(...arguments),this}getModifier(e){let t=super.getModifier(e)
 return t||"function"!=typeof l.TaskProperty.prototype[e]||(t=l.TaskProperty.prototype[e].bind(this)),t}getScheduler(e,t){return new c.default(e,t)}_setupEmberKVO(e){p(i.addListener,e,this._eventNames,this.name,"perform",!1),p(i.addListener,e,this._cancelEventNames,this.name,"cancelAll",!1),p(n.addObserver,e,this._observes,this.name,"perform",!0)}get taskFn(){return this.taskDefinition}set taskFn(e){this.setTaskDefinition(e)}}e.TaskFactory=v})),define("ember-concurrency/-private/task-group",["exports","ember-concurrency/-private/external/task/task-group","ember-concurrency/-private/taskable-mixin","ember-concurrency/-private/tracked-state"],(function(e,t,r,i){"use strict"
 Object.defineProperty(e,"__esModule",{value:!0}),e.TaskGroup=void 0
-class n extends t.TaskGroup{}e.TaskGroup=n,i.TRACKED_INITIAL_TASK_STATE&&Object.defineProperties(n.prototype,i.TRACKED_INITIAL_TASK_STATE),Object.assign(n.prototype,r.TASKABLE_MIXIN)})),define("ember-concurrency/-private/task-instance",["exports","ember-concurrency/-private/external/task-instance/base","ember-concurrency/-private/tracked-state","ember-concurrency/-private/utils"],(function(e,t,r,i){"use strict"
+class n extends t.TaskGroup{}e.TaskGroup=n,i.TRACKED_INITIAL_TASK_STATE&&Object.defineProperties(n.prototype,i.TRACKED_INITIAL_TASK_STATE),Object.assign(n.prototype,r.TASKABLE_MIXIN)}))
+define("ember-concurrency/-private/task-instance",["exports","ember-concurrency/-private/external/task-instance/base","ember-concurrency/-private/tracked-state","ember-concurrency/-private/utils"],(function(e,t,r,i){"use strict"
 Object.defineProperty(e,"__esModule",{value:!0}),e.TaskInstance=void 0
 class n extends t.BaseTaskInstance{setState(e){let t=this._recomputeState(e);(0,i.assignProperties)(this,{...e,isRunning:!e.isFinished,isDropped:"dropped"===t,state:t})}_recomputeState(e){return e.isDropped?"dropped":e.isCanceled?e.hasStarted?"canceled":"dropped":e.isFinished?"finished":e.hasStarted?"running":"waiting"}onStarted(){this.triggerEvent("started",this)}onSuccess(){this.triggerEvent("succeeded",this)}onError(e){this.triggerEvent("errored",this,e)}onCancel(e){this.triggerEvent("canceled",this,e)}formatCancelReason(e){return`TaskInstance '${this.getName()}' was canceled because ${e}. For more information, see: http://ember-concurrency.com/docs/task-cancelation-help`}getName(){return this.name||(this.name=this.task&&this.task.name||"<unknown>"),this.name}selfCancelLoopWarning(e){let t=`\`${e.getName()}\``,r=`\`${this.getName()}\``
 console.warn(`ember-concurrency detected a potentially hazardous "self-cancel loop" between parent task ${t} and child task ${r}. If you want child task ${r} to be canceled when parent task ${t} is canceled, please change \`.perform()\` to \`.linked().perform()\`. If you want child task ${r} to keep running after parent task ${t} is canceled, change it to \`.unlinked().perform()\``)}triggerEvent(){if(!this.hasEnabledEvents)return
@@ -9409,8 +9443,7 @@ return s&&(a.get?a.get=a.get.bind(s):s&&a.set&&(a.set=a.set.bind(s))),Reflect.de
 Object.defineProperty(e,"__esModule",{value:!0}),e.TASKABLE_MIXIN=void 0
 const r={_performCount:0,setState(e){this._performCount=this._performCount+(e.numPerformedInc||0)
 let r=e.numRunning>0,i=e.numQueued>0,n=Object.assign({},e,{performCount:this._performCount,isRunning:r,isQueued:i,isIdle:!r&&!i,state:r?"running":"idle"});(0,t.assignProperties)(this,n)},onState(e,t){t.onStateCallback&&t.onStateCallback(e,t)}}
-e.TASKABLE_MIXIN=r}))
-define("ember-concurrency/-private/tracked-state",["exports","@glimmer/tracking","ember-concurrency/-private/external/task/default-state","ember-concurrency/-private/external/task-instance/initial-state","ember-concurrency/-private/utils"],(function(e,t,r,i,n){"use strict"
+e.TASKABLE_MIXIN=r})),define("ember-concurrency/-private/tracked-state",["exports","@glimmer/tracking","ember-concurrency/-private/external/task/default-state","ember-concurrency/-private/external/task-instance/initial-state","ember-concurrency/-private/utils"],(function(e,t,r,i,n){"use strict"
 function a(e,r){return Object.keys(e).reduce(((r,i)=>function(e,r,i){const n=Object.getOwnPropertyDescriptor(e,i)
 n.initializer=n.initializer||(()=>e[i]),delete n.value
 const a=(0,t.tracked)(r,i,n)
@@ -9472,7 +9505,8 @@ Object.defineProperty(e,"__esModule",{value:!0}),Object.defineProperty(e,"defaul
 Object.defineProperty(e,"__esModule",{value:!0}),Object.defineProperty(e,"default",{enumerable:!0,get:function(){return t.default}})})),define("ember-data/serializers/rest",["exports","@ember-data/serializer/rest"],(function(e,t){"use strict"
 Object.defineProperty(e,"__esModule",{value:!0}),Object.defineProperty(e,"default",{enumerable:!0,get:function(){return t.default}})})),define("ember-data/setup-container",["exports","@ember-data/store"],(function(e,t){"use strict"
 Object.defineProperty(e,"__esModule",{value:!0}),e.default=function(e){(function(e){e.registerOptionsForType("serializer",{singleton:!1}),e.registerOptionsForType("adapter",{singleton:!1}),e.hasRegistration("service:store")||e.register("service:store",t.default)})(e)}})),define("ember-data/store",["exports","@ember-data/store"],(function(e,t){"use strict"
-Object.defineProperty(e,"__esModule",{value:!0}),Object.defineProperty(e,"default",{enumerable:!0,get:function(){return t.default}})})),define("ember-data/transform",["exports","@ember-data/serializer/transform"],(function(e,t){"use strict"
+Object.defineProperty(e,"__esModule",{value:!0}),Object.defineProperty(e,"default",{enumerable:!0,get:function(){return t.default}})}))
+define("ember-data/transform",["exports","@ember-data/serializer/transform"],(function(e,t){"use strict"
 Object.defineProperty(e,"__esModule",{value:!0}),Object.defineProperty(e,"default",{enumerable:!0,get:function(){return t.default}})})),define("ember-data/version",["exports"],(function(e){"use strict"
 Object.defineProperty(e,"__esModule",{value:!0}),e.default=void 0
 e.default="4.4.0"})),define("ember-event-helpers/helpers/prevent-default",["exports","@ember/component/helper","@ember/debug"],(function(e,t,r){"use strict"
@@ -9484,8 +9518,7 @@ function i(e){let[t]=e
 return function(e){e.stopPropagation(),t&&t(e)}}Object.defineProperty(e,"__esModule",{value:!0}),e.default=void 0,e.stopPropagation=i
 var n=(0,t.helper)(i)
 e.default=n})),define("ember-fetch/errors",["exports"],(function(e){"use strict"
-Object.defineProperty(e,"__esModule",{value:!0}),e.isAbortError=function(e){return"AbortError"==e.name},e.isBadRequestResponse=function(e){return 400===e.status},e.isConflictResponse=function(e){return 409===e.status},e.isForbiddenResponse=function(e){return 403===e.status},e.isGoneResponse=function(e){return 410===e.status},e.isInvalidResponse=function(e){return 422===e.status},e.isNotFoundResponse=function(e){return 404===e.status},e.isServerErrorResponse=function(e){return e.status>=500&&e.status<600},e.isUnauthorizedResponse=function(e){return 401===e.status}}))
-define("ember-fetch/types",["exports"],(function(e){"use strict"
+Object.defineProperty(e,"__esModule",{value:!0}),e.isAbortError=function(e){return"AbortError"==e.name},e.isBadRequestResponse=function(e){return 400===e.status},e.isConflictResponse=function(e){return 409===e.status},e.isForbiddenResponse=function(e){return 403===e.status},e.isGoneResponse=function(e){return 410===e.status},e.isInvalidResponse=function(e){return 422===e.status},e.isNotFoundResponse=function(e){return 404===e.status},e.isServerErrorResponse=function(e){return e.status>=500&&e.status<600},e.isUnauthorizedResponse=function(e){return 401===e.status}})),define("ember-fetch/types",["exports"],(function(e){"use strict"
 Object.defineProperty(e,"__esModule",{value:!0}),e.isPlainObject=function(e){return"[object Object]"===Object.prototype.toString.call(e)}})),define("ember-fetch/utils/determine-body-promise",["exports","@ember/debug"],(function(e,t){"use strict"
 Object.defineProperty(e,"__esModule",{value:!0}),e.default=function(e,r){return e.text().then((function(i){let n=i
 try{n=JSON.parse(i)}catch(a){if(!(a instanceof SyntaxError))throw a
@@ -9623,7 +9656,8 @@ super(...arguments),e=this,t="keyboard",i=this,(r=s)&&Object.defineProperty(e,t,
 this.keyCombo=r,this.callback=n,this.eventName=a,this.keyboardActivated=s,this.keyboardPriority=o,this.keyboardHandlers={},this.keyboardHandlers[(0,i.default)(a,r)]=n,this.keyboard.register(this)}willDestroy(){this.keyboard.unregister(this),super.willDestroy(...arguments)}},u=a.prototype,c="keyboard",d=[r.inject],h={configurable:!0,enumerable:!0,writable:!0,initializer:null},p={},Object.keys(h).forEach((function(e){p[e]=h[e]})),p.enumerable=!!p.enumerable,p.configurable=!!p.configurable,("value"in p||p.initializer)&&(p.writable=!0),p=d.slice().reverse().reduce((function(e,t){return t(u,c,e)||e}),p),f&&void 0!==p.initializer&&(p.value=p.initializer?p.initializer.call(f):void 0,p.initializer=void 0),void 0===p.initializer&&(Object.defineProperty(u,c,p),p=null),s=p,a)
 var u,c,d,h,f,p
 e.default=l})),define("ember-keyboard/index",["exports","ember-keyboard/utils/get-mouse-code","ember-keyboard/decorators/key-responder","ember-keyboard/decorators/on-key","ember-keyboard/listeners/key-events","ember-keyboard/listeners/mouse-events","ember-keyboard/listeners/touch-events","ember-keyboard/utils/trigger-event"],(function(e,t,r,i,n,a,s,o){"use strict"
-Object.defineProperty(e,"__esModule",{value:!0}),Object.defineProperty(e,"click",{enumerable:!0,get:function(){return a.click}}),e.getCode=function(){throw new Error("ember-keyboard: `getCode` has been removed. There is no longer a need for this function as you can directly specify `key` and/or `code` values")},e.getKeyCode=function(){throw new Error("ember-keyboard: `getKeyCode` has been removed. There is no longer a need for this function as you can directly specify `key` and/or `code` values")},Object.defineProperty(e,"getMouseCode",{enumerable:!0,get:function(){return t.default}}),Object.defineProperty(e,"keyDown",{enumerable:!0,get:function(){return n.keyDown}}),Object.defineProperty(e,"keyPress",{enumerable:!0,get:function(){return n.keyPress}}),Object.defineProperty(e,"keyResponder",{enumerable:!0,get:function(){return r.default}}),Object.defineProperty(e,"keyUp",{enumerable:!0,get:function(){return n.keyUp}}),Object.defineProperty(e,"mouseDown",{enumerable:!0,get:function(){return a.mouseDown}}),Object.defineProperty(e,"mouseUp",{enumerable:!0,get:function(){return a.mouseUp}}),Object.defineProperty(e,"onKey",{enumerable:!0,get:function(){return i.default}}),Object.defineProperty(e,"touchEnd",{enumerable:!0,get:function(){return s.touchEnd}}),Object.defineProperty(e,"touchStart",{enumerable:!0,get:function(){return s.touchStart}}),Object.defineProperty(e,"triggerKeyDown",{enumerable:!0,get:function(){return o.triggerKeyDown}}),Object.defineProperty(e,"triggerKeyPress",{enumerable:!0,get:function(){return o.triggerKeyPress}}),Object.defineProperty(e,"triggerKeyUp",{enumerable:!0,get:function(){return o.triggerKeyUp}})})),define("ember-keyboard/listeners/key-events",["exports","ember-keyboard/utils/listener-name"],(function(e,t){"use strict"
+Object.defineProperty(e,"__esModule",{value:!0}),Object.defineProperty(e,"click",{enumerable:!0,get:function(){return a.click}}),e.getCode=function(){throw new Error("ember-keyboard: `getCode` has been removed. There is no longer a need for this function as you can directly specify `key` and/or `code` values")},e.getKeyCode=function(){throw new Error("ember-keyboard: `getKeyCode` has been removed. There is no longer a need for this function as you can directly specify `key` and/or `code` values")},Object.defineProperty(e,"getMouseCode",{enumerable:!0,get:function(){return t.default}}),Object.defineProperty(e,"keyDown",{enumerable:!0,get:function(){return n.keyDown}}),Object.defineProperty(e,"keyPress",{enumerable:!0,get:function(){return n.keyPress}}),Object.defineProperty(e,"keyResponder",{enumerable:!0,get:function(){return r.default}}),Object.defineProperty(e,"keyUp",{enumerable:!0,get:function(){return n.keyUp}}),Object.defineProperty(e,"mouseDown",{enumerable:!0,get:function(){return a.mouseDown}}),Object.defineProperty(e,"mouseUp",{enumerable:!0,get:function(){return a.mouseUp}}),Object.defineProperty(e,"onKey",{enumerable:!0,get:function(){return i.default}}),Object.defineProperty(e,"touchEnd",{enumerable:!0,get:function(){return s.touchEnd}}),Object.defineProperty(e,"touchStart",{enumerable:!0,get:function(){return s.touchStart}}),Object.defineProperty(e,"triggerKeyDown",{enumerable:!0,get:function(){return o.triggerKeyDown}}),Object.defineProperty(e,"triggerKeyPress",{enumerable:!0,get:function(){return o.triggerKeyPress}}),Object.defineProperty(e,"triggerKeyUp",{enumerable:!0,get:function(){return o.triggerKeyUp}})}))
+define("ember-keyboard/listeners/key-events",["exports","ember-keyboard/utils/listener-name"],(function(e,t){"use strict"
 Object.defineProperty(e,"__esModule",{value:!0}),e.keyDown=function(e){return(0,t.default)("keydown",e)},e.keyPress=function(e){return(0,t.default)("keypress",e)},e.keyUp=function(e){return(0,t.default)("keyup",e)}})),define("ember-keyboard/listeners/mouse-events",["exports","ember-keyboard/utils/listener-name","ember-keyboard/fixtures/mouse-buttons-array","ember-keyboard/fixtures/modifiers-array"],(function(e,t,r,i){"use strict"
 Object.defineProperty(e,"__esModule",{value:!0}),e.click=function(e){return a("click",e)},e.mouseDown=function(e){return a("mousedown",e)},e.mouseUp=function(e){return a("mouseup",e)}
 const n=r.default.concat(i.default),a=function(e,r){const i=void 0!==r?r.split("+"):[]
@@ -9656,8 +9690,7 @@ let e=((0,r.getOwner)(this).resolveRegistration("config:environment")||{}).ember
 e.disableOnInputFields&&(this._disableOnInput=!0),this._listeners=e.listeners||["keyUp","keyDown","keyPress"],this._listeners=this._listeners.map((e=>e.toLowerCase())),this._listeners.forEach((e=>{document.addEventListener(e,this._respond)}))}willDestroy(){super.willDestroy(...arguments),"undefined"==typeof FastBoot&&this._listeners.forEach((e=>{document.removeEventListener(e,this._respond)}))}_respond(e){if(this._disableOnInput&&e.target){const t=e.target.tagName
 if(e.target.getAttribute&&null!=e.target.getAttribute("contenteditable")||"TEXTAREA"===t||"INPUT"===t)return}(0,n.run)((()=>{let{firstResponders:t,normalResponders:r}=this;(0,s.handleKeyEventWithPropagation)(e,{firstResponders:t,normalResponders:r})}))}register(e){this.registeredResponders.add(e)}unregister(e){this.registeredResponders.delete(e)}keyDown(){return(0,a.keyDown)(...arguments)}keyPress(){return(0,a.keyPress)(...arguments)}keyUp(){return(0,a.keyUp)(...arguments)}},d=l.prototype,h="_respond",f=[i.action],p=Object.getOwnPropertyDescriptor(l.prototype,"_respond"),m=l.prototype,g={},Object.keys(p).forEach((function(e){g[e]=p[e]})),g.enumerable=!!g.enumerable,g.configurable=!!g.configurable,("value"in g||g.initializer)&&(g.writable=!0),g=f.slice().reverse().reduce((function(e,t){return t(d,h,e)||e}),g),m&&void 0!==g.initializer&&(g.value=g.initializer?g.initializer.call(m):void 0,g.initializer=void 0),void 0===g.initializer&&(Object.defineProperty(d,h,g),g=null),l)
 var d,h,f,p,m,g
-e.default=c}))
-define("ember-keyboard/utils/get-cmd-key",["exports"],(function(e){"use strict"
+e.default=c})),define("ember-keyboard/utils/get-cmd-key",["exports"],(function(e){"use strict"
 Object.defineProperty(e,"__esModule",{value:!0}),e.default=function(e){if("undefined"==typeof FastBoot)return void 0===e&&(e=navigator.platform),e.indexOf("Mac")>-1?"meta":"ctrl"}})),define("ember-keyboard/utils/get-mouse-code",["exports","@ember/utils"],(function(e,t){"use strict"
 Object.defineProperty(e,"__esModule",{value:!0}),e.default=function(e){if((0,t.isNone)(e))return
 switch(e){case"left":return 0
@@ -9851,9 +9884,10 @@ var r=(0,t.createTemplateFactory)({id:"iywV5xgq",block:'[[[41,[30,0,["hasOverlay
 e.default=r})),define("ember-modal-dialog/templates/components/modal-dialog",["exports","@ember/template-factory"],(function(e,t){"use strict"
 Object.defineProperty(e,"__esModule",{value:!0}),e.default=void 0
 var r=(0,t.createTemplateFactory)({id:"XWaFT4YJ",block:'[[[8,[30,0,["whichModalDialogComponent"]],[[17,1]],[["@wrapperClass","@wrapperClassNames","@overlayClass","@overlayClassNames","@containerClass","@containerClassNames","@hasOverlay","@translucentOverlay","@clickOutsideToClose","@destinationElementId","@overlayPosition","@tetherTarget","@legacyTarget","@attachment","@targetAttachment","@targetModifier","@targetOffset","@offset","@tetherClassPrefix","@constraints","@attachmentClass","@stack","@value","@onClickOverlay","@onClose"],[[30,0,["wrapperClass"]],[30,0,["wrapperClassNames"]],[30,0,["overlayClass"]],[30,0,["overlayClassNames"]],[30,0,["containerClass"]],[30,0,["containerClassNames"]],[30,0,["hasOverlay"]],[30,0,["translucentOverlay"]],[30,0,["clickOutsideToClose"]],[30,0,["destinationElementId"]],[30,0,["overlayPosition"]],[30,0,["tetherTarget"]],[30,0,["target"]],[30,0,["attachment"]],[30,0,["targetAttachment"]],[30,0,["targetModifier"]],[30,0,["targetOffset"]],[30,0,["offset"]],[30,0,["tetherClassPrefix"]],[30,0,["constraints"]],[30,0,["attachmentClass"]],[30,0,["stack"]],[30,0,["value"]],[30,0,["onClickOverlayAction"]],[30,0,["onCloseAction"]]]],[["default"],[[[[1,"\\n  "],[18,2,null],[1,"\\n"]],[]]]]]],["&attrs","&default"],false,["yield"]]',moduleName:"ember-modal-dialog/templates/components/modal-dialog.hbs",isStrictMode:!1})
-e.default=r})),define("ember-modal-dialog/templates/components/tether-dialog",["exports","@ember/template-factory"],(function(e,t){"use strict"
+e.default=r}))
+define("ember-modal-dialog/templates/components/tether-dialog",["exports","@ember/template-factory"],(function(e,t){"use strict"
 Object.defineProperty(e,"__esModule",{value:!0}),e.default=void 0
-var r=(0,t.createTemplateFactory)({id:"yFOgD+oe",block:'[[[41,[30,0,["hasOverlay"]],[[[1,"  "],[8,[39,1],null,[["@to"],[[30,0,["destinationElementId"]]]],[["default"],[[[[1,"\\n    "],[10,0],[15,0,[30,0,["overlayClassNamesString"]]],[15,"onclick",[28,[37,2],[[30,0],[30,0,["onClickOverlay"]]],null]],[14,"tabindex","-1"],[14,"data-emd-overlay",""],[12],[1,"\\n    "],[13],[1,"\\n  "]],[]]]]],[1,"\\n"]],[]],null],[8,[39,3],[[17,1]],[["@class","@target","@attachment","@targetAttachment","@targetModifier","@classPrefix","@offset","@targetOffset","@constraints"],[[30,0,["containerClassNamesString"]],[30,0,["tetherTarget"]],[30,0,["attachment"]],[30,0,["targetAttachment"]],[30,0,["targetModifier"]],[30,0,["tetherClassPrefix"]],[30,0,["offset"]],[30,0,["targetOffset"]],[30,0,["constraints"]]]],[["default"],[[[[1,"\\n  "],[18,2,null],[1,"\\n"]],[]]]]]],["&attrs","&default"],false,["if","ember-wormhole","action","ember-tether","yield"]]',moduleName:"ember-modal-dialog/templates/components/tether-dialog.hbs",isStrictMode:!1})
+var r=(0,t.createTemplateFactory)({id:"GojXVlka",block:'[[[41,[30,0,["hasOverlay"]],[[[1,"  "],[8,[39,1],null,[["@to"],[[30,0,["destinationElementId"]]]],[["default"],[[[[1,"\\n    "],[10,0],[15,0,[30,0,["overlayClassNamesString"]]],[15,"onclick",[28,[37,2],[[30,0],[30,0,["onClickOverlay"]]],null]],[14,"tabindex","-1"],[14,"data-emd-overlay",""],[12],[1,"\\n    "],[13],[1,"\\n  "]],[]]]]],[1,"\\n"]],[]],null],[8,[39,3],[[16,0,[30,0,["containerClassNamesString"]]],[17,1]],[["@target","@attachment","@targetAttachment","@targetModifier","@classPrefix","@offset","@targetOffset","@constraints"],[[30,0,["tetherTarget"]],[30,0,["attachment"]],[30,0,["targetAttachment"]],[30,0,["targetModifier"]],[30,0,["tetherClassPrefix"]],[30,0,["offset"]],[30,0,["targetOffset"]],[30,0,["constraints"]]]],[["default"],[[[[1,"\\n  "],[18,2,null],[1,"\\n"]],[]]]]]],["&attrs","&default"],false,["if","ember-wormhole","action","ember-tether","yield"]]',moduleName:"ember-modal-dialog/templates/components/tether-dialog.hbs",isStrictMode:!1})
 e.default=r})),define("ember-modal-dialog/utils/config-utils",["exports"],(function(e){"use strict"
 Object.defineProperty(e,"__esModule",{value:!0}),e.getDestinationElementIdFromConfig=function(e){let t=e["ember-modal-dialog"]&&e["ember-modal-dialog"].modalRootElementId
 return t=t||"modal-overlays",t}})),define("ember-modifier/-private/class/modifier-manager",["exports","@ember/modifier","@ember/destroyable","ember-modifier/-private/class/modifier","ember-modifier/-private/compat"],(function(e,t,r,i,n){"use strict"
@@ -9881,8 +9915,7 @@ let t=()=>{}
 e.consumeArgs=t,e.consumeArgs=t=function(e){let{positional:t,named:r}=e
 const i=t
 for(let n=0;n<i.length;n++)i[n]
-Object.values(r)}}))
-define("ember-modifier/-private/function-based/modifier-manager",["exports","@ember/modifier","ember-modifier/-private/compat"],(function(e,t,r){"use strict"
+Object.values(r)}})),define("ember-modifier/-private/function-based/modifier-manager",["exports","@ember/modifier","ember-modifier/-private/compat"],(function(e,t,r){"use strict"
 function i(e,t,r){return(t=function(e){var t=function(e,t){if("object"!=typeof e||null===e)return e
 var r=e[Symbol.toPrimitive]
 if(void 0!==r){var i=r.call(e,t||"default")
@@ -10095,7 +10128,7 @@ throw new TypeError("@@toPrimitive must return a primitive value.")}return("stri
 return"symbol"==typeof t?t:String(t)}(t))in e?Object.defineProperty(e,t,{value:r,enumerable:!0,configurable:!0,writable:!0}):e[t]=r,e}function h(e,t,r,i,n){var a={}
 return Object.keys(i).forEach((function(e){a[e]=i[e]})),a.enumerable=!!a.enumerable,a.configurable=!!a.configurable,("value"in a||a.initializer)&&(a.writable=!0),a=r.slice().reverse().reduce((function(r,i){return i(e,t,r)||r}),a),n&&void 0!==a.initializer&&(a.value=a.initializer?a.initializer.call(n):void 0,a.initializer=void 0),void 0===a.initializer&&(Object.defineProperty(e,t,a),a=null),a}Object.defineProperty(e,"__esModule",{value:!0}),e.default=void 0
 const f=null
-let p=(n=class extends r.default{constructor(){super(...arguments),c(this,"stereo",a,this),d(this,"identifier",f),c(this,"task",s,this),c(this,"soundProxy",o,this),c(this,"_sound",l,this),c(this,"options",u,this)}get isLoading(){return this.sound&&this.sound.isLoading||this.soundProxy&&this.soundProxy.isLoading}get sound(){return this._sound?this._sound:this.soundProxy&&this.soundProxy.isResolved?this.soundProxy.value:null}get result(){return!1}compute(e){let[t]=e,r=arguments.length>1&&void 0!==arguments[1]?arguments[1]:{}
+let p=(n=class extends r.default{constructor(){super(...arguments),c(this,"stereo",a,this),d(this,"identifier",f),c(this,"task",s,this),c(this,"soundProxy",o,this),c(this,"_sound",l,this),c(this,"options",u,this)}get isLoading(){return this.sound&&this.sound.isLoading||this.soundProxy&&this.soundProxy.isLoading}get sound(){return this._sound?this._sound:this.soundProxy&&this.soundProxy.value?this.soundProxy.value:null}get result(){return!1}compute(e){let[t]=e,r=arguments.length>1&&void 0!==arguments[1]?arguments[1]:{}
 return this.options=r,t!==this.identifier&&(this.identifier=t,t&&t.url&&t.play&&(this._sound=t),t&&(this.soundProxy=this.stereo.soundProxy(t)),this.sound||r.load&&this.stereo.load(t,this.options)),this.result}},a=h(n.prototype,"stereo",[t.inject],{configurable:!0,enumerable:!0,writable:!0,initializer:null}),s=h(n.prototype,"task",[i.dedupeTracked],{configurable:!0,enumerable:!0,writable:!0,initializer:function(){return f}}),o=h(n.prototype,"soundProxy",[i.dedupeTracked],{configurable:!0,enumerable:!0,writable:!0,initializer:function(){return f}}),l=h(n.prototype,"_sound",[i.dedupeTracked],{configurable:!0,enumerable:!0,writable:!0,initializer:function(){return f}}),u=h(n.prototype,"options",[i.dedupeTracked],{configurable:!0,enumerable:!0,writable:!0,initializer:function(){return f}}),n)
 e.default=p})),define("ember-stereo/-private/utils/connection-loader",["exports","@ember/debug","@ember/string","@ember/application","@glimmer/tracking","@ember/utils"],(function(e,t,r,i,n,a){"use strict"
 var s,o,l
@@ -10106,7 +10139,8 @@ let d=(s=class{constructor(e,t){u(this,"loaded",o,this),u(this,"connectionOrder"
 const r=this.lookup(e)
 return r.setup(t),r}lookup(e){const t=(0,r.dasherize)(e),n=(0,i.getOwner)(this.service).lookup(`ember-stereo@stereo-connection:${t}`),a=(0,i.getOwner)(this.service).lookup(`stereo-connection:${t}`)
 return a||n}},o=c(s.prototype,"loaded",[n.tracked],{configurable:!0,enumerable:!0,writable:!0,initializer:function(){return{}}}),l=c(s.prototype,"connectionOrder",[n.tracked],{configurable:!0,enumerable:!0,writable:!0,initializer:function(){return[]}}),s)
-e.default=d})),define("ember-stereo/-private/utils/debug-message",["exports","debug"],(function(e,t){"use strict"
+e.default=d}))
+define("ember-stereo/-private/utils/debug-message",["exports","debug"],(function(e,t){"use strict"
 Object.defineProperty(e,"__esModule",{value:!0}),e.default=function(e,r){r=`[${e.identifier}] ${r}`,e.sound&&(r=`[✓]${r}`)
 return(0,t.default)(`ember-stereo-helpers:${e.name}`)(r),!1}})),define("ember-stereo/-private/utils/error-cache",["exports","@ember/array","debug","@glimmer/tracking","ember-stereo/-private/utils/has-equal-urls","ember-stereo/-private/utils/normalize-identifier","@ember/service"],(function(e,t,r,i,n,a,s){"use strict"
 var o,l,u,c,d,h
@@ -10134,8 +10168,7 @@ e.default=class{constructor(){i(this,"eventManager",t.default.extend(r.default).
 this.eventManager.trigger(e,...r)}}})),define("ember-stereo/-private/utils/has-equal-identifiers",["exports","ember-stereo/-private/utils/has-equal-urls","ember-stereo/-private/utils/resolve-urls"],(function(e,t,r){"use strict"
 Object.defineProperty(e,"__esModule",{value:!0}),e.default=async function(e,i){let n=await(0,r.default)(e),a=await(0,r.default)(i)
 return(0,t.default)(n,a)}})),define("ember-stereo/-private/utils/has-equal-urls",["exports","ember-stereo/-private/utils/stereo-url","@ember/array"],(function(e,t,r){"use strict"
-Object.defineProperty(e,"__esModule",{value:!0}),e.default=function(e,i){return e=(0,r.makeArray)(e).map((e=>new t.default(e))),i=(0,r.makeArray)(i).map((e=>new t.default(e))),e.filter((e=>i.map((e=>e.key)).includes(e.key))).length>0}}))
-define("ember-stereo/-private/utils/metadata-cache",["exports","ember-stereo/-private/utils/object-cache","ember-stereo/-private/utils/normalize-identifier"],(function(e,t,r){"use strict"
+Object.defineProperty(e,"__esModule",{value:!0}),e.default=function(e,i){return e=(0,r.makeArray)(e).map((e=>new t.default(e))),i=(0,r.makeArray)(i).map((e=>new t.default(e))),e.filter((e=>i.map((e=>e.key)).includes(e.key))).length>0}})),define("ember-stereo/-private/utils/metadata-cache",["exports","ember-stereo/-private/utils/object-cache","ember-stereo/-private/utils/normalize-identifier"],(function(e,t,r){"use strict"
 function i(e,t,r){return(t=function(e){var t=function(e,t){if("object"!=typeof e||null===e)return e
 var r=e[Symbol.toPrimitive]
 if(void 0!==r){var i=r.call(e,t||"default")
@@ -10211,13 +10244,11 @@ if(this.isDestroyed)return
 t=e instanceof n.default?e.url:(0,s.default)(e)
 let i=Object.keys(this._cache).find((e=>(0,a.default)(e,t)));(0,r.default)(this.name)(`removing sound from cache with url: ${t}`),this._cache[i]&&(delete this._cache[i],this.cachedCount=Object.keys(this._cache).length,this.cachedList=Object.keys(this._cache),this.cachedSounds=Object.values(this._cache))}cache(e){if(this.isDestroyed)return
 let t=(0,s.default)(e.url);(0,r.default)(this.name)(`caching sound with url: ${t}`),this._cache[t]||(this._cache[t]=e,this.cachedCount=Object.keys(this._cache).length,this.cachedList=Object.keys(this._cache),this.cachedSounds=Object.values(this._cache))}}).prototype,"stereo",[o.inject],{configurable:!0,enumerable:!0,writable:!0,initializer:null}),d=v(u.prototype,"cachedCount",[i.tracked],{configurable:!0,enumerable:!0,writable:!0,initializer:function(){return 0}}),h=v(u.prototype,"cachedList",[i.tracked],{configurable:!0,enumerable:!0,writable:!0,initializer:function(){return new l.TrackedArray}}),f=v(u.prototype,"cachedSounds",[i.tracked],{configurable:!0,enumerable:!0,writable:!0,initializer:function(){return new l.TrackedArray}}),p=v(u.prototype,"_cache",[i.tracked],{configurable:!0,enumerable:!0,writable:!0,initializer:function(){return new l.TrackedObject}}),u)
-e.default=b})),define("ember-stereo/-private/utils/sound-proxy",["exports","@glimmer/tracking","@ember/utils","debug","ember-stereo/-private/utils/evented","ember-stereo/-private/utils/has-equal-urls","ember-concurrency"],(function(e,t,r,i,n,a,s){"use strict"
-var o,l,u,c,d
+e.default=b})),define("ember-stereo/-private/utils/sound-proxy",["exports","@glimmer/tracking","@ember/utils","debug","ember-stereo/-private/utils/evented","ember-stereo/-private/utils/has-equal-urls","ember-concurrency","tracked-toolbox"],(function(e,t,r,i,n,a,s,o){"use strict"
+var l,u,c,d
 function h(e,t,r,i){r&&Object.defineProperty(e,t,{enumerable:r.enumerable,configurable:r.configurable,writable:r.writable,value:r.initializer?r.initializer.call(i):void 0})}function f(e,t,r,i,n){var a={}
 return Object.keys(i).forEach((function(e){a[e]=i[e]})),a.enumerable=!!a.enumerable,a.configurable=!!a.configurable,("value"in a||a.initializer)&&(a.writable=!0),a=r.slice().reverse().reduce((function(r,i){return i(e,t,r)||r}),a),n&&void 0!==a.initializer&&(a.value=a.initializer?a.initializer.call(n):void 0,a.initializer=void 0),void 0===a.initializer&&(Object.defineProperty(e,t,a),a=null),a}Object.defineProperty(e,"__esModule",{value:!0}),e.default=void 0
-let p=(o=(0,s.task)({debug:!0}),l=class extends n.default{constructor(e,t){super(...arguments),h(this,"isLoading",u,this),h(this,"url",c,this),h(this,"value",d,this),this.stereo=t,this.stereo.on("loadTask:started",this.onStart.bind(this)),this.stereo.on("loadTask:errored",this.onFinish.bind(this)),this.stereo.on("loadTask:succeeded",this.onFinish.bind(this)),this.resolveUrlTask.perform(e).catch((e=>{if(!(0,s.didCancel)(e))throw e})),this.waitForLoadTask.perform().catch((e=>{if(!(0,s.didCancel)(e))throw e}))}*waitForLoadTask(){for(yield(0,s.waitForProperty)(this,"url",(e=>!!e)),(0,i.default)("ember-stereo:sound-proxy")(`waiting for ${this.url} to load`);!this.value;){let e=this.stereo.findLoadedSound(this.url)
-if(e)this.value=e
-else{let{sound:e}=yield(0,s.waitForEvent)(this.stereo,"sound-ready");(0,a.default)(e.url,this.url)&&(this.value=e)}if(this.value)break}(0,i.default)("ember-stereo:sound-proxy")(`the wait is over for ${this.url} to load`)}async afterLoad(e){try{await this.waitForLoadTask.perform(),e(this.value)}catch(t){}}*resolveUrlTask(e){this.url=yield this.stereo.resolveIdentifierTask.perform(e),(0,i.default)("ember-stereo:sound-proxy")(`resolved identifier to ${this.url}`)}get isPending(){return!this.value}get isResolved(){return!(0,r.isEmpty)(this.value)}get isErrored(){return!(0,r.isEmpty)(this.errors)}get errors(){return this.stereo.cachedErrors.find((e=>(0,a.default)(e.url,this.url)))}async onStart(e){let t=await this.stereo.resolveIdentifierTask.perform(e.args[0]);(0,a.default)(t,this.url)&&(this.isLoading=!0)}async onFinish(e){let t=await this.stereo.resolveIdentifierTask.perform(e.args[0]);(0,a.default)(t,this.url)&&(this.isLoading=!1)}willDestroy(){this.stereo.off("loadTask:started",this.onStart.bind(this)),this.stereo.off("loadTask:errored",this.onFinish.bind(this)),this.stereo.off("loadTask:succeeded",this.onFinish.bind(this))}},u=f(l.prototype,"isLoading",[t.tracked],{configurable:!0,enumerable:!0,writable:!0,initializer:function(){return!1}}),c=f(l.prototype,"url",[t.tracked],{configurable:!0,enumerable:!0,writable:!0,initializer:null}),d=f(l.prototype,"value",[t.tracked],{configurable:!0,enumerable:!0,writable:!0,initializer:null}),f(l.prototype,"waitForLoadTask",[o],Object.getOwnPropertyDescriptor(l.prototype,"waitForLoadTask"),l.prototype),f(l.prototype,"resolveUrlTask",[s.task],Object.getOwnPropertyDescriptor(l.prototype,"resolveUrlTask"),l.prototype),l)
+let p=(l=(0,s.task)({debug:!0}),u=class extends n.default{constructor(e,t){super(...arguments),h(this,"isLoading",c,this),h(this,"url",d,this),this.stereo=t,this.stereo.on("loadTask:started",this.onStart.bind(this)),this.stereo.on("loadTask:errored",this.onFinish.bind(this)),this.stereo.on("loadTask:succeeded",this.onFinish.bind(this)),this.resolveUrlTask.perform(e).catch((e=>{if(!(0,s.didCancel)(e))throw e})),this.waitForLoadTask.perform().catch((e=>{if(!(0,s.didCancel)(e))throw e}))}get value(){return this.stereo.findLoadedSound(this.url)}*waitForLoadTask(){for(yield(0,s.waitForProperty)(this,"url",(e=>!!e)),(0,i.default)("ember-stereo:sound-proxy")(`waiting for ${this.url} to load`);!this.value&&(yield(0,s.timeout)(200),!this.value););(0,i.default)("ember-stereo:sound-proxy")(`the wait is over for ${this.url} to load`)}async afterLoad(e){try{await this.waitForLoadTask.perform(),e(this.value)}catch(t){}}*resolveUrlTask(e){this.url=yield this.stereo.resolveIdentifierTask.perform(e),(0,i.default)("ember-stereo:sound-proxy")(`resolved identifier to ${this.url}`)}get isPending(){return!this.value}get isResolved(){return!(0,r.isEmpty)(this.value)}get isErrored(){return!(0,r.isEmpty)(this.errors)}get errors(){return this.stereo.cachedErrors.find((e=>(0,a.default)(e.url,this.url)))}async onStart(e){let t=await this.stereo.resolveIdentifierTask.perform(e.args[0]);(0,a.default)(t,this.url)&&(this.isLoading=!0)}async onFinish(e){let t=await this.stereo.resolveIdentifierTask.perform(e.args[0]);(0,a.default)(t,this.url)&&(this.isLoading=!1)}willDestroy(){this.stereo.off("loadTask:started",this.onStart.bind(this)),this.stereo.off("loadTask:errored",this.onFinish.bind(this)),this.stereo.off("loadTask:succeeded",this.onFinish.bind(this))}},c=f(u.prototype,"isLoading",[t.tracked],{configurable:!0,enumerable:!0,writable:!0,initializer:function(){return!1}}),d=f(u.prototype,"url",[t.tracked],{configurable:!0,enumerable:!0,writable:!0,initializer:null}),f(u.prototype,"value",[o.cached],Object.getOwnPropertyDescriptor(u.prototype,"value"),u.prototype),f(u.prototype,"waitForLoadTask",[l],Object.getOwnPropertyDescriptor(u.prototype,"waitForLoadTask"),u.prototype),f(u.prototype,"resolveUrlTask",[s.task],Object.getOwnPropertyDescriptor(u.prototype,"resolveUrlTask"),u.prototype),u)
 e.default=p})),define("ember-stereo/-private/utils/stereo-url",["exports","ember-stereo/-private/utils/mime-types","@glimmer/tracking","@ember/array"],(function(e,t,r,i){"use strict"
 var n,a
 Object.defineProperty(e,"__esModule",{value:!0}),e.default=void 0
@@ -10247,7 +10278,7 @@ throw new TypeError("@@toPrimitive must return a primitive value.")}return("stri
 return"symbol"==typeof t?t:String(t)}(t))in e?Object.defineProperty(e,t,{value:r,enumerable:!0,configurable:!0,writable:!0}):e[t]=r,e}function u(e,t,r,i,n){var a={}
 return Object.keys(i).forEach((function(e){a[e]=i[e]})),a.enumerable=!!a.enumerable,a.configurable=!!a.configurable,("value"in a||a.initializer)&&(a.writable=!0),a=r.slice().reverse().reduce((function(r,i){return i(e,t,r)||r}),a),n&&void 0!==a.initializer&&(a.value=a.initializer?a.initializer.call(n):void 0,a.initializer=void 0),void 0===a.initializer&&(Object.defineProperty(e,t,a),a=null),a}Object.defineProperty(e,"__esModule",{value:!0}),e.default=void 0
 let c=(n=class{constructor(e,t){let r=arguments.length>2&&void 0!==arguments[2]?arguments[2]:{}
-o(this,"stereoUrl",a,this),o(this,"config",s,this),l(this,"sharedAudioAccess",null),l(this,"error",null),l(this,"success",!1),l(this,"tried",!1),this.connection=e,this.stereoUrl=t,this.config=r||{},this.sharedAudioAccess=r.sharedAudioAccess}get url(){return this.stereoUrl?this.stereoUrl.url:null}get mimeType(){return this.stereoUrl?this.stereoUrl.mimeType:null}get name(){return this.connectionName}get connectionName(){return this.connection.toString()}get key(){return this.connection.key}get connectionKey(){return this.key}get options(){return this.config.options}get canUseConnection(){return!!this.url&&this.connection.canUseConnection(this.url)}get canPlayMimeType(){return!!this.url&&this.connection.canPlayMimeType(this.mimeType)}get canPlay(){return!!this.url&&this.connection.canPlay(this.url,this.mimeType)}createSound(){let e=new this.connection({url:this.url,connectionName:this.connectionName,connectionKey:this.connectionKey,sharedAudioAccess:this.sharedAudioAccess,options:this.options})
+o(this,"stereoUrl",a,this),o(this,"config",s,this),l(this,"sharedAudioAccess",null),l(this,"error",null),l(this,"erroredSound",null),l(this,"success",!1),l(this,"tried",!1),this.connection=e,this.stereoUrl=t,this.config=r||{},this.sharedAudioAccess=r.sharedAudioAccess}get url(){return this.stereoUrl?this.stereoUrl.url:null}get mimeType(){return this.stereoUrl?this.stereoUrl.mimeType:null}get name(){return this.connectionName}get connectionName(){return this.connection.toString()}get key(){return this.connection.key}get connectionKey(){return this.key}get options(){return this.config.options}get canUseConnection(){return!!this.url&&this.connection.canUseConnection(this.url)}get canPlayMimeType(){return!!this.url&&this.connection.canPlayMimeType(this.mimeType)}get canPlay(){return!!this.url&&this.connection.canPlay(this.url,this.mimeType)}createSound(){let e=new this.connection({url:this.url,connectionName:this.connectionName,connectionKey:this.connectionKey,sharedAudioAccess:this.sharedAudioAccess,options:this.options})
 return(0,i.setOwner)(e,(0,i.getOwner)(this)),e}},a=u(n.prototype,"stereoUrl",[t.tracked],{configurable:!0,enumerable:!0,writable:!0,initializer:null}),s=u(n.prototype,"config",[t.tracked],{configurable:!0,enumerable:!0,writable:!0,initializer:null}),u(n.prototype,"canUseConnection",[r.cached],Object.getOwnPropertyDescriptor(n.prototype,"canUseConnection"),n.prototype),u(n.prototype,"canPlayMimeType",[r.cached],Object.getOwnPropertyDescriptor(n.prototype,"canPlayMimeType"),n.prototype),u(n.prototype,"canPlay",[r.cached],Object.getOwnPropertyDescriptor(n.prototype,"canPlay"),n.prototype),n)
 e.default=c})),define("ember-stereo/-private/utils/untracked-object-cache",["exports","ember-stereo/-private/utils/normalize-identifier"],(function(e,t){"use strict"
 function r(e,t,r){return(t=function(e){var t=function(e,t){if("object"!=typeof e||null===e)return e
@@ -10294,14 +10325,14 @@ return"symbol"==typeof t?t:String(t)}(t))in e?Object.defineProperty(e,t,{value:r
 class i extends t.default{constructor(){super(...arguments),r(this,"name","find-sound")}get result(){return this.sound}}e.default=i})),define("ember-stereo/helpers/json-stringify",["exports","@ember/component/helper"],(function(e,t){"use strict"
 Object.defineProperty(e,"__esModule",{value:!0}),e.default=void 0
 var r=(0,t.helper)((function(e){return e&&e[0]&&null!=e[0]?e[1]?JSON.stringify(e[0],null,2):JSON.stringify(e[0]):""}))
-e.default=r})),define("ember-stereo/helpers/load-sound",["exports","@ember/service","@ember/component/helper","ember-stereo/-private/utils/prepare-options"],(function(e,t,r,i){"use strict"
-var n,a
+e.default=r})),define("ember-stereo/helpers/load-sound",["exports","@ember/service","@ember/component/helper","ember-stereo/-private/utils/prepare-options","ember-concurrency"],(function(e,t,r,i,n){"use strict"
+var a,s
 Object.defineProperty(e,"__esModule",{value:!0}),e.default=void 0
-let s=(n=class extends r.default{constructor(){var e,t,r,i
-super(...arguments),e=this,t="stereo",i=this,(r=a)&&Object.defineProperty(e,t,{enumerable:r.enumerable,configurable:r.configurable,writable:r.writable,value:r.initializer?r.initializer.call(i):void 0})}compute(e){let[t]=e,r=arguments.length>1&&void 0!==arguments[1]?arguments[1]:{}
-return r=(0,i.default)(r),()=>this.stereo.load(t,r).then((e=>e.sound))}},o=n.prototype,l="stereo",u=[t.inject],c={configurable:!0,enumerable:!0,writable:!0,initializer:null},h={},Object.keys(c).forEach((function(e){h[e]=c[e]})),h.enumerable=!!h.enumerable,h.configurable=!!h.configurable,("value"in h||h.initializer)&&(h.writable=!0),h=u.slice().reverse().reduce((function(e,t){return t(o,l,e)||e}),h),d&&void 0!==h.initializer&&(h.value=h.initializer?h.initializer.call(d):void 0,h.initializer=void 0),void 0===h.initializer&&(Object.defineProperty(o,l,h),h=null),a=h,n)
-var o,l,u,c,d,h
-e.default=s})),define("ember-stereo/helpers/numeric-duration",["exports","@ember/component/helper"],(function(e,t){"use strict"
+let o=(a=class extends r.default{constructor(){var e,t,r,i
+super(...arguments),e=this,t="stereo",i=this,(r=s)&&Object.defineProperty(e,t,{enumerable:r.enumerable,configurable:r.configurable,writable:r.writable,value:r.initializer?r.initializer.call(i):void 0})}compute(e){let[t]=e,r=arguments.length>1&&void 0!==arguments[1]?arguments[1]:{}
+return r=(0,i.default)(r),()=>{try{return this.stereo.load(t,r).then((e=>e.sound))}catch(e){if(!(0,n.didCancel)(e))throw e}}}},l=a.prototype,u="stereo",c=[t.inject],d={configurable:!0,enumerable:!0,writable:!0,initializer:null},f={},Object.keys(d).forEach((function(e){f[e]=d[e]})),f.enumerable=!!f.enumerable,f.configurable=!!f.configurable,("value"in f||f.initializer)&&(f.writable=!0),f=c.slice().reverse().reduce((function(e,t){return t(l,u,e)||e}),f),h&&void 0!==f.initializer&&(f.value=f.initializer?f.initializer.call(h):void 0,f.initializer=void 0),void 0===f.initializer&&(Object.defineProperty(l,u,f),f=null),s=f,a)
+var l,u,c,d,h,f
+e.default=o})),define("ember-stereo/helpers/numeric-duration",["exports","@ember/component/helper"],(function(e,t){"use strict"
 function r(e){let[t]=e
 var r=parseInt(t/1e3%60),i=parseInt(t/6e4%60),n=parseInt(t/36e5%24)
 return i=i<10?"0"+i:i,r=r<10?"0"+r:r,n>0?n+":"+i+":"+r:i+":"+r}Object.defineProperty(e,"__esModule",{value:!0}),e.default=void 0,e.numericDuration=r
@@ -10309,12 +10340,13 @@ var i=(0,t.helper)(r)
 e.default=i})),define("ember-stereo/helpers/pause-sound",["exports","ember-stereo/-private/helpers/action-helper"],(function(e,t){"use strict"
 Object.defineProperty(e,"__esModule",{value:!0}),e.default=void 0
 class r extends t.default{performAction(e){if(!e)return!1
-e.pause()}}e.default=r})),define("ember-stereo/helpers/play-sound",["exports","ember-stereo/-private/helpers/action-helper"],(function(e,t){"use strict"
+e.pause()}}e.default=r})),define("ember-stereo/helpers/play-sound",["exports","ember-stereo/-private/helpers/action-helper","ember-concurrency"],(function(e,t,r){"use strict"
 Object.defineProperty(e,"__esModule",{value:!0}),e.default=void 0
-class r extends t.default{async performAction(){return await this.stereo.play(this.identifier,this.options)}}e.default=r})),define("ember-stereo/helpers/rewind-sound",["exports","ember-stereo/-private/helpers/action-helper"],(function(e,t){"use strict"
+class i extends t.default{performAction(){return this.stereo.playTask.perform(this.identifier,this.options).catch((e=>{if(!(0,r.didCancel)(e))throw e}))}}e.default=i})),define("ember-stereo/helpers/rewind-sound",["exports","ember-stereo/-private/helpers/action-helper"],(function(e,t){"use strict"
 Object.defineProperty(e,"__esModule",{value:!0}),e.default=void 0
 class r extends t.default{performAction(e){if(!e)return!1
-e.rewind(this.options?.increment||15e3)}}e.default=r})),define("ember-stereo/helpers/seek-sound",["exports","ember-stereo/-private/helpers/action-helper"],(function(e,t){"use strict"
+e.rewind(this.options?.increment||15e3)}}e.default=r}))
+define("ember-stereo/helpers/seek-sound",["exports","ember-stereo/-private/helpers/action-helper"],(function(e,t){"use strict"
 Object.defineProperty(e,"__esModule",{value:!0}),e.default=void 0
 class r extends t.default{performAction(e,t){if(!e)return!1
 {let r=this.options.unit||"percentage",i=void 0===this.options.position?t:this.options.position
@@ -10360,8 +10392,7 @@ return Object.keys(i).forEach((function(e){a[e]=i[e]})),a.enumerable=!!a.enumera
 const d=Object.freeze({})
 let h=(a=class extends t.default{constructor(){super(...arguments),u(this,"name","sound-is-errored"),l(this,"stereo",s,this),l(this,"result",o,this),u(this,"identifier",d)}compute(e,t){let[r="system"]=e,{connectionName:n}=t,a=this.stereo.cachedErrors.filter((async e=>(0,i.default)(e.url,r)))
 return n?a.filter((e=>e.connectionName===n)).length>0:a.length>0}},s=c(a.prototype,"stereo",[n.inject],{configurable:!0,enumerable:!0,writable:!0,initializer:null}),o=c(a.prototype,"result",[r.dedupeTracked],{configurable:!0,enumerable:!0,writable:!0,initializer:function(){return!1}}),a)
-e.default=h}))
-define("ember-stereo/helpers/sound-is-fastforwardable",["exports","ember-stereo/-private/helpers/is-helper","ember-stereo/-private/utils/debug-message"],(function(e,t,r){"use strict"
+e.default=h})),define("ember-stereo/helpers/sound-is-fastforwardable",["exports","ember-stereo/-private/helpers/is-helper","ember-stereo/-private/utils/debug-message"],(function(e,t,r){"use strict"
 function i(e,t,r){return(t=function(e){var t=function(e,t){if("object"!=typeof e||null===e)return e
 var r=e[Symbol.toPrimitive]
 if(void 0!==r){var i=r.call(e,t||"default")
@@ -10438,29 +10469,31 @@ var s,o,l,u,c,d
 e.default=a})),define("ember-stereo/helpers/stop-sound",["exports","ember-stereo/-private/helpers/action-helper"],(function(e,t){"use strict"
 Object.defineProperty(e,"__esModule",{value:!0}),e.default=void 0
 class r extends t.default{performAction(e){if(!e)return!1
-e.stop()}}e.default=r})),define("ember-stereo/helpers/toggle-play-sound",["exports","ember-stereo/-private/helpers/action-helper"],(function(e,t){"use strict"
+e.stop()}}e.default=r})),define("ember-stereo/helpers/toggle-play-sound",["exports","ember-stereo/-private/helpers/action-helper","ember-concurrency"],(function(e,t,r){"use strict"
 Object.defineProperty(e,"__esModule",{value:!0}),e.default=void 0
-class r extends t.default{performAction(e){e?e.togglePause():this.stereo.play(this.identifier,this.options)}}e.default=r})),define("ember-stereo/helpers/toggle-stereo-mute",["exports","@ember/service","@ember/component/helper"],(function(e,t,r){"use strict"
+class i extends t.default{performAction(e){e?e.togglePause():this.stereo.playTask.perform(this.identifier,this.options).catch((e=>{if(!(0,r.didCancel)(e))throw e}))}}e.default=i})),define("ember-stereo/helpers/toggle-stereo-mute",["exports","@ember/service","@ember/component/helper"],(function(e,t,r){"use strict"
 var i,n
 Object.defineProperty(e,"__esModule",{value:!0}),e.default=void 0
 let a=(i=class extends r.default{constructor(){var e,t,r,i
 super(...arguments),e=this,t="stereo",i=this,(r=n)&&Object.defineProperty(e,t,{enumerable:r.enumerable,configurable:r.configurable,writable:r.writable,value:r.initializer?r.initializer.call(i):void 0})}compute(){return()=>this.stereo.toggleMute()}},s=i.prototype,o="stereo",l=[t.inject],u={configurable:!0,enumerable:!0,writable:!0,initializer:null},d={},Object.keys(u).forEach((function(e){d[e]=u[e]})),d.enumerable=!!d.enumerable,d.configurable=!!d.configurable,("value"in d||d.initializer)&&(d.writable=!0),d=l.slice().reverse().reduce((function(e,t){return t(s,o,e)||e}),d),c&&void 0!==d.initializer&&(d.value=d.initializer?d.initializer.call(c):void 0,d.initializer=void 0),void 0===d.initializer&&(Object.defineProperty(s,o,d),d=null),n=d,i)
 var s,o,l,u,c,d
-e.default=a})),define("ember-stereo/modifiers/sound-position-progress",["exports","@ember/object","@ember/service","ember-modifier","@ember/destroyable"],(function(e,t,r,i,n){"use strict"
-var a,s
-function o(e,t,r){return(t=function(e){var t=function(e,t){if("object"!=typeof e||null===e)return e
+e.default=a})),define("ember-stereo/modifiers/sound-position-progress",["exports","@ember/service","tracked-toolbox","ember-modifier","ember-concurrency"],(function(e,t,r,i,n){"use strict"
+var a,s,o
+function l(e,t,r){return(t=function(e){var t=function(e,t){if("object"!=typeof e||null===e)return e
 var r=e[Symbol.toPrimitive]
 if(void 0!==r){var i=r.call(e,t||"default")
 if("object"!=typeof i)return i
 throw new TypeError("@@toPrimitive must return a primitive value.")}return("string"===t?String:Number)(e)}(e,"string")
-return"symbol"==typeof t?t:String(t)}(t))in e?Object.defineProperty(e,t,{value:r,enumerable:!0,configurable:!0,writable:!0}):e[t]=r,e}function l(e,t,r,i,n){var a={}
+return"symbol"==typeof t?t:String(t)}(t))in e?Object.defineProperty(e,t,{value:r,enumerable:!0,configurable:!0,writable:!0}):e[t]=r,e}function u(e,t,r,i,n){var a={}
 return Object.keys(i).forEach((function(e){a[e]=i[e]})),a.enumerable=!!a.enumerable,a.configurable=!!a.configurable,("value"in a||a.initializer)&&(a.writable=!0),a=r.slice().reverse().reduce((function(r,i){return i(e,t,r)||r}),a),n&&void 0!==a.initializer&&(a.value=a.initializer?a.initializer.call(n):void 0,a.initializer=void 0),void 0===a.initializer&&(Object.defineProperty(e,t,a),a=null),a}Object.defineProperty(e,"__esModule",{value:!0}),e.default=void 0
-let u=(a=class extends i.default{constructor(){var e,t,r,i
-super(...arguments),e=this,t="stereo",i=this,(r=s)&&Object.defineProperty(e,t,{enumerable:r.enumerable,configurable:r.configurable,writable:r.writable,value:r.initializer?r.initializer.call(i):void 0}),o(this,"element",null),(0,n.registerDestructor)(this,this.unregisterListeners.bind(this))}get loadedSound(){return this.stereo.findLoadedSound(this.url)}onPositionChange(e){let{sound:t}=e
-t.hasUrl(this.url)&&this.modifyPosition(...arguments)}modifyPosition(e){let{sound:t}=e
-this.element.style.width=(t.position||0)/t.duration*100+"%",this.element.style.pointerEvents="none"}modify(e,t,r){let[i]=t
-this.url=i,this.options=r,this.element||(this.element=e,this.element.setAttribute("data-sound-position-progress",!0),this.stereo.on("audio-position-will-change",this.onPositionChange.bind(this)),this.stereo.on("audio-position-changed",this.onPositionChange.bind(this)))}unregisterListeners(){try{this.stereo.off("audio-position-changed",this.onPositionChange.bind(this)),this.stereo.off("audio-position-will-change",this.onPositionChange.bind(this))}catch(e){}}},s=l(a.prototype,"stereo",[r.inject],{configurable:!0,enumerable:!0,writable:!0,initializer:null}),l(a.prototype,"onPositionChange",[t.action],Object.getOwnPropertyDescriptor(a.prototype,"onPositionChange"),a.prototype),a)
-e.default=u})),define("ember-stereo/modifiers/sound-position-slider",["exports","@ember/object","@ember/service","ember-concurrency","@ember/runloop","ember-gesture-modifiers/modifiers/did-pan","@ember/destroyable"],(function(e,t,r,i,n,a,s){"use strict"
+let c=(a=(0,n.task)({drop:!0}),s=class extends i.default{constructor(){var e,t,r,i
+super(...arguments),e=this,t="stereo",i=this,(r=o)&&Object.defineProperty(e,t,{enumerable:r.enumerable,configurable:r.configurable,writable:r.writable,value:r.initializer?r.initializer.call(i):void 0}),l(this,"element",null)}get loadedSound(){return this.stereo.findLoadedSound(this.url)}modifyPosition(e){let{sound:t}=e,r=t?.position??0,i=t?.duration??1
+this.element.style.width=r/i*100+"%",this.element.style.pointerEvents="none"}modify(e,t,r){let[i]=t
+this.url=i,this.options=r,this.element||(this.element=e,this.element.setAttribute("data-sound-position-progress",!0),this.modifyPosition({sound:this.loadedSound})),this.watchPositionTask.perform().catch((()=>{}))}*watchPositionTask(){for(;;){let e=this.loadedSound?.position
+yield(0,n.timeout)(100)
+let t=yield(0,n.race)([(0,n.waitForEvent)(this.stereo,"audio-position-will-change"),(0,n.waitForEvent)(this.stereo,"audio-position-changed"),(0,n.waitForProperty)(this,"loadedSound",(t=>t?.position!=e)),(0,n.timeout)(500)])
+t?.sound?this.modifyPosition({sound:t.sound}):this.loadedSound&&this.modifyPosition({sound:this.loadedSound})}}},o=u(s.prototype,"stereo",[t.inject],{configurable:!0,enumerable:!0,writable:!0,initializer:null}),u(s.prototype,"loadedSound",[r.cached],Object.getOwnPropertyDescriptor(s.prototype,"loadedSound"),s.prototype),u(s.prototype,"watchPositionTask",[a],Object.getOwnPropertyDescriptor(s.prototype,"watchPositionTask"),s.prototype),s)
+e.default=c})),define("ember-stereo/modifiers/sound-position-slider",["exports","@ember/object","@ember/service","ember-concurrency","@ember/runloop","ember-gesture-modifiers/modifiers/did-pan","@ember/destroyable"],(function(e,t,r,i,n,a,s){"use strict"
 var o,l
 function u(e,t,r){return(t=function(e){var t=function(e,t){if("object"!=typeof e||null===e)return e
 var r=e[Symbol.toPrimitive]
@@ -10515,7 +10548,7 @@ if(n)return(0,u.default)("ember-stereo")("retreived sound from cache"),yield{sou
 if(0==a.filter((e=>e.canPlay)).length)return this._handlePreloadError({urlsToTry:i,options:r,strategies:a})}catch(o){return this._handlePreloadError({urlsToTry:i,options:r,strategies:a||[]})}var s=!1
 let e=[]
 for(let t of a)if(t.canPlay){let r=yield this.tryLoadingSoundTask.perform(t).catch((e=>{t.error=e}))
-if(r.error&&(t.error=r.error,e.push(t)),r.sound){(0,u.default)("ember-stereo")(`firing sound-ready for ${r.sound.url}`),this.trigger("sound-ready",{sound:r.sound}),(n=r.sound)._debug=a,s=!0
+if(r.error&&(t.error=r.error,t.erroredSound=r.erroredSound,e.push(t)),r.sound){(0,u.default)("ember-stereo")(`firing sound-ready for ${r.sound.url}`),this.trigger("sound-ready",{sound:r.sound}),(n=r.sound)._debug=a,s=!0
 break}}return s&&n?(this.handleCurrentSoundTransitionTask.perform(n),r.metadata&&(n.metadata={...n.metadata,...r.metadata}),this.soundCache.cache(n),this.oneAtATime.register(n),{sound:n,failures:e}):this._handleLoadError({urlsToTry:i,failures:e,options:r,strategies:a})}}*handleCurrentSoundTransitionTask(e){for(;;){yield(0,s.waitForEvent)(e,"audio-played"),(0,u.default)("ember-stereo")("handling sound transition")
 let t=this.currentSound,r=e
 t!==r&&(t?.isPlaying&&this.trigger("current-sound-interrupted",{sound:t}),this.trigger("current-sound-changed",{sound:r,previousSound:t}),this.currentSound=e)}}load(e,t){t={metadata:{},...t}
@@ -10540,7 +10573,7 @@ return r=t?t.error:(0,n.makeArray)(e).map((e=>e.error)).filter((e=>e.toString().
 return this.connectionLoader=new E.default(this,e),(0,i.setOwner)(this.connectionLoader,(0,i.getOwner)(this)),this}get connections(){return this.connectionLoader.connections}get connectionNames(){return this.connectionLoader.names}get loadedUrls(){return this.soundCache.cachedList}get loadedSounds(){return this.soundCache.cachedSounds}get cachedErrors(){return this.errorCache.cachedErrors}findLoadedSound(e){return this.soundCache.find(e)}findSound(e){return this.soundProxy(e)?.value}soundProxy(e){if(this.proxyCache.has(e))return this.proxyCache.find(e)
 if(e){let t=new w.default(e,this)
 return this.proxyCache.store(e,t),t}}removeSound(e){let t=new _.default(e).url
-this.soundCache.remove(t),this.errorCache.remove(t),this.proxyCache.remove(t),this.metadataCache.remove(t),this.currentSound?.url===t&&(this._unregisterEvents(this.currentSound),this.currentSound=null)}*waitForSuccessTask(e,t){return yield(0,s.waitForProperty)(t,"isReady"),(0,u.default)("ember-stereo")(`SUCCESS: [${e.connectionName}] -> (${e.url})`),e.success=!0,{sound:t}}*waitForFailureTask(e,t){return yield(0,s.waitForProperty)(t,"isErrored"),(0,u.default)("ember-stereo")(`FAILED: [${e.connectionName}] -> ${t.error} (${e.url})`),this._unregisterEvents(t),e.error=t.error,{error:t.error}}*tryLoadingSoundTask(e){var t=e.createSound()
+this.soundCache.remove(t),this.errorCache.remove(t),this.proxyCache.remove(t),this.metadataCache.remove(t),this.currentSound?.url===t&&(this._unregisterEvents(this.currentSound),this.currentSound=null)}*waitForSuccessTask(e,t){return yield(0,s.waitForProperty)(t,"isReady"),(0,u.default)("ember-stereo")(`SUCCESS: [${e.connectionName}] -> (${e.url})`),e.success=!0,{sound:t}}*waitForFailureTask(e,t){return yield(0,s.waitForProperty)(t,"isErrored"),(0,u.default)("ember-stereo")(`FAILED: [${e.connectionName}] -> ${t.error} (${e.url})`),this._unregisterEvents(t),e.error=t.error,{error:t.error,erroredSound:t}}*tryLoadingSoundTask(e){var t=e.createSound()
 return this._registerEvents(t),(0,u.default)("ember-stereo")(`TRYING: [${e.connectionName}] -> ${e.url}`),e.tried=!0,yield(0,s.race)([this.waitForSuccessTask.perform(e,t),this.waitForFailureTask.perform(e,t)])}_setCurrentPosition(){let e=this._currentSound
 if(e)try{let t=e._currentPosition()
 e._position!=t&&(e._position=t)}catch(t){console.error(t)}}_registerEvents(e){let t=this
@@ -10550,11 +10583,11 @@ z.forEach((r=>{e.has(r.event)&&e.off(r.event,t,t[r.handler])}))}_relayEvent(e){l
 document.addEventListener("touchstart",r,{passive:!0})
 let i=(0,o.later)((()=>{(0,u.default)("ember-stereo")(`Looks like the mobile browser blocked an autoplay trying to play sound with url: ${e.url}`),e.isBlocked=!0,e.trigger("audio-blocked")}),2e3)
 e.one("audio-load-error",(()=>{})),e.one("audio-played",(()=>{document.removeEventListener("touchstart",r),(0,o.cancel)(i)})),e.play(t)}willDestroy(){clearInterval(this.poll),this.loadTask.cancelAll(),this.playTask.cancelAll()}},x=F(O.prototype,"autoPlayAllowed",[r.tracked],{configurable:!0,enumerable:!0,writable:!0,initializer:function(){return!1}}),P=F(O.prototype,"soundCache",[r.tracked],{configurable:!0,enumerable:!0,writable:!0,initializer:function(){return new v.default}}),A=F(O.prototype,"errorCache",[r.tracked],{configurable:!0,enumerable:!0,writable:!0,initializer:function(){return new h.default}}),R=F(O.prototype,"metadataCache",[r.tracked],{configurable:!0,enumerable:!0,writable:!0,initializer:function(){return new m.default}}),C=F(O.prototype,"urlCache",[r.tracked],{configurable:!0,enumerable:!0,writable:!0,initializer:function(){return new p.default}}),D=F(O.prototype,"_currentSound",[r.tracked],{configurable:!0,enumerable:!0,writable:!0,initializer:function(){return null}}),M=F(O.prototype,"_volume",[r.tracked],{configurable:!0,enumerable:!0,writable:!0,initializer:function(){return this.defaultVolume}}),I=F(O.prototype,"isMobileDevice",[r.tracked],{configurable:!0,enumerable:!0,writable:!0,initializer:function(){return"ontouchstart"in window}}),F(O.prototype,"loadTask",[T],Object.getOwnPropertyDescriptor(O.prototype,"loadTask"),O.prototype),F(O.prototype,"handleCurrentSoundTransitionTask",[s.task],Object.getOwnPropertyDescriptor(O.prototype,"handleCurrentSoundTransitionTask"),O.prototype),F(O.prototype,"playTask",[k],Object.getOwnPropertyDescriptor(O.prototype,"playTask"),O.prototype),F(O.prototype,"resolveIdentifierTask",[S],Object.getOwnPropertyDescriptor(O.prototype,"resolveIdentifierTask"),O.prototype),F(O.prototype,"waitForSuccessTask",[s.task],Object.getOwnPropertyDescriptor(O.prototype,"waitForSuccessTask"),O.prototype),F(O.prototype,"waitForFailureTask",[s.task],Object.getOwnPropertyDescriptor(O.prototype,"waitForFailureTask"),O.prototype),F(O.prototype,"tryLoadingSoundTask",[s.task],Object.getOwnPropertyDescriptor(O.prototype,"tryLoadingSoundTask"),O.prototype),O)
-e.default=U})),define("ember-stereo/stereo-connections/base",["exports","@ember/runloop","@ember/array","@ember/debug","ember-stereo/-private/utils/mime-types","debug","@glimmer/tracking","ember-stereo/-private/utils/evented","ember-stereo/-private/utils/has-equal-urls","@ember/application"],(function(e,t,r,i,n,a,s,o,l,u){"use strict"
-var c,d,h,f,p,m,g,v,b,y,_,w,E,T,k,S,O,x
-function P(e,t,r,i){r&&Object.defineProperty(e,t,{enumerable:r.enumerable,configurable:r.configurable,writable:r.writable,value:r.initializer?r.initializer.call(i):void 0})}function A(e,t,r,i,n){var a={}
+e.default=U})),define("ember-stereo/stereo-connections/base",["exports","@ember/runloop","@ember/array","@ember/debug","ember-stereo/-private/utils/mime-types","debug","@glimmer/tracking","ember-stereo/-private/utils/evented","ember-stereo/-private/utils/has-equal-urls","@ember/application","@ember/destroyable"],(function(e,t,r,i,n,a,s,o,l,u,c){"use strict"
+var d,h,f,p,m,g,v,b,y,_,w,E,T,k,S,O,x,P
+function A(e,t,r,i){r&&Object.defineProperty(e,t,{enumerable:r.enumerable,configurable:r.configurable,writable:r.writable,value:r.initializer?r.initializer.call(i):void 0})}function R(e,t,r,i,n){var a={}
 return Object.keys(i).forEach((function(e){a[e]=i[e]})),a.enumerable=!!a.enumerable,a.configurable=!!a.configurable,("value"in a||a.initializer)&&(a.writable=!0),a=r.slice().reverse().reduce((function(r,i){return i(e,t,r)||r}),a),n&&void 0!==a.initializer&&(a.value=a.initializer?a.initializer.call(n):void 0,a.initializer=void 0),void 0===a.initializer&&(Object.defineProperty(e,t,a),a=null),a}Object.defineProperty(e,"__esModule",{value:!0}),e.default=void 0
-let R=(c=class extends o.default{static setup(e){this.config=e}static canPlay(e,t){return!!this.canUseConnection(e)&&((t=t||e.mimeType||(0,n.getMimeType)(e))?this.canPlayMimeType(t):(console.warn(`Could not determine mime type for ${e}`),console.warn("Attempting to play urls with an unknown mime type can be bad for performance. See documentation for more info."),!0))}static canUseConnection(){return!0}static canPlayMimeType(e){let t=this.acceptMimeTypes,i=this.rejectMimeTypes
+let C=(d=class extends o.default{static setup(e){this.config=e}static canPlay(e,t){return!!this.canUseConnection(e)&&((t=t||e.mimeType||(0,n.getMimeType)(e))?this.canPlayMimeType(t):(console.warn(`Could not determine mime type for ${e}`),console.warn("Attempting to play urls with an unknown mime type can be bad for performance. See documentation for more info."),!0))}static canUseConnection(){return!0}static canPlayMimeType(e){let t=this.acceptMimeTypes,i=this.rejectMimeTypes
 return t?(0,r.A)(t).includes(e):!i||!(0,r.A)(i).includes(e)}get identifier(){return this.url}get metadata(){let e=(0,u.getOwner)(this)
 if(e){let t=e.lookup("service:stereo")
 return t?.metadataCache?.find(this.url)}return{}}set metadata(e){let t=(0,u.getOwner)(this)
@@ -10565,15 +10598,15 @@ let t=e.pathname.split("/")
 return`ember-stereo:${this.connectionName||this.constructor.toString()} (${t[t.length-1]})`}trigger(e){let t=arguments.length>1&&void 0!==arguments[1]?arguments[1]:{}
 t||(t={}),t.sound||(t.sound=this),this.eventManager.trigger(e,t)}get isStream(){return this.duration==1/0}get isFastForwardable(){return!this.isStream}get isRewindable(){return!this.isStream}get isSeekable(){return!this.isStream}get position(){return this._position}set position(e){this.trigger("audio-position-will-change",{sound:this,currentPosition:this._currentPosition(),newPosition:e}),this._position=this._setPosition(e)}get currentTime(){return null}get mimeType(){return(0,n.getMimeType)(this.url)}debug(){(0,a.default)(this.debugName)(...arguments)}constructor(){var e
 let r=arguments.length>0&&void 0!==arguments[0]?arguments[0]:{}
-super(...arguments),e=this,P(this,"url",d,this),P(this,"connectionName",h,this),P(this,"hasPlayed",f,this),P(this,"isLoading",p,this),P(this,"isLoaded",m,this),P(this,"isPlaying",g,this),P(this,"isErrored",v,this),P(this,"isReady",b,this),P(this,"isBlocked",y,this),P(this,"error",_,this),P(this,"_position",w,this),P(this,"duration",E,this),P(this,"percentLoaded",T,this),P(this,"id3Tags",k,this),P(this,"id3TagMetadata",S,this),P(this,"_debug",O,this),P(this,"sharedAudioAccess",x,this),this.url=r.url,this.connectionName=r.connectionName,this.connectionKey=r.connectionKey,this.options=r.options,this.sharedAudioAccess=r.sharedAudioAccess,this.timeout="timeout"in r?r.timeout:3e4
+super(...arguments),e=this,A(this,"url",h,this),A(this,"connectionName",f,this),A(this,"hasPlayed",p,this),A(this,"isLoading",m,this),A(this,"isLoaded",g,this),A(this,"isPlaying",v,this),A(this,"isErrored",b,this),A(this,"isReady",y,this),A(this,"isBlocked",_,this),A(this,"error",w,this),A(this,"_position",E,this),A(this,"duration",T,this),A(this,"percentLoaded",k,this),A(this,"id3Tags",S,this),A(this,"id3TagMetadata",O,this),A(this,"_debug",x,this),A(this,"sharedAudioAccess",P,this),(0,c.registerDestructor)(this,this.teardown.bind(this)),this.url=r.url,this.connectionName=r.connectionName,this.connectionKey=r.connectionKey,this.options=r.options,this.sharedAudioAccess=r.sharedAudioAccess,this.timeout="timeout"in r?r.timeout:3e4
 let{audioLoading:i,audioLoaded:n,audioReady:a,audioPlayed:s,audioPaused:o,audioEnded:l,audioLoadError:u}=this
 this.isLoading=!0,this.on("audio-played",(()=>{this.hasPlayed=!0,this.isLoading=!1,this.isPlaying=!0,this.isBlocked=!1,this.error=null,s&&i(this),this.debug(`audio-played ${this.isPlaying}`)})),this.on("audio-paused",(()=>{this.isPlaying=!1,o&&o(this),this.debug("audio-paused")})),this.on("audio-ended",(()=>{this.isPlaying=!1,this._position=this._setPosition(0),l&&l(this),this.debug("audio-ended")})),this.on("audio-ready",(()=>{this.isReady=!0,this.duration=this._audioDuration(),a&&a(this),this.debug("audio-ready")})),this.on("audio-load-error",(function(){let t=arguments.length>0&&void 0!==arguments[0]?arguments[0]:{},{error:r}=t
-e.hasPlayed&&(e.isLoading=!1,e.isPlaying=!1),e.isErrored=!0,e.error=r,u&&u(e),e.debug("audio-load-error")})),this.on("audio-loaded",(()=>{this.isLoading=!1,this.isLoaded=!0,n&&n(this),this.debug("audio-loaded")})),this.on("audio-loading",(e=>{e&&e.percentLoaded&&(this.percentLoaded=e.percentLoaded),i&&i(this,e&&e.percentLoaded),this.debug("audio-loading")})),this.on("audio-duration-changed",(()=>{this.duration=this._audioDuration()})),this.on("audio-blocked",(()=>{this.isBlocked=!0}))
-try{this._detectTimeouts(),this.setup()}catch(c){(0,t.next)((()=>{this.trigger("audio-load-error",{sound:this,error:`Error in setup ${c.message}`}),u&&u(this)}))}}_detectTimeouts(){if(this.timeout){let e=(0,t.later)((()=>{this.trigger("audio-load-error",{sound:this,error:"request timed out"})}),this.timeout)
+e.hasPlayed&&(e.isLoading=!1,e.isPlaying=!1),e.debug("audio-load-error"),e.shouldRetry&&e.retry?e.retry():(e.isErrored=!0,e.error=r,u&&u(e))})),this.on("audio-loaded",(()=>{this.isLoading=!1,this.isLoaded=!0,n&&n(this),this.debug("audio-loaded")})),this.on("audio-loading",(e=>{e&&e.percentLoaded&&(this.percentLoaded=e.percentLoaded),i&&i(this,e&&e.percentLoaded),this.debug("audio-loading")})),this.on("audio-duration-changed",(()=>{this.duration=this._audioDuration()})),this.on("audio-blocked",(()=>{this.isBlocked=!0}))
+try{this._detectTimeouts(),this.setup()}catch(d){(0,t.next)((()=>{this.trigger("audio-load-error",{sound:this,error:`Error in setup ${d.message}`}),u&&u(this)}))}}_detectTimeouts(){if(this.timeout){let e=(0,t.later)((()=>{this.trigger("audio-load-error",{sound:this,error:"request timed out"})}),this.timeout)
 this.on("audio-ready",(()=>(0,t.cancel)(e))),this.on("audio-load-error",(()=>(0,t.cancel)(e)))}}fastForward(e){let t=this._audioDuration(),r=this._currentPosition(),i=Math.min(r+e,t)
 this.trigger("audio-will-fast-forward",{sound:this,currentPosition:r,newPosition:i}),this._setPosition(i),this._position=this._currentPosition()}rewind(e){let t=this._currentPosition(),r=Math.max(t-e,0)
-this.trigger("audio-will-rewind",{sound:this,currentPosition:t,newPosition:r}),this._setPosition(r),this._position=this._currentPosition()}togglePause(){return this.isPlaying?this.pause():this.play()}setup(){}_setVolume(){}_audioDuration(){}_currentPosition(){}_setPosition(){}play(){}pause(){}stop(){}teardown(){}hasUrl(e){return(0,l.default)(this.url,e)}},d=A(c.prototype,"url",[s.tracked],{configurable:!0,enumerable:!0,writable:!0,initializer:null}),h=A(c.prototype,"connectionName",[s.tracked],{configurable:!0,enumerable:!0,writable:!0,initializer:null}),f=A(c.prototype,"hasPlayed",[s.tracked],{configurable:!0,enumerable:!0,writable:!0,initializer:function(){return!1}}),p=A(c.prototype,"isLoading",[s.tracked],{configurable:!0,enumerable:!0,writable:!0,initializer:function(){return!1}}),m=A(c.prototype,"isLoaded",[s.tracked],{configurable:!0,enumerable:!0,writable:!0,initializer:function(){return!1}}),g=A(c.prototype,"isPlaying",[s.tracked],{configurable:!0,enumerable:!0,writable:!0,initializer:function(){return!1}}),v=A(c.prototype,"isErrored",[s.tracked],{configurable:!0,enumerable:!0,writable:!0,initializer:function(){return!1}}),b=A(c.prototype,"isReady",[s.tracked],{configurable:!0,enumerable:!0,writable:!0,initializer:function(){return!1}}),y=A(c.prototype,"isBlocked",[s.tracked],{configurable:!0,enumerable:!0,writable:!0,initializer:function(){return!1}}),_=A(c.prototype,"error",[s.tracked],{configurable:!0,enumerable:!0,writable:!0,initializer:function(){return null}}),w=A(c.prototype,"_position",[s.tracked],{configurable:!0,enumerable:!0,writable:!0,initializer:function(){return 0}}),E=A(c.prototype,"duration",[s.tracked],{configurable:!0,enumerable:!0,writable:!0,initializer:function(){return 0}}),T=A(c.prototype,"percentLoaded",[s.tracked],{configurable:!0,enumerable:!0,writable:!0,initializer:function(){return 0}}),k=A(c.prototype,"id3Tags",[s.tracked],{configurable:!0,enumerable:!0,writable:!0,initializer:function(){return{}}}),S=A(c.prototype,"id3TagMetadata",[s.tracked],{configurable:!0,enumerable:!0,writable:!0,initializer:function(){return{}}}),O=A(c.prototype,"_debug",[s.tracked],{configurable:!0,enumerable:!0,writable:!0,initializer:function(){return{}}}),x=A(c.prototype,"sharedAudioAccess",[s.tracked],{configurable:!0,enumerable:!0,writable:!0,initializer:null}),c)
-e.default=R})),define("ember-stereo/stereo-connections/hls",["exports","ember-stereo/stereo-connections/base","hls.js","@glimmer/tracking"],(function(e,t,r,i){"use strict"
+this.trigger("audio-will-rewind",{sound:this,currentPosition:t,newPosition:r}),this._setPosition(r),this._position=this._currentPosition()}togglePause(){return this.isPlaying?this.pause():this.play()}setup(){}_setVolume(){}_audioDuration(){}_currentPosition(){}_setPosition(){}play(){}pause(){}stop(){}teardown(){this.isDestroyed=!0}hasUrl(e){return(0,l.default)(this.url,e)}},h=R(d.prototype,"url",[s.tracked],{configurable:!0,enumerable:!0,writable:!0,initializer:null}),f=R(d.prototype,"connectionName",[s.tracked],{configurable:!0,enumerable:!0,writable:!0,initializer:null}),p=R(d.prototype,"hasPlayed",[s.tracked],{configurable:!0,enumerable:!0,writable:!0,initializer:function(){return!1}}),m=R(d.prototype,"isLoading",[s.tracked],{configurable:!0,enumerable:!0,writable:!0,initializer:function(){return!1}}),g=R(d.prototype,"isLoaded",[s.tracked],{configurable:!0,enumerable:!0,writable:!0,initializer:function(){return!1}}),v=R(d.prototype,"isPlaying",[s.tracked],{configurable:!0,enumerable:!0,writable:!0,initializer:function(){return!1}}),b=R(d.prototype,"isErrored",[s.tracked],{configurable:!0,enumerable:!0,writable:!0,initializer:function(){return!1}}),y=R(d.prototype,"isReady",[s.tracked],{configurable:!0,enumerable:!0,writable:!0,initializer:function(){return!1}}),_=R(d.prototype,"isBlocked",[s.tracked],{configurable:!0,enumerable:!0,writable:!0,initializer:function(){return!1}}),w=R(d.prototype,"error",[s.tracked],{configurable:!0,enumerable:!0,writable:!0,initializer:function(){return null}}),E=R(d.prototype,"_position",[s.tracked],{configurable:!0,enumerable:!0,writable:!0,initializer:function(){return 0}}),T=R(d.prototype,"duration",[s.tracked],{configurable:!0,enumerable:!0,writable:!0,initializer:function(){return 0}}),k=R(d.prototype,"percentLoaded",[s.tracked],{configurable:!0,enumerable:!0,writable:!0,initializer:function(){return 0}}),S=R(d.prototype,"id3Tags",[s.tracked],{configurable:!0,enumerable:!0,writable:!0,initializer:function(){return{}}}),O=R(d.prototype,"id3TagMetadata",[s.tracked],{configurable:!0,enumerable:!0,writable:!0,initializer:function(){return{}}}),x=R(d.prototype,"_debug",[s.tracked],{configurable:!0,enumerable:!0,writable:!0,initializer:function(){return{}}}),P=R(d.prototype,"sharedAudioAccess",[s.tracked],{configurable:!0,enumerable:!0,writable:!0,initializer:null}),d)
+e.default=C})),define("ember-stereo/stereo-connections/hls",["exports","ember-stereo/stereo-connections/base","hls.js","@glimmer/tracking"],(function(e,t,r,i){"use strict"
 var n,a,s,o,l,u,c,d,h
 function f(e,t,r,i){r&&Object.defineProperty(e,t,{enumerable:r.enumerable,configurable:r.configurable,writable:r.writable,value:r.initializer?r.initializer.call(i):void 0})}function p(e,t,r){return(t=function(e){var t=function(e,t){if("object"!=typeof e||null===e)return e
 var r=e[Symbol.toPrimitive]
@@ -10594,7 +10627,7 @@ case e.target.error.MEDIA_ERR_DECODE:this.debug("video element error: decoding e
 break
 case e.target.error.MEDIA_ERR_SRC_NOT_SUPPORTED:this.debug("video element error: source format not supported"),this._giveUpAndDie("audio source format is not supported")
 break
-default:this._giveUpAndDie("unknown error")}}_onHLSError(e,t){if(t.fatal)switch(this.debug(t),console.log(t),t.type){case r.default.ErrorTypes.NETWORK_ERROR:this._giveUpAndDie(`${t.details}`)
+default:this._giveUpAndDie("unknown error")}}_onHLSError(e,t){if(t.fatal)switch(this.debug(t),t.type){case r.default.ErrorTypes.NETWORK_ERROR:this._giveUpAndDie(`${t.details}`)
 break
 case r.default.ErrorTypes.MEDIA_ERROR:this._tryToRecoverFromMediaError(`${t.details}`)
 break
@@ -10603,7 +10636,7 @@ switch(t){case 0:this.debug(`First attempt at media error recovery for error: ${
 break
 case 1:this.debug(`Second attempt at media error recovery: switching codecs for error: ${e}`),r.swapAudioCodec(),r.recoverMediaError()
 break
-case 2:this.debug(`We tried our best and we failed: ${e}`),this._giveUpAndDie(e)}this.mediaRecoveryAttempts=this.mediaRecoveryAttempts+1}_giveUpAndDie(e){this.hls.destroy(),this.trigger("audio-load-error",{sound:this,error:e})}get audioElement(){return this.video}get currentTime(){return this._currentTime}_audioDuration(){return this.live?1/0:1e3*this.video.duration}_currentPosition(){return this._updateCurrentTime(),1e3*this.video.currentTime}_setPosition(e){return this.video.currentTime=e/1e3,this.isPlaying||this.hls.startLoad(),this._updateCurrentTime(),e}_setVolume(e){this.video.volume=e/100}async tryPlaying(){try{await this.video.play()}catch(e){"NotAllowedError"==e.name&&(this.trigger("audio-blocked",{sound:this,error:e.message,event:e}),this.pause())}}async play(){this.isLoading=!0,this.video.src||(this.trigger("audio-loading",this),this.setup()),await this.tryPlaying(),this.debug("#play"),this.loadStopped&&(this.hls.startLoad(),this.loadStopped=!1)}pause(){this.debug("#pause"),this.video.pause(),this.hls.stopLoad(),this.loadStopped=!0}stop(){this.debug("#stop"),this.pause(),this.video.removeAttribute("src")}teardown(){this.hls.destroy()}},p(h,"acceptMimeTypes",["application/vnd.apple.mpegurl"]),p(h,"key","HLS"),a=m((n=h).prototype,"live",[i.tracked],{configurable:!0,enumerable:!0,writable:!0,initializer:function(){return!1}}),s=m(n.prototype,"loaded",[i.tracked],{configurable:!0,enumerable:!0,writable:!0,initializer:function(){return!1}}),o=m(n.prototype,"mediaRecoveryAttempts",[i.tracked],{configurable:!0,enumerable:!0,writable:!0,initializer:function(){return 0}}),l=m(n.prototype,"_currentTime",[i.tracked],{configurable:!0,enumerable:!0,writable:!0,initializer:function(){return null}}),u=m(n.prototype,"realTimeOffset",[i.tracked],{configurable:!0,enumerable:!0,writable:!0,initializer:null}),c=m(n.prototype,"appendedPts",[i.tracked],{configurable:!0,enumerable:!0,writable:!0,initializer:function(){return 0}}),d=m(n.prototype,"positionNow",[i.tracked],{configurable:!0,enumerable:!0,writable:!0,initializer:function(){return 0}}),n)
+case 2:this.debug(`We tried our best and we failed: ${e}`),this._giveUpAndDie(e)}this.mediaRecoveryAttempts=this.mediaRecoveryAttempts+1}_giveUpAndDie(e){this.hls.destroy(),this.trigger("audio-load-error",{sound:this,error:e})}get audioElement(){return this.video}get currentTime(){return this._currentTime}_audioDuration(){return this.live?1/0:1e3*this.video.duration}_currentPosition(){return this._updateCurrentTime(),1e3*this.video.currentTime}_setPosition(e){return this.video.currentTime=e/1e3,this.isPlaying||this.hls.startLoad(),this._updateCurrentTime(),e}_setVolume(e){this.video.volume=e/100}async tryPlaying(){try{await this.video.play()}catch(e){"NotAllowedError"==e.name&&(this.trigger("audio-blocked",{sound:this,error:e.message,event:e}),this.pause())}}async play(){this.isLoading=!0,this.video.src||(this.trigger("audio-loading",this),this.setup()),await this.tryPlaying(),this.debug("#play"),this.loadStopped&&(this.hls.startLoad(),this.loadStopped=!1)}pause(){this.debug("#pause"),this.video.pause(),this.hls.stopLoad(),this.loadStopped=!0}stop(){this.debug("#stop"),this.pause(),this.video.removeAttribute("src")}teardown(){this.hls.destroy(),super.teardown()}},p(h,"acceptMimeTypes",["application/vnd.apple.mpegurl"]),p(h,"key","HLS"),a=m((n=h).prototype,"live",[i.tracked],{configurable:!0,enumerable:!0,writable:!0,initializer:function(){return!1}}),s=m(n.prototype,"loaded",[i.tracked],{configurable:!0,enumerable:!0,writable:!0,initializer:function(){return!1}}),o=m(n.prototype,"mediaRecoveryAttempts",[i.tracked],{configurable:!0,enumerable:!0,writable:!0,initializer:function(){return 0}}),l=m(n.prototype,"_currentTime",[i.tracked],{configurable:!0,enumerable:!0,writable:!0,initializer:function(){return null}}),u=m(n.prototype,"realTimeOffset",[i.tracked],{configurable:!0,enumerable:!0,writable:!0,initializer:null}),c=m(n.prototype,"appendedPts",[i.tracked],{configurable:!0,enumerable:!0,writable:!0,initializer:function(){return 0}}),d=m(n.prototype,"positionNow",[i.tracked],{configurable:!0,enumerable:!0,writable:!0,initializer:function(){return 0}}),n)
 e.default=g})),define("ember-stereo/stereo-connections/howler",["exports","@ember/array","ember-stereo/stereo-connections/base","howler"],(function(e,t,r,i){"use strict"
 function n(e,t,r){return(t=function(e){var t=function(e,t){if("object"!=typeof e||null===e)return e
 var r=e[Symbol.toPrimitive]
@@ -10622,7 +10655,7 @@ break
 case 4:e="Audio source format is not supported."
 break
 default:e="Audio load error"}r.trigger("audio-load-error",{sound:r,error:e})}},onseek:function(){r.trigger("audio-position-changed",{sound:r})}},this.options)
-this.howl=new i.Howl(n)}teardown(){this.howl&&this.howl.unload()}get audioElement(){let e=this.howl?._sounds
+this.howl=new i.Howl(n)}teardown(){this.howl&&this.howl.unload(),super.teardown()}get audioElement(){let e=this.howl?._sounds
 if(e&&e.length>0){let t=e[0]._node
 if(t)return t.setAttribute("crossorigin","anonymous"),t.setAttribute("preload","metadata"),t}}_audioDuration(){return 1e3*this.howl?.duration()}_currentPosition(){return 1e3*this.howl?.seek()}_setPosition(e){return this.howl?.seek(e/1e3),this._currentPosition()}_setVolume(e){this.howl?.volume(e/100)}play(){let{position:e}=arguments.length>0&&void 0!==arguments[0]?arguments[0]:{}
 this.isLoading=!0,this.debug("#play"),void 0!==e&&this._setPosition(e),this.howl.play()}pause(){this.debug("#pause"),this.howl.pause()}stop(){this.debug("#stop"),this.howl.stop()}}e.default=a,n(a,"rejectMimeTypes",["application/vnd.apple.mpegurl"]),n(a,"key","Howler")})),define("ember-stereo/stereo-connections/native-audio",["exports","@glimmer/tracking","@ember/array","@ember/runloop","ember-concurrency","tracked-toolbox","ember-stereo/stereo-connections/base"],(function(e,t,r,i,n,a,s){"use strict"
@@ -10636,7 +10669,7 @@ return"symbol"==typeof t?t:String(t)}(t))in e?Object.defineProperty(e,t,{value:r
 return Object.keys(i).forEach((function(e){a[e]=i[e]})),a.enumerable=!!a.enumerable,a.configurable=!!a.configurable,("value"in a||a.initializer)&&(a.writable=!0),a=r.slice().reverse().reduce((function(r,i){return i(e,t,r)||r}),a),n&&void 0!==a.initializer&&(a.value=a.initializer?a.initializer.call(n):void 0,a.initializer=void 0),void 0===a.initializer&&(Object.defineProperty(e,t,a),a=null),a}Object.defineProperty(e,"__esModule",{value:!0}),e.default=void 0
 const g=["loadstart","durationchange","loadedmetadata","loadeddata","progress","canplay","canplaythrough","error","playing","pause","ended","seeking","seeked","emptied","timeupdate"]
 let v=(o=(0,n.task)({restartable:!0}),l=(0,n.task)({restartable:!0}),h=class extends s.default{constructor(){super(...arguments),f(this,"_internalElement",c,this),p(this,"_durationHistory",[]),f(this,"_durationHistory",d,this)}static canPlayMimeType(e){return""!==(new Audio).canPlayType(e)}static toString(){return"Native Audio"}setup(){let e=this.requestControl()
-e.src=this.url,this._registerEvents(e),e.load()}_registerEvents(e){g.forEach((t=>{e.addEventListener(t,(e=>(0,i.run)((()=>this._handleAudioEvent(t,e)))))}))}_unregisterEvents(e){g.forEach((t=>e.removeEventListener(t)))}_handleAudioEvent(e,t){if(this.urlsAreEqual(t.target?.src,this.url)||""===t.target?.src)switch(this.debug(`Handling '${e}' event from audio element`),e){case"loadeddata":this.audioElement.readyState>=2&&this._onAudioReady()
+e.src=this.url,this._registerEvents(e),this.retryCount=0,e.load()}_registerEvents(e){g.forEach((t=>{e.addEventListener(t,(e=>(0,i.run)((()=>this._handleAudioEvent(t,e)))))}))}_unregisterEvents(e){g.forEach((t=>e.removeEventListener(t)))}_handleAudioEvent(e,t){if(this.urlsAreEqual(t.target?.src,this.url)||""===t.target?.src)switch(this.debug(`Handling '${e}' event from audio element`),e){case"loadeddata":this.audioElement.readyState>=2&&this._onAudioReady()
 break
 case"canplay":case"canplaythrough":this._onAudioReady()
 break
@@ -10681,15 +10714,15 @@ let{position:r}=e
 return function*(){t.isLoading=!0
 let e=t.requestControl()
 t.loadAudio(e),t.restoreState(),void 0!==r&&t._setPosition(r),t.debug("telling audio to play")
-try{yield e.play().catch((e=>{throw e}))}catch(i){t._onAudioError(i)}finally{t.isLoading=!1}}()}play(){let{position:e}=arguments.length>0&&void 0!==arguments[0]?arguments[0]:{}
-try{return this.playTask.perform({position:e})}catch(t){if(!(0,n.didCancel)(t))throw t}}pause(){this.debug("#pause")
+try{yield e.play().catch((e=>{throw e}))}catch(i){t._onAudioError(i)}finally{t.isLoading=!1}}()}get shouldRetry(){return this.retryCount<1}retry(){this.debug("retrying load with crossorigin not set"),this.audioElement.removeAttribute("crossorigin"),this.retryCount=this.retryCount+1,this.audioElement.src=this.url,this.audioElement.load()}play(){let{position:e}=arguments.length>0&&void 0!==arguments[0]?arguments[0]:{}
+return this.playTask.perform({position:e})}pause(){this.debug("#pause")
 let e=this.audioElement
 this.isStream?this.stop():e.pause()}stop(){this.debug("#stop")
 let e=this.audioElement
 e.pause(),e.removeAttribute("src"),e.load()}loadAudio(e){this.defeatBrowserCaching(),this.urlsAreEqual(e.src,this.url)||(e.setAttribute("src",this.url),e.load())}defeatBrowserCaching(){if(this.isStream){let e=document.createElement("a")
 e.href=this.url,e.hash=(new Date).getTime(),this.url=e.href}}urlsAreEqual(e,t){let r=document.createElement("a"),i=document.createElement("a")
 return r.href=e,i.href=t,r.href===i.href}teardown(){let e=this.requestControl()
-this.durationWorkaroundTask.cancelAll(),this.trigger("_will_destroy",{sound:this}),this._unregisterEvents(e)}},p(h,"key","NativeAudio"),c=m((u=h).prototype,"_internalElement",[t.tracked],{configurable:!0,enumerable:!0,writable:!0,initializer:null}),m(u.prototype,"probablyAStream",[a.cached],Object.getOwnPropertyDescriptor(u.prototype,"probablyAStream"),u.prototype),d=m(u.prototype,"_durationHistory",[t.tracked],{configurable:!0,enumerable:!0,writable:!0,initializer:function(){return[]}}),m(u.prototype,"durationWorkaroundTask",[o],Object.getOwnPropertyDescriptor(u.prototype,"durationWorkaroundTask"),u.prototype),m(u.prototype,"playTask",[l],Object.getOwnPropertyDescriptor(u.prototype,"playTask"),u.prototype),u)
+this.durationWorkaroundTask.cancelAll(),this.trigger("_will_destroy",{sound:this}),this._unregisterEvents(e),super.teardown()}},p(h,"key","NativeAudio"),c=m((u=h).prototype,"_internalElement",[t.tracked],{configurable:!0,enumerable:!0,writable:!0,initializer:null}),m(u.prototype,"probablyAStream",[a.cached],Object.getOwnPropertyDescriptor(u.prototype,"probablyAStream"),u.prototype),d=m(u.prototype,"_durationHistory",[t.tracked],{configurable:!0,enumerable:!0,writable:!0,initializer:function(){return[]}}),m(u.prototype,"durationWorkaroundTask",[o],Object.getOwnPropertyDescriptor(u.prototype,"durationWorkaroundTask"),u.prototype),m(u.prototype,"playTask",[l],Object.getOwnPropertyDescriptor(u.prototype,"playTask"),u.prototype),u)
 e.default=v})),define("ember-svg-jar/inlined/addon-docs-pen",["exports"],(function(e){"use strict"
 Object.defineProperty(e,"__esModule",{value:!0}),e.default=void 0
 e.default={content:'<title>Group 2 Copy 2</title><g fill-rule="evenodd"><path d="M206.897 58c-.484 3.423-2.667 6-6.397 6-2.547 0-4.373-1.202-5.429-3.054C157 67.738 122.832 85.927 96.164 111.89 69.004 94.1 37.063 83.1 2.71 81.27A162.4 162.4 0 01.897 57c0-9.006.735-17.813 2.14-26.346C36.881 28.616 68.344 17.673 95.152.118c26.814 26.491 61.364 45.057 99.92 51.936C196.126 50.202 197.952 49 200.5 49c3.73 0 5.913 2.577 6.397 6H95v3h111.897z"/><g transform="translate(19.116 29.756)"><circle cx="26.12" cy="26.12" r="26.12"/><path d="M39.387 28.863s-7.943 5.63-13.164 5.705c-5.22.075-4.69-3.284-4.69-3.284s19.141-6.5 13.92-19.336c-2.346-3.302-5.07-4.342-8.926-4.266-3.86.075-8.645 2.41-11.749 9.316-1.483 3.294-2.022 6.419-2.325 8.785 0 0-3.348.679-5.165-.823-1.817-1.5-2.75 0-2.75 0s-3.12 3.942-.016 5.144c3.104 1.2 7.943 1.762 7.943 1.762.44 2.102 1.736 5.671 5.516 8.518 5.673 4.278 16.567-.393 16.567-.393s2.374-.894 4.463-2.487c3.041-2.649 2.614-10.707.376-8.64zm-18.633-3.62c.224-8.815 6.048-12.667 8.066-10.741 2.017 1.926 1.27 6.074-2.541 8.667-3.807 2.592-5.525 2.074-5.525 2.074z" fill-rule="nonzero"/></g></g>',attrs:{width:"207",height:"112",viewBox:"0 0 207 112",xmlns:"http://www.w3.org/2000/svg"}}})),define("ember-svg-jar/inlined/angle-down",["exports"],(function(e){"use strict"
@@ -10698,7 +10731,8 @@ e.default={content:'<path fill="currentColor" d="M143 352.3L7 216.3c-9.4-9.4-9.4
 Object.defineProperty(e,"__esModule",{value:!0}),e.default=void 0
 e.default={content:'<path fill="currentColor" d="M177 159.7l136 136c9.4 9.4 9.4 24.6 0 33.9l-22.6 22.6c-9.4 9.4-24.6 9.4-33.9 0L160 255.9l-96.4 96.4c-9.4 9.4-24.6 9.4-33.9 0L7 329.7c-9.4-9.4-9.4-24.6 0-33.9l136-136c9.4-9.5 24.6-9.5 34-.1z"/>',attrs:{"aria-hidden":"true",xmlns:"http://www.w3.org/2000/svg",viewBox:"0 0 320 512",class:"svg-inline--fa fa-angle-up fa-w-10 fa-3x"}}})),define("ember-svg-jar/inlined/api-item",["exports"],(function(e){"use strict"
 Object.defineProperty(e,"__esModule",{value:!0}),e.default=void 0
-e.default={content:'<title>icons/class</title><path d="M13.026 30.176a6.4 6.4 0 001.128-.13 4.337 4.337 0 001.345-.5c.434-.245.81-.57 1.128-.975.318-.405.478-.926.478-1.562v-8.937c0-1.013.202-1.895.607-2.647.405-.752.897-1.374 1.475-1.865a5.96 5.96 0 011.822-1.085c.636-.231 1.186-.347 1.649-.347h3.948v3.905H24.22c-.55 0-.984.094-1.302.282a2.004 2.004 0 00-.738.737 2.618 2.618 0 00-.325.998 8.58 8.58 0 00-.065 1.02v8.46c0 .867-.174 1.59-.52 2.168-.348.579-.76 1.034-1.237 1.367a5.42 5.42 0 01-1.475.738c-.506.159-.933.253-1.28.282v.086c.347.03.774.102 1.28.217.506.116.998.34 1.475.673.477.332.89.81 1.236 1.431.347.622.521 1.454.521 2.495v8.2c0 .318.022.658.065 1.02.043.36.152.693.325.997.174.304.42.55.738.737.318.188.752.282 1.302.282h2.386v3.905h-3.948c-.463 0-1.013-.116-1.649-.347a5.96 5.96 0 01-1.822-1.085c-.578-.491-1.07-1.113-1.475-1.865s-.607-1.634-.607-2.647v-8.59c0-.694-.16-1.272-.478-1.735a3.65 3.65 0 00-1.128-1.085 4.455 4.455 0 00-1.345-.542c-.462-.101-.838-.152-1.128-.152v-3.904zm38.092 3.904c-.319 0-.709.05-1.172.152a5.217 5.217 0 00-1.345.499c-.434.231-.802.55-1.106.954-.304.405-.456.926-.456 1.562v8.937c0 1.013-.202 1.895-.607 2.647-.405.752-.897 1.374-1.475 1.865a5.96 5.96 0 01-1.822 1.085c-.636.231-1.186.347-1.649.347h-3.948v-3.905h2.386c.55 0 .984-.094 1.302-.282.318-.188.564-.433.738-.737.173-.304.282-.636.325-.998a8.58 8.58 0 00.065-1.02v-8.46c0-.867.174-1.59.52-2.168.348-.579.76-1.034 1.237-1.367a4.96 4.96 0 011.475-.716 11.98 11.98 0 011.28-.304v-.086a9.443 9.443 0 01-1.28-.217 4.22 4.22 0 01-1.475-.673c-.477-.332-.89-.81-1.236-1.431-.347-.622-.521-1.454-.521-2.495v-8.2a8.58 8.58 0 00-.065-1.02 2.618 2.618 0 00-.325-.997 2.004 2.004 0 00-.738-.737c-.318-.188-.752-.282-1.302-.282h-2.386v-3.905h3.948c.463 0 1.013.116 1.649.347a5.96 5.96 0 011.822 1.085c.578.491 1.07 1.113 1.475 1.865s.607 1.634.607 2.647v8.59c0 .694.152 1.272.456 1.735.304.463.672.824 1.106 1.085.434.26.882.44 1.345.542.463.101.853.152 1.172.152v3.904z" fill-rule="evenodd"/>',attrs:{width:"64",height:"64",viewBox:"0 0 64 64",xmlns:"http://www.w3.org/2000/svg"}}})),define("ember-svg-jar/inlined/caret",["exports"],(function(e){"use strict"
+e.default={content:'<title>icons/class</title><path d="M13.026 30.176a6.4 6.4 0 001.128-.13 4.337 4.337 0 001.345-.5c.434-.245.81-.57 1.128-.975.318-.405.478-.926.478-1.562v-8.937c0-1.013.202-1.895.607-2.647.405-.752.897-1.374 1.475-1.865a5.96 5.96 0 011.822-1.085c.636-.231 1.186-.347 1.649-.347h3.948v3.905H24.22c-.55 0-.984.094-1.302.282a2.004 2.004 0 00-.738.737 2.618 2.618 0 00-.325.998 8.58 8.58 0 00-.065 1.02v8.46c0 .867-.174 1.59-.52 2.168-.348.579-.76 1.034-1.237 1.367a5.42 5.42 0 01-1.475.738c-.506.159-.933.253-1.28.282v.086c.347.03.774.102 1.28.217.506.116.998.34 1.475.673.477.332.89.81 1.236 1.431.347.622.521 1.454.521 2.495v8.2c0 .318.022.658.065 1.02.043.36.152.693.325.997.174.304.42.55.738.737.318.188.752.282 1.302.282h2.386v3.905h-3.948c-.463 0-1.013-.116-1.649-.347a5.96 5.96 0 01-1.822-1.085c-.578-.491-1.07-1.113-1.475-1.865s-.607-1.634-.607-2.647v-8.59c0-.694-.16-1.272-.478-1.735a3.65 3.65 0 00-1.128-1.085 4.455 4.455 0 00-1.345-.542c-.462-.101-.838-.152-1.128-.152v-3.904zm38.092 3.904c-.319 0-.709.05-1.172.152a5.217 5.217 0 00-1.345.499c-.434.231-.802.55-1.106.954-.304.405-.456.926-.456 1.562v8.937c0 1.013-.202 1.895-.607 2.647-.405.752-.897 1.374-1.475 1.865a5.96 5.96 0 01-1.822 1.085c-.636.231-1.186.347-1.649.347h-3.948v-3.905h2.386c.55 0 .984-.094 1.302-.282.318-.188.564-.433.738-.737.173-.304.282-.636.325-.998a8.58 8.58 0 00.065-1.02v-8.46c0-.867.174-1.59.52-2.168.348-.579.76-1.034 1.237-1.367a4.96 4.96 0 011.475-.716 11.98 11.98 0 011.28-.304v-.086a9.443 9.443 0 01-1.28-.217 4.22 4.22 0 01-1.475-.673c-.477-.332-.89-.81-1.236-1.431-.347-.622-.521-1.454-.521-2.495v-8.2a8.58 8.58 0 00-.065-1.02 2.618 2.618 0 00-.325-.997 2.004 2.004 0 00-.738-.737c-.318-.188-.752-.282-1.302-.282h-2.386v-3.905h3.948c.463 0 1.013.116 1.649.347a5.96 5.96 0 011.822 1.085c.578.491 1.07 1.113 1.475 1.865s.607 1.634.607 2.647v8.59c0 .694.152 1.272.456 1.735.304.463.672.824 1.106 1.085.434.26.882.44 1.345.542.463.101.853.152 1.172.152v3.904z" fill-rule="evenodd"/>',attrs:{width:"64",height:"64",viewBox:"0 0 64 64",xmlns:"http://www.w3.org/2000/svg"}}}))
+define("ember-svg-jar/inlined/caret",["exports"],(function(e){"use strict"
 Object.defineProperty(e,"__esModule",{value:!0}),e.default=void 0
 e.default={content:'<title>caret</title><path d="M32 41L15 24h35z" fill-rule="evenodd"/>',attrs:{width:"64",height:"64",viewBox:"0 0 64 64",xmlns:"http://www.w3.org/2000/svg"}}})),define("ember-svg-jar/inlined/check",["exports"],(function(e){"use strict"
 Object.defineProperty(e,"__esModule",{value:!0}),e.default=void 0
@@ -10708,8 +10742,7 @@ e.default={content:'<path fill="currentColor" d="M256 8C119 8 8 119 8 256s111 24
 Object.defineProperty(e,"__esModule",{value:!0}),e.default=void 0
 e.default={content:'<path fill="currentColor" d="M400 32H48C21.5 32 0 53.5 0 80v352c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48V80c0-26.5-21.5-48-48-48zm-6 400H54c-3.3 0-6-2.7-6-6V86c0-3.3 2.7-6 6-6h340c3.3 0 6 2.7 6 6v340c0 3.3-2.7 6-6 6z"/>',attrs:{xmlns:"http://www.w3.org/2000/svg",viewBox:"0 0 448 512",class:"svg-inline--fa fa-square fa-w-14 fa-3x"}}})),define("ember-svg-jar/inlined/connection-failure",["exports"],(function(e){"use strict"
 Object.defineProperty(e,"__esModule",{value:!0}),e.default=void 0
-e.default={content:'<path fill="currentColor" d="M256 0C114.6 0 0 100.3 0 224c0 70.1 36.9 132.6 94.5 173.7 9.6 6.9 15.2 18.1 13.5 29.9l-9.4 66.2c-1.4 9.6 6 18.2 15.7 18.2H192v-56c0-4.4 3.6-8 8-8h16c4.4 0 8 3.6 8 8v56h64v-56c0-4.4 3.6-8 8-8h16c4.4 0 8 3.6 8 8v56h77.7c9.7 0 17.1-8.6 15.7-18.2l-9.4-66.2c-1.7-11.7 3.8-23 13.5-29.9C475.1 356.6 512 294.1 512 224 512 100.3 397.4 0 256 0zm-96 320c-35.3 0-64-28.7-64-64s28.7-64 64-64 64 28.7 64 64-28.7 64-64 64zm192 0c-35.3 0-64-28.7-64-64s28.7-64 64-64 64 28.7 64 64-28.7 64-64 64z"/>',attrs:{xmlns:"http://www.w3.org/2000/svg",viewBox:"0 0 512 512",class:"svg-inline--fa fa-skull fa-w-16 fa-3x"}}}))
-define("ember-svg-jar/inlined/connection-ineligible",["exports"],(function(e){"use strict"
+e.default={content:'<path fill="currentColor" d="M256 0C114.6 0 0 100.3 0 224c0 70.1 36.9 132.6 94.5 173.7 9.6 6.9 15.2 18.1 13.5 29.9l-9.4 66.2c-1.4 9.6 6 18.2 15.7 18.2H192v-56c0-4.4 3.6-8 8-8h16c4.4 0 8 3.6 8 8v56h64v-56c0-4.4 3.6-8 8-8h16c4.4 0 8 3.6 8 8v56h77.7c9.7 0 17.1-8.6 15.7-18.2l-9.4-66.2c-1.7-11.7 3.8-23 13.5-29.9C475.1 356.6 512 294.1 512 224 512 100.3 397.4 0 256 0zm-96 320c-35.3 0-64-28.7-64-64s28.7-64 64-64 64 28.7 64 64-28.7 64-64 64zm192 0c-35.3 0-64-28.7-64-64s28.7-64 64-64 64 28.7 64 64-28.7 64-64 64z"/>',attrs:{xmlns:"http://www.w3.org/2000/svg",viewBox:"0 0 512 512",class:"svg-inline--fa fa-skull fa-w-16 fa-3x"}}})),define("ember-svg-jar/inlined/connection-ineligible",["exports"],(function(e){"use strict"
 Object.defineProperty(e,"__esModule",{value:!0}),e.default=void 0
 e.default={content:'<path fill="currentColor" d="M325.8 193.8L263.6 256l62.2 62.2c4.7 4.7 4.7 12.3 0 17l-22.6 22.6c-4.7 4.7-12.3 4.7-17 0L224 295.6l-62.2 62.2c-4.7 4.7-12.3 4.7-17 0l-22.6-22.6c-4.7-4.7-4.7-12.3 0-17l62.2-62.2-62.2-62.2c-4.7-4.7-4.7-12.3 0-17l22.6-22.6c4.7-4.7 12.3-4.7 17 0l62.2 62.2 62.2-62.2c4.7-4.7 12.3-4.7 17 0l22.6 22.6c4.7 4.7 4.7 12.3 0 17zM448 80v352c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V80c0-26.5 21.5-48 48-48h352c26.5 0 48 21.5 48 48zm-48 346V86c0-3.3-2.7-6-6-6H54c-3.3 0-6 2.7-6 6v340c0 3.3 2.7 6 6 6h340c3.3 0 6-2.7 6-6z"/>',attrs:{xmlns:"http://www.w3.org/2000/svg",viewBox:"0 0 448 512",class:"svg-inline--fa fa-times-square fa-w-14 fa-3x"}}})),define("ember-svg-jar/inlined/connection-success",["exports"],(function(e){"use strict"
 Object.defineProperty(e,"__esModule",{value:!0}),e.default=void 0
@@ -10759,7 +10792,8 @@ e.default={content:'<title>search</title><path d="M23.997 40.742c-9.249 0-16.746
 Object.defineProperty(e,"__esModule",{value:!0}),e.default=void 0
 e.default={content:'<g fill="currentColor" fill-rule="nonzero"><path d="M239.8 31c0 2.5-1.2 4.9-3.2 6.5L208 60.8c-1.1.9-2.5 1.4-3.8 1.4-1.8 0-3.5-.8-4.7-2.2-2.1-2.6-1.7-6.4.9-8.4l17.8-14.4h-6.4c-29.2 0-56.9 11.4-74 30.5-1.2 1.3-2.8 2-4.5 2-1.4 0-2.8-.5-4-1.5-2.5-2.2-2.7-6-.5-8.5 19.3-21.6 50.3-34.5 82.9-34.5h6.4l-17.8-14.4c-2.6-2.1-3-5.8-.9-8.4 2.1-2.6 5.9-3 8.5-.9l28.6 23.2c2.1 1.5 3.3 3.8 3.3 6.3z"/><path d="M239.8 137.6c0 2.5-1.2 4.9-3.2 6.5L208 167.3c-1.1.9-2.4 1.3-3.8 1.3-1.8 0-3.5-.8-4.7-2.2-2.1-2.6-1.7-6.4.9-8.4l17.8-14.4h-6.4c-43.7 0-82.8-22.9-97.2-57C102 57 67.3 37 28.3 37H6.6c-3.3 0-6-2.7-6-6s2.7-6 6-6h21.7c43.8 0 82.8 22.9 97.3 57 12.6 29.7 47.2 49.6 86.2 49.6h6.4l-17.8-14.4c-2.6-2.1-3-5.9-.9-8.4 2.1-2.6 5.9-3 8.5-.9l28.6 23.2c2 1.7 3.2 4.1 3.2 6.5z"/><path d="M28.3 143.6H6.6c-3.3 0-6-2.7-6-6s2.7-6 6-6h21.7c29.2 0 56.9-11.4 74-30.5 2.2-2.5 6-2.7 8.5-.5s2.7 6 .5 8.5c-19.4 21.6-50.4 34.5-83 34.5z"/></g>',attrs:{width:"240",height:"169",viewBox:"0 0 240 169",xmlns:"http://www.w3.org/2000/svg"}}})),define("ember-svg-jar/inlined/skip-backward-outline",["exports"],(function(e){"use strict"
 Object.defineProperty(e,"__esModule",{value:!0}),e.default=void 0
-e.default={content:'<path d="M24.47 23.38l-6.69-4.66A37.37 37.37 0 0150.94 7.17h.24l1.28.24.63.13.91.24L55 8l.48.14c.46.13.92.27 1.37.42h.1a37.55 37.55 0 0117.33 12.15c.31.39.61.79.9 1.19l.26.35c.21.3.42.6.63.91l.47.7.37.6c.22.35.43.71.64 1.07l.14.26A37.53 37.53 0 0182 49.66c0 .14 0 .27-.06.41-.06.37-.13.73-.2 1.1-.07.37-.11.55-.17.82-.06.27-.11.45-.16.67-.1.41-.2.82-.31 1.22l-.1.26A37.33 37.33 0 0151.76 80.7c-.633.113-1.263.21-1.89.29h-.14c-.58.07-1.17.13-1.75.18h-.09c-19.029 1.372-36.03-11.825-39.42-30.6a3.34 3.34 0 10-6.57 1.18 43.82 43.82 0 0017.94 28.14c.08.11.16.11.22.2a43.65 43.65 0 0025 7.89c2.632 0 5.26-.235 7.85-.7.74-.133 1.473-.283 2.2-.45l.25-.06c20.97-5.02 35.212-24.495 33.64-46v-.08c0-.64-.12-1.28-.19-1.92v-.32a42.53 42.53 0 00-.34-2.22 41.213 41.213 0 00-1-4.26C82.19 13.377 65.394.407 46.07 0a44.43 44.43 0 00-8.66.69 43.62 43.62 0 00-25.16 14.18l-7.23-5c-2-1.4-3.69-.54-3.74 1.91L.86 32.27c0 2.45 1.77 3.72 4.05 2.82L24 27.55c2.26-.9 2.48-2.77.47-4.17z" fill="currentColor" fill-rule="nonzero"/>',attrs:{width:"90",height:"88",viewBox:"0 0 90 88",xmlns:"http://www.w3.org/2000/svg"}}})),define("ember-svg-jar/inlined/skip-forward-outline",["exports"],(function(e){"use strict"
+e.default={content:'<path d="M24.47 23.38l-6.69-4.66A37.37 37.37 0 0150.94 7.17h.24l1.28.24.63.13.91.24L55 8l.48.14c.46.13.92.27 1.37.42h.1a37.55 37.55 0 0117.33 12.15c.31.39.61.79.9 1.19l.26.35c.21.3.42.6.63.91l.47.7.37.6c.22.35.43.71.64 1.07l.14.26A37.53 37.53 0 0182 49.66c0 .14 0 .27-.06.41-.06.37-.13.73-.2 1.1-.07.37-.11.55-.17.82-.06.27-.11.45-.16.67-.1.41-.2.82-.31 1.22l-.1.26A37.33 37.33 0 0151.76 80.7c-.633.113-1.263.21-1.89.29h-.14c-.58.07-1.17.13-1.75.18h-.09c-19.029 1.372-36.03-11.825-39.42-30.6a3.34 3.34 0 10-6.57 1.18 43.82 43.82 0 0017.94 28.14c.08.11.16.11.22.2a43.65 43.65 0 0025 7.89c2.632 0 5.26-.235 7.85-.7.74-.133 1.473-.283 2.2-.45l.25-.06c20.97-5.02 35.212-24.495 33.64-46v-.08c0-.64-.12-1.28-.19-1.92v-.32a42.53 42.53 0 00-.34-2.22 41.213 41.213 0 00-1-4.26C82.19 13.377 65.394.407 46.07 0a44.43 44.43 0 00-8.66.69 43.62 43.62 0 00-25.16 14.18l-7.23-5c-2-1.4-3.69-.54-3.74 1.91L.86 32.27c0 2.45 1.77 3.72 4.05 2.82L24 27.55c2.26-.9 2.48-2.77.47-4.17z" fill="currentColor" fill-rule="nonzero"/>',attrs:{width:"90",height:"88",viewBox:"0 0 90 88",xmlns:"http://www.w3.org/2000/svg"}}}))
+define("ember-svg-jar/inlined/skip-forward-outline",["exports"],(function(e){"use strict"
 Object.defineProperty(e,"__esModule",{value:!0}),e.default=void 0
 e.default={content:'<path d="M65.53 23.38l6.69-4.66A37.37 37.37 0 0039.06 7.17h-.24l-1.28.24-.63.13-.91.24L35 8l-.48.14c-.46.13-.92.27-1.37.42h-.1a37.55 37.55 0 00-17.33 12.15c-.31.39-.61.79-.9 1.19l-.26.35c-.21.3-.42.6-.63.91l-.47.7-.37.6c-.22.35-.43.71-.64 1.07l-.14.26A37.53 37.53 0 008 49.66c0 .14 0 .27.06.41.06.37.13.73.2 1.1.07.37.11.55.17.82.06.27.11.45.16.67.1.41.2.82.31 1.22l.1.26A37.33 37.33 0 0038.24 80.7c.633.113 1.263.21 1.89.29h.14c.58.07 1.17.13 1.75.18h.09c19.029 1.372 36.03-11.825 39.42-30.6a3.34 3.34 0 116.57 1.18 43.82 43.82 0 01-17.94 28.14c-.08.11-.16.11-.22.2a43.65 43.65 0 01-25 7.89c-2.632 0-5.26-.235-7.85-.7a47.583 47.583 0 01-2.2-.45l-.25-.06C13.67 81.75-.572 62.275 1 40.77v-.08c0-.64.12-1.28.19-1.92v-.32c.093-.74.207-1.48.34-2.22.26-1.447.593-2.867 1-4.26C7.81 13.377 24.606.407 43.93 0a44.43 44.43 0 018.66.69 43.62 43.62 0 0125.16 14.18l7.23-5c2-1.4 3.69-.54 3.74 1.91l.42 20.49c0 2.45-1.77 3.72-4.05 2.82L66 27.55c-2.26-.9-2.48-2.77-.47-4.17z" fill="currentColor" fill-rule="nonzero"/>',attrs:{width:"90",height:"88",viewBox:"0 0 90 88",xmlns:"http://www.w3.org/2000/svg"}}})),define("ember-svg-jar/inlined/stop-outline",["exports"],(function(e){"use strict"
 Object.defineProperty(e,"__esModule",{value:!0}),e.default=void 0
@@ -10769,8 +10803,7 @@ e.default={content:'<g fill="currentColor" fill-rule="nonzero"><path d="M159.5 1
 Object.defineProperty(e,"__esModule",{value:!0}),e.default=void 0
 e.default={content:'<g fill="currentColor" fill-rule="nonzero"><path d="M135.7 73.3V20c0-7.5-4.1-14.2-10.8-17.3-6.5-3.1-14.1-2.2-19.8 2.5L43.3 63.9H22.4C10.1 63.9.2 73.9.2 86.2v63.7c0 12.3 10 22.2 22.2 22.2h20.9l61.5 58.4.4.3c3.5 2.8 7.7 4.3 11.9 4.3 2.7 0 5.4-.6 8-1.8 6.6-3.2 10.8-9.8 10.8-17.3v-53.3c22-2.9 39.1-21.9 39.1-44.7-.2-22.8-17.3-41.8-39.3-44.7zM12.1 149.9V86.2c0-5.7 4.6-10.3 10.2-10.3h17.3v84.2H22.3c-5.6 0-10.2-4.6-10.2-10.2zM123.7 216c0 2.9-1.5 5.3-3.9 6.5-1.1.5-4 1.5-7-.8l-61.1-58.1v-91l61.1-58.1c3-2.3 5.8-1.4 7-.8 2.4 1.2 3.9 3.6 3.9 6.5V216zm12-65.4V85.5c15.4 2.8 27.1 16.4 27.1 32.6 0 16.2-11.7 29.7-27.1 32.5z"/><path d="M153.3 193.5c-2.6 0-5-1.7-5.8-4.3-.9-3.2.9-6.5 4.1-7.4 28.2-8.2 47.9-34.4 47.9-63.7 0-29.4-19.7-55.6-47.9-63.7-3.2-.9-5-4.3-4.1-7.4.9-3.2 4.2-5 7.4-4.1 33.3 9.7 56.6 40.6 56.6 75.3 0 34.7-23.3 65.6-56.6 75.3h-1.6z"/><path d="M154.3 231.8c-2.6 0-5.1-1.8-5.8-4.4-.9-3.2 1-6.5 4.2-7.4 48.8-13.1 82.8-55 82.8-102 0-46.9-34.1-88.9-82.8-102-3.2-.9-5.1-4.2-4.2-7.4.9-3.2 4.1-5.1 7.4-4.2 54 14.5 91.7 61.2 91.7 113.6 0 52.3-37.7 99-91.7 113.6-.6.1-1.1.2-1.6.2z"/></g>',attrs:{width:"248",height:"236",viewBox:"0 0 248 236",xmlns:"http://www.w3.org/2000/svg"}}})),define("ember-svg-jar/inlined/volume-low-outline",["exports"],(function(e){"use strict"
 Object.defineProperty(e,"__esModule",{value:!0}),e.default=void 0
-e.default={content:'<g fill="currentColor" fill-rule="nonzero"><path d="M135.9 73V19.7c0-7.5-4.1-14.2-10.8-17.3-6.5-3.1-14.1-2.2-19.8 2.5L43.5 63.6H22.6C10.3 63.6.3 73.6.3 85.8v63.7c0 12.3 10 22.2 22.3 22.2h20.8l61.5 58.4.4.3c3.5 2.8 7.7 4.3 11.9 4.3 2.7 0 5.4-.6 8-1.8 6.6-3.2 10.8-9.8 10.8-17.3v-53.3c22-2.9 39.1-21.9 39.1-44.7-.2-22.8-17.2-41.7-39.2-44.6zm-96.1 86.8H22.5c-5.7 0-10.3-4.6-10.3-10.2V85.9c0-5.6 4.6-10.2 10.3-10.2h17.3v84.1zm84.1 55.8c0 2.9-1.5 5.3-3.9 6.5-1.1.6-4 1.5-7-.8l-61.2-58.1v-91L113 14c3-2.3 5.8-1.4 7-.8 2.4 1.2 3.9 3.6 3.9 6.5v195.9zm12-65.4V85.1c15.4 2.8 27.1 16.3 27.1 32.6-.1 16.2-11.8 29.7-27.1 32.5z"/><path d="M153.5 193.2c-2.6 0-5-1.7-5.8-4.3-.9-3.2.9-6.5 4.1-7.4 28.2-8.2 47.9-34.4 47.9-63.7 0-29.4-19.7-55.6-47.9-63.7-3.2-.9-5-4.3-4.1-7.4.9-3.2 4.3-5 7.4-4.1 33.3 9.7 56.6 40.6 56.6 75.3 0 34.7-23.3 65.6-56.6 75.3-.5-.1-1.1 0-1.6 0z"/></g>',attrs:{width:"212",height:"235",viewBox:"0 0 212 235",xmlns:"http://www.w3.org/2000/svg"}}}))
-define("ember-svg-jar/inlined/volume-mute-outline",["exports"],(function(e){"use strict"
+e.default={content:'<g fill="currentColor" fill-rule="nonzero"><path d="M135.9 73V19.7c0-7.5-4.1-14.2-10.8-17.3-6.5-3.1-14.1-2.2-19.8 2.5L43.5 63.6H22.6C10.3 63.6.3 73.6.3 85.8v63.7c0 12.3 10 22.2 22.3 22.2h20.8l61.5 58.4.4.3c3.5 2.8 7.7 4.3 11.9 4.3 2.7 0 5.4-.6 8-1.8 6.6-3.2 10.8-9.8 10.8-17.3v-53.3c22-2.9 39.1-21.9 39.1-44.7-.2-22.8-17.2-41.7-39.2-44.6zm-96.1 86.8H22.5c-5.7 0-10.3-4.6-10.3-10.2V85.9c0-5.6 4.6-10.2 10.3-10.2h17.3v84.1zm84.1 55.8c0 2.9-1.5 5.3-3.9 6.5-1.1.6-4 1.5-7-.8l-61.2-58.1v-91L113 14c3-2.3 5.8-1.4 7-.8 2.4 1.2 3.9 3.6 3.9 6.5v195.9zm12-65.4V85.1c15.4 2.8 27.1 16.3 27.1 32.6-.1 16.2-11.8 29.7-27.1 32.5z"/><path d="M153.5 193.2c-2.6 0-5-1.7-5.8-4.3-.9-3.2.9-6.5 4.1-7.4 28.2-8.2 47.9-34.4 47.9-63.7 0-29.4-19.7-55.6-47.9-63.7-3.2-.9-5-4.3-4.1-7.4.9-3.2 4.3-5 7.4-4.1 33.3 9.7 56.6 40.6 56.6 75.3 0 34.7-23.3 65.6-56.6 75.3-.5-.1-1.1 0-1.6 0z"/></g>',attrs:{width:"212",height:"235",viewBox:"0 0 212 235",xmlns:"http://www.w3.org/2000/svg"}}})),define("ember-svg-jar/inlined/volume-mute-outline",["exports"],(function(e){"use strict"
 Object.defineProperty(e,"__esModule",{value:!0}),e.default=void 0
 e.default={content:'<path d="M234.3 225.8l-65.4-65.4c18.3-5.7 31.6-22.9 31.6-43 0-22.8-17-41.8-39.1-44.7V19.4c0-7.5-4.1-14.2-10.8-17.3-6.5-3.1-14.1-2.2-19.8 2.5L70.4 62l-60-59.9C8-.3 4.2-.3 1.9 2.1c-2.4 2.3-2.4 6.1 0 8.5l52.8 52.8h-6.6c-12.3 0-22.3 10-22.3 22.2v63.7c0 12.3 10 22.2 22.3 22.2H69l61.5 58.4.4.3c3.5 2.8 7.7 4.2 11.9 4.2 2.7 0 5.4-.6 8-1.8 6.6-3.2 10.8-9.8 10.8-17.3v-45.4l64.3 64.3c1.2 1.2 2.7 1.8 4.3 1.8 1.5 0 3-.6 4.2-1.8 2.2-2.3 2.2-6.1-.1-8.4zM65.4 159.4H48.1c-5.7 0-10.3-4.6-10.3-10.2V85.5c0-5.6 4.6-10.2 10.3-10.2h17.3v84.1zm84.1 55.9c0 2.9-1.5 5.3-3.9 6.5-1.1.6-4 1.5-7-.8l-61.2-58.1v-77l72 72v57.4h.1zm0-74.4L78.9 70.3l59.7-56.7c3-2.3 5.8-1.4 7-.8 2.4 1.2 3.9 3.6 3.9 6.5v121.6zm12-56.1c15.4 2.8 27.1 16.3 27.1 32.6 0 16.2-11.7 29.7-27.1 32.5V84.8z" fill="currentColor" fill-rule="nonzero"/>',attrs:{width:"236",height:"236",viewBox:"0 0 236 236",xmlns:"http://www.w3.org/2000/svg"}}})),define("ember-svg-jar/utils/make-svg",["exports","@ember/utils","@ember/template","@ember/object/internals"],(function(e,t,r,i){"use strict"
 Object.defineProperty(e,"__esModule",{value:!0}),e.createAccessibilityElements=u,e.createAriaLabel=c,e.default=function(e){let t=arguments.length>1&&void 0!==arguments[1]?arguments[1]:{},i=arguments.length>2?arguments[2]:void 0
@@ -10892,7 +10925,8 @@ r&&i!==r&&r.focus()},_appendRange(e,t,r){for(;t;)e.insertBefore(t,null),t=t!==r?
 do{var i=r.previousSibling
 if(r.parentNode&&(r.parentNode.removeChild(r),r===e))break
 r=i}while(r)}})
-e.default=o})),define("ember-wormhole/templates/components/ember-wormhole",["exports","@ember/template-factory"],(function(e,t){"use strict"
+e.default=o}))
+define("ember-wormhole/templates/components/ember-wormhole",["exports","@ember/template-factory"],(function(e,t){"use strict"
 Object.defineProperty(e,"__esModule",{value:!0}),e.default=void 0
 var r=(0,t.createTemplateFactory)({id:"AZTawDXE",block:'[[[1,[28,[35,0],[[30,0,["_wormholeHeadNode"]]],null]],[18,1,null],[1,[28,[35,0],[[30,0,["_wormholeTailNode"]]],null]]],["&default"],false,["unbound","yield"]]',moduleName:"ember-wormhole/templates/components/ember-wormhole.hbs",isStrictMode:!1})
 e.default=r})),define("ember-wormhole/utils/dom",["exports","@ember/application"],(function(e,t){"use strict"
@@ -10951,8 +10985,7 @@ r&&(0,t.setValue)(r,null)}constructor(e){a(this,"collection",(0,t.createStorage)
 class o{readStorageFor(e){const{storages:r}=this
 let i=r.get(e)
 void 0===i&&(i=(0,t.createStorage)(null,(()=>!1)),r.set(e,i)),(0,t.getValue)(i)}dirtyStorageFor(e){const r=this.storages.get(e)
-r&&(0,t.setValue)(r,null)}constructor(e){a(this,"storages",new WeakMap),a(this,"vals",void 0),this.vals=e?new WeakMap(e):new WeakMap}get(e){return this.readStorageFor(e),this.vals.get(e)}has(e){return this.readStorageFor(e),this.vals.has(e)}set(e,t){return this.dirtyStorageFor(e),this.vals.set(e,t),this}delete(e){return this.dirtyStorageFor(e),this.vals.delete(e)}get[n](){return this.vals[Symbol.toStringTag]}}e.TrackedWeakMap=o,Object.setPrototypeOf(o.prototype,WeakMap.prototype)}))
-define("tracked-built-ins/-private/object",["exports","ember-tracked-storage-polyfill"],(function(e,t){"use strict"
+r&&(0,t.setValue)(r,null)}constructor(e){a(this,"storages",new WeakMap),a(this,"vals",void 0),this.vals=e?new WeakMap(e):new WeakMap}get(e){return this.readStorageFor(e),this.vals.get(e)}has(e){return this.readStorageFor(e),this.vals.has(e)}set(e,t){return this.dirtyStorageFor(e),this.vals.set(e,t),this}delete(e){return this.dirtyStorageFor(e),this.vals.delete(e)}get[n](){return this.vals[Symbol.toStringTag]}}e.TrackedWeakMap=o,Object.setPrototypeOf(o.prototype,WeakMap.prototype)})),define("tracked-built-ins/-private/object",["exports","ember-tracked-storage-polyfill"],(function(e,t){"use strict"
 function r(e,t){n(e,t),t.add(e)}function i(e,t,r){n(e,t),t.set(e,r)}function n(e,t){if(t.has(e))throw new TypeError("Cannot initialize the same private elements twice on an object")}function a(e,t){var r=function(e,t,r){if(!t.has(e))throw new TypeError("attempted to "+r+" private field on non-instance")
 return t.get(e)}(e,t,"get")
 return function(e,t){if(t.get)return t.get.call(e)
