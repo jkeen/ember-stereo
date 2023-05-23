@@ -1,5 +1,14 @@
 ember-stereo changelog
 
+## [4.1.2](https://github.com/jkeen/ember-stereo/compare/v4.1.1...v4.1.2) (2023-05-23)
+
+
+### Bug Fixes
+
+* if crossorigin=anonymous fails on <audio> element, automatically try removing crossorigin. Resolves CORS issue ([3bbda22](https://github.com/jkeen/ember-stereo/commit/3bbda2277c7d5b74190c6a3adf2a971635053afe))
+* Implement proper teardown on sound destruction ([f1d6355](https://github.com/jkeen/ember-stereo/commit/f1d6355c845b43c8f10c93abde5782fe664be1b3))
+* Resolve issue where sound-position-progress modifier would not work with howler since howler doesn't emit audio-position-changed events ([77408ff](https://github.com/jkeen/ember-stereo/commit/77408ffa9a3637ee89eeeb076cd48acfaaebdd59))
+
 ## [4.1.1](https://github.com/jkeen/ember-stereo/compare/v4.1.0...v4.1.1) (2023-04-23)
 
 
