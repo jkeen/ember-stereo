@@ -10,7 +10,7 @@
 */
 
 import { inject as service } from '@ember/service';
-import { cached } from '@glimmer/tracking';
+import { cached } from 'tracked-toolbox';
 import Modifier from 'ember-modifier';
 import { macroCondition, isTesting } from '@embroider/macros';
 
