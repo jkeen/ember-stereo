@@ -2,7 +2,7 @@ import { tracked } from '@glimmer/tracking';
 import { A } from '@ember/array';
 import { run } from '@ember/runloop';
 import { isTesting, macroCondition } from '@embroider/macros';
-import { didCancel, task, timeout } from 'ember-concurrency';
+import { task, timeout } from 'ember-concurrency';
 import { cached } from 'tracked-toolbox';
 import BaseSound from 'ember-stereo/stereo-connections/base';
 // These are the events we're watching for
