@@ -94,9 +94,8 @@ jobs:
       max-parallel: 1
       matrix:
         ember-try-scenario:
-          - ember-lts-3.28
-          - ember-lts-4.4
-          - ember-release
+          - ember-lts-4.8
+          - ember-4.12
           - embroider-safe
           - embroider-optimized
         allow-failure: [false]
@@ -128,6 +127,7 @@ jobs:
       matrix:
         allow-failure: [true]
         ember-try-scenario:
+          - ember-release
           - ember-beta
           - ember-canary
     steps:

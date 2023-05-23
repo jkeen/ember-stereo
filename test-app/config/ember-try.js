@@ -10,18 +10,26 @@ module.exports = async function () {
       embroiderSafe(),
       embroiderOptimized(),
       {
-        name: 'ember-lts-3.28',
-        npm: {
-          devDependencies: {
-            'ember-source': '~3.28.0',
-          },
-        },
-      },
-      {
         name: 'ember-lts-4.4',
         npm: {
           devDependencies: {
             'ember-source': '~4.4.0',
+          },
+        },
+      },
+      {
+        name: 'ember-lts-4.8',
+        npm: {
+          devDependencies: {
+            'ember-source': '~4.8.0',
+          },
+        },
+      },
+      {
+        name: 'ember-4.12',
+        npm: {
+          devDependencies: {
+            'ember-source': '~4.12.0',
           },
         },
       },
