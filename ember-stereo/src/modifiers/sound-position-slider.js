@@ -25,10 +25,6 @@ export default class SoundPositionSliderModifier extends DidPanModifier {
     registerDestructor(this, this.unregisterListeners.bind(this));
   }
 
-  get loadedSound() {
-    return this.stereo.findLoadedSound(this.url);
-  }
-
   get isRangeControl() {
     return this.element.tagName === 'INPUT' && this.element.type === 'range';
   }
@@ -78,7 +74,15 @@ export default class SoundPositionSliderModifier extends DidPanModifier {
     }
   }
 
-  modify(element, [url], options) {
+  get loadedSound() {
+    return this.stereo.findSound(this.identifier);
+  }
+
+  modify(element, [identifier], options) {
+    if (this.identifier != identifier) {
+      this.identifier = identifier;
+    }
+
     if (!this.element) {
       this.element = element;
       this.options = options;
@@ -96,8 +100,8 @@ export default class SoundPositionSliderModifier extends DidPanModifier {
       this.element.setAttribute('data-sound-position-slider', true);
     }
 
-    if (this.isRangeControl && this.url !== url) {
-      this.url = url;
+    if (this.isRangeControl && this.identifier !== identifier) {
+      this.identifier = identifier;
 
       if (this.loadedSound) {
         this.loadedSound.off(
@@ -115,8 +119,8 @@ export default class SoundPositionSliderModifier extends DidPanModifier {
           }
         })
         .catch(() => {});
-    } else if (this.url !== url) {
-      this.url = url;
+    } else if (this.identifier !== identifier) {
+      this.identifier = identifier;
     }
 
     if (!this.isRangeControl) {

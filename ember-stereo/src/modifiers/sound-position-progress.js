@@ -10,9 +10,8 @@
 */
 
 import { inject as service } from '@ember/service';
-import { cached } from '@glimmer/tracking';
 import Modifier from 'ember-modifier';
-import { macroCondition, isTesting } from '@embroider/macros';
+import debug from 'debug';
 
 import {
   task,
@@ -25,59 +24,60 @@ import {
 export default class SoundPositionProgressModifier extends Modifier {
   @service stereo;
   element = null;
+  identifier = null;
 
-  @cached
   get loadedSound() {
-    return this.stereo.findLoadedSound(this.url);
+    return this.stereo.findLoadedSound(this.identifier);
   }
 
-  modifyPosition({ sound }) {
-    let position = sound?.position ?? 0;
+  modifyPosition({ sound, position }) {
     let duration = sound?.duration ?? 1;
 
-    this.element.style.width = `${(position / duration) * 100}%`;
+    this.element.style.width = `${
+      ((position ?? sound?.position ?? 0) / duration) * 100
+    }%`;
     this.element.style.pointerEvents = 'none';
   }
 
-  modify(element, [url], options) {
-    this.url = url;
+  modify(element, [identifier], options) {
     this.options = options;
 
+    if (this.identifier != identifier) {
+      this.identifier = identifier;
+    }
     if (!this.element) {
       this.element = element;
       this.element.setAttribute('data-sound-position-progress', true);
       this.modifyPosition({ sound: this.loadedSound });
     }
-    this.watchPositionTask.perform().catch(() => {
-      /* noop */
+    this.watchPositionTask.perform().catch((e) => {
+      debug(`ember-stereo:sound-position-progress ${this.identifier}`, e);
     });
   }
 
-  @task({ drop: true })
+  @task
   *watchPositionTask() {
     while (true) {
+      yield waitForProperty(this, 'loadedSound', (v) => v);
       let position = this.loadedSound?.position;
       yield timeout(100);
 
-      let result = yield race([
-        waitForEvent(this.loadedSound, 'audio-position-will-change'),
-        waitForEvent(this.loadedSound, 'audio-position-changed'),
-        waitForProperty(
-          this,
-          'loadedSound',
-          (sound) => sound?.position != position
-        ),
-        timeout(500),
-      ]);
+      if (this.loadedSound) {
+        let result = yield race([
+          waitForEvent(this.loadedSound, 'audio-position-will-change'),
+          waitForEvent(this.loadedSound, 'audio-position-changed'),
+          waitForProperty(
+            this,
+            'loadedSound',
+            (sound) => sound?.position != position
+          ),
+        ]);
 
-      if (result?.sound) {
-        this.modifyPosition({ sound: result.sound });
-      } else if (this.loadedSound) {
-        this.modifyPosition({ sound: this.loadedSound });
-      }
-
-      if (macroCondition(isTesting())) {
-        break;
+        if (result?.sound) {
+          this.modifyPosition({ sound: result.sound });
+        } else if (this.loadedSound) {
+          this.modifyPosition({ sound: this.loadedSound });
+        }
       }
     }
   }
