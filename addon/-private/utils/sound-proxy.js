@@ -13,7 +13,7 @@ import { cached } from 'tracked-toolbox';
 
 export default class SoundProxy extends Evented {
   @tracked isLoading = false;
-  @tracked url;
+  @tracked identifier;
 
   constructor(identifier, stereo) {
     super(...arguments);
@@ -35,19 +35,24 @@ export default class SoundProxy extends Evented {
     });
   }
 
-  @cached
+  @tracked _value;
+  set value(val) {
+    this._value = val;
+  }
+
   get value() {
-    return this.stereo.findLoadedSound(this.url);
+    return this._value || this.stereo.findLoadedSound(this.identifier);
   }
 
   @task({ debug: true })
   *waitForLoadTask() {
-    yield waitForProperty(this, 'url', (v) => !!v);
-    debug('ember-stereo:sound-proxy')(`waiting for ${this.url} to load`);
+    yield waitForProperty(this, 'identifier', (v) => !!v);
+    debug('ember-stereo:sound-proxy')(`waiting for ${this.identifier} to load`);
     while (!this.value) {
       yield timeout(200);
 
       if (this.value) {
+        this.value = this.stereo.findLoadedSound(this.identifier);
         break;
       }
 
@@ -56,7 +61,7 @@ export default class SoundProxy extends Evented {
       }
     }
     debug('ember-stereo:sound-proxy')(
-      `the wait is over for ${this.url} to load`
+      `the wait is over for ${this.identifier} to load`
     );
   }
 
@@ -71,8 +76,12 @@ export default class SoundProxy extends Evented {
 
   @task
   *resolveUrlTask(identifier) {
-    this.url = yield this.stereo.resolveIdentifierTask.perform(identifier);
-    debug('ember-stereo:sound-proxy')(`resolved identifier to ${this.url}`);
+    this.identifier = yield this.stereo.resolveIdentifierTask.perform(
+      identifier
+    );
+    debug('ember-stereo:sound-proxy')(
+      `resolved identifier to ${this.identifier}`
+    );
   }
 
   get isPending() {
@@ -89,7 +98,7 @@ export default class SoundProxy extends Evented {
 
   get errors() {
     return this.stereo.cachedErrors.find((error) =>
-      hasEqualUrls(error.url, this.url)
+      hasEqualUrls(error.url, this.identifier)
     );
   }
 
@@ -98,7 +107,7 @@ export default class SoundProxy extends Evented {
       taskInstance.args[0]
     );
 
-    let match = hasEqualUrls(urls, this.url);
+    let match = hasEqualUrls(urls, this.identifier);
     if (match) {
       this.isLoading = true;
     }
@@ -108,7 +117,7 @@ export default class SoundProxy extends Evented {
     let urls = await this.stereo.resolveIdentifierTask.perform(
       taskInstance.args[0]
     );
-    let match = hasEqualUrls(urls, this.url);
+    let match = hasEqualUrls(urls, this.identifier);
     if (match) {
       this.isLoading = false;
     }
