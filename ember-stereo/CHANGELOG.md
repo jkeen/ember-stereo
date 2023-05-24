@@ -1,5 +1,12 @@
 ember-stereo changelog
 
+# [5.0.0-beta.3](https://github.com/jkeen/ember-stereo/compare/v5.0.0-beta.2...v5.0.0-beta.3) (2023-05-24)
+
+
+### Bug Fixes
+
+* Resolve issue introduced in last version when multiple sound position sliders on the same page ([7db16c1](https://github.com/jkeen/ember-stereo/commit/7db16c162ab92025cc34a1f2b91f251244e46e1c))
+
 # [5.0.0-beta.2](https://github.com/jkeen/ember-stereo/compare/v5.0.0-beta.1...v5.0.0-beta.2) (2023-05-23)
 
 
