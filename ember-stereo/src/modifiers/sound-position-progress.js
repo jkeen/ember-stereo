@@ -60,8 +60,8 @@ export default class SoundPositionProgressModifier extends Modifier {
       yield timeout(100);
 
       let result = yield race([
-        waitForEvent(this.stereo, 'audio-position-will-change'),
-        waitForEvent(this.stereo, 'audio-position-changed'),
+        waitForEvent(this.loadedSound, 'audio-position-will-change'),
+        waitForEvent(this.loadedSound, 'audio-position-changed'),
         waitForProperty(
           this,
           'loadedSound',
