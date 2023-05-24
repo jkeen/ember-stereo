@@ -1,5 +1,12 @@
 ember-stereo changelog
 
+## [4.1.4](https://github.com/jkeen/ember-stereo/compare/v4.1.3...v4.1.4) (2023-05-24)
+
+
+### Bug Fixes
+
+* Resolve some more bugs with sound-position modifiers ([fb496c3](https://github.com/jkeen/ember-stereo/commit/fb496c3a10498bc274c51f1489c7d6a90d7fc8e6))
+
 ## [4.1.3](https://github.com/jkeen/ember-stereo/compare/v4.1.2...v4.1.3) (2023-05-24)
 
 
