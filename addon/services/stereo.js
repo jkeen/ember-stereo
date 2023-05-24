@@ -28,6 +28,7 @@ import Strategizer from 'ember-stereo/-private/utils/strategizer';
 import StereoUrl from 'ember-stereo/-private/utils/stereo-url';
 import SoundProxy from 'ember-stereo/-private/utils/sound-proxy';
 import ConnectionLoader from 'ember-stereo/-private/utils/connection-loader';
+import BaseSound from 'ember-stereo/stereo-connections/base';
 
 const DEFAULT_CONNECTIONS = [
   { name: 'NativeAudio' },
@@ -864,11 +865,19 @@ export default class Stereo extends Service.extend(EmberEvented) {
    */
 
   findLoadedSound(identifiers) {
-    return this.soundCache.find(identifiers);
+    if (identifiers instanceof BaseSound) {
+      return identifiers;
+    } else {
+      return this.soundCache.find(identifiers);
+    }
   }
 
   findSound(identifier) {
-    return this.soundProxy(identifier)?.value;
+    if (identifier instanceof BaseSound) {
+      return identifier;
+    } else {
+      return this.soundProxy(identifier)?.value;
+    }
 
     //TODO: use a Proxy? it'd be neat to be able to 'find' a sound
     // that isn't loaded and attach events to it.

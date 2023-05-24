@@ -5,7 +5,6 @@ import debug from 'debug';
 import Evented from 'ember-stereo/-private/utils/evented';
 import hasEqualUrls from 'ember-stereo/-private/utils/has-equal-urls';
 import { task, waitForProperty, timeout, didCancel } from 'ember-concurrency';
-import { cached } from 'tracked-toolbox';
 /**
 * This class lazy loads sounds based on identifiers
   @private
