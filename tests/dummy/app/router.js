@@ -22,7 +22,7 @@ Router.map(function () {
     this.route('event-monitoring');
     this.route('waiting-for-sounds');
     this.route('volume');
-    this.route('custom-position-controls');
+    this.route('advanced');
     this.route('testing');
   });
 
