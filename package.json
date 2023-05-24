@@ -8,8 +8,8 @@
   "author": "Jeff Keen",
   "scripts": {
     "build": "pnpm --filter ember-stereo run build",
-    "lint": "pnpm run lint",
-    "lint:fix": "pnpm lint:fix",
+    "lint": "pnpm --filter '*' run lint",
+    "lint:fix": "pnpm --filter '*' run lint:fix",
     "prepare": "pnpm build",
     "start": "concurrently 'npm:start:*' --restart-after 5000 --prefix-colors cyan,white,yellow",
     "start:addon": "pnpm --filter ember-stereo run start",

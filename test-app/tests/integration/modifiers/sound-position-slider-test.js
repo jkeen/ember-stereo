@@ -47,9 +47,9 @@ module('Integration | Modifier | sound-position-slider', function (hooks) {
       clientY: 100,
     });
 
-    assert.equal(sound1.position, 5000);
-    assert.equal(sound2.position, 2000);
-    assert.equal(sound3.position, 9500);
+    assert.strictEqual(sound1.position, 5000);
+    assert.strictEqual(sound2.position, 2000);
+    assert.strictEqual(sound3.position, 9500);
 
     assert.ok(true);
   });
