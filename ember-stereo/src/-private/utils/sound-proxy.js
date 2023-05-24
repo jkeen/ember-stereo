@@ -1,10 +1,9 @@
 import { tracked } from '@glimmer/tracking';
 import { isEmpty } from '@ember/utils';
-import { isTesting, macroCondition } from '@embroider/macros';
 import debug from 'debug';
 import Evented from './evented';
 import hasEqualUrls from './has-equal-urls';
-import { task, waitForProperty, timeout, didCancel } from 'ember-concurrency';
+import { task, waitForProperty, didCancel } from 'ember-concurrency';
 /**
 * This class lazy loads sounds based on identifiers
   @private
@@ -34,31 +33,14 @@ export default class SoundProxy extends Evented {
     });
   }
 
-  @tracked _value;
-  set value(val) {
-    this._value = val;
-  }
-
-  get value() {
-    return this._value || this.stereo.findLoadedSound(this.identifier);
-  }
+  @tracked value;
 
   @task({ debug: true })
   *waitForLoadTask() {
     yield waitForProperty(this, 'identifier', (v) => !!v);
     debug('ember-stereo:sound-proxy')(`waiting for ${this.identifier} to load`);
-    while (!this.value) {
-      yield timeout(200);
 
-      if (this.value) {
-        this.value = this.stereo.findLoadedSound(this.identifier);
-        break;
-      }
-
-      if (macroCondition(isTesting())) {
-        break;
-      }
-    }
+    yield waitForProperty(this, 'value', (v) => !!v);
     debug('ember-stereo:sound-proxy')(
       `the wait is over for ${this.identifier} to load`
     );
@@ -119,6 +101,7 @@ export default class SoundProxy extends Evented {
     let match = hasEqualUrls(urls, this.identifier);
     if (match) {
       this.isLoading = false;
+      this.value = this.stereo.findLoadedSound(this.identifier);
     }
   }
 
