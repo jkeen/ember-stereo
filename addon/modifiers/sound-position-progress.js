@@ -11,8 +11,6 @@
 
 import { inject as service } from '@ember/service';
 import Modifier from 'ember-modifier';
-import { macroCondition, isTesting } from '@embroider/macros';
-import { tracked } from '@glimmer/tracking';
 import debug from 'debug';
 
 import {
