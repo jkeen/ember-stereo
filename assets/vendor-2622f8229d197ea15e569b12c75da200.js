@@ -10491,7 +10491,7 @@ super(...arguments),e=this,t="stereo",i=this,(r=o)&&Object.defineProperty(e,t,{e
 this.element.style.width=r/i*100+"%",this.element.style.pointerEvents="none"}modify(e,t,r){let[i]=t
 this.url=i,this.options=r,this.element||(this.element=e,this.element.setAttribute("data-sound-position-progress",!0),this.modifyPosition({sound:this.loadedSound})),this.watchPositionTask.perform().catch((()=>{}))}*watchPositionTask(){for(;;){let e=this.loadedSound?.position
 yield(0,n.timeout)(100)
-let t=yield(0,n.race)([(0,n.waitForEvent)(this.stereo,"audio-position-will-change"),(0,n.waitForEvent)(this.stereo,"audio-position-changed"),(0,n.waitForProperty)(this,"loadedSound",(t=>t?.position!=e)),(0,n.timeout)(500)])
+let t=yield(0,n.race)([(0,n.waitForEvent)(this.loadedSound,"audio-position-will-change"),(0,n.waitForEvent)(this.loadedSound,"audio-position-changed"),(0,n.waitForProperty)(this,"loadedSound",(t=>t?.position!=e)),(0,n.timeout)(500)])
 t?.sound?this.modifyPosition({sound:t.sound}):this.loadedSound&&this.modifyPosition({sound:this.loadedSound})}}},o=u(s.prototype,"stereo",[t.inject],{configurable:!0,enumerable:!0,writable:!0,initializer:null}),u(s.prototype,"loadedSound",[r.cached],Object.getOwnPropertyDescriptor(s.prototype,"loadedSound"),s.prototype),u(s.prototype,"watchPositionTask",[a],Object.getOwnPropertyDescriptor(s.prototype,"watchPositionTask"),s.prototype),s)
 e.default=c})),define("ember-stereo/modifiers/sound-position-slider",["exports","@ember/object","@ember/service","ember-concurrency","@ember/runloop","ember-gesture-modifiers/modifiers/did-pan","@ember/destroyable"],(function(e,t,r,i,n,a,s){"use strict"
 var o,l
