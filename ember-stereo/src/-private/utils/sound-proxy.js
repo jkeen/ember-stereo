@@ -4,6 +4,7 @@ import debug from 'debug';
 import Evented from './evented';
 import hasEqualUrls from './has-equal-urls';
 import { task, waitForProperty, didCancel } from 'ember-concurrency';
+import { registerDestructor } from '@ember/destroyable';
 /**
 * This class lazy loads sounds based on identifiers
   @private
@@ -21,11 +22,14 @@ export default class SoundProxy extends Evented {
     this.stereo.on('loadTask:errored', this.onFinish.bind(this));
     this.stereo.on('loadTask:succeeded', this.onFinish.bind(this));
 
+    registerDestructor(this, this.willDestroy.bind(this));
+
     this.resolveUrlTask.perform(identifier).catch((e) => {
       if (!didCancel(e)) {
         throw e;
       }
     });
+
     this.waitForLoadTask.perform().catch((e) => {
       if (!didCancel(e)) {
         throw e;
@@ -39,6 +43,8 @@ export default class SoundProxy extends Evented {
   *waitForLoadTask() {
     yield waitForProperty(this, 'identifier', (v) => !!v);
     debug('ember-stereo:sound-proxy')(`waiting for ${this.identifier} to load`);
+
+    this.value = this.stereo.findLoadedSound(this.identifier);
 
     yield waitForProperty(this, 'value', (v) => !!v);
     debug('ember-stereo:sound-proxy')(
