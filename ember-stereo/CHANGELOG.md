@@ -1,5 +1,12 @@
 ember-stereo changelog
 
+# [5.0.0-beta.5](https://github.com/jkeen/ember-stereo/compare/v5.0.0-beta.4...v5.0.0-beta.5) (2023-05-25)
+
+
+### Bug Fixes
+
+* timing issue with sound proxy in test environment ([eae0b3b](https://github.com/jkeen/ember-stereo/commit/eae0b3b15d83abfb95e5f6c78522b04e83aba5b0))
+
 # [5.0.0-beta.4](https://github.com/jkeen/ember-stereo/compare/v5.0.0-beta.3...v5.0.0-beta.4) (2023-05-24)
 
 
