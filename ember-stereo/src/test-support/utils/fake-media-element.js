@@ -1,6 +1,7 @@
 import Evented from '../../-private/utils/evented';
 import { tracked } from '@glimmer/tracking';
 import TestAudioUrl from './test-audio-url';
+import { registerDestructor } from '@ember/destroyable';
 import debug from 'debug';
 // Ready state values
 // const HAVE_NOTHING = 0;
@@ -29,6 +30,7 @@ export default class FakeMediaElement extends Evented {
       `initializing fake ${arguments[0] ?? ''} element`
     );
     this.setInitialState();
+    registerDestructor(this, () => this.willDestroy());
   }
 
   setInitialState() {
@@ -216,7 +218,7 @@ export default class FakeMediaElement extends Evented {
   }
 
   stopTimer() {
-    clearInterval(this.poller);
+    clearInterval(this._stereoFakeMediaElementPoller);
   }
 
   resetTimer() {
@@ -237,6 +239,6 @@ export default class FakeMediaElement extends Evented {
   }
 
   willDestroy() {
-    clearInterval(window._stereoFakeMediaElementPoller);
+    this.stopTimer();
   }
 }
