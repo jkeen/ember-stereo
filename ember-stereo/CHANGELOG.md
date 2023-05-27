@@ -1,5 +1,12 @@
 ember-stereo changelog
 
+# [5.0.0-beta.6](https://github.com/jkeen/ember-stereo/compare/v5.0.0-beta.5...v5.0.0-beta.6) (2023-05-27)
+
+
+### Bug Fixes
+
+* improve fake media element cleanup in tests ([af128d1](https://github.com/jkeen/ember-stereo/commit/af128d1c28c5c3532653dc2dbb74729bb85fb180))
+
 # [5.0.0-beta.5](https://github.com/jkeen/ember-stereo/compare/v5.0.0-beta.4...v5.0.0-beta.5) (2023-05-25)
 
 
