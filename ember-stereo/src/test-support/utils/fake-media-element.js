@@ -213,7 +213,7 @@ export default class FakeMediaElement extends Evented {
   startTimer() {
     this._stereoFakeMediaElementPoller = setInterval(
       this.advance.bind(this),
-      100
+      500
     );
   }
 
