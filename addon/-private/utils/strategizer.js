@@ -25,6 +25,7 @@ export default class Strategizer {
       sharedAudioAccess: this.useSharedAudioAccess
         ? this.sharedAudioAccess
         : undefined,
+      options: this.options,
     };
 
     let strategy = new Strategy(
