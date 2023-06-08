@@ -20,11 +20,16 @@ export default class Strategizer {
   }
 
   buildStrategy(connection, url) {
+    let passthroughOptions = {};
+    if (this.options.xhr) {
+      passthroughOptions.xhr = this.options?.xhr;
+    }
     let strategyOptions = {
       metadata: this.options.metadata,
       sharedAudioAccess: this.useSharedAudioAccess
         ? this.sharedAudioAccess
         : undefined,
+      options: passthroughOptions,
     };
 
     let strategy = new Strategy(
