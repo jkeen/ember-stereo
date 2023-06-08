@@ -31,7 +31,29 @@ export default class HLSSound extends BaseSound {
     let video = document.createElement('video');
     video.setAttribute('crossorigin', 'anonymous');
     this.video = video;
-    let hls = new HLS({ debug: false, startFragPrefetch: true });
+    let options = { debug: false, startFragPrefetch: true };
+
+    if (this.options.xhr) {
+      options.xhrSetup = (xhr, url) => {
+        if (this.url !== url && this.options.xhr?.manifestOnly) {
+          // If this isn't the manifest request and we've requested manifestOnly, don't set these options
+          return;
+        }
+
+        xhr.withCredentials = this.options.xhr?.withCredentials || false;
+
+        if (this.options?.xhr?.headers) {
+          Object.keys(this.options.xhr.headers).forEach((key) => {
+            xhr.setRequestHeader(key, this.options?.xhr?.headers[key]);
+          });
+        }
+
+        xhr.method = this.options.xhr?.method || 'GET';
+      };
+      delete this.options.xhr;
+    }
+
+    let hls = new HLS({ ...options, ...(this.options || {}) });
 
     this.hls = hls;
     this._setupHLSEvents(hls);
