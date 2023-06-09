@@ -1,5 +1,18 @@
 ember-stereo changelog
 
+# [5.0.0-beta.7](https://github.com/jkeen/ember-stereo/compare/v5.0.0-beta.6...v5.0.0-beta.7) (2023-06-09)
+
+
+### Bug Fixes
+
+* reduce fake media element timer to every 500ms instead of 100ms ([9a0278d](https://github.com/jkeen/ember-stereo/commit/9a0278df97218414b082af438a90a80003af586f))
+
+
+### Features
+
+* Allow xhr option to be passed through to connections, so each connection can handle authenticated requests ([cb00c5d](https://github.com/jkeen/ember-stereo/commit/cb00c5d3d3d816978270ad2673938f8d62e9d655))
+* Fail native audio connection if xhr is passed, as native audio does not support that. ([8d0f3b5](https://github.com/jkeen/ember-stereo/commit/8d0f3b530dad661cac478ee04e1fd221b85da763))
+
 # [5.0.0-beta.6](https://github.com/jkeen/ember-stereo/compare/v5.0.0-beta.5...v5.0.0-beta.6) (2023-05-27)
 
 
