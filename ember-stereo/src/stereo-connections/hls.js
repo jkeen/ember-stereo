@@ -61,7 +61,7 @@ export default class HLSSound extends BaseSound {
 
       let options = { debug: false, startFragPrefetch: true };
 
-      if (this.options.xhr) {
+      if (this.options?.xhr) {
         options.xhrSetup = (xhr, url) => {
           if (this.url !== url && this.options.xhr?.manifestOnly) {
             // If this isn't the manifest request and we've requested manifestOnly, don't set these options

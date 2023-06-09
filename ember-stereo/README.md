@@ -50,16 +50,6 @@ ember install ember-stereo
 >Play</button>
 ```
 
-- `pause-sound`
-
-```hbs
-<button
-  type='button'
-  class='button is-link'
-  {{on 'click' (pause-sound @identifier)}}
->Pause</button>
-```
-
 - `load-sound`
 
 ```hbs
@@ -68,6 +58,16 @@ ember install ember-stereo
   class='button is-link'
   {{on 'click' (load-sound @identifier)}}
 >Load</button>
+```
+
+- `pause-sound`
+
+```hbs
+<button
+  type='button'
+  class='button is-link'
+  {{on 'click' (pause-sound @identifier)}}
+>Pause</button>
 ```
 
 - `stop-sound`
