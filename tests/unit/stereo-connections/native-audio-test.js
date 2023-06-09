@@ -416,7 +416,7 @@ module('Unit | Connection | Native Audio', function (hooks) {
   });
 
   test('does not support xhr options', async function (assert) {
-    assert.expect(4);
+    assert.expect(2);
     let stereo = this.owner.lookup('service:stereo');
     let url1 = '/good/5000/silence.mp3';
 
@@ -428,11 +428,11 @@ module('Unit | Connection | Native Audio', function (hooks) {
       },
     });
 
-    let erroredSound = failures[0].erroredSound;
+    let erroredSound = failures[0]?.erroredSound;
     assert.strictEqual(erroredSound.retryCount, 0);
     assert.strictEqual(
       erroredSound.error,
-      'xhr is not supported in NativeAudio'
+      'xhr options are not supported in NativeAudio'
     );
   });
 });

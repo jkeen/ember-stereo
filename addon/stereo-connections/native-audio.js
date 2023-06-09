@@ -65,7 +65,7 @@ export default class NativeAudio extends BaseSound {
     if (this.options?.xhr) {
       return this.trigger('audio-load-error', {
         sound: this,
-        error: 'xhr is not supported in NativeAudio',
+        error: 'xhr options are not supported in NativeAudio',
       });
     } else {
       audio.load();
