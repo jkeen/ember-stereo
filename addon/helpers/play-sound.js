@@ -19,6 +19,7 @@ import { didCancel } from 'ember-concurrency';
   @param {Any} identifier url, urls, url objects, promise that resolves to a url
   @param {Hash} metadata? metadata that should be included with the sound
   @param {[String]} useConnections? array of connection names in preference order
+  @param {[String]} xhr? hash of xhr options: { method: 'POST', headers: { Authorization: 'Bearer 1234'}, withCredentials: true }
   @return {Function}
 */
 export default class playSound extends StereoBaseActionHelper {

@@ -62,7 +62,14 @@ export default class NativeAudio extends BaseSound {
       audio.muted = true;
     }
 
-    audio.load();
+    if (this.options?.xhr) {
+      return this.trigger('audio-load-error', {
+        sound: this,
+        error: 'xhr is not supported in NativeAudio',
+      });
+    } else {
+      audio.load();
+    }
   }
 
   _registerEvents(audio) {
@@ -426,7 +433,7 @@ export default class NativeAudio extends BaseSound {
   }
 
   get shouldRetry() {
-    return this.retryCount < 1;
+    return this.retryCount < 1 && !this.options?.xhr;
   }
 
   retry() {
