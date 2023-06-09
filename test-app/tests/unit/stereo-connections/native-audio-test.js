@@ -410,7 +410,7 @@ module('Unit | Connection | Native Audio', function (hooks) {
       },
     });
 
-    let erroredSound = failures[0].erroredSound;
+    let erroredSound = failures[0]?.erroredSound;
     assert.strictEqual(erroredSound.retryCount, 0);
     assert.strictEqual(
       erroredSound.error,
