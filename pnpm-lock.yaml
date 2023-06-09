@@ -230,8 +230,8 @@ importers:
         specifier: ^1.4.0
         version: 1.4.0
       howler:
-        specifier: ^2.2.3
-        version: 2.2.3
+        specifier: jkeen/howler.js#dist/master
+        version: github.com/jkeen/howler.js/cab0ca8c2451be2e7d17db98588e89184417cdc8
       tracked-built-ins:
         specifier: ^3.1.0
         version: 3.1.1
@@ -835,7 +835,7 @@ packages:
     resolution: {integrity: sha512-bde1etTx6ZyTmobl9LLMMQsaizFVZrquTEHOqKeQESMKo4PlObf+8+JA25ZsIpZhT/WEd39+vOdLXAFG/nELpA==}
     engines: {node: '>=6.9.0'}
     dependencies:
-      '@babel/types': 7.21.4
+      '@babel/types': 7.21.5
 
   /@babel/helper-string-parser@7.19.4:
     resolution: {integrity: sha512-nHtDoQcuqFmwYNYPz3Rah5ph2p8PFeFCsZk9A/48dPc/rGocJ5J3hAAZ7pb76VWX3fZKu+uEr/FhH5jLx7umrw==}
@@ -1931,7 +1931,7 @@ packages:
     dependencies:
       '@babel/code-frame': 7.21.4
       '@babel/parser': 7.21.4
-      '@babel/types': 7.21.4
+      '@babel/types': 7.21.5
 
   /@babel/traverse@7.21.4:
     resolution: {integrity: sha512-eyKrRHKdyZxqDm+fV1iqL9UAHMoIg0nDaGqfIOd8rKH17m5snv7Gn4qgjBoFfLz9APvjFU/ICT00NVCv1Epp8Q==}
@@ -11503,9 +11503,6 @@ packages:
       lru-cache: 7.18.3
     dev: true
 
-  /howler@2.2.3:
-    resolution: {integrity: sha512-QM0FFkw0LRX1PR8pNzJVAY25JhIWvbKMBFM4gqk+QdV+kPXOhleWGCB6AiAF/goGjIHK2e/nIElplvjQwhr0jg==}
-
   /hsl-regex@1.0.0:
     resolution: {integrity: sha512-M5ezZw4LzXbBKMruP+BNANf0k+19hDQMgpzBIYnya//Al+fjNct9Wf3b1WedLqdEs2hKBvxq/jh+DsHJLj0F9A==}
     dev: true
@@ -17988,7 +17985,7 @@ packages:
       ember-modifier: 4.1.0(ember-source@4.8.4)
       ember-sinon: 5.0.0
       hls.js: 1.4.0
-      howler: 2.2.3
+      howler: github.com/jkeen/howler.js/cab0ca8c2451be2e7d17db98588e89184417cdc8
       tracked-built-ins: 3.1.1
       tracked-toolbox: 2.0.0(@babel/core@7.21.5)(ember-source@4.8.4)
     transitivePeerDependencies:
@@ -17998,6 +17995,11 @@ packages:
       - supports-color
       - webpack
     dev: true
+
+  github.com/jkeen/howler.js/cab0ca8c2451be2e7d17db98588e89184417cdc8:
+    resolution: {tarball: https://codeload.github.com/jkeen/howler.js/tar.gz/cab0ca8c2451be2e7d17db98588e89184417cdc8}
+    name: '@tunein/howler'
+    version: 2.4.1
 
   github.com/yapplabs/ember-modal-dialog/31ffee4c657ebe96b1f80adbc39c0339b52236e2(ember-source@4.8.4):
     resolution: {tarball: https://codeload.github.com/yapplabs/ember-modal-dialog/tar.gz/31ffee4c657ebe96b1f80adbc39c0339b52236e2}

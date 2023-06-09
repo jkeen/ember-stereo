@@ -11,7 +11,6 @@ import { waitFor } from '@ember/test-waiters';
 
 */
 export default class Howler extends BaseSound {
-  static rejectMimeTypes = ['application/vnd.apple.mpegurl'];
   static key = 'Howler';
 
   static toString() {
