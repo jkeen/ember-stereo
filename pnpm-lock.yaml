@@ -212,7 +212,7 @@ importers:
         specifier: ^2.3.4
         version: 2.3.7(@babel/core@7.17.10)
       ember-gesture-modifiers:
-        specifier: ^4.0.1
+        specifier: ^4.0.1 || ^5.0.0
         version: 4.0.1(@babel/core@7.17.10)
       ember-get-config:
         specifier: ^2.0
@@ -1426,6 +1426,7 @@ packages:
     dependencies:
       '@babel/core': 7.21.5
       '@babel/helper-plugin-utils': 7.20.2
+    dev: true
 
   /@babel/plugin-transform-classes@7.21.0(@babel/core@7.21.4):
     resolution: {integrity: sha512-RZhbYTCEUAe6ntPehC4hlslPWosNHDox+vAs4On/mCLRLfoDVHf6hVEd7kuxr1RnHwJmxFfUM3cZiZRmPxJPXQ==}
@@ -1787,6 +1788,7 @@ packages:
       '@babel/plugin-syntax-typescript': 7.21.4(@babel/core@7.21.5)
     transitivePeerDependencies:
       - supports-color
+    dev: true
 
   /@babel/plugin-transform-unicode-escapes@7.18.10(@babel/core@7.21.4):
     resolution: {integrity: sha512-kKAdAI+YzPgGY/ftStBFXTI1LZFju38rYThnfMykS+IXy8BVx+res7s2fxf1l8I35DV2T97ezo6+SGrXz6B3iQ==}
@@ -2486,7 +2488,7 @@ packages:
       '@embroider/macros': 1.10.0
       broccoli-funnel: 3.0.8
       ember-cli-babel: 7.26.11
-      ember-source: 4.8.4(@babel/core@7.21.5)(@glimmer/component@1.1.2)(webpack@5.81.0)
+      ember-source: 4.8.4(@babel/core@7.17.10)(@glimmer/component@1.1.2)(webpack@5.81.0)
     transitivePeerDependencies:
       - supports-color
 
@@ -2566,6 +2568,7 @@ packages:
     transitivePeerDependencies:
       - '@babel/core'
       - supports-color
+    dev: true
 
   /@glimmer/di@0.1.11:
     resolution: {integrity: sha512-moRwafNDwHTnTHzyyZC9D+mUSvYrs1Ak0tRPjjmCghdoHHIvMshVbEnwKb/1WmW5CUlKc2eL9rlAV32n3GiItg==}
@@ -2713,6 +2716,7 @@ packages:
       babel-plugin-debug-macros: 0.3.4(@babel/core@7.21.5)
     transitivePeerDependencies:
       - '@babel/core'
+    dev: true
 
   /@handlebars/parser@1.1.0:
     resolution: {integrity: sha512-rR7tJoSwJ2eooOpYGxGGW95sLq6GXUaS1UtWvN7pei6n2/okYvCGld9vsUTvkl2migxbkszsycwtMf/GEc1k1A==}
@@ -4726,6 +4730,7 @@ packages:
     dependencies:
       '@babel/core': 7.21.5
       semver: 5.7.1
+    dev: true
 
   /babel-plugin-debug-macros@0.3.4(@babel/core@7.17.10):
     resolution: {integrity: sha512-wfel/vb3pXfwIDZUrkoDrn5FHmlWI96PCJ3UCDv2a86poJ3EQrnArNW5KfHSVJ9IOgxHbo748cQt7sDU+0KCEw==}
@@ -4753,6 +4758,7 @@ packages:
     dependencies:
       '@babel/core': 7.21.5
       semver: 5.7.1
+    dev: true
 
   /babel-plugin-ember-data-packages-polyfill@0.1.2:
     resolution: {integrity: sha512-kTHnOwoOXfPXi00Z8yAgyD64+jdSXk3pknnS7NlqnCKAU6YDkXZ4Y7irl66kaZjZn0FBBt0P4YOZFZk85jYOww==}
@@ -8491,6 +8497,7 @@ packages:
     transitivePeerDependencies:
       - '@babel/core'
       - supports-color
+    dev: true
 
   /ember-cli-typescript@4.2.1:
     resolution: {integrity: sha512-0iKTZ+/wH6UB/VTWKvGuXlmwiE8HSIGcxHamwNhEC5x1mN3z8RfvsFZdQWYUzIWFN2Tek0gmepGRPTwWdBYl/A==}
@@ -8758,6 +8765,7 @@ packages:
     transitivePeerDependencies:
       - '@babel/core'
       - supports-color
+    dev: true
 
   /ember-composable-helpers@5.0.0:
     resolution: {integrity: sha512-gyUrjiSju4QwNrsCLbBpP0FL6VDFZaELNW7Kbcp60xXhjvNjncYgzm4zzYXhT+i1lLA6WEgRZ3lOGgyBORYD0w==}
@@ -9294,6 +9302,7 @@ packages:
       - '@babel/core'
       - supports-color
       - webpack
+    dev: true
 
   /ember-svg-jar@2.4.2:
     resolution: {integrity: sha512-TwtCwlxjp347+v7PK3xWpx7KXV3RDYogFe+WZA1+1ftiZqJfk9NzvXeMFA3thkhXmoT6IOYYnLR2ryjCmDiLsw==}
