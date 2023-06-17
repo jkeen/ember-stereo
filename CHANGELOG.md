@@ -1,5 +1,13 @@
 ember-stereo changelog
 
+# [4.2.0](https://github.com/jkeen/ember-stereo/compare/v4.1.4...v4.2.0) (2023-06-17)
+
+
+### Features
+
+* Allow xhr option to be passed through to connections, so each connection can handle authenticated requests ([82fc6ad](https://github.com/jkeen/ember-stereo/commit/82fc6ad9d1cfec1a15cf80960a92d7d9c63f7c0c))
+* Fail native audio connection if xhr is passed, as native audio does not support that. ([93dea68](https://github.com/jkeen/ember-stereo/commit/93dea688f8023013657c61953ec75f0f59835f5f))
+
 ## [4.1.4](https://github.com/jkeen/ember-stereo/compare/v4.1.3...v4.1.4) (2023-05-24)
 
 
