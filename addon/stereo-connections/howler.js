@@ -21,75 +21,80 @@ export default class Howler extends BaseSound {
   setup() {
     let urls = makeArray(this.url);
     let sound = this;
-    let options = Object.assign(
-      {
-        src: urls,
-        autoplay: false,
-        preload: true,
-        html5: true,
-        volume: 1,
-        onload: function () {
-          sound.url = this._src;
-          sound.howl = this;
-          sound.trigger('audio-loaded', { sound });
-          sound.trigger('audio-ready', { sound });
-        },
-        onpause: function () {
-          // if (!sound.isPlaying) {
-          sound.trigger('audio-paused', { sound });
-          // }
-        },
-        onplay: function () {
-          sound.trigger('audio-played', { sound });
-        },
-        onend: function () {
-          sound.trigger('audio-ended', { sound });
-        },
-        onstop: function () {
-          sound.trigger('audio-paused', { sound });
-        },
-        onloaderror: function (id, code) {
-          var MEDIA_NOT_ALLOWED = 0;
-          var MEDIA_ERR_ABORTED = 1;
-          var MEDIA_ERR_NETWORK = 2;
-          var MEDIA_ERR_DECODE = 3;
-          var MEDIA_ERR_SRC_NOT_SUPPORTED = 4;
-
-          if (code === MEDIA_NOT_ALLOWED) {
-            sound.trigger('audio-blocked', {
-              sound,
-              error:
-                'Audio autoplay attempt was blocked by browser user settings',
-            });
-          } else {
-            let message = '';
-            switch (code) {
-              case MEDIA_ERR_ABORTED:
-                message = 'You aborted the audio playback.';
-                break;
-              case MEDIA_ERR_NETWORK:
-                message = 'A network error caused the audio download to fail.';
-                break;
-              case MEDIA_ERR_DECODE:
-                message = 'Decoder error.';
-                break;
-              case MEDIA_ERR_SRC_NOT_SUPPORTED:
-                message = 'Audio source format is not supported.';
-                break;
-              default:
-                message = 'Audio load error';
-                break;
-            }
-
-            sound.trigger('audio-load-error', { sound, error: message });
-          }
-        },
-        onseek: function () {
-          sound.trigger('audio-position-changed', { sound });
-        },
+    let options = Object.assign({
+      src: urls,
+      autoplay: false,
+      preload: true,
+      html5: true,
+      volume: 1,
+      onload: function () {
+        sound.url = this._src;
+        sound.howl = this;
+        sound.trigger('audio-loaded', { sound });
+        sound.trigger('audio-ready', { sound });
       },
-      this.options
-    );
+      onpause: function () {
+        // if (!sound.isPlaying) {
+        sound.trigger('audio-paused', { sound });
+        // }
+      },
+      onplay: function () {
+        sound.trigger('audio-played', { sound });
+      },
+      onend: function () {
+        sound.trigger('audio-ended', { sound });
+      },
+      onstop: function () {
+        sound.trigger('audio-paused', { sound });
+      },
+      onloaderror: function (id, code) {
+        var MEDIA_NOT_ALLOWED = 0;
+        var MEDIA_ERR_ABORTED = 1;
+        var MEDIA_ERR_NETWORK = 2;
+        var MEDIA_ERR_DECODE = 3;
+        var MEDIA_ERR_SRC_NOT_SUPPORTED = 4;
+
+        if (code === MEDIA_NOT_ALLOWED) {
+          sound.trigger('audio-blocked', {
+            sound,
+            error:
+              'Audio autoplay attempt was blocked by browser user settings',
+          });
+        } else {
+          let message = '';
+          switch (code) {
+            case MEDIA_ERR_ABORTED:
+              message = 'You aborted the audio playback.';
+              break;
+            case MEDIA_ERR_NETWORK:
+              message = 'A network error caused the audio download to fail.';
+              break;
+            case MEDIA_ERR_DECODE:
+              message = 'Decoder error.';
+              break;
+            case MEDIA_ERR_SRC_NOT_SUPPORTED:
+              message = 'Audio source format is not supported.';
+              break;
+            default:
+              message = 'Audio load error';
+              break;
+          }
+
+          sound.trigger('audio-load-error', { sound, error: message });
+        }
+      },
+      onseek: function () {
+        sound.trigger('audio-position-changed', { sound });
+      },
+    });
+
+    if (this.options.xhr) {
+      options.xhr = {
+        withCredentials: this.options.xhr?.withCredentials || false,
+        headers: this.options.xhr?.headers || {},
+        method: this.options.xhr?.method || 'GET',
+      };
+    }
 
     this.howl = new Howl(options);
   }
