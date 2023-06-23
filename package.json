@@ -48,7 +48,7 @@
     "ember-cli-babel": "^7.26.11",
     "ember-cli-htmlbars": "^6.1.1",
     "ember-concurrency": "^2.1.2",
-    "ember-gesture-modifiers": "^4.0.1",
+    "ember-gesture-modifiers": "^4.0.1 || ^5.0.0",
     "ember-get-config": "^2.0",
     "ember-modal-dialog": "^4.0.0",
     "ember-modifier": "^4.0.0",
