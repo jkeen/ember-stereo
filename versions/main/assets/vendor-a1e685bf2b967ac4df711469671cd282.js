@@ -33,7 +33,7 @@ if(!r||"new"===r.state)return(r=new s(e,[],o,null)).module.exports=t,r.state="fi
  *            Portions Copyright 2008-2011 Apple Inc. All rights reserved.
  * @license   Licensed under MIT license
  *            See https://raw.github.com/emberjs/ember.js/master/LICENSE
- * @version   4.8.5
+ * @version   4.8.6
  */
 var e,t;(function(){var r="undefined"!=typeof globalThis?globalThis:"undefined"!=typeof self?self:"undefined"!=typeof window?window:"undefined"!=typeof global?global:null
 if(null===r)throw new Error("unable to locate global object")
@@ -1199,7 +1199,6 @@ this.reopenClass(i)}this[e][t.name]=t}}m.initializers=Object.create(null),m.inst
 var b=m
 e.default=b})),e("@ember/engine/instance",["exports","@ember/object","@ember/-internals/runtime","@ember/debug","@ember/error","@ember/-internals/container","@ember/-internals/utils","@ember/engine/lib/engine-parent","@ember/-internals/owner","@ember/engine"],(function(e,t,r,i,n,a,s,o,l,u){"use strict"
 Object.defineProperty(e,"__esModule",{value:!0}),e.default=void 0
-u.default
 class c extends(t.default.extend(r.RegistryProxyMixin,r.ContainerProxyMixin)){constructor(){super(...arguments),this._booted=!1,this._bootPromise=null}static setupRegistry(e,t){}init(e){var t
 super.init(e),(0,s.guidFor)(this),null!==(t=this.base)&&void 0!==t||(this.base=this.application)
 var r=this.__registry__=new a.Registry({fallback:this.base.__registry__})
@@ -3264,7 +3263,7 @@ return i.Adapter=n,i.QUnitAdapter=a,Object.defineProperty(re,"Test",{configurabl
 var le=re
 t.default=le})),e("ember/version",["exports"],(function(e){"use strict"
 Object.defineProperty(e,"__esModule",{value:!0}),e.default=void 0
-e.default="4.8.5"})),e("route-recognizer",["exports"],(function(e){"use strict"
+e.default="4.8.6"})),e("route-recognizer",["exports"],(function(e){"use strict"
 Object.defineProperty(e,"__esModule",{value:!0}),e.default=void 0
 var t=Object.create
 function r(){var e=t(null)
@@ -3906,7 +3905,7 @@ var v=g.exports,b=Number.isFinite||function(e){return"number"==typeof e&&isFinit
 function S(e,t){if(self.console&&!0===e||"object"==typeof e){!function(e){for(var t=arguments.length,r=new Array(t>1?t-1:0),i=1;i<t;i++)r[i-1]=arguments[i]
 r.forEach((function(t){k[t]=e[t]?e[t].bind(e):function(e){var t=self.console[e]
 return t?t.bind(self.console,"["+e+"] >"):E}(t)}))}(e,"debug","log","info","warn","error")
-try{k.log('Debug logs enabled for "'+t+'" in hls.js version 1.4.3')}catch(e){k=T}}else k=T}var O=k,x=/^(\d+)x(\d+)$/,P=/(.+?)=(".*?"|.*?)(?:,|$)/g,A=function(){function e(t){for(var r in"string"==typeof t&&(t=e.parseAttrList(t)),t)t.hasOwnProperty(r)&&("X-"===r.substring(0,2)&&(this.clientAttrs=this.clientAttrs||[],this.clientAttrs.push(r)),this[r]=t[r])}var t=e.prototype
+try{k.log('Debug logs enabled for "'+t+'" in hls.js version 1.4.6')}catch(e){k=T}}else k=T}var O=k,x=/^(\d+)x(\d+)$/,P=/(.+?)=(".*?"|.*?)(?:,|$)/g,A=function(){function e(t){for(var r in"string"==typeof t&&(t=e.parseAttrList(t)),t)t.hasOwnProperty(r)&&("X-"===r.substring(0,2)&&(this.clientAttrs=this.clientAttrs||[],this.clientAttrs.push(r)),this[r]=t[r])}var t=e.prototype
 return t.decimalInteger=function(e){var t=parseInt(this[e],10)
 return t>Number.MAX_SAFE_INTEGER?1/0:t},t.hexadecimalInteger=function(e){if(this[e]){var t=(this[e]||"0x").slice(2)
 t=(1&t.length?"0":"")+t
@@ -4316,11 +4315,11 @@ if((l!==yt||i)&&n){var u=oe(a[o].data)
 if(u){var c=a[o].pts,d=c+a[o].duration
 d>wt&&(d=wt),d-c<=0&&(d=c+.25)
 for(var h=0;h<u.length;h++){var f=u[h]
-if(!ae(f)){this.updateId3CueEnds(c)
+if(!ae(f)){this.updateId3CueEnds(c,l)
 var p=new s(c,d,"")
-p.value=f,l&&(p.type=l),this.id3Track.addCue(p)}}}}}}}},t.updateId3CueEnds=function(e){var t,r=null==(t=this.id3Track)?void 0:t.cues
-if(r)for(var i=r.length;i--;){var n=r[i]
-n.startTime<e&&n.endTime===wt&&(n.endTime=e)}},t.onBufferFlushing=function(e,t){var r=t.startOffset,i=t.endOffset,n=t.type,a=this.id3Track,s=this.hls
+p.value=f,l&&(p.type=l),this.id3Track.addCue(p)}}}}}}}},t.updateId3CueEnds=function(e,t){var r,i=null==(r=this.id3Track)?void 0:r.cues
+if(i)for(var n=i.length;n--;){var a=i[n]
+a.type===t&&a.startTime<e&&a.endTime===wt&&(a.endTime=e)}},t.onBufferFlushing=function(e,t){var r=t.startOffset,i=t.endOffset,n=t.type,a=this.id3Track,s=this.hls
 if(s){var o=s.config,l=o.enableEmsgMetadataCues,u=o.enableID3MetadataCues
 a&&(l||u)&&vt(a,r,i,"audio"===n?function(e){return e.type===bt&&u}:"video"===n?function(e){return e.type===yt&&l}:function(e){return e.type===bt&&u||e.type===yt&&l})}},t.onLevelUpdated=function(e,t){var r=this,i=t.details
 if(this.media&&i.hasProgramDateTime&&this.hls.config.enableDateRangeMetadataCues){var n=this.dateRangeCuesAppended,a=this.id3Track,s=i.dateRanges,o=Object.keys(s)
@@ -4417,8 +4416,8 @@ var i=Math.min(t,r.duration+(r.deltaPTS?r.deltaPTS:0))
 return r.start+r.duration-i<=e?1:r.start-i>e&&r.start?-1:0}function Vt(e,t,r){var i=1e3*Math.min(t,r.duration+(r.deltaPTS?r.deltaPTS:0))
 return(r.endProgramDateTime||0)-i>e}var $t,Gt=function(){function e(e){this.hls=void 0,this.playlistError=0,this.penalizedRenditions={},this.log=void 0,this.warn=void 0,this.error=void 0,this.hls=e,this.log=O.log.bind(O,"[info]:"),this.warn=O.warn.bind(O,"[warning]:"),this.error=O.error.bind(O,"[error]:"),this.registerListeners()}var t=e.prototype
 return t.registerListeners=function(){var e=this.hls
-e.on(y.ERROR,this.onError,this),e.on(y.MANIFEST_LOADING,this.onManifestLoading,this)},t.unregisterListeners=function(){var e=this.hls
-e&&(e.off(y.ERROR,this.onError,this),e.off(y.ERROR,this.onErrorOut,this),e.off(y.MANIFEST_LOADING,this.onManifestLoading,this))},t.destroy=function(){this.unregisterListeners(),this.hls=null,this.penalizedRenditions={}},t.startLoad=function(e){this.playlistError=0},t.stopLoad=function(){},t.getVariantLevelIndex=function(e){return(null==e?void 0:e.type)===lt?e.level:this.hls.loadLevel},t.onManifestLoading=function(){this.playlistError=0,this.penalizedRenditions={}},t.onError=function(e,t){var r
+e.on(y.ERROR,this.onError,this),e.on(y.MANIFEST_LOADING,this.onManifestLoading,this),e.on(y.LEVEL_UPDATED,this.onLevelUpdated,this)},t.unregisterListeners=function(){var e=this.hls
+e&&(e.off(y.ERROR,this.onError,this),e.off(y.ERROR,this.onErrorOut,this),e.off(y.MANIFEST_LOADING,this.onManifestLoading,this),e.off(y.LEVEL_UPDATED,this.onLevelUpdated,this))},t.destroy=function(){this.unregisterListeners(),this.hls=null,this.penalizedRenditions={}},t.startLoad=function(e){this.playlistError=0},t.stopLoad=function(){},t.getVariantLevelIndex=function(e){return(null==e?void 0:e.type)===lt?e.level:this.hls.loadLevel},t.onManifestLoading=function(){this.playlistError=0,this.penalizedRenditions={}},t.onLevelUpdated=function(){this.playlistError=0},t.onError=function(e,t){var r
 if(!t.fatal){var i=this.hls,n=t.context
 switch(t.details){case w.FRAG_LOAD_ERROR:case w.FRAG_LOAD_TIMEOUT:case w.KEY_LOAD_ERROR:case w.KEY_LOAD_TIMEOUT:return void(t.errorAction=this.getFragRetryOrSwitchAction(t))
 case w.FRAG_GAP:case w.FRAG_PARSING_ERROR:case w.FRAG_DECRYPT_ERROR:return t.errorAction=this.getFragRetryOrSwitchAction(t),void(t.errorAction.action=2)
@@ -4442,13 +4441,13 @@ if(zt(o,l,Lt(e),c))return{action:5,flags:0,retryConfig:o,retryCount:l}}var d=thi
 return o&&(d.retryConfig=o,d.retryCount=l),d},t.getLevelSwitchAction=function(e,t){var r=this.hls
 null==t&&(t=r.loadLevel)
 var i=this.hls.levels[t]
-if(i&&(i.loadError++,r.autoLevelEnabled)){for(var n,a,s=-1,o=r.levels,l=null==(n=e.frag)?void 0:n.type,u=null!=(a=e.context)?a:{},c=u.type,d=u.groupId,h=o.length;h--;){var f=(h+r.loadLevel)%o.length
-if(f!==r.loadLevel&&0===o[f].loadError){var p=o[f]
-if(e.details===w.FRAG_GAP&&e.frag){var m=o[f].details
-if(m){var g=Bt(e.frag,m.fragments,e.frag.start)
-if(null!=g&&g.gap)continue}}else{if(c===st&&d===p.audioGroupId||c===ot&&d===p.textGroupId)continue
-if(l===ut&&i.audioGroupId===p.audioGroupId||l===ct&&i.textGroupId===p.textGroupId)continue}s=f
-break}}if(s>-1&&r.loadLevel!==s)return e.levelRetry=!0,{action:2,flags:0,nextAutoLevel:s}}return{action:2,flags:1}},t.onErrorOut=function(e,t){var r
+if(i&&(i.loadError++,r.autoLevelEnabled)){for(var n,a,s=-1,o=r.levels,l=r.loadLevel,u=r.minAutoLevel,c=r.maxAutoLevel,d=null==(n=e.frag)?void 0:n.type,h=null!=(a=e.context)?a:{},f=h.type,p=h.groupId,m=o.length;m--;){var g=(m+l)%o.length
+if(g!==l&&g>=u&&g<=c&&0===o[g].loadError){var v=o[g]
+if(e.details===w.FRAG_GAP&&e.frag){var b=o[g].details
+if(b){var y=Bt(e.frag,b.fragments,e.frag.start)
+if(null!=y&&y.gap)continue}}else{if(f===st&&p===v.audioGroupId||f===ot&&p===v.textGroupId)continue
+if(d===ut&&i.audioGroupId===v.audioGroupId||d===ct&&i.textGroupId===v.textGroupId)continue}s=g
+break}}if(s>-1&&r.loadLevel!==s)return e.levelRetry=!0,this.playlistError=0,{action:2,flags:0,nextAutoLevel:s}}return{action:2,flags:1}},t.onErrorOut=function(e,t){var r
 switch(null==(r=t.errorAction)?void 0:r.action){case 0:break
 case 2:this.sendAlternateToPenaltyBox(t),t.errorAction.resolved||t.details===w.FRAG_GAP||(t.fatal=!0)}t.fatal&&this.hls.stopLoad()},t.sendAlternateToPenaltyBox=function(e){var t=this.hls,r=e.errorAction
 if(r){var i=r.flags,n=r.hdcpLevel,a=r.nextAutoLevel
@@ -4491,7 +4490,8 @@ T=Math.max(0,T),this.log("reload live playlist "+e+" in "+Math.round(T)+" ms"),t
 return r&&(void 0!==t?t-n:0)<r?i?"v2":"YES":""}(e,r)
 return null!=t&&t.skip&&e.deltaUpdateFailed&&(r=t.msn,i=t.part,n=""),new Ot(r,i,n)},t.checkRetry=function(e){var t=this,r=e.details,i=Lt(e),n=e.errorAction,a=n||{},s=a.action,o=a.retryCount,l=void 0===o?0:o,u=a.retryConfig,c=!!n&&!!u&&(5===s||!n.resolved&&2===s)
 if(c){var d
-if(this.requestScheduled=-1,i&&null!=(d=e.context)&&d.deliveryDirectives)this.warn("Retrying playlist loading "+(l+1)+"/"+u.maxNumRetry+' after "'+r+'" without delivery-directives'),this.loadPlaylist()
+if(this.requestScheduled=-1,l>=u.maxNumRetry)return!1
+if(i&&null!=(d=e.context)&&d.deliveryDirectives)this.warn("Retrying playlist loading "+(l+1)+"/"+u.maxNumRetry+' after "'+r+'" without delivery-directives'),this.loadPlaylist()
 else{var h=Ft(u,l)
 this.timer=self.setTimeout((function(){return t.loadPlaylist()}),h),this.warn("Retrying playlist loading "+(l+1)+"/"+u.maxNumRetry+' after "'+r+'" in '+h+"ms")}e.levelRetry=!0,n.resolved=!0}return c},e}(),Kt=function(e){function t(t,r){var i
 return(i=e.call(this,t,"[level-controller]")||this)._levels=[],i._firstLevel=-1,i._startLevel=void 0,i.currentLevel=null,i.currentLevelIndex=-1,i.manualLevelIndex=-1,i.steering=void 0,i.onParsedComplete=void 0,i.steering=r,i._registerListeners(),i}l(t,e)
@@ -4975,8 +4975,8 @@ this.decryptBuffer(o.buffer).then((function(o){n.data=a.getAvcDecryptedUnit(s,o)
 for(;;t++,r=0){if(t>=e.length)return void i()
 for(var n=e[t].units;!(r>=n.length);r++){var a=n[r]
 if(!(a.data.length<=48||1!==a.type&&5!==a.type||(this.decryptAvcSample(e,t,r,i,a),this.decrypter.isSync())))return}}},e}(),oi=188,li=function(){function e(e,t,r){this.observer=void 0,this.config=void 0,this.typeSupported=void 0,this.sampleAes=null,this.pmtParsed=!1,this.audioCodec=void 0,this.videoCodec=void 0,this._duration=0,this._pmtId=-1,this._avcTrack=void 0,this._audioTrack=void 0,this._id3Track=void 0,this._txtTrack=void 0,this.aacOverFlow=null,this.avcSample=null,this.remainderData=null,this.observer=e,this.config=t,this.typeSupported=r}e.probe=function(t){var r=e.syncOffset(t)
-return r>0&&O.warn("MPEG2-TS detected but first sync word found @ offset "+r),-1!==r},e.syncOffset=function(e){for(var t=e.length,r=Math.min(940,e.length-oi)+1,i=0;i<r;){for(var n=!1,a=i;a<t&&71===e[a];a+=oi)if(n||0!==ci(e,a)||(n=!0),n&&a+oi>r)return i
-i++}return-1},e.createTrack=function(e,t){return{container:"video"===e||"audio"===e?"video/mp2t":void 0,type:e,id:ve[e],pid:-1,inputTimeScale:9e4,sequenceNumber:0,samples:[],dropped:0,duration:"audio"===e?t:void 0}}
+return r>0&&O.warn("MPEG2-TS detected but first sync word found @ offset "+r),-1!==r},e.syncOffset=function(e){for(var t=e.length,r=Math.min(940,e.length-oi)+1,i=0;i<r;){for(var n=!1,a=-1,s=0,o=i;o<t;o+=oi){if(71!==e[o]){if(s)return-1
+break}if(s++,-1===a&&0!==(a=o)&&(r=Math.min(a+18612,e.length-oi)+1),n||(n=0===ci(e,o)),n&&s>1&&(0===a&&s>2||o+oi>r))return a}i++}return-1},e.createTrack=function(e,t){return{container:"video"===e||"audio"===e?"video/mp2t":void 0,type:e,id:ve[e],pid:-1,inputTimeScale:9e4,sequenceNumber:0,samples:[],dropped:0,duration:"audio"===e?t:void 0}}
 var t=e.prototype
 return t.resetInitSegment=function(t,r,i,n){this.pmtParsed=!1,this._pmtId=-1,this._avcTrack=e.createTrack("video"),this._audioTrack=e.createTrack("audio",n),this._id3Track=e.createTrack("id3"),this._txtTrack=e.createTrack("text"),this._audioTrack.segmentCodec="aac",this.aacOverFlow=null,this.avcSample=null,this.remainderData=null,this.audioCodec=r,this.videoCodec=i,this._duration=n},t.resetTimeStamp=function(){},t.resetContiguity=function(){var e=this._audioTrack,t=this._avcTrack,r=this._id3Track
 e&&(e.pesData=null),t&&(t.pesData=null),r&&(r.pesData=null),this.aacOverFlow=null,this.avcSample=null,this.remainderData=null},t.demux=function(t,r,i,n){var a
@@ -5160,7 +5160,7 @@ T.pts=ki(T.pts-b,h),T.dts=ki(T.dts-b,h),T.dts<l[E>0?E-1:E].dts&&(v=!0)}v&&l.sort
 return r||i})),n=l[0].dts
 var k=l[l.length-1].dts-n,S=k?Math.round(k/(c-1)):p||e.inputTimeScale/30
 if(r){var x=n-h,P=x>S,A=x<-1
-if((P||A)&&(P?O.warn("AVC: "+_i(x,!0)+" ms ("+x+"dts) hole between fragments detected, filling it"):O.warn("AVC: "+_i(-x,!0)+" ms ("+x+"dts) overlapping between fragments detected"),!A||h>l[0].pts)){n=h
+if((P||A)&&(P?O.warn("AVC: "+_i(x,!0)+" ms ("+x+"dts) hole between fragments detected, filling it"):O.warn("AVC: "+_i(-x,!0)+" ms ("+x+"dts) overlapping between fragments detected"),!A||h>=l[0].pts)){n=h
 var R=l[0].pts-x
 l[0].dts=n,l[0].pts=R,O.log("Video: First PTS/DTS adjusted: "+_i(R,!0)+"/"+_i(n,!0)+", delta: "+_i(x,!0)+" ms")}}n=Math.max(0,n)
 for(var C=0,D=0,M=0;M<c;M++){for(var I=l[M],L=I.units,j=L.length,F=0,N=0;N<j;N++)F+=L[N].data.length
@@ -5208,7 +5208,7 @@ if(null===t)return e
 for(r=t<e?-8589934592:8589934592;Math.abs(e-t)>4294967296;)e+=r
 return e}function Si(e,t,r,i){var n=e.samples.length
 if(n){for(var a=e.inputTimeScale,s=0;s<n;s++){var o=e.samples[s]
-o.pts=ki(o.pts-9e4*r.baseTime/r.timescale,t*a)/a,o.dts=ki(o.dts-9e4*i.baseTime/i.timescale,t*a)/a}var l=e.samples
+o.pts=ki(o.pts-r.baseTime*a/r.timescale,t*a)/a,o.dts=ki(o.dts-i.baseTime*a/i.timescale,t*a)/a}var l=e.samples
 return e.samples=[],{samples:l}}}function Oi(e,t,r){var i=e.samples.length
 if(i){for(var n=e.inputTimeScale,a=0;a<i;a++){var s=e.samples[a]
 s.pts=ki(s.pts-9e4*r.baseTime/r.timescale,t*n)/n}e.samples.sort((function(e,t){return e.pts-t.pts}))
@@ -5432,6 +5432,7 @@ e.off(y.MEDIA_ATTACHED,this.onMediaAttached,this),e.off(y.MEDIA_DETACHING,this.o
 if(this.stopLoad(),this.setInterval(100),this.level=-1,!this.startFragRequested){var i=r.startLevel;-1===i&&(r.config.testBandwidth&&this.levels.length>1?(i=0,this.bitrateTest=!0):i=r.nextAutoLevel),this.level=r.nextLoadLevel=i,this.loadedmetadata=!1}t>0&&-1===e&&(this.log("Override startPosition with lastCurrentTime @"+t.toFixed(3)),e=t),this.state=Er,this.nextLoadPosition=this.startPosition=this.lastCurrentTime=e,this.tick()}else this._forceStartLoad=!0,this.state=wr},r.stopLoad=function(){this._forceStartLoad=!1,e.prototype.stopLoad.call(this)},r.doTick=function(){switch(this.state){case Dr:var e,t=this.levels,r=this.level,i=null==t||null==(e=t[r])?void 0:e.details
 if(i&&(!i.live||this.levelLastLoaded===this.level)){if(this.waitForCdnTuneIn(i))break
 this.state=Er
+break}if(this.hls.nextLoadLevel!==this.level){this.state=Er
 break}break
 case Sr:var n,a=self.performance.now(),s=this.retryDate;(!s||a>=s||null!=(n=this.media)&&n.seeking)&&(this.resetStartWhenNotLoaded(this.level),this.state=Er)}this.state===Er&&this.doTickIdle(),this.onTickEnd()},r.onTickEnd=function(){e.prototype.onTickEnd.call(this),this.checkBuffer(),this.checkFragmentChanged()},r.doTickIdle=function(){var e=this.hls,t=this.levelLastLoaded,r=this.levels,i=this.media,n=e.config,a=e.nextLoadLevel
 if(null!==t&&(i||!this.startFragRequested&&n.startFragPrefetch)&&(!this.altAudio||!this.audioOnly)&&null!=r&&r[a]){var s=r[a],o=this.getMainFwdBufferInfo()
@@ -5649,11 +5650,12 @@ d||(d=this.transmuxer=new $i(this.hls,ut,this._handleTransmuxComplete.bind(this)
 var h=this.initPTS[r.cc],f=null==(t=r.initSegment)?void 0:t.data
 if(void 0!==h){var p=i?i.index:-1,m=-1!==p,g=new hr(r.level,r.sn,r.stats.chunkCount,n.byteLength,p,m)
 d.push(n,f,c,"",r,i,u.totalduration,!1,g,h)}else this.log("Unknown video PTS for cc "+r.cc+", waiting for video PTS before demuxing audio frag "+r.sn+" of ["+u.startSN+" ,"+u.endSN+"],track "+s),(this.waitingData=this.waitingData||{frag:r,part:i,cache:new Qi,complete:!1}).cache.push(new Uint8Array(n)),this.waitingVideoCC=this.videoTrackCC,this.state=Cr}else this.warn("Audio track is undefined on fragment load progress")}else this.warn("Audio tracks were reset while fragment load was in progress. Fragment "+r.sn+" of level "+r.level+" will not be buffered")},r._handleFragmentLoadComplete=function(t){this.waitingData?this.waitingData.complete=!0:e.prototype._handleFragmentLoadComplete.call(this,t)},r.onBufferReset=function(){this.mediaBuffer=this.videoBuffer=null,this.loadedmetadata=!1},r.onBufferCreated=function(e,t){var r=t.tracks.audio
-r&&(this.mediaBuffer=r.buffer||null),t.tracks.video&&(this.videoBuffer=t.tracks.video.buffer||null)},r.onFragBuffered=function(e,t){var r,n=t.frag,a=t.part
-if(n.type===ut)if(this.fragContextChanged(n))this.warn("Fragment "+n.sn+(a?" p: "+a.index:"")+" of level "+n.level+" finished buffering, but was aborted. state: "+this.state+", audioSwitch: "+(this.switchingTrack?this.switchingTrack.name:"false"))
-else{if("initSegment"!==n.sn){this.fragPrevious=n
-var s=this.switchingTrack
-s&&(this.bufferedTrack=s,this.switchingTrack=null,this.hls.trigger(y.AUDIO_TRACK_SWITCHED,i({},s)))}this.fragBufferedComplete(n,a)}else this.loadedmetadata||n.type!==lt||null!=(r=this.videoBuffer||this.media)&&r.buffered.length&&(this.loadedmetadata=!0)},r.onError=function(t,r){var i
+r&&(this.mediaBuffer=r.buffer||null),t.tracks.video&&(this.videoBuffer=t.tracks.video.buffer||null)},r.onFragBuffered=function(e,t){var r=t.frag,n=t.part
+if(r.type===ut)if(this.fragContextChanged(r))this.warn("Fragment "+r.sn+(n?" p: "+n.index:"")+" of level "+r.level+" finished buffering, but was aborted. state: "+this.state+", audioSwitch: "+(this.switchingTrack?this.switchingTrack.name:"false"))
+else{if("initSegment"!==r.sn){this.fragPrevious=r
+var a=this.switchingTrack
+a&&(this.bufferedTrack=a,this.switchingTrack=null,this.hls.trigger(y.AUDIO_TRACK_SWITCHED,i({},a)))}this.fragBufferedComplete(r,n)}else if(!this.loadedmetadata&&r.type===lt){var s=this.videoBuffer||this.media
+s&&dr.getBuffered(s).length&&(this.loadedmetadata=!0)}},r.onError=function(t,r){var i
 if(r.fatal)this.state=Rr
 else switch(r.details){case w.FRAG_GAP:case w.FRAG_PARSING_ERROR:case w.FRAG_DECRYPT_ERROR:case w.FRAG_LOAD_ERROR:case w.FRAG_LOAD_TIMEOUT:case w.KEY_LOAD_ERROR:case w.KEY_LOAD_TIMEOUT:this.onFragmentOrKeyLoadError(ut,r)
 break
@@ -6485,7 +6487,7 @@ return e?e.subtitleTracks:[]}},{key:"subtitleTrack",get:function(){var e=this.su
 return e?e.subtitleTrack:-1},set:function(e){var t=this.subtitleTrackController
 t&&(t.subtitleTrack=e)}},{key:"media",get:function(){return this._media}},{key:"subtitleDisplay",get:function(){var e=this.subtitleTrackController
 return!!e&&e.subtitleDisplay},set:function(e){var t=this.subtitleTrackController
-t&&(t.subtitleDisplay=e)}},{key:"lowLatencyMode",get:function(){return this.config.lowLatencyMode},set:function(e){this.config.lowLatencyMode=e}},{key:"liveSyncPosition",get:function(){return this.latencyController.liveSyncPosition}},{key:"latency",get:function(){return this.latencyController.latency}},{key:"maxLatency",get:function(){return this.latencyController.maxLatency}},{key:"targetLatency",get:function(){return this.latencyController.targetLatency}},{key:"drift",get:function(){return this.latencyController.drift}},{key:"forceStartLoad",get:function(){return this.streamController.forceStartLoad}}],[{key:"version",get:function(){return"1.4.3"}},{key:"Events",get:function(){return y}},{key:"ErrorTypes",get:function(){return _}},{key:"ErrorDetails",get:function(){return w}},{key:"DefaultConfig",get:function(){return e.defaultConfig?e.defaultConfig:wa},set:function(t){e.defaultConfig=t}}]),e}()
+t&&(t.subtitleDisplay=e)}},{key:"lowLatencyMode",get:function(){return this.config.lowLatencyMode},set:function(e){this.config.lowLatencyMode=e}},{key:"liveSyncPosition",get:function(){return this.latencyController.liveSyncPosition}},{key:"latency",get:function(){return this.latencyController.latency}},{key:"maxLatency",get:function(){return this.latencyController.maxLatency}},{key:"targetLatency",get:function(){return this.latencyController.targetLatency}},{key:"drift",get:function(){return this.latencyController.drift}},{key:"forceStartLoad",get:function(){return this.streamController.forceStartLoad}}],[{key:"version",get:function(){return"1.4.6"}},{key:"Events",get:function(){return y}},{key:"ErrorTypes",get:function(){return _}},{key:"ErrorDetails",get:function(){return w}},{key:"DefaultConfig",get:function(){return e.defaultConfig?e.defaultConfig:wa},set:function(t){e.defaultConfig=t}}]),e}()
 return Ta.defaultConfig=void 0,Ta},"object"==typeof exports&&"undefined"!=typeof module?module.exports=i():"function"==typeof define&&define.amd?define(i):(r="undefined"!=typeof globalThis?globalThis:r||self).Hls=i()}(!1),function(){var e
 e={default:Hls},define("hls",[],(function(){"use strict"
 return e}))}(),"undefined"==typeof FastBoot){var preferNative=!1;(function(e){define("fetch",["exports","ember","rsvp"],(function(t,r,i){"use strict"
