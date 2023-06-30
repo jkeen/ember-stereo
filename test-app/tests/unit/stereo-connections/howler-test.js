@@ -8,7 +8,7 @@ module('Unit | Connection | Howler', function (hooks) {
   setupTest(hooks);
   setupStereoTest(hooks);
 
-  test('Howler should say it cannot play hls streams', function (assert) {
+  test('Howler should say it can maybe play hls streams', function (assert) {
     let badUrls = A([
       'http://example.org/test.m3u8',
       'http://example.org/test.m3u8?query_params',
@@ -24,9 +24,9 @@ module('Unit | Connection | Howler', function (hooks) {
     assert.expect(badUrls.length + goodUrls.length);
 
     badUrls.forEach((url) => {
-      assert.false(
+      assert.true(
         HowlerConnection.canPlay(url),
-        `Should not play file with ${url}`
+        `Should try to play file with ${url}`
       );
     });
 
@@ -39,27 +39,16 @@ module('Unit | Connection | Howler', function (hooks) {
   });
 
   test('Howler should report playability of file objects', function (assert) {
-    let badFiles = A([
+    assert.expect(4);
+    let goodFiles = A([
       {
         url: 'http://example.org/test.m3u8',
         mimeType: 'application/vnd.apple.mpegurl',
       },
-    ]);
-
-    let goodFiles = A([
       { url: 'http://example.org/test.mp3', mimeType: 'audio/mpeg' },
       { url: 'http://example.org/test.aac', mimeType: 'audio/aac' },
       { url: 'http://example.org/test.wav', mimeType: 'audio/wav' },
     ]);
-
-    assert.expect(badFiles.length + goodFiles.length);
-
-    badFiles.forEach((url) => {
-      assert.false(
-        HowlerConnection.canPlay(url),
-        `Should not play file with mime type ${url.mimeType}`
-      );
-    });
 
     goodFiles.forEach((url) => {
       assert.true(
