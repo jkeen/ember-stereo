@@ -1,5 +1,7 @@
 ember-stereo changelog
 
+# [5.0.0-beta.8](https://github.com/jkeen/ember-stereo/compare/v5.0.0-beta.7...v5.0.0-beta.8) (2023-06-30)
+
 # [5.0.0-beta.7](https://github.com/jkeen/ember-stereo/compare/v5.0.0-beta.6...v5.0.0-beta.7) (2023-06-09)
 
 
