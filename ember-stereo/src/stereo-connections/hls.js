@@ -122,7 +122,6 @@ export default class HLSSound extends BaseSound {
       instance.on(HLS.Events.LEVEL_LOADED, (e, data) => {
         this.debug(`level ${data.level} loaded`);
         this.live = data.details.live;
-        this._initializeCurrentTime();
         this._signalAudioIsReady();
       });
 
@@ -138,36 +137,8 @@ export default class HLSSound extends BaseSound {
       instance.on(HLS.Events.FRAG_CHANGED, (e, f) => {
         this._updateAudioBuffer(f.frag);
         this._updateId3Info(f.frag);
-        this._updateRealTimeOffset(f.frag);
       });
     });
-  }
-
-  _initializeCurrentTime(data) {
-    if (!this.realTimeOffset && data?.details) {
-      this.realTimeOffset = data.details.fragments[0].programDateTime;
-      this._updateCurrentTime();
-    }
-  }
-
-  @tracked realTimeOffset;
-  @tracked appendedPts = 0;
-  @tracked positionNow = 0;
-  _updateRealTimeOffset(fragment) {
-    if (fragment.programDateTime) {
-      this.positionNow = this.video.currentTime;
-      this.realTimeOffset = fragment.programDateTime - fragment.start;
-      this.appendedPts = fragment.appendedPTS;
-    }
-  }
-
-  _updateCurrentTime() {
-    if (this.realTimeOffset) {
-      this._currentTime = new Date(
-        (this.video.currentTime - this.positionNow) * 1000 + this.realTimeOffset
-      );
-      // this.debug(`time = ${this.currentTime}`);
-    }
   }
 
   _updateId3Info(fragment) {
@@ -194,7 +165,6 @@ export default class HLSSound extends BaseSound {
   _setupPlayerEvents(video) {
     video.addEventListener('playing', () => {
       if (this.loaded) {
-        this._updateCurrentTime();
         this.trigger('audio-played', { sound: this });
       } else {
         this._signalAudioIsReady();
@@ -325,7 +295,7 @@ export default class HLSSound extends BaseSound {
   /* Public interface to sound */
 
   get currentTime() {
-    return this._currentTime;
+    return this.hls.playingDate;
   }
 
   _audioDuration() {
@@ -337,7 +307,6 @@ export default class HLSSound extends BaseSound {
   }
 
   _currentPosition() {
-    this._updateCurrentTime();
     return this.video.currentTime * 1000;
   }
 
@@ -346,7 +315,6 @@ export default class HLSSound extends BaseSound {
     if (!this.isPlaying) {
       this.hls.startLoad();
     }
-    this._updateCurrentTime();
 
     return position;
   }
