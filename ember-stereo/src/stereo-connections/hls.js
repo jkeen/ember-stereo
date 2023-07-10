@@ -298,12 +298,28 @@ export default class HLSSound extends BaseSound {
     return this.hls.playingDate;
   }
 
+  get isFastForwardable() {
+    return true;
+  }
+
+  get isRewindable() {
+    return true;
+  }
+
+  get isSeekable() {
+    return true;
+  }
+
+  get isLive() {
+    return this.live;
+  }
+
+  get isStream() {
+    return this.isLive;
+  }
+
   _audioDuration() {
-    if (this.live) {
-      return Infinity;
-    } else {
-      return this.video.duration * 1000;
-    }
+    return this.video.duration * 1000;
   }
 
   _currentPosition() {
