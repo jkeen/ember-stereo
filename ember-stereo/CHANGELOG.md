@@ -1,5 +1,12 @@
 ember-stereo changelog
 
+# [5.0.0-beta.9](https://github.com/jkeen/ember-stereo/compare/v5.0.0-beta.8...v5.0.0-beta.9) (2023-07-10)
+
+
+### Features
+
+* adjust logic to allow for live streaming HLS files and allowing ([a633c17](https://github.com/jkeen/ember-stereo/commit/a633c17b8204d05a94ea1e98297ab8e20581d846))
+
 # [5.0.0-beta.8](https://github.com/jkeen/ember-stereo/compare/v5.0.0-beta.7...v5.0.0-beta.8) (2023-06-30)
 
 # [5.0.0-beta.7](https://github.com/jkeen/ember-stereo/compare/v5.0.0-beta.6...v5.0.0-beta.7) (2023-06-09)
