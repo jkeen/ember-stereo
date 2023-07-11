@@ -33,9 +33,12 @@ export default class SoundPositionProgressModifier extends Modifier {
   modifyPosition({ sound, position }) {
     let duration = sound?.duration ?? 1;
 
-    this.element.style.width = `${
-      ((position ?? sound?.position ?? 0) / duration) * 100
-    }%`;
+    let percent = Math.max(
+      0,
+      Math.min(((position ?? sound?.position ?? 0) / duration) * 100, 100)
+    );
+
+    this.element.style.width = `${percent}%`;
     this.element.style.pointerEvents = 'none';
   }
 
