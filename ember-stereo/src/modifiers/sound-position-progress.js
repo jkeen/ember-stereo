@@ -74,7 +74,10 @@ export default class SoundPositionProgressModifier extends Modifier {
         ]);
 
         if (result?.sound) {
-          this.modifyPosition({ sound: result.sound });
+          this.modifyPosition({
+            sound: result.sound,
+            position: result?.newPosition,
+          });
         } else if (this.loadedSound) {
           this.modifyPosition({ sound: this.loadedSound });
         }
