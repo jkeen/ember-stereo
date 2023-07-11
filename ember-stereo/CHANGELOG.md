@@ -1,5 +1,13 @@
 ember-stereo changelog
 
+# [5.0.0-beta.10](https://github.com/jkeen/ember-stereo/compare/v5.0.0-beta.9...v5.0.0-beta.10) (2023-07-11)
+
+
+### Bug Fixes
+
+* limit percentage between 0 and 100 ([e2d4537](https://github.com/jkeen/ember-stereo/commit/e2d45374a8163f88c9b2159befcd37d851431764))
+* pass in newPosition to sound-position-progress if available ([cfaf2a3](https://github.com/jkeen/ember-stereo/commit/cfaf2a32239c38e37e90dc23dc6ad937eb3dcbf1))
+
 # [5.0.0-beta.9](https://github.com/jkeen/ember-stereo/compare/v5.0.0-beta.8...v5.0.0-beta.9) (2023-07-10)
 
 
