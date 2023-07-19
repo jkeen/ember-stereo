@@ -35,3 +35,7 @@
 # broccoli-debug
 /DEBUG/
 packages/
+
+ember-stereo/
+docs/
+test-app/
