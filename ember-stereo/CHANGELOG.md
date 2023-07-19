@@ -1,5 +1,12 @@
 ember-stereo changelog
 
+# [5.0.0-beta.11](https://github.com/jkeen/ember-stereo/compare/v5.0.0-beta.10...v5.0.0-beta.11) (2023-07-19)
+
+
+### Bug Fixes
+
+* Don't play howl if it's already playing ([072e429](https://github.com/jkeen/ember-stereo/commit/072e4291f6e0de488578d1e5f488ab27ffd55f5e))
+
 # [5.0.0-beta.10](https://github.com/jkeen/ember-stereo/compare/v5.0.0-beta.9...v5.0.0-beta.10) (2023-07-11)
 
 
