@@ -14,7 +14,7 @@ To illustrate let's try and play this [(incredible) digitized in-store cassete t
 
 <Docs::TryMultipleUrls />
 
-Looks like you're running <Docs::CurrentBrowser /> on <Docs::CurrentOs />
+Looks like you're running {{docs/current-browser}} on {{docs/current-os}}
 
 ### Ogg
 
