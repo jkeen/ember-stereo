@@ -140,12 +140,14 @@ export default class Howler extends BaseSound {
   }
 
   play({ position } = {}) {
-    this.isLoading = true;
-    this.debug('#play');
-    if (typeof position !== 'undefined') {
-      this._setPosition(position);
+    if (!this.howl.playing()) {
+      this.isLoading = true;
+      this.debug('#play');
+      if (typeof position !== 'undefined') {
+        this._setPosition(position);
+      }
+      this.howl.play();
     }
-    this.howl.play();
   }
 
   pause() {
