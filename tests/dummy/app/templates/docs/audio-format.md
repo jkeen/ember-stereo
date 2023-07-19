@@ -14,20 +14,18 @@ To illustrate let's try and play this [(incredible) digitized in-store cassete t
 
 <Docs::TryMultipleUrls/>
 
-Looks like you're running <Docs::CurrentBrowser/> on <Docs::CurrentOS/>
+Looks like you're running {{docs/current-browser}} on {{docs/current-os}}
 
 ### Ogg
 
-Here's what  <Docs::CurrentBrowser/> for <Docs::CurrentOS/> told `ember-stereo` about the chances of this `ogg` file succeeding.
-
-
+Here's what {{docs/current-browser}} for {{docs/current-os}} told `ember-stereo` about the chances of this `ogg` file succeeding.
 
 <Docs::StrategyBreakdown @identifier="https://archive.org/download/KmartOctober1989/Kmart%20October%201989.ogg"/>
 <Docs::StereoPlayer @identifier="https://archive.org/download/KmartOctober1989/Kmart%20October%201989.ogg"/>
 
 ### Mp3
 
-This for sure works on  <Docs::CurrentBrowser/> for <Docs::CurrentOS/>. Nothing to get excited about, but here's the details anyway:
+This for sure works on {{docs/current-browser}} for {{docs/current-os}}. Nothing to get excited about, but here's the details anyway:
 
 <Docs::StrategyBreakdown @identifier="https://archive.org/download/KmartOctober1989/Kmart%20October%201989.mp3"/>
 <Docs::StereoPlayer @identifier="https://archive.org/download/KmartOctober1989/Kmart%20October%201989.mp3"/>
