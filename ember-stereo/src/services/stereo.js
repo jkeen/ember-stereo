@@ -1254,6 +1254,10 @@ export default class Stereo extends Service.extend(EmberEvented) {
     });
     // }
     sound.play(options);
+
+    if (sound.isPlaying) {
+      cancel(blockCheck);
+    }
   }
 
   willDestroy() {
