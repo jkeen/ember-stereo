@@ -1,0 +1,19 @@
+<DocsDemo as |demo|>
+  <demo.example @name='queued.hbs'>
+
+    {{#if (sound-is-playing (current-sound))}}
+      <p>{{get (current-sound) 'url'}}</p>
+
+      <button type='button' {{on 'click' (stop-sound (current-sound))}}>
+        Stop
+      </button>
+    {{else}}
+      <button type='button' {{on 'click' this.playSound}}>
+        Play Queue
+      </button>
+    {{/if}}
+
+  </demo.example>
+  <demo.snippet @name='queued.hbs' />
+  <demo.snippet @name='queued.js' />
+</DocsDemo>
