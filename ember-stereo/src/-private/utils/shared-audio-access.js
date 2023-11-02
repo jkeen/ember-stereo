@@ -8,9 +8,17 @@ const log = debug('ember-stereo:shared-audio-access');
  * out the src allows us to play a piece of audio seamlessly without requiring
  * an extra click by the user to get around strict autoplay restrictions
  *
+ * Note from late 2023:
+ * The above was true in 2016-2017, but not sure if it still stands. Apparently using
+ * a single element also solved some WNYC-specific issues with adswizz not allowing multiple
+ * connections at once (as documented in the changelog for 1.6.0). But again, not sure if that's
+ * worth keeping something that significantly complicates the codebase.
+ *
  * @private
  */
+/*
 
+ */
 export default class SharedAudioAccess {
   audioElement;
   owner;
