@@ -170,10 +170,10 @@ export default class NativeAudio extends BaseSound {
       return;
     }
 
-    // if (this.isPlaying) {
-    //   // send a pause event so anyone subscribed to stereo's relayed events gets the message
-    //   this._onAudioPaused(this);
-    // }
+    // Send a pause event to ensure playback status is updated correctly.
+    // If this doesn't happen, the audio can get stuck in a playing state,
+    // even though it's not playing. https://github.com/jkeen/ember-stereo/issues/22
+    this._onAudioPaused(this);
 
     this.sharedAudioAccess.releaseControl(this);
     // save current state of audio element to the internal element that won't be played
