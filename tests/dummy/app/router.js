@@ -24,6 +24,7 @@ Router.map(function () {
     this.route('volume');
     this.route('advanced');
     this.route('testing');
+    this.route('debugging');
   });
 
   this.route('diagnostic', function () {
