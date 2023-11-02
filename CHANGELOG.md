@@ -1,5 +1,12 @@
 ember-stereo changelog
 
+## [4.2.2](https://github.com/jkeen/ember-stereo/compare/v4.2.1...v4.2.2) (2023-11-02)
+
+
+### Bug Fixes
+
+* send pause event when releasing control of shared audio element ([f7fec45](https://github.com/jkeen/ember-stereo/commit/f7fec45ab46b6bd37817e94ef393e0bfd5593f9b))
+
 ## [4.2.1](https://github.com/jkeen/ember-stereo/compare/v4.2.0...v4.2.1) (2023-07-19)
 
 # [4.2.0](https://github.com/jkeen/ember-stereo/compare/v4.1.4...v4.2.0) (2023-06-17)
