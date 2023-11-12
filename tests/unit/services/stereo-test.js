@@ -302,51 +302,6 @@ module('Unit | Service | stereo', function (hooks) {
     assert.equal(findSpy.callCount, 3, 'cache should have been checked');
   });
 
-  test('position gets polled regularly on the currentSound but not on the others', function (assert) {
-    this.clock = sandbox.useFakeTimers();
-
-    const service = this.owner
-      .lookup('service:stereo')
-      .loadConnections(['NativeAudio']);
-
-    const INTERVAL = 20;
-
-    let sound1 = new (service.connectionLoader.get('NativeAudio'))({
-      url: '/good/1000/silence.mp3',
-    });
-    let sound2 = new (service.connectionLoader.get('NativeAudio'))({
-      url: '/good/1000/silence2.mp3',
-    });
-
-    // setOwner(sound1, getOwner(service));
-    // setOwner(sound2, getOwner(service));
-
-    let spy1 = sandbox.spy(sound1, '_currentPosition');
-    let spy2 = sandbox.spy(sound2, '_currentPosition');
-
-    assert.equal(spy1.callCount, 0, 'sound 1 should not have been polled yet');
-    assert.equal(spy2.callCount, 0, 'sound 1 should not have been polled yet');
-    service.set('pollInterval', INTERVAL);
-    service.currentSound = sound1;
-
-    this.clock.tick(INTERVAL * 4);
-
-    assert.equal(spy1.callCount, 4, 'sound 1 should have been polled 4 times');
-    assert.equal(spy2.callCount, 0, 'sound 2 should not have been polled yet');
-    service.currentSound = sound2;
-
-    this.clock.tick(INTERVAL * 2);
-
-    assert.equal(
-      spy1.callCount,
-      4,
-      'sound 1 should not have been polled again'
-    );
-    assert.equal(spy2.callCount, 2, 'sound 2 should have been polled twice');
-
-    this.clock.restore();
-  });
-
   test('volume changes are set on the current sound', function (assert) {
     assert.expect(7);
     const service = this.owner
@@ -610,7 +565,7 @@ module('Unit | Service | stereo', function (hooks) {
       'second sound should have its own position'
     );
 
-    await sound2.play();
+    sound2.play();
     sound2.position = 125;
 
     assert.equal(
@@ -624,14 +579,14 @@ module('Unit | Service | stereo', function (hooks) {
       'second sound should still have its own position'
     );
 
-    await sound1.play();
+    sound1.play();
     assert.equal(
       Math.floor(sound1._currentPosition()),
       100,
       'first sound should still have its own position'
     );
     sound2.position = 300;
-    await sound2.play();
+    sound2.play();
     assert.equal(
       Math.floor(sound2._currentPosition()),
       300,

@@ -1,6 +1,7 @@
 import Evented from 'ember-stereo/-private/utils/evented';
 import { tracked } from '@glimmer/tracking';
 import TestAudioUrl from './test-audio-url';
+import { task, rawTimeout, animationFrame } from 'ember-concurrency';
 import debug from 'debug';
 // Ready state values
 // const HAVE_NOTHING = 0;
@@ -45,6 +46,7 @@ export default class FakeMediaElement extends Evented {
     this._currentTime = 0;
     this.loaded = false;
     this.crossorigin = 'anonymous';
+    this.startTickingTask.cancelAll();
   }
 
   async load() {
@@ -125,21 +127,19 @@ export default class FakeMediaElement extends Evented {
 
     debug('ember-stereo:fake-element')(`${this.src} play`);
     this.paused = false;
-    this.startTimer();
+
     this.trigger('playing', { target: this });
-    return Promise.resolve(this);
+    return this.startTickingTask.perform();
   }
 
   pause() {
     debug('ember-stereo:fake-element')(`${this.src} pausing`);
     this.trigger('pause', { target: this });
-    this.stopTimer();
     this.paused = true;
   }
 
   stop() {
     this.pause();
-    this.stopTimer();
   }
 
   get seekable() {
@@ -166,7 +166,6 @@ export default class FakeMediaElement extends Evented {
   }
 
   remove() {
-    this.stopTimer();
     this.paused = true;
   }
 
@@ -208,35 +207,21 @@ export default class FakeMediaElement extends Evented {
     return this[name];
   }
 
-  startTimer() {
-    this._stereoFakeMediaElementPoller = setInterval(
-      this.advance.bind(this),
-      100
-    );
-  }
+  @task
+  *startTickingTask() {
+    let cutoffTime = new Date().getTime() + 2 * 1000;
 
-  stopTimer() {
-    clearInterval(this.poller);
-  }
-
-  resetTimer() {
-    this.counter = 0;
-  }
-
-  advance() {
-    if (!this.paused && this.src) {
-      var diff = this._previous ? Date.now() - this._previous : 0;
-      this._previous = Date.now();
+    while (!this.paused && this.src && new Date() < cutoffTime) {
+      // don't let a sound live longer than 2 seconds when testing
+      yield animationFrame();
+      var diff = this._previous ? new Date().getTime() - this._previous : 0;
+      this._previous = new Date().getTime();
       this.currentTime = this.currentTime + diff / 1000;
       this.trigger('timeupdate', { target: this });
 
       debug('ember-stereo:fake-element')(`${this.src} ${this.currentTime}`);
-    } else {
-      // this._previous = false;
-    }
-  }
 
-  willDestroy() {
-    clearInterval(window._stereoFakeMediaElementPoller);
+      yield rawTimeout(50);
+    }
   }
 }
