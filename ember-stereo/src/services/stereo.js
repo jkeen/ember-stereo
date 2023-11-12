@@ -1109,8 +1109,11 @@ export default class Stereo extends Service.extend(EmberEvented) {
 
   /**
    * Updates now playing info from metadata if appropriate keys exist
-   */
+   * @method _updateNowPlaying
+   * @param {Object} sound
+   * @private
 
+   */
   _updateNowPlaying(sound) {
     if (!sound) return;
     if (sound.isDestroyed) return;

@@ -8,11 +8,10 @@ import { inject as service } from '@ember/service';
 import { TrackedObject, TrackedArray } from 'tracked-built-ins';
 
 /**
- *
-/**
-* This class caches sound objects based on urls.
-* @private
-*/
+ * This class caches sound objects based on urls.
+ * @private
+ * @class SoundCaches
+ */
 
 export default class SoundCache {
   @service stereo;

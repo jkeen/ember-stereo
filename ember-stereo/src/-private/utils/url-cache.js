@@ -4,6 +4,7 @@ import ObjectCache from './object-cache';
 /**
 * This class caches url resolutions.
   @private
+  @class UrlCache
 */
 
 export default class UrlCache extends ObjectCache {

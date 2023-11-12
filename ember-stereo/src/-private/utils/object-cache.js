@@ -14,6 +14,7 @@ function isAnObject(identifier) {
 
 /**
  * This class caches things based on a strings or objects. You shouldn't have to interact with this class.
+ * @class ObjectCache
  */
 export default class ObjectCache {
   @service stereo; // used by subclasses

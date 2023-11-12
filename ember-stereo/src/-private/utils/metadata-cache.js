@@ -4,6 +4,7 @@ import normalizeIdentifier from './normalize-identifier';
 /**
 * This class caches metadata.
   @private
+  @class MetadataCache
 */
 
 export default class MetadataCache extends ObjectCache {

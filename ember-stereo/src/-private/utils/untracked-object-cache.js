@@ -10,6 +10,8 @@ function isAnObject(identifier) {
 
 /**
  * This class caches things based on a strings or objects. You shouldn't have to interact with this class.
+ * @private
+ * @class UntrackedObjectCache
  */
 export default class UntrackedObjectCache {
   objectCache = new WeakMap();

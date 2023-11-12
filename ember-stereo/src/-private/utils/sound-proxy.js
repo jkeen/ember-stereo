@@ -8,6 +8,7 @@ import { registerDestructor } from '@ember/destroyable';
 /**
 * This class lazy loads sounds based on identifiers
   @private
+  @class SoundProxy
 */
 
 export default class SoundProxy extends Evented {
