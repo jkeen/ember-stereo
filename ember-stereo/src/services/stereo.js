@@ -76,8 +76,6 @@ export default class Stereo extends Service.extend(EmberEvented) {
   @tracked urlCache = new UrlCache();
   proxyCache = new UntrackedObjectCache();
 
-  pollInterval = 500;
-
   constructor() {
     super(...arguments);
     const owner = getOwner(this);
@@ -100,11 +98,6 @@ export default class Stereo extends Service.extend(EmberEvented) {
     setOwner(this.metadataCache, owner);
     setOwner(this.urlCache, owner);
     setOwner(this.proxyCache, owner);
-
-    this.poll = setInterval(
-      this._setCurrentPosition.bind(this),
-      macroCondition(isTesting()) ? 20 : this.pollInterval
-    );
 
     if (macroCondition(isTesting())) {
       // no checks for autoplay as it messes with the fake media element
@@ -1009,28 +1002,6 @@ export default class Stereo extends Service.extend(EmberEvented) {
   }
 
   /**
-   * Sets the current sound with its current position, so the sound doesn't have
-   * to deal with timers. The service runs the show.
-   *
-   * @method _setCurrentPosition
-   * @private
-   */
-
-  _setCurrentPosition() {
-    let sound = this._currentSound;
-    if (sound) {
-      try {
-        let newPosition = sound._currentPosition();
-        if (sound._position != newPosition) {
-          sound._position = newPosition;
-        }
-      } catch (e) {
-        console.error(e);
-        // continue regardless of error
-      }
-    }
-  }
-  /**
    * Register events on a current sound. Audio events triggered on that sound
    * will be relayed and triggered on this service
    *
@@ -1268,7 +1239,6 @@ export default class Stereo extends Service.extend(EmberEvented) {
   }
 
   willDestroy() {
-    clearInterval(this.poll);
     this.loadTask.cancelAll();
     this.playTask.cancelAll();
   }

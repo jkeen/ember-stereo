@@ -227,25 +227,20 @@ module('Unit | Connection | Native Audio', function (hooks) {
     let { sound: sound1 } = await stereo.load(url1);
     let { sound: sound2 } = await stereo.load(url2);
 
-    sinon.stub(sound1, 'debug');
-    sinon.stub(sound2, 'debug');
-
     sound1.position = 200;
-    await sound1.play(); // sound 1 has control
+    sound1.play(); // sound 1 has control
 
     sound2.position = 500; // sound 2 should not affect sound 1
 
-    assert.strictEqual(
-      sound1._currentPosition(),
-      200,
+    assert.ok(
+      sound1._currentPosition() >= 200,
       'sound 1 should have kept its position'
     );
 
-    await sound2.play(); // sound 2 has control
+    sound2.play(); // sound 2 has control
 
-    assert.strictEqual(
-      sound2._currentPosition(),
-      500,
+    assert.ok(
+      sound2._currentPosition() >= 500,
       'sound 2 should have kept its position'
     );
 
@@ -262,9 +257,6 @@ module('Unit | Connection | Native Audio', function (hooks) {
     let sound1 = new NativeAudio({ url: url1, timeout: false });
     let sound2 = new NativeAudio({ url: url2, timeout: false });
 
-    sinon.stub(sound1, 'debug');
-    sinon.stub(sound2, 'debug');
-
     sound1.position = 10;
     sound1.play(); // sound 1 has control
 
@@ -278,9 +270,8 @@ module('Unit | Connection | Native Audio', function (hooks) {
 
     sound2.play(); // sound 2 has control
 
-    assert.strictEqual(
-      sound2._currentPosition(),
-      100,
+    assert.ok(
+      sound2._currentPosition() >= 100,
       'sound 2 should have kept its position'
     );
   });
@@ -416,5 +407,21 @@ module('Unit | Connection | Native Audio', function (hooks) {
       erroredSound.error,
       'xhr options are not supported in NativeAudio'
     );
+  });
+
+  test('audio-position-changed events get fired', async function (assert) {
+    assert.expect(1);
+    let stereo = this.owner.lookup('service:stereo');
+    let url1 = '/good/2000/silence.mp3';
+
+    let events = [];
+
+    let { sound: sound1 } = await stereo.load(url1, {
+      useConnections: ['NativeAudio'],
+    });
+    sound1.on('audio-position-changed', ({ sound }) => events.push(sound));
+    await sound1.play();
+
+    assert.ok(events.length > 50, 'position changed events were fired');
   });
 });

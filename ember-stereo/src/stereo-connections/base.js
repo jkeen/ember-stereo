@@ -8,6 +8,7 @@ import Evented from '../-private/utils/evented';
 import hasEqualUrls from '../-private/utils/has-equal-urls';
 import { getOwner } from '@ember/application';
 import { registerDestructor } from '@ember/destroyable';
+import { task, animationFrame, timeout, didCancel } from 'ember-concurrency';
 
 /**
  * This is the base sound object from which other sound objects are derived.
@@ -263,7 +264,7 @@ export default class Sound extends Evented {
    * @public
    */
   get position() {
-    // _position is updated by the service on the currently playing sound
+    // _position is updated on a loop on the currently playing sound
     return this._position;
   }
   set position(v) {
@@ -274,6 +275,29 @@ export default class Sound extends Evented {
     });
 
     this._position = this._setPosition(v);
+  }
+
+  /* we both want to query for the playing sounds position, and fire change events
+   more often than an audio element would, as documented in this issue: https://github.com/jkeen/ember-stereo/issues/24  */
+
+   @task({ maxConcurrency: 1, drop: true })
+  *updatePositionTask() {
+    while (this.isPlaying) {
+      yield animationFrame();
+      yield timeout(50);
+
+      let previousPosition = this._position;
+      let currentPosition = this._currentPosition();
+
+      if (previousPosition != currentPosition) {
+        this._position = currentPosition;
+
+        this.trigger('audio-position-changed', {
+          sound: this,
+          position: this._position,
+        });
+      }
+    }
   }
 
   /**
@@ -329,6 +353,12 @@ export default class Sound extends Evented {
       this.isBlocked = false;
       this.error = null;
 
+      this.updatePositionTask.perform().catch((e) => {
+        if (!didCancel(e)) {
+          throw e;
+        }
+      });
+
       if (audioPlayed) {
         audioLoading(this);
       }
@@ -346,7 +376,7 @@ export default class Sound extends Evented {
 
     this.on('audio-ended', () => {
       this.isPlaying = false;
-      this._position = this._setPosition(0);
+      this.position = 0;
       if (audioEnded) {
         audioEnded(this);
       }
@@ -455,8 +485,7 @@ export default class Sound extends Evented {
       currentPosition,
       newPosition,
     });
-    this._setPosition(newPosition);
-    this._position = this._currentPosition();
+    this.position = newPosition;
   }
 
   /**
@@ -473,8 +502,7 @@ export default class Sound extends Evented {
       currentPosition,
       newPosition,
     });
-    this._setPosition(newPosition);
-    this._position = this._currentPosition();
+    this.position = newPosition;
   }
 
   /**
