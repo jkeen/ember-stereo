@@ -15,6 +15,7 @@ const log = debug('ember-stereo:shared-audio-access');
  * worth keeping something that significantly complicates the codebase.
  *
  * @private
+ * @class SharedAudioAccess
  */
 /*
 

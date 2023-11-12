@@ -8,6 +8,7 @@ import { task, waitForProperty, timeout, didCancel } from 'ember-concurrency';
 /**
 * This class lazy loads sounds based on identifiers
   @private
+  @class SoundProxy
 */
 
 export default class SoundProxy extends Evented {

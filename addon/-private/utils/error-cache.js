@@ -8,6 +8,7 @@ import { inject as service } from '@ember/service';
 /**
  * This class caches errors based on urls.
  * @private
+ * @class ErrorCache
  */
 
 export default class ErrorCache {
