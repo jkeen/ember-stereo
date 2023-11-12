@@ -530,6 +530,12 @@ export default class Stereo extends Service.extend(EmberEvented) {
     options = { metadata: {}, ...options };
 
     let previouslyPlayingSound = this.isPlaying ? this.currentSound : false;
+    if (
+      previouslyPlayingSound &&
+      previouslyPlayingSound?.urlsAreEqual(urlsOrPromise)
+    ) {
+      return { sound: previouslyPlayingSound, failures: [] };
+    }
 
     let loadPromise = this.loadTask.perform(urlsOrPromise, options);
     this.trigger('new-load-request', { loadPromise, urlsOrPromise, options }); //urls: Promise.resolve(resolveUrls(urlsOrPromise))
