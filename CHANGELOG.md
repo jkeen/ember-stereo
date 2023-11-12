@@ -1,5 +1,12 @@
 ember-stereo changelog
 
+## [4.2.3](https://github.com/jkeen/ember-stereo/compare/v4.2.2...v4.2.3) (2023-11-12)
+
+
+### Bug Fixes
+
+* resolve issue when trying to play a sound that is already playing. fixes [#23](https://github.com/jkeen/ember-stereo/issues/23) ([dc32ba3](https://github.com/jkeen/ember-stereo/commit/dc32ba3aae8f751144430a28ff9567ca0c5e118a))
+
 ## [4.2.2](https://github.com/jkeen/ember-stereo/compare/v4.2.1...v4.2.2) (2023-11-02)
 
 
