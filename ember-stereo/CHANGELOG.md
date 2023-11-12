@@ -1,5 +1,14 @@
 ember-stereo changelog
 
+# [5.0.0-beta.12](https://github.com/jkeen/ember-stereo/compare/v5.0.0-beta.11...v5.0.0-beta.12) (2023-11-12)
+
+
+### Bug Fixes
+
+* cancel block check if sound is already playing (howler) ([85254b2](https://github.com/jkeen/ember-stereo/commit/85254b2e41bed000f840c53161f2a3552e4a6915))
+* resolve issue when trying to play a sound that is already playing. fixes [#23](https://github.com/jkeen/ember-stereo/issues/23) ([321bc19](https://github.com/jkeen/ember-stereo/commit/321bc198add38b33c175550a8ef143f4bcd56206))
+* send pause event when releasing control of shared audio element ([8620ab8](https://github.com/jkeen/ember-stereo/commit/8620ab81317a0c7486656a3c1667ab72fb9d38e9))
+
 # [5.0.0-beta.11](https://github.com/jkeen/ember-stereo/compare/v5.0.0-beta.10...v5.0.0-beta.11) (2023-07-19)
 
 
