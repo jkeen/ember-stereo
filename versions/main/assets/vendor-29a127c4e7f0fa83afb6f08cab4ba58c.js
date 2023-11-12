@@ -10561,7 +10561,9 @@ try{let r=this.loadTask.perform(e,t)
 return this.trigger("new-load-request",{loadPromise:r,urlsOrPromise:e,options:t}),r}catch(r){if(!(0,s.didCancel)(r))throw r}}playTask(e){var t=this
 let r=arguments.length>1&&void 0!==arguments[1]?arguments[1]:{}
 return function*(){r={metadata:{},...r}
-let i=!!t.isPlaying&&t.currentSound,n=t.loadTask.perform(e,r)
+let i=!!t.isPlaying&&t.currentSound
+if(i&&i?.urlsAreEqual(e))return{sound:i,failures:[]}
+let n=t.loadTask.perform(e,r)
 t.trigger("new-load-request",{loadPromise:n,urlsOrPromise:e,options:r})
 let{sound:a,failures:o}=yield n
 return a?(t._registerEvents(a),t._attemptToPlaySound(a,r),yield(0,s.race)([(0,s.waitForProperty)(a,"isPlaying"),(0,s.waitForProperty)(a,"isErrored")]),i&&t.trigger("current-sound-interrupted",{sound:i}),a&&"position"in r&&(a.position=r.position),a.isPlaying?{sound:a,failures:o}:t._handlePlaybackError({sound:a,options:r})):t._handleLoadError({failures:o,options:r})}()}_shouldSilenceErrors(e){return Object.keys(e||{}).includes("silenceErrors")?e.silenceErrors:!!Object.keys(this.systemStereoOptions||{}).includes("silenceErrors")&&this.systemStereoOptions?.silenceErrors}_determineAutoplayPermissions(){l.default.audio().then((e=>{let{result:t}=e
