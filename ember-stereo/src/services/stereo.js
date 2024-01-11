@@ -532,7 +532,8 @@ export default class Stereo extends Service.extend(EmberEvented) {
     let previouslyPlayingSound = this.isPlaying ? this.currentSound : false;
     if (
       previouslyPlayingSound &&
-      previouslyPlayingSound?.urlsAreEqual(urlsOrPromise)
+      previouslyPlayingSound.urlsAreEqual &&
+      previouslyPlayingSound.urlsAreEqual(urlsOrPromise)
     ) {
       return { sound: previouslyPlayingSound, failures: [] };
     }
