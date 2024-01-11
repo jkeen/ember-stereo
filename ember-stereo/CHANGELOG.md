@@ -1,5 +1,12 @@
 ember-stereo changelog
 
+# [5.0.0-beta.13](https://github.com/jkeen/ember-stereo/compare/v5.0.0-beta.12...v5.0.0-beta.13) (2024-01-11)
+
+
+### Bug Fixes
+
+* move urlsAreEqual to base class so all connections benefit ([efd16a2](https://github.com/jkeen/ember-stereo/commit/efd16a2a2fa5bb8ea3bc61ffd5c10ec69aa96c63))
+
 # [5.0.0-beta.12](https://github.com/jkeen/ember-stereo/compare/v5.0.0-beta.11...v5.0.0-beta.12) (2023-11-12)
 
 
