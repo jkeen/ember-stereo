@@ -495,18 +495,6 @@ export default class NativeAudio extends BaseSound {
     }
   }
 
-  urlsAreEqual(url1, url2) {
-    // GOTCHA: audio.src is a fully qualified URL, and this.url may be a relative url
-    // So when comparing, make sure we're dealing in absolutes
-
-    let parser1 = document.createElement('a');
-    let parser2 = document.createElement('a');
-    parser1.href = url1;
-    parser2.href = url2;
-
-    return parser1.href === parser2.href;
-  }
-
   teardown() {
     let audio = this.requestControl();
     this.durationWorkaroundTask.cancelAll();
