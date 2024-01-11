@@ -1,5 +1,12 @@
 ember-stereo changelog
 
+# [5.0.0-beta.14](https://github.com/jkeen/ember-stereo/compare/v5.0.0-beta.13...v5.0.0-beta.14) (2024-01-11)
+
+
+### Bug Fixes
+
+* revert previous change, fix the actual problem ([364720e](https://github.com/jkeen/ember-stereo/commit/364720eb2f8eb88ee322aedfd6a2811a2e30dee2))
+
 # [5.0.0-beta.13](https://github.com/jkeen/ember-stereo/compare/v5.0.0-beta.12...v5.0.0-beta.13) (2024-01-11)
 
 
