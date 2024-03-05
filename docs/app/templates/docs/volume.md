@@ -9,3 +9,4 @@ To adjust the stereo volume through the service, `stereo.volume` is a getter/set
 <Docs::StereoPlayer @identifier="/sounds/angry-lady-ms-cleo.mp3" />
 
 <Docs::StereoVolumeExample />
+<Docs::StereoVolumeElementExample />

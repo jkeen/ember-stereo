@@ -1,12 +1,8 @@
 <DocsDemo as |demo|>
   <demo.example @name='stereo-volume.hbs'>
     <div class='flex items-center w-full'>
-      <Input
-        {{stereo-volume}}
-        id='stereo-volume'
-        class='bg-on-surface-2'
-        @type='range'
-      />
+      {{! template-lint-disable require-input-label }}
+      <Input {{stereo-volume}} class='bg-on-surface-2' @type='range' />
       <label for='stereo-volume' class='stereo-volume'>
         <button
           type='button'
@@ -24,5 +20,5 @@
       </label>
     </div>
   </demo.example>
-  <demo.snippet @name='stereo-volume-control.hbs' />
+  <demo.snippet @name='stereo-volume.hbs' />
 </DocsDemo>

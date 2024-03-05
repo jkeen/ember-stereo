@@ -62,6 +62,7 @@
     "ember-qunit": "^6.0.0",
     "ember-resolver": "^8.1.0",
     "ember-source": "~4.8.0",
+    "ember-style-modifier": "4.3.0",
     "ember-stereo": "workspace:../ember-stereo",
     "ember-svg-jar": "^2.4.2",
     "ember-template-lint": "^4.16.1",
