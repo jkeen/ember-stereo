@@ -1,5 +1,12 @@
 ember-stereo changelog
 
+# [5.0.0-beta.18](https://github.com/jkeen/ember-stereo/compare/v5.0.0-beta.17...v5.0.0-beta.18) (2024-03-05)
+
+
+### Bug Fixes
+
+* improve volume slider logic ([79d7d8b](https://github.com/jkeen/ember-stereo/commit/79d7d8bf8232e782c7545677e9dcd63ad4d247c9))
+
 # [5.0.0-beta.17](https://github.com/jkeen/ember-stereo/compare/v5.0.0-beta.16...v5.0.0-beta.17) (2024-03-03)
 
 # [5.0.0-beta.16](https://github.com/jkeen/ember-stereo/compare/v5.0.0-beta.15...v5.0.0-beta.16) (2024-03-02)
