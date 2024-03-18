@@ -1,5 +1,12 @@
 ember-stereo changelog
 
+# [5.0.0-beta.19](https://github.com/jkeen/ember-stereo/compare/v5.0.0-beta.18...v5.0.0-beta.19) (2024-03-18)
+
+
+### Features
+
+* improve firing resolution of audio-position-changed event. refs [#24](https://github.com/jkeen/ember-stereo/issues/24) ([e1ebbc0](https://github.com/jkeen/ember-stereo/commit/e1ebbc05dbfe6fd6e7d13f62d4a71c6b9d1034fc))
+
 # [5.0.0-beta.18](https://github.com/jkeen/ember-stereo/compare/v5.0.0-beta.17...v5.0.0-beta.18) (2024-03-05)
 
 
