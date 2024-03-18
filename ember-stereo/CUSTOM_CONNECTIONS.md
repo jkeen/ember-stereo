@@ -6,7 +6,7 @@ Do you need to support a funky audio format that requires a special library, or 
 $ ember generate stereo-connection dash-connection
 ```
 
-This creates `app/stereo-connections/dash-connection.js` and a unit test at `tests/unit/stereo-connections/dash-connection.js`, which you should now customize.
+This creates `src/stereo-connections/dash-connection.js` and a unit test at `tests/unit/stereo-connections/dash-connection.js`, which you should now customize.
 
 The files created by the blueprint should walk you through what you need to implement, but to be thorough:
 

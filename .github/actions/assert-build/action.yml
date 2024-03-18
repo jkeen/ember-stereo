@@ -7,7 +7,7 @@ runs:
       shell: bash
       run: |-
         echo '
-          target: ${{ env.dist }}
+          target: ./ember-stereo/dist
           setup:
             run: pnpm build
             cwd: ./ember-stereo
@@ -16,6 +16,7 @@ runs:
             helpers/current-sound.js
             helpers/fastforward-sound.js
             helpers/find-sound.js
+            helpers/json-stringify.js
             helpers/load-sound.js
             helpers/numeric-duration.js
             helpers/pause-sound.js
@@ -34,8 +35,9 @@ runs:
             helpers/sound-is-seekable.js
             helpers/sound-metadata.js
             helpers/sound-position.js
-            helpers/stereo-volume.js
             helpers/stereo-volume-is-adjustable.js
+            helpers/stereo-volume.js
+            helpers/stop-sound.js
             helpers/toggle-play-sound.js
             helpers/toggle-stereo-mute.js
             modifiers/sound-position-progress.js
@@ -43,13 +45,17 @@ runs:
             modifiers/stereo-volume.js
             services/stereo.js
             stereo-connections/base.js
+            stereo-connections/hls.js
+            stereo-connections/howler.js
+            stereo-connections/native-audio.js
             test-support/stereo-setup.js
 
         ' >> assert-contents.config.yml
+        cat assert-contents.config.yml
         npx assert-folder-contents
 
     - name: Upload dist assets to cache
       uses: actions/upload-artifact@v3
       with:
         name: dist
-        path: ${{ env.dist }}
+        path: ./ember-stereo/dist
