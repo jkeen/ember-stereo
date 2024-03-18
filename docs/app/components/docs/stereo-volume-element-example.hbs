@@ -1,0 +1,32 @@
+<DocsDemo as |demo|>
+  <demo.example @name='stereo-volume-element.hbs'>
+    <div class='flex items-center w-full'>
+      {{! template-lint-disable require-input-label }}
+      <div
+        {{stereo-volume}}
+        class='bg-on-surface-2 w-full h-2 rounded rounded-md'
+      >
+        <div
+          class='bg-accent-0 h-full rounded rounded-md'
+          {{style width=(concat (stereo-volume) '%')}}
+        ></div>
+      </div>
+      <label for='stereo-volume' class='stereo-volume'>
+        <button
+          type='button'
+          class='flex items-center'
+          {{on 'click' (toggle-stereo-mute)}}
+        >
+          {{#if (gt (stereo-volume) 0)}}
+            {{svg-jar 'volume-low-outline' height=20 width=30}}
+            <span>{{stereo-volume}}</span>
+          {{else}}
+            {{svg-jar 'volume-mute-outline' height=20 width=30}}
+            <span>{{stereo-volume}}</span>
+          {{/if}}
+        </button>
+      </label>
+    </div>
+  </demo.example>
+  <demo.snippet @name='stereo-volume-element.hbs' />
+</DocsDemo>
