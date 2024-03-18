@@ -1,5 +1,12 @@
 ember-stereo changelog
 
+## [4.3.1](https://github.com/jkeen/ember-stereo/compare/v4.3.0...v4.3.1) (2024-03-18)
+
+
+### Bug Fixes
+
+* only show durationWorkaroundTask error if the task wasn't cancelled ([6b6410b](https://github.com/jkeen/ember-stereo/commit/6b6410b64a9d4855ba7e6e0a06b9987022474164))
+
 # [4.3.0](https://github.com/jkeen/ember-stereo/compare/v4.2.3...v4.3.0) (2023-11-12)
 
 
