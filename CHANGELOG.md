@@ -1,5 +1,52 @@
 ember-stereo changelog
 
+## [4.2.3](https://github.com/jkeen/ember-stereo/compare/v4.2.2...v4.2.3) (2023-11-12)
+
+
+### Bug Fixes
+
+* resolve issue when trying to play a sound that is already playing. fixes [#23](https://github.com/jkeen/ember-stereo/issues/23) ([dc32ba3](https://github.com/jkeen/ember-stereo/commit/dc32ba3aae8f751144430a28ff9567ca0c5e118a))
+
+## [4.2.2](https://github.com/jkeen/ember-stereo/compare/v4.2.1...v4.2.2) (2023-11-02)
+
+
+### Bug Fixes
+
+* send pause event when releasing control of shared audio element ([f7fec45](https://github.com/jkeen/ember-stereo/commit/f7fec45ab46b6bd37817e94ef393e0bfd5593f9b))
+
+## [4.2.1](https://github.com/jkeen/ember-stereo/compare/v4.2.0...v4.2.1) (2023-07-19)
+
+# [4.2.0](https://github.com/jkeen/ember-stereo/compare/v4.1.4...v4.2.0) (2023-06-17)
+
+
+### Features
+
+* Allow xhr option to be passed through to connections, so each connection can handle authenticated requests ([82fc6ad](https://github.com/jkeen/ember-stereo/commit/82fc6ad9d1cfec1a15cf80960a92d7d9c63f7c0c))
+* Fail native audio connection if xhr is passed, as native audio does not support that. ([93dea68](https://github.com/jkeen/ember-stereo/commit/93dea688f8023013657c61953ec75f0f59835f5f))
+
+## [4.1.4](https://github.com/jkeen/ember-stereo/compare/v4.1.3...v4.1.4) (2023-05-24)
+
+
+### Bug Fixes
+
+* Resolve some more bugs with sound-position modifiers ([fb496c3](https://github.com/jkeen/ember-stereo/commit/fb496c3a10498bc274c51f1489c7d6a90d7fc8e6))
+
+## [4.1.3](https://github.com/jkeen/ember-stereo/compare/v4.1.2...v4.1.3) (2023-05-24)
+
+
+### Bug Fixes
+
+* Resolve issue introduced in last version when multiple sound position sliders on the same page ([a2dc4bd](https://github.com/jkeen/ember-stereo/commit/a2dc4bdb9f8313d72f98731f729c896b8e398b31))
+
+## [4.1.2](https://github.com/jkeen/ember-stereo/compare/v4.1.1...v4.1.2) (2023-05-23)
+
+
+### Bug Fixes
+
+* if crossorigin=anonymous fails on <audio> element, automatically try removing crossorigin. Resolves CORS issue ([3bbda22](https://github.com/jkeen/ember-stereo/commit/3bbda2277c7d5b74190c6a3adf2a971635053afe))
+* Implement proper teardown on sound destruction ([f1d6355](https://github.com/jkeen/ember-stereo/commit/f1d6355c845b43c8f10c93abde5782fe664be1b3))
+* Resolve issue where sound-position-progress modifier would not work with howler since howler doesn't emit audio-position-changed events ([77408ff](https://github.com/jkeen/ember-stereo/commit/77408ffa9a3637ee89eeeb076cd48acfaaebdd59))
+
 ## [4.1.1](https://github.com/jkeen/ember-stereo/compare/v4.1.0...v4.1.1) (2023-04-23)
 
 
