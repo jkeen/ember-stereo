@@ -6,6 +6,7 @@ on:
     branches:
       - main
       - develop
+      - beta
       # npm version tags
       - /^v\d+.\d+.\d+(?:-(?:alpha|beta|rc)\.\d+)?/
   pull_request:
@@ -14,141 +15,112 @@ concurrency:
   cancel-in-progress: true
 env:
   CI: true
+  dist: ember-stereo/dist
 jobs:
+  install_dependencies:
+    name: Install Dependencies
+    timeout-minutes: 5
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ./.github/actions/pnpm
+
   lint:
     if: "! contains(toJSON(github.event.commits.*.message), '[skip ci]')"
     name: Lint
+    needs: [install_dependencies]
+    timeout-minutes: 5
     runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v2
-      - uses: volta-cli/action@v1
-
-      - run: yarn install --frozen-lockfile
-
-      - name: ESLint
-        run: yarn lint:js
-
-      - name: Templates
-        run: yarn lint:hbs
-
-  test:
-    if: "! contains(toJSON(github.event.commits.*.message), '[skip ci]')"
-    name: Tests
-    runs-on: ${{ matrix.os }}
-    needs: [lint]
-
     strategy:
+      fail-fast: true
       matrix:
-        os: [ubuntu-latest]
-        browser: [chrome] # disabling firefox for now, sad to say but Firefox headless struggles with some of these tests
+        path:
+          - ./ember-stereo
+          - ./test-app
     steps:
-      - uses: actions/checkout@v2
-        with:
-          fetch-depth: 1
+      - uses: actions/checkout@v3
+      - uses: ./.github/actions/pnpm
+      - name: ESLint
+        run: cd ${{ matrix.path }} && pnpm run lint:js
+      - name: Template Lint
+        run: cd ${{ matrix.path }} && pnpm run lint:hbs
 
-      - name: Set up Volta
-        uses: volta-cli/action@v1
+  build:
+    name: Build Tests
+    needs: [install_dependencies]
+    timeout-minutes: 5
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ./.github/actions/pnpm
+      - uses: ./.github/actions/assert-build
 
-      - name: Get package manager's global cache path
-        id: global-cache-dir-path
-        run: echo "::set-output name=dir::$(yarn cache dir)"
-
-      - name: Cache package manager's global cache and node_modules
-        id: cache-dependencies
-        uses: actions/cache@v2
-        with:
-          path: |
-            ${{ steps.global-cache-dir-path.outputs.dir }}
-            node_modules
-          key: ${{ runner.os }}-${{ matrix.node-version }}-${{
-            hashFiles('**/yarn.lock'
-            ) }}
-          restore-keys: |
-            ${{ runner.os }}-${{ matrix.node-version }}-
-
-      - name: Install Dependencies
-        run: yarn install --frozen-lockfile
-        if: |
-          steps.cache-dependencies.outputs.cache-hit != 'true'
-
-      - name: Test
-        run: yarn test:ember --launch ${{ matrix.browser }}
+  default-tests:
+    if: "! contains(toJSON(github.event.commits.*.message), '[skip ci]')"
+    name: Default Tests
+    timeout-minutes: 5
+    runs-on: ubuntu-latest
+    needs: [build]
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ./.github/actions/pnpm
+      - uses: ./.github/actions/download-built-package
+      - run: pnpm --filter test-app test:ember
 
   floating-dependencies:
-    name: Floating Dependencies
-    runs-on: ${{ matrix.os }}
-    needs: [lint]
-
-    strategy:
-      matrix:
-        os: [ubuntu-latest]
-        browser: [chrome] # disabling firefox for now, sad to say but Firefox headless struggles with some of these tests
+    if: "! contains(toJSON(github.event.commits.*.message), '[skip ci]')"
+    name: Floating Deps Test
+    timeout-minutes: 5
+    runs-on: ubuntu-latest
+    needs: [build]
     steps:
-      - uses: actions/checkout@v2
-        with:
-          fetch-depth: 1
-
-      - name: Set up Volta
-        uses: volta-cli/action@v1
-
-      - name: Get package manager's global cache path
-        id: global-cache-dir-path
-        run: echo "::set-output name=dir::$(yarn cache dir)"
-
-      - name: Cache package manager's global cache and node_modules
-        id: cache-dependencies
-        uses: actions/cache@v2
-        with:
-          path: |
-            ${{ steps.global-cache-dir-path.outputs.dir }}
-            node_modules
-          key: ${{ runner.os }}-${{ matrix.node-version }}-${{
-            hashFiles('**/yarn.lock'
-            ) }}
-          restore-keys: |
-            ${{ runner.os }}-${{ matrix.node-version }}-
-
-      - name: Install Dependencies
-        run: yarn install --frozen-lockfile
-        if: |
-          steps.cache-dependencies.outputs.cache-hit != 'true'
-
-      - name: Test
-        run: yarn test:ember --launch ${{ matrix.browser }}
+      - uses: actions/checkout@v3
+      - uses: ./.github/actions/pnpm
+      - name: Install Dependencies (without lockfile)
+        run: rm pnpm-lock.yaml && pnpm install
+      - uses: ./.github/actions/download-built-package
+      - run: pnpm --filter test-app test:ember
 
   ember-try-required:
+    if: "! contains(toJSON(github.event.commits.*.message), '[skip ci]')"
     name: Tests - ${{ matrix.ember-try-scenario }}
     runs-on: ubuntu-latest
     continue-on-error: ${{ matrix.allow-failure }}
-    needs: [lint]
+    needs:
+      - build
+      - lint
     strategy:
       fail-fast: false
       max-parallel: 1
       matrix:
         ember-try-scenario:
-          - ember-lts-3.28
-          - ember-lts-4.4
+          - ember-lts-4.8
+          - ember-4.12
+          - embroider-safe
+          - embroider-optimized
         allow-failure: [false]
     steps:
-      - uses: actions/checkout@v2
-      - name: Install Node
-        uses: actions/setup-node@v2
-        with:
-          node-version: 14.x
-          cache: yarn
-      - name: Install Dependencies
-        run: yarn install --frozen-lockfile
-      - name: Test
-        env:
-          EMBER_TRY_SCENARIO: ${{ matrix.ember-try-scenario }}
-        run: ./node_modules/.bin/ember try:one $EMBER_TRY_SCENARIO
+      - uses: actions/checkout@v3
+      - uses: ./.github/actions/pnpm
+      - uses: ./.github/actions/download-built-package
+      - name: Run Tests
+        working-directory: ./test-app
+        run: |
+          if [[ "${{matrix.ember-try-scenario}}" == "'ember-lts-4.8 + embroider-optimized'" ]]; then
+            echo 'Running custom try scenario due to peer deps resolving incorrectly (due to installation issues)'
+            pnpm add --save-dev ember-source@~4.8.0
+            pnpm add --save-dev @embroider/core @embroider/webpack @embroider/compat
+            pnpm test:ember
+          else
+            pnpm test:ember-try:one ${{ matrix.ember-try-scenario }} --skip-cleanup
+          fi
 
   ember-try-optional:
+    if: "! contains(toJSON(github.event.commits.*.message), '[skip ci]')"
     name: Tests - ${{ matrix.ember-try-scenario }}
     runs-on: ubuntu-latest
     continue-on-error: ${{ matrix.allow-failure }}
-    needs: [lint]
+    needs: [build, lint]
     strategy:
       fail-fast: true
       max-parallel: 1
@@ -159,45 +131,38 @@ jobs:
           - ember-beta
           - ember-canary
     steps:
-      - uses: actions/checkout@v2
-      - name: Install Node
-        uses: actions/setup-node@v2
-        with:
-          node-version: 14.x
-          cache: yarn
-      - name: Install Dependencies
-        run: yarn install --frozen-lockfile
-      - name: Test
-        env:
-          EMBER_TRY_SCENARIO: ${{ matrix.ember-try-scenario }}
-        run: ./node_modules/.bin/ember try:one $EMBER_TRY_SCENARIO
+      - uses: actions/checkout@v3
+      - uses: ./.github/actions/pnpm
+      - uses: ./.github/actions/download-built-package
+      - name: Run Tests
+        working-directory: ./test-app
+        run: |
+          if [[ "${{matrix.ember-try-scenario}}" == "'ember-lts-4.8 + embroider-optimized'" ]]; then
+            echo 'Running custom try scenario due to peer deps resolving incorrectly (due to installation issues)'
+            pnpm add --save-dev ember-source@~4.8.0
+            pnpm add --save-dev @embroider/core @embroider/webpack @embroider/compat
+            pnpm test:ember
+          else
+            pnpm test:ember-try:one ${{ matrix.ember-try-scenario }} --skip-cleanup
+          fi
 
   deploy:
     name: Deploy
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
-    needs: [test, floating-dependencies, ember-try-required]
+    if: contains('refs/heads/main', github.ref) ||  contains('refs/heads/beta', github.ref)
+    needs: [default-tests, floating-dependencies, ember-try-required]
     steps:
-      - uses: actions/checkout@v2
-      - uses: volta-cli/action@v1
-
-      - run: echo "ADDON_DOCS_VERSION_PATH=${GITHUB_REF##*/}" >> $GITHUB_ENV
-
-      - run: echo "ADDON_DOCS_UPDATE_LATEST=true" >> $GITHUB_ENV
-        if: contains(github.ref , 'main') == true
-
-      - run: yarn install
-
-      - name: Deploy
-        env:
-          DEPLOY_KEY: ${{ secrets.DEPLOY_KEY }}
-        run: yarn ember deploy production --verbose --activate
+      - name: Dispatch Release
+        uses: benc-uk/workflow-dispatch@v1
+        with:
+          workflow: Deploy Docs
+          token: ${{ secrets.GH_TOKEN }}
 
   publish:
     name: Release
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
-    needs: [test, floating-dependencies, ember-try-required]
+    if: contains('refs/heads/main', github.ref) ||  contains('refs/heads/beta', github.ref)
+    needs: [default-tests, floating-dependencies, ember-try-required]
     steps:
       - name: Dispatch Release
         uses: benc-uk/workflow-dispatch@v1
