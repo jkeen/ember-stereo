@@ -1,5 +1,26 @@
 ember-stereo changelog
 
+# [5.0.0-beta.20](https://github.com/jkeen/ember-stereo/compare/v5.0.0-beta.19...v5.0.0-beta.20) (2024-03-18)
+
+
+### Bug Fixes
+
+* if crossorigin=anonymous fails on <audio> element, automatically try removing crossorigin. Resolves CORS issue ([3bbda22](https://github.com/jkeen/ember-stereo/commit/3bbda2277c7d5b74190c6a3adf2a971635053afe))
+* Implement proper teardown on sound destruction ([f1d6355](https://github.com/jkeen/ember-stereo/commit/f1d6355c845b43c8f10c93abde5782fe664be1b3))
+* only show durationWorkaroundTask error if the task wasn't cancelled ([c5f6b08](https://github.com/jkeen/ember-stereo/commit/c5f6b080529f1e32af65dd9c8dc87f959b2da46f))
+* Resolve issue introduced in last version when multiple sound position sliders on the same page ([a2dc4bd](https://github.com/jkeen/ember-stereo/commit/a2dc4bdb9f8313d72f98731f729c896b8e398b31))
+* resolve issue when trying to play a sound that is already playing. fixes [#23](https://github.com/jkeen/ember-stereo/issues/23) ([dc32ba3](https://github.com/jkeen/ember-stereo/commit/dc32ba3aae8f751144430a28ff9567ca0c5e118a))
+* Resolve issue where sound-position-progress modifier would not work with howler since howler doesn't emit audio-position-changed events ([77408ff](https://github.com/jkeen/ember-stereo/commit/77408ffa9a3637ee89eeeb076cd48acfaaebdd59))
+* Resolve some more bugs with sound-position modifiers ([fb496c3](https://github.com/jkeen/ember-stereo/commit/fb496c3a10498bc274c51f1489c7d6a90d7fc8e6))
+* send pause event when releasing control of shared audio element ([f7fec45](https://github.com/jkeen/ember-stereo/commit/f7fec45ab46b6bd37817e94ef393e0bfd5593f9b))
+
+
+### Features
+
+* Allow xhr option to be passed through to connections, so each connection can handle authenticated requests ([82fc6ad](https://github.com/jkeen/ember-stereo/commit/82fc6ad9d1cfec1a15cf80960a92d7d9c63f7c0c))
+* Fail native audio connection if xhr is passed, as native audio does not support that. ([93dea68](https://github.com/jkeen/ember-stereo/commit/93dea688f8023013657c61953ec75f0f59835f5f))
+* improve firing resolution of audio-position-changed event. refs [#24](https://github.com/jkeen/ember-stereo/issues/24) ([0777253](https://github.com/jkeen/ember-stereo/commit/0777253152bc6e65448a13fca9a71168cc3971c1))
+
 # [5.0.0-beta.19](https://github.com/jkeen/ember-stereo/compare/v5.0.0-beta.18...v5.0.0-beta.19) (2024-03-18)
 
 
