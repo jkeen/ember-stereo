@@ -2,7 +2,7 @@ import { tracked } from '@glimmer/tracking';
 import { A } from '@ember/array';
 import { run } from '@ember/runloop';
 import { isTesting, macroCondition } from '@embroider/macros';
-import { task, timeout } from 'ember-concurrency';
+import { task, timeout, didCancel } from 'ember-concurrency';
 import { cached } from 'tracked-toolbox';
 import BaseSound from 'ember-stereo/stereo-connections/base';
 // These are the events we're watching for
@@ -255,7 +255,9 @@ export default class NativeAudio extends BaseSound {
     if (!this.isPlaying) {
       this.trigger('audio-played', { sound: this });
       this.durationWorkaroundTask.perform().catch((e) => {
-        console.error(e);
+        if (!didCancel(e)) {
+          console.error(e);
+        }
       });
     }
   }
