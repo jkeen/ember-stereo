@@ -239,7 +239,7 @@
         "@semantic-release/changelog",
         {
           "changelogTitle": "ember-stereo changelog",
-          "changelogFile": "CHANGELOG.md"
+          "changelogFile": "../CHANGELOG.md"
         }
       ],
       "@semantic-release/npm",
