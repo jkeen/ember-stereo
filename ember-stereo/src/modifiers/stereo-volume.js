@@ -24,17 +24,19 @@ export default class StereoVolumeModifier extends Modifier {
 
   @action
   handleTap(e) {
-    e.preventDefault();
-    var rect = this.element.getBoundingClientRect();
-    // Check if the event is a touch event
-    let x;
-    if (e.type === 'touchmove') {
-      x = e.touches[0].clientX - rect.left; // x position within the element for touch event
-    } else {
-      x = e.clientX - rect.left; // x position within the element for mouse click
-    }
-    let volumeLevel = parseInt((x / rect.width) * 100, 10);
-    this.setVolume(volumeLevel)
+    window.requestAnimationFrame(() => {
+      e.preventDefault();
+      var rect = this.element.getBoundingClientRect();
+      // Check if the event is a touch event
+      let x;
+      if (e.type === 'touchmove') {
+        x = e.touches[0].clientX - rect.left; // x position within the element for touch event
+      } else {
+        x = e.clientX - rect.left; // x position within the element for mouse click
+      }
+      let volumeLevel = parseInt((x / rect.width) * 100, 10);
+      this.setVolume(volumeLevel)
+    })
   }
 
   @action
