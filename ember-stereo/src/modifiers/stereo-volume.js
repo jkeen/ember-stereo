@@ -57,16 +57,14 @@ export default class StereoVolumeModifier extends Modifier {
   isDragging = false;
 
   @action
-  handleDragStart(event) {
+  handleDragStart() {
     this.isDragging = true;
-    event.preventDefault();
     return false;
   }
 
   @action
-  handleDragEnd(event) {
+  handleDragEnd() {
     this.isDragging = false;
-    event.preventDefault();
     return false;
   }
 
