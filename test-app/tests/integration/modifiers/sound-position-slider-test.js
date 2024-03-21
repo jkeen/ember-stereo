@@ -1,3 +1,4 @@
+/* stylelint-disable */
 import { module, test } from 'qunit';
 import { setupRenderingTest } from 'ember-qunit';
 import { render, click } from '@ember/test-helpers';
