@@ -473,6 +473,6 @@ var h=[c,a,i,u,b,d,p,n,t,o,r,m,f,l,s].map((e=>(e.urlObject={url:e.url},e.urlProm
 e.default=h})),define("docs/utils/titleize",["exports","ember-cli-string-helpers/utils/titleize"],(function(e,t){Object.defineProperty(e,"__esModule",{value:!0}),Object.defineProperty(e,"default",{enumerable:!0,get:function(){return t.default}})})),define("docs/utils/touch-utils",["exports"],(function(e){Object.defineProperty(e,"__esModule",{value:!0}),e.findTouchById=function(e,t){for(let n=0;n<e.length;n++){let o=e.item(n)
 if(o.identifier===t)return o}},e.isSimulatedMouseEvent=function(e){if(e){const t=e.sourceCapabilities&&!0===e.sourceCapabilities.firesTouchEvents,n=5===e.mozInputSource,o=!0===e.forwardedTouchEvent
 return t||n||o}return!1}})),define("docs/config/environment",[],(function(){try{var e="docs/config/environment",t=document.querySelector('meta[name="'+e+'"]').getAttribute("content"),n={default:JSON.parse(decodeURIComponent(t))}
-return Object.defineProperty(n,"__esModule",{value:!0}),n}catch(o){throw new Error('Could not read config from meta tag with name "'+e+'".')}})),runningTests||require("docs/app").default.create({name:"docs",version:"0.0.0+62a179ee"})
+return Object.defineProperty(n,"__esModule",{value:!0}),n}catch(o){throw new Error('Could not read config from meta tag with name "'+e+'".')}})),runningTests||require("docs/app").default.create({name:"docs",version:"0.0.0+9b998e77"})
 
-//# sourceMappingURL=docs-5b192b0c76d5d95673ef96494db6f430.map
+//# sourceMappingURL=docs-285046276fd40fad3805ebb83a54cd03.map
