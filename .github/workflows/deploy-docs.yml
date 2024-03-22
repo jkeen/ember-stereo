@@ -29,8 +29,8 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Set Version Path
-        run: echo "ADDON_DOCS_VERSION_PATH=${GITHUB_REF##*/}" >> $GITHUB_ENV
+      # - name: Set Version Path
+      #   run: echo "ADDON_DOCS_VERSION_PATH=${GITHUB_REF##*/}" >> $GITHUB_ENV
 
       - name: Set Latest
         run: echo "ADDON_DOCS_UPDATE_LATEST=true" >> $GITHUB_ENV
