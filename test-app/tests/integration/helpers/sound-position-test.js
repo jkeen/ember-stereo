@@ -56,4 +56,20 @@ module('Integration | Helper | sound-position', function (hooks) {
     await render(hbs`{{sound-position this.url format='time'}}`);
     assert.strictEqual(this.element.textContent.trim(), '00:05');
   });
+
+  test('it renders dummy data if given data', async function (assert) {
+    this.url = '/good/10/position.mp3';
+    await render(hbs`{{sound-position position=5000 duration=10000}}`);
+    assert.strictEqual(this.element.textContent.trim(), '5000');
+
+    await render(hbs`{{sound-position position=5000 duration=10000 format='time'}}`);
+    assert.strictEqual(this.element.textContent.trim(), '00:05');
+
+    await render(hbs`{{sound-position position=5000 duration=10000 format='percentage'}}`);
+    assert.strictEqual(this.element.textContent.trim(), '50');
+
+    await render(hbs`{{sound-position position=0 duration=10000 format='percent'}}`);
+    assert.strictEqual(this.element.textContent.trim(), '0');
+  });
+
 });

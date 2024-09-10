@@ -72,4 +72,42 @@ module('Integration | Modifier | sound-position-progress', function (hooks) {
         'background-color: green; width: 80%; pointer-events: none;'
       );
   });
+
+
+  test('it renders manual positions', async function (assert) {
+    this.id1 = 'blue';
+    this.id2 = 'green';
+    this.id3 = 'red';
+
+    await render(
+      hbs`
+        <div style="background-color: blue" data-id='{{this.id1}}' {{sound-position-progress duration=1000 position=500}}>one</div>
+        <div style="background-color: green" data-id='{{this.id2}}' {{sound-position-progress duration=0 position=0}}>two</div>
+        <div style="background-color: red" data-id='{{this.id3}}' {{sound-position-progress position=5000 duration=50000}}>three</div>
+        `
+    );
+
+    assert.dom('[data-sound-position-progress]').exists({ count: 3 });
+
+    await settled();
+    assert
+      .dom(`[data-id='${this.id1}']`)
+      .hasAttribute(
+        'style',
+        'background-color: blue; width: 50%; pointer-events: none;'
+      );
+    assert
+      .dom(`[data-id='${this.id2}']`)
+      .hasAttribute(
+        'style',
+        'background-color: green; width: 0%; pointer-events: none;'
+      );
+    assert
+      .dom(`[data-id='${this.id3}']`)
+      .hasAttribute(
+        'style',
+        'background-color: red; width: 10%; pointer-events: none;'
+      );
+  });
+
 });

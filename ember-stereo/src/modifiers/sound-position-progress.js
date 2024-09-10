@@ -30,12 +30,13 @@ export default class SoundPositionProgressModifier extends Modifier {
     return this.stereo.findLoadedSound(this.identifier);
   }
 
-  modifyPosition({ sound, position }) {
-    let duration = sound?.duration ?? 1;
+  modifyPosition({ sound, position, duration }) {
+    let dur = duration || sound?.duration || 1;
+    let pos = position || sound?.position || 0;
 
     let percent = Math.max(
       0,
-      Math.min(((position ?? sound?.position ?? 0) / duration) * 100, 100)
+      Math.min((pos / dur) * 100, 100)
     );
 
     this.element.style.width = `${percent}%`;
@@ -51,11 +52,16 @@ export default class SoundPositionProgressModifier extends Modifier {
     if (!this.element) {
       this.element = element;
       this.element.setAttribute('data-sound-position-progress', true);
-      this.modifyPosition({ sound: this.loadedSound });
+      this.modifyPosition({ sound: this.loadedSound, position: options?.position, duration: options?.duration });
     }
-    this.watchPositionTask.perform().catch((e) => {
-      debug(`ember-stereo:sound-position-progress ${this.identifier}`, e);
-    });
+
+    if (this.identifier) {
+      this.watchPositionTask.perform().catch((e) => {
+        debug(`ember-stereo:sound-position-progress ${this.identifier}`, e);
+      });
+    } else {
+      this.modifyPosition({ position: options?.position, duration: options?.duration });
+    }
   }
 
   @task

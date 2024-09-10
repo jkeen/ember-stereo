@@ -58,7 +58,7 @@
         {{! template-lint-disable require-input-label }}
         {{! BEGIN-SNIPPET position-modifiers.hbs }}
         <div
-          {{sound-position-slider @identifier}}
+          {{sound-position-slider @identifier onChangePosition=this.onChangePosition}}
           class='stereo-player-position-slider'
         >
           <div
@@ -100,6 +100,12 @@
     </div>
   </div>
 
+  {{#if this.lastSelectedPosition}}
+    <div class="flex flex-auto text-sm py-2">
+      Last selected position: {{this.lastSelectedPosition}}
+    </div>
+  {{/if}}
+
   {{#if (sound-is-errored @identifier)}}
     <div class='stereo-player-errors'>
       {{sound-error-details @identifier}}
@@ -107,6 +113,9 @@
   {{/if}}
 </div>
 
+
+{{#unless @hideSource}}
 <DocsDemo as |demo|>
   <demo.snippet @name='position-modifiers.hbs' />
 </DocsDemo>
+{{/unless}}

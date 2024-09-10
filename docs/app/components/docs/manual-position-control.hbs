@@ -1,0 +1,38 @@
+<div class='stereo-player'>
+  <div class='stereo-player-main'>
+    <div class='stereo-player-controls'>
+
+    </div>
+
+    <div class='stereo-player-position'>
+      {{sound-position position=(or this.lastSelectedPosition @position) duration=@duration format='time'}}
+        {{! template-lint-disable require-input-label }}
+        {{! BEGIN-SNIPPET dummy-position-modifiers.hbs }}
+        <div
+          {{sound-position-slider position=(or this.lastSelectedPosition @position) duration=@duration onChangePosition=this.onChangePosition}}
+          class='stereo-player-position-slider'
+        >
+          <div
+            {{sound-position-progress position=(or this.lastSelectedPosition @position) duration=@duration}}
+            class='stereo-player-position-progress'
+          ></div>
+        </div>
+        {{! END-SNIPPET }}
+
+      {{sound-duration duration=@duration format='time'}}
+    </div>
+  </div>
+
+  {{#if this.lastSelectedPosition}}
+    <div class="flex flex-auto text-sm py-2">
+      Last selected position: {{this.lastSelectedPosition}}
+    </div>
+  {{/if}}
+</div>
+
+
+{{#unless @hideSource}}
+<DocsDemo as |demo|>
+  <demo.snippet @name='dummy-position-modifiers.hbs' />
+</DocsDemo>
+{{/unless}}

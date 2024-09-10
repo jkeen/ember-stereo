@@ -15,9 +15,9 @@ import { task, waitForProperty } from 'ember-concurrency';
 import { next } from '@ember/runloop';
 import DidPanModifier from 'ember-gesture-modifiers/modifiers/did-pan';
 import { registerDestructor } from '@ember/destroyable';
-
 export default class SoundPositionSliderModifier extends DidPanModifier {
   @service stereo;
+  options = {};
   element = null;
 
   constructor() {
@@ -25,21 +25,41 @@ export default class SoundPositionSliderModifier extends DidPanModifier {
     registerDestructor(this, this.unregisterListeners.bind(this));
   }
 
+  get loadedSound() {
+    return this.stereo.findSound(this.identifier);
+  }
+
   get isRangeControl() {
     return this.element.tagName === 'INPUT' && this.element.type === 'range';
   }
 
-  @action onChange(event) {
+  get duration() {
+    return this.options?.duration || this.loadedSound?.duration || 0;
+  }
+
+  get position() {
+    return this.options?.position || this.loadedSound?.position || 0;
+  }
+
+  get canChangePosition() {
+    return (this.options.duration && this.options.position) || (this.loadedSound &&
+      this.loadedSound.isFastForwardable &&
+      this.loadedSound.isRewindable)
+  }
+
+  @action
+  onRangeControlChange(event) {
+    let newPosition = this.duration * (parseInt(event.target.value, 10) / 100);
     if (this.isRangeControl) {
-      this.loadedSound.position =
-        this.loadedSound.duration * (parseInt(event.target.value, 10) / 100);
+      this.updatePosition(newPosition);
     }
   }
 
-  @action onPositionChange() {
+  @action
+  onPositionChange() {
     if (this.isRangeControl) {
       this.element.value =
-        (this.loadedSound.position / this.loadedSound.duration) * 100;
+        (this.position / this.duration) * 100;
     }
   }
 
@@ -57,35 +77,31 @@ export default class SoundPositionSliderModifier extends DidPanModifier {
     var x = e.clientX - rect.left; //x position within the element.
 
     if (
-      this.loadedSound &&
-      this.loadedSound.isFastForwardable &&
-      this.loadedSound.isRewindable &&
+      this.canChangePosition &&
       this.element
     ) {
       let positionPercentage = x / rect.width;
       let newPosition = parseFloat(
-        this.loadedSound.duration * positionPercentage,
+        this.duration * positionPercentage,
         10
       );
+      this.updatePosition(parseInt(newPosition, 10));
+
       next(() => {
-        this.loadedSound.position = parseInt(newPosition, 10);
         this.dragAdjustment = 0;
       });
     }
   }
 
-  get loadedSound() {
-    return this.stereo.findSound(this.identifier);
-  }
-
   modify(element, [identifier], options) {
+    this.options = options;
+
     if (this.identifier != identifier) {
       this.identifier = identifier;
     }
 
     if (!this.element) {
       this.element = element;
-      this.options = options;
 
       if (this.isRangeControl) {
         this.element.setAttribute('max', 100);
@@ -100,30 +116,22 @@ export default class SoundPositionSliderModifier extends DidPanModifier {
       this.element.setAttribute('data-sound-position-slider', true);
     }
 
-    if (this.isRangeControl && this.identifier !== identifier) {
-      this.identifier = identifier;
-
+    if (this.isRangeControl) {
       if (this.loadedSound) {
-        this.loadedSound.off(
-          'audio-position-changed',
-          this.onPositionChange.bind(this)
-        );
+        this.loadedSound.off('audio-position-changed', this.onPositionChange.bind(this));
       }
+
       this.afterLoadTask
         .perform((sound) => {
           sound.on('audio-position-changed', this.onPositionChange.bind(this));
 
-          this.element.addEventListener('change', this.onChange, true);
+          this.element.addEventListener('change', this.onRangeControlChange, true);
           if (sound.isSeekable) {
             this.element.removeAttribute('disabled');
           }
         })
         .catch(() => {});
-    } else if (this.identifier !== identifier) {
-      this.identifier = identifier;
-    }
-
-    if (!this.isRangeControl) {
+    } else {
       super.removeEventListeners();
 
       super.threshold = 10;
@@ -146,15 +154,22 @@ export default class SoundPositionSliderModifier extends DidPanModifier {
   @action
   onPan(e) {
     if (
-      this.loadedSound &&
-      this.loadedSound.isFastForwardable &&
-      this.loadedSound.isRewindable &&
+      this.canChangePosition &&
       this.element
     ) {
       var rect = this.element.getBoundingClientRect();
       let percentPosition = (e.current.x - rect.x) / rect.width;
-      let actualPosition = percentPosition * this.loadedSound.duration;
-      this.loadedSound.position = actualPosition;
+      let actualPosition = Math.min(Math.max(percentPosition, 0.0001), 1) * this.duration;
+      this.updatePosition(actualPosition);
+    }
+  }
+
+  updatePosition(position) {
+    if (this.loadedSound) {
+      this.loadedSound.position = position;
+    }
+    if (this.options.onChangePosition) {
+      this.options.onChangePosition(position);
     }
   }
 
@@ -170,7 +185,7 @@ export default class SoundPositionSliderModifier extends DidPanModifier {
             this.onPositionChange.bind(this)
           );
         }
-        this.element.removeEventListener('change', this.onChange, true);
+        this.element.removeEventListener('change', this.onRangeControlChange, true);
       } else {
         super.willRemove(...arguments);
         if (this.loadedSound) {
@@ -179,7 +194,7 @@ export default class SoundPositionSliderModifier extends DidPanModifier {
             this.onPositionChange.bind(this)
           );
         }
-        this.element.removeEventListener('change', this.onChange);
+        this.element.removeEventListener('change', this.onRangeControlChange);
         this.element.removeEventListener('click', this.handleTap);
         this.element.removeEventListener('tap', this.handleTap);
         this.element.removeEventListener('mousedown', this.handleTap);

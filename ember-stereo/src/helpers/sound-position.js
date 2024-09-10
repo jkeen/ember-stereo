@@ -27,22 +27,26 @@ export default class SoundPosition extends StereoBaseIsHelper {
   get result() {
     let { format, defaultValue } = this.options;
     let result;
+
+    let position = this.options?.position || this.sound?.position;
+    let duration = this.options?.duration || this.sound?.duration;
+
     if (format == 'percent' || format == 'percentage') {
-      if (this.sound) {
-        result = (this.sound.position / this.sound.duration) * 100;
+      if (position && duration) {
+        result = (position / duration) * 100;
       } else {
         result = defaultValue || 0;
       }
     } else if (format == 'time') {
-      if (this.sound?.position !== undefined) {
-        result = numericDuration([this.sound.position]);
+      if (position !== undefined) {
+        result = numericDuration([position]);
       } else {
         result = defaultValue || '00:00';
       }
-    } else if (this.sound?.position === undefined && defaultValue) {
+    } else if (position === undefined && defaultValue) {
       result = defaultValue;
     } else {
-      result = this.sound?.position;
+      result = position
     }
 
     debugMessage(this, `${format} render = ${result}`);

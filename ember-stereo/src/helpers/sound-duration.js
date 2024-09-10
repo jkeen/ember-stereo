@@ -28,18 +28,20 @@ export default class SoundDuration extends StereoBaseIsHelper {
     let { defaultValue, format } = this.options;
     let result = defaultValue;
 
+    let duration = this.sound?.duration || this.options?.duration;
+
     if (format == 'time') {
-      if (this.sound?.duration) {
-        if (this.sound?.duration === Infinity) {
+      if (duration) {
+        if (duration === Infinity) {
           result = '∞';
         } else {
-          result = numericDuration([this.sound?.duration]);
+          result = numericDuration([duration]);
         }
       } else {
         result = defaultValue || '--:--';
       }
     } else {
-      result = this.sound?.duration || defaultValue;
+      result = duration || defaultValue;
     }
 
     debugMessage(this, `render = ${result}`);
