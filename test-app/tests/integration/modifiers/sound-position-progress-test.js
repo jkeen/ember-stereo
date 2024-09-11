@@ -73,7 +73,6 @@ module('Integration | Modifier | sound-position-progress', function (hooks) {
       );
   });
 
-
   test('it renders manual positions', async function (assert) {
     this.id1 = 'blue';
     this.id2 = 'green';
@@ -109,5 +108,4 @@ module('Integration | Modifier | sound-position-progress', function (hooks) {
         'background-color: red; width: 10%; pointer-events: none;'
       );
   });
-
 });

@@ -1,7 +1,7 @@
 /* stylelint-disable */
 import { module, test } from 'qunit';
 import { setupRenderingTest } from 'ember-qunit';
-import { render, click, settled } from '@ember/test-helpers';
+import { render, click } from '@ember/test-helpers';
 import { hbs } from 'ember-cli-htmlbars';
 import { setupStereoTest } from 'ember-stereo/test-support/stereo-setup';
 
@@ -54,7 +54,6 @@ module('Integration | Modifier | sound-position-slider', function (hooks) {
 
     assert.ok(true);
   });
-
 
   test('change callbacks work', async function (assert) {
     this.url1 = '/good/10000/one.mp3';
