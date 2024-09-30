@@ -9,37 +9,68 @@ import { waitFor } from '@ember/test-waiters';
  * @constructor
  */
 
-export function getMediaSource() {
+function getMediaSource(
+  preferManagedMediaSource = true,
+) {
   if (typeof self === 'undefined') return undefined;
-  return self.MediaSource || self.WebKitMediaSource;
+  const mms =
+    (preferManagedMediaSource || !self.MediaSource) &&
+    (self.ManagedMediaSource );
+  return (
+    mms ||
+    self.MediaSource ||
+    (self.WebKitMediaSource)
+  );
+}
+
+function mimeTypeForCodec(codec, type) {
+  return `${type}/mp4;codecs="${codec}"`;
 }
 
 function getSourceBuffer() {
   return self.SourceBuffer || self.WebKitSourceBuffer;
 }
 
+function isMSESupported() {
+  const mediaSource = getMediaSource();
+  if (!mediaSource) {
+    return false;
+  }
+
+  // if SourceBuffer is exposed ensure its API is valid
+  // Older browsers do not expose SourceBuffer globally so checking SourceBuffer.prototype is impossible
+  const sourceBuffer = getSourceBuffer();
+  return (
+    !sourceBuffer ||
+    (sourceBuffer.prototype &&
+      typeof sourceBuffer.prototype.appendBuffer === 'function' &&
+      typeof sourceBuffer.prototype.remove === 'function')
+  );
+}
+
 export default class HLSSound extends BaseSound {
   static acceptMimeTypes = ['application/vnd.apple.mpegurl'];
   static canUseConnection() {
     // This is copied from the HLS source. We don't want to load all of HLS.js just to check if it can be used
-    const mediaSource = getMediaSource();
-    if (!mediaSource) {
+    if (!isMSESupported()) {
       return false;
     }
-    const sourceBuffer = getSourceBuffer();
-    const isTypeSupported =
-      mediaSource &&
-      typeof mediaSource.isTypeSupported === 'function' &&
-      mediaSource.isTypeSupported('video/mp4; codecs="avc1.42E01E,mp4a.40.2"');
 
-    // if SourceBuffer is exposed ensure its API is valid
-    // Older browsers do not expose SourceBuffer globally so checking SourceBuffer.prototype is impossible
-    const sourceBufferValidAPI =
-      !sourceBuffer ||
-      (sourceBuffer.prototype &&
-        typeof sourceBuffer.prototype.appendBuffer === 'function' &&
-        typeof sourceBuffer.prototype.remove === 'function');
-    return !!isTypeSupported && !!sourceBufferValidAPI;
+    const mediaSource = getMediaSource();
+    return (
+      typeof mediaSource?.isTypeSupported === 'function' &&
+      (['avc1.42E01E,mp4a.40.2', 'av01.0.01M.08', 'vp09.00.50.08'].some(
+        (codecsForVideoContainer) =>
+          mediaSource.isTypeSupported(
+            mimeTypeForCodec(codecsForVideoContainer, 'video'),
+          ),
+      ) ||
+        ['mp4a.40.2', 'fLaC'].some((codecForAudioContainer) =>
+          mediaSource.isTypeSupported(
+            mimeTypeForCodec(codecForAudioContainer, 'audio'),
+          ),
+        ))
+    );
   }
 
   static key = 'HLS';
