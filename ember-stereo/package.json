@@ -54,7 +54,8 @@
     "ember-get-config": "^2.0",
     "ember-modifier": "^4.0.0",
     "ember-sinon": "^5.0.0",
-    "hls.js": "< 1.5.0",
+    "date-fns": "^3.6.0",
+    "hls.js": "^1.5.15",
     "howler": "jkeen/howler.js#dist/master",
     "tracked-built-ins": "^3.1.0",
     "tracked-toolbox": "^2.0.0"
@@ -146,6 +147,7 @@
       "./helpers/sound-is-rewindable.js": "./dist/_app_/helpers/sound-is-rewindable.js",
       "./helpers/sound-is-seekable.js": "./dist/_app_/helpers/sound-is-seekable.js",
       "./helpers/sound-metadata.js": "./dist/_app_/helpers/sound-metadata.js",
+      "./helpers/sound-position-timestamp.js": "./dist/_app_/helpers/sound-position-timestamp.js",
       "./helpers/sound-position.js": "./dist/_app_/helpers/sound-position.js",
       "./helpers/stereo-volume-is-adjustable.js": "./dist/_app_/helpers/stereo-volume-is-adjustable.js",
       "./helpers/stereo-volume.js": "./dist/_app_/helpers/stereo-volume.js",
