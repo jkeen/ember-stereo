@@ -14,7 +14,7 @@ export default class Queued extends Component {
     this.queue = [
       '/sounds/attention.mp3',
       '/sounds/internet-on-computers.mp3',
-      'https://streaming.koop.org/stream.aac';,
+      'https://streaming.koop.org/stream.aac',
     ];
 
     let sound = await this.playNext();

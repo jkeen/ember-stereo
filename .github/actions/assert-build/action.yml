@@ -35,6 +35,7 @@ runs:
             helpers/sound-is-seekable.js
             helpers/sound-metadata.js
             helpers/sound-position.js
+            helpers/sound-position-timestamp.js
             helpers/stereo-volume-is-adjustable.js
             helpers/stereo-volume.js
             helpers/stop-sound.js
