@@ -9,18 +9,11 @@ import { waitFor } from '@ember/test-waiters';
  * @constructor
  */
 
-function getMediaSource(
-  preferManagedMediaSource = true,
-) {
+function getMediaSource(preferManagedMediaSource = true) {
   if (typeof self === 'undefined') return undefined;
   const mms =
-    (preferManagedMediaSource || !self.MediaSource) &&
-    (self.ManagedMediaSource );
-  return (
-    mms ||
-    self.MediaSource ||
-    (self.WebKitMediaSource)
-  );
+    (preferManagedMediaSource || !self.MediaSource) && self.ManagedMediaSource;
+  return mms || self.MediaSource || self.WebKitMediaSource;
 }
 
 function mimeTypeForCodec(codec, type) {
@@ -62,13 +55,13 @@ export default class HLSSound extends BaseSound {
       (['avc1.42E01E,mp4a.40.2', 'av01.0.01M.08', 'vp09.00.50.08'].some(
         (codecsForVideoContainer) =>
           mediaSource.isTypeSupported(
-            mimeTypeForCodec(codecsForVideoContainer, 'video'),
-          ),
+            mimeTypeForCodec(codecsForVideoContainer, 'video')
+          )
       ) ||
         ['mp4a.40.2', 'fLaC'].some((codecForAudioContainer) =>
           mediaSource.isTypeSupported(
-            mimeTypeForCodec(codecForAudioContainer, 'audio'),
-          ),
+            mimeTypeForCodec(codecForAudioContainer, 'audio')
+          )
         ))
     );
   }
@@ -166,7 +159,7 @@ export default class HLSSound extends BaseSound {
       );
 
       instance.on(HLS.Events.FRAG_CHANGED, (e, f) => {
-        this._updateAudioBuffer(f.frag);
+        // this._updateAudioBuffer(f.frag);
         this._updateId3Info(f.frag);
       });
     });
