@@ -509,8 +509,8 @@ importers:
         specifier: ^1.5.15
         version: 1.5.15
       howler:
-        specifier: jkeen/howler.js#dist/master
-        version: github.com/jkeen/howler.js/cab0ca8c2451be2e7d17db98588e89184417cdc8
+        specifier: tunein/howler.js
+        version: github.com/tunein/howler.js/5cd1ecff8d6df8f8793bd7126ccab317ea37feb4
       tracked-built-ins:
         specifier: ^3.1.0
         version: 3.1.1
@@ -626,6 +626,9 @@ importers:
       concurrently:
         specifier: ^8.2.0
         version: 8.2.0
+      date-fns:
+        specifier: ^3.6.0
+        version: 3.6.0
       debug:
         specifier: 4.3.2
         version: 4.3.2(supports-color@5.5.0)
@@ -26535,7 +26538,7 @@ packages:
       ember-modifier: 4.1.0(ember-source@4.8.4)
       ember-sinon: 5.0.0
       hls.js: 1.5.15
-      howler: github.com/jkeen/howler.js/cab0ca8c2451be2e7d17db98588e89184417cdc8
+      howler: github.com/tunein/howler.js/5cd1ecff8d6df8f8793bd7126ccab317ea37feb4
       tracked-built-ins: 3.1.1
       tracked-toolbox: 2.0.0(@babel/core@7.24.3)(ember-source@4.8.4)
     transitivePeerDependencies:
@@ -26570,7 +26573,7 @@ packages:
       ember-modifier: 4.1.0(ember-source@5.0.0)
       ember-sinon: 5.0.0
       hls.js: 1.5.15
-      howler: github.com/jkeen/howler.js/cab0ca8c2451be2e7d17db98588e89184417cdc8
+      howler: github.com/tunein/howler.js/5cd1ecff8d6df8f8793bd7126ccab317ea37feb4
       tracked-built-ins: 3.1.1
       tracked-toolbox: 2.0.0(@babel/core@7.24.3)(ember-source@5.0.0)
     transitivePeerDependencies:
@@ -26675,7 +26678,7 @@ packages:
       - webpack
     dev: true
 
-  github.com/jkeen/howler.js/cab0ca8c2451be2e7d17db98588e89184417cdc8:
-    resolution: {tarball: https://codeload.github.com/jkeen/howler.js/tar.gz/cab0ca8c2451be2e7d17db98588e89184417cdc8}
+  github.com/tunein/howler.js/5cd1ecff8d6df8f8793bd7126ccab317ea37feb4:
+    resolution: {tarball: https://codeload.github.com/tunein/howler.js/tar.gz/5cd1ecff8d6df8f8793bd7126ccab317ea37feb4}
     name: '@tunein/howler'
     version: 2.4.1
