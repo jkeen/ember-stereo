@@ -278,11 +278,11 @@ export default class Stereo extends Service.extend(EmberEvented) {
   }
   set volume(v) {
     if (this.currentSound) {
-      debug('ember-stereo')(`setting current sound volume = ${v}`);
+      debug('ember-stereo:service')(`setting current sound volume = ${v}`);
       this.currentSound._setVolume(v);
     }
     this._volume = v;
-    debug('ember-stereo')(`setting volume = ${v}`);
+    debug('ember-stereo:service')(`setting volume = ${v}`);
     this.trigger('volume-change', v);
   }
 
@@ -372,14 +372,16 @@ export default class Stereo extends Service.extend(EmberEvented) {
   @task({ restartable: true, evented: true })
   *loadTask(urlsOrPromise, _options) {
     let options = this.prepareLoadOptions(_options);
+
+    debug('ember-stereo:service')(`loadTask`, urlsOrPromise, options);
     let urlsToTry = yield this.urlCache.resolve(urlsOrPromise);
-    debug('ember-stereo')(`given urls: ${urlsToTry.join(', ')}`);
+    debug('ember-stereo:service')(`given urls: ${urlsToTry.join(', ')}`);
     this.trigger('pre-load', urlsToTry);
     this.errorCache.remove(urlsToTry);
 
     var sound = this.findLoadedSound(urlsToTry);
     if (sound) {
-      debug('ember-stereo')('retreived sound from cache');
+      debug('ember-stereo:service')('retreived sound from cache');
       return yield { sound };
     } else {
       // TODO: refactor so it's more like this
@@ -394,11 +396,13 @@ export default class Stereo extends Service.extend(EmberEvented) {
       try {
         var strategies = this._buildStrategies(urlsToTry, options);
         if (strategies.filter((s) => s.canPlay).length == 0) {
-          debug('ember-stereo')('all strategies reported canPlay = false');
+          debug('ember-stereo:service')(
+            'all strategies reported canPlay = false'
+          );
           return this._handlePreloadError({ urlsToTry, options, strategies });
         }
       } catch (e) {
-        debug('ember-stereo')('error building strategies', e);
+        debug('ember-stereo:service')('error building strategies', e);
         return this._handlePreloadError({
           urlsToTry,
           options,
@@ -408,6 +412,8 @@ export default class Stereo extends Service.extend(EmberEvented) {
 
       var success = false;
       let failures = [];
+
+      debug('ember-stereo:service')('strategies', strategies);
 
       for (let strategy of strategies) {
         if (strategy.canPlay) {
@@ -423,7 +429,9 @@ export default class Stereo extends Service.extend(EmberEvented) {
             failures.push(strategy);
           }
           if (result.sound) {
-            debug('ember-stereo')(`firing sound-ready for ${result.sound.url}`);
+            debug('ember-stereo:service')(
+              `firing sound-ready for ${result.sound.url}`
+            );
             this.trigger('sound-ready', { sound: result.sound });
             sound = result.sound;
             sound._debug = strategies;
@@ -462,7 +470,7 @@ export default class Stereo extends Service.extend(EmberEvented) {
   *handleCurrentSoundTransitionTask(sound) {
     while (true) {
       yield waitForEvent(sound, 'audio-played');
-      debug('ember-stereo')('handling sound transition');
+      debug('ember-stereo:service')('handling sound transition');
 
       let previousSound = this.currentSound;
       let currentSound = sound;
@@ -523,6 +531,8 @@ export default class Stereo extends Service.extend(EmberEvented) {
   @task({ restartable: true })
   *playTask(urlsOrPromise, options = {}) {
     options = { metadata: {}, ...options };
+
+    debug('ember-stereo:service')(`playTask`, urlsOrPromise, options);
 
     let previouslyPlayingSound = this.isPlaying ? this.currentSound : false;
     if (
@@ -810,9 +820,9 @@ export default class Stereo extends Service.extend(EmberEvented) {
       this._registerEvents(sound);
       this._updateNowPlaying(sound);
       sound._setVolume(this.volume);
-      debug('ember-stereo')(`setting current sound -> ${sound.url}`);
+      debug('ember-stereo:service')(`setting current sound -> ${sound.url}`);
     } else {
-      debug('ember-stereo')(`setting current sound -> null`);
+      debug('ember-stereo:service')(`setting current sound -> null`);
     }
 
     this._currentSound = sound;
@@ -950,7 +960,7 @@ export default class Stereo extends Service.extend(EmberEvented) {
   @task
   *waitForSuccessTask(strategy, sound) {
     yield waitForProperty(sound, 'isReady');
-    debug('ember-stereo')(
+    debug('ember-stereo:service')(
       `SUCCESS: [${strategy.connectionName}] -> (${strategy.url})`
     );
     strategy.success = true;
@@ -970,7 +980,7 @@ export default class Stereo extends Service.extend(EmberEvented) {
   @task
   *waitForFailureTask(strategy, sound) {
     yield waitForProperty(sound, 'isErrored');
-    debug('ember-stereo')(
+    debug('ember-stereo:service')(
       `FAILED: [${strategy.connectionName}] -> ${sound.error} (${strategy.url})`
     );
     this._unregisterEvents(sound);
@@ -993,7 +1003,7 @@ export default class Stereo extends Service.extend(EmberEvented) {
     var newSound = strategy.createSound();
     this._registerEvents(newSound);
 
-    debug('ember-stereo')(
+    debug('ember-stereo:service')(
       `TRYING: [${strategy.connectionName}] -> ${strategy.url}`
     );
     strategy.tried = true;
@@ -1063,7 +1073,7 @@ export default class Stereo extends Service.extend(EmberEvented) {
   _relayEvent(eventName, info = {}) {
     next(() => {
       this.trigger(eventName, info);
-      debug('ember-stereo')(eventName, info);
+      debug('ember-stereo:service')(eventName, info);
     });
   }
 
@@ -1215,14 +1225,16 @@ export default class Stereo extends Service.extend(EmberEvented) {
   _attemptToPlaySound(sound, options) {
     // if (this.isMobileDevice) {
     let touchPlay = () => {
-      debug('ember-stereo')(`triggering sound play from document touch`);
+      debug('ember-stereo:service')(
+        `triggering sound play from document touch`
+      );
       sound.play();
     };
 
     document.addEventListener('touchstart', touchPlay, { passive: true });
 
     let blockCheck = later(() => {
-      debug('ember-stereo')(
+      debug('ember-stereo:service')(
         `Looks like the mobile browser blocked an autoplay trying to play sound with url: ${sound.url}`
       );
       sound.isBlocked = true;
