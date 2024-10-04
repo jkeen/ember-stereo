@@ -5,7 +5,7 @@ import { tracked } from '@glimmer/tracking';
 // BEGIN-SNIPPET proxy-example.js
 export default class ProxyExample extends Component {
   @service stereo;
-  @tracked url = 'https://kut.streamguys1.com/kut-web.aac';
+  @tracked url = 'https://streaming.koop.org/stream.aac';
 
   get sound() {
     return this.stereo.findSound(this.url);
