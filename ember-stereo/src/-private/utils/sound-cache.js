@@ -45,7 +45,7 @@ export default class SoundCache {
     let foundSounds = emberArray(sounds).compact();
 
     if (foundSounds.length > 0) {
-      debug(this.name)(`cache hit for `, foundSounds[0].url);
+      // debug(this.name)(`cache hit for `, foundSounds[0].url);
     } else {
       debug(this.name)(`cache miss for`, identifiers);
     }

@@ -397,7 +397,9 @@ export default class Stereo extends Service.extend(EmberEvented) {
         var strategies = this._buildStrategies(urlsToTry, options);
         if (strategies.filter((s) => s.canPlay).length == 0) {
           debug('ember-stereo:service')(
-            'all strategies reported canPlay = false'
+            `all strategies (${strategies
+              .map((s) => s.connectionName)
+              .join(', ')}) reported canPlay = false`
           );
           return this._handlePreloadError({ urlsToTry, options, strategies });
         }

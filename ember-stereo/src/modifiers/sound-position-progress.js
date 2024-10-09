@@ -34,10 +34,7 @@ export default class SoundPositionProgressModifier extends Modifier {
     let dur = duration || sound?.duration || 1;
     let pos = position || sound?.position || 0;
 
-    let percent = Math.max(
-      0,
-      Math.min((pos / dur) * 100, 100)
-    );
+    let percent = Math.max(0, Math.min((pos / dur) * 100, 100));
 
     this.element.style.width = `${percent}%`;
     this.element.style.pointerEvents = 'none';
@@ -52,7 +49,11 @@ export default class SoundPositionProgressModifier extends Modifier {
     if (!this.element) {
       this.element = element;
       this.element.setAttribute('data-sound-position-progress', true);
-      this.modifyPosition({ sound: this.loadedSound, position: options?.position, duration: options?.duration });
+      this.modifyPosition({
+        sound: this.loadedSound,
+        position: options?.position,
+        duration: options?.duration,
+      });
     }
 
     if (this.identifier) {
@@ -60,7 +61,10 @@ export default class SoundPositionProgressModifier extends Modifier {
         debug(`ember-stereo:sound-position-progress ${this.identifier}`, e);
       });
     } else {
-      this.modifyPosition({ position: options?.position, duration: options?.duration });
+      this.modifyPosition({
+        position: options?.position,
+        duration: options?.duration,
+      });
     }
   }
 
@@ -73,7 +77,15 @@ export default class SoundPositionProgressModifier extends Modifier {
 
       if (this.loadedSound) {
         let result = yield race([
-          waitForEvent(this.loadedSound, 'audio-position-will-change'),
+          waitForEvent(this.loadedSound, 'audio-position-will-change').then(
+            (event) => {
+              this.modifyPosition({
+                sound: this.loadedSound,
+                position: event.newPosition, // Set the position from the will-change event
+              });
+              return { ...event, willChange: true }; // Indicate that will-change event fired
+            }
+          ),
           waitForEvent(this.loadedSound, 'audio-position-changed'),
           waitForProperty(
             this,
@@ -82,12 +94,16 @@ export default class SoundPositionProgressModifier extends Modifier {
           ),
         ]);
 
-        if (result?.sound) {
+        if (result?.willChange) {
+          // If audio-position-will-change was the event, wait for a delay before letting the sound update again
+        } else if (result?.sound) {
+          // Handle audio-position-changed or other position updates
           this.modifyPosition({
             sound: result.sound,
             position: result?.newPosition,
           });
         } else if (this.loadedSound) {
+          // Fallback to update the position based on the current sound
           this.modifyPosition({ sound: this.loadedSound });
         }
       }

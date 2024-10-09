@@ -24,19 +24,25 @@ export default class Sound extends Evented {
   static canPlay(url, mimeType) {
     let usablePlatform = this.canUseConnection(url);
     if (!usablePlatform) {
+      debug('ember-stereo:canPlay')(
+        `can not use ${this.debugName} on this platform`
+      );
       return false;
     }
 
     mimeType = mimeType || url.mimeType || getMimeType(url);
 
     if (mimeType) {
-      return this.canPlayMimeType(mimeType);
+      let result = this.canPlayMimeType(mimeType);
+      if (result) {
+        debug(this.debugName)(`can play mime type ${mimeType} (${this.url})`);
+      } else {
+        debug(this.debugName)(`can't play mime type ${mimeType} (${this.url})`);
+      }
+
+      return result;
     } else {
-      /* eslint-disable no-console */
-      console.warn(`Could not determine mime type for ${url}`);
-      console.warn(
-        'Attempting to play urls with an unknown mime type can be bad for performance. See documentation for more info.'
-      );
+      debug(this.debugName)(`can't play mime type ${mimeType} (${this.url})`);
       /* eslint-enable no-console */
       return true;
     }
@@ -268,19 +274,32 @@ export default class Sound extends Evented {
     return this._position;
   }
   set position(v) {
+    this.setPositionTask.perform(v).catch((e) => {
+      if (!didCancel(e)) {
+        throw e;
+      }
+    });
+  }
+
+  @task({ maxConcurrency: 1, restartable: true })
+  *setPositionTask(v) {
     this.trigger('audio-position-will-change', {
       sound: this,
       currentPosition: this._currentPosition(),
       newPosition: v,
     });
 
-    this._position = this._setPosition(v);
+    yield timeout(50);
+
+    next(() => {
+      this._position = this._setPosition(v);
+    });
   }
 
   /* we both want to query for the playing sounds position, and fire change events
    more often than an audio element would, as documented in this issue: https://github.com/jkeen/ember-stereo/issues/24  */
 
-   @task({ maxConcurrency: 1, drop: true })
+  @task({ maxConcurrency: 1, drop: true })
   *updatePositionTask() {
     while (this.isPlaying) {
       yield animationFrame();
