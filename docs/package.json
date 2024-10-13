@@ -18,9 +18,10 @@
     "lint:hbs:fix": "ember-template-lint . --fix",
     "lint:js": "eslint . --cache",
     "lint:js:fix": "eslint . --fix",
-    "start": "ember serve -p 4101",
+    "start": "concurrently 'ember serve  -p 4101' 'pnpm _syncPnpm --watch' --names 'docs serve,docs sync deps'",
     "test": "npm-run-all --print-name \"lint\" \"test:*\"",
-    "test:ember": "ember test"
+    "test:ember": "ember test",
+    "_syncPnpm": "pnpm sync-dependencies-meta-injected"
   },
   "dependencies": {
     "debug": "4.3.2"
@@ -87,7 +88,7 @@
     "webpack": "^5.81.0"
   },
   "engines": {
-    "node": "14.* || 16.* || >= 18"
+    "node": "16.* || >= 18"
   },
   "ember": {
     "edition": "octane"
@@ -96,6 +97,11 @@
     "paths": [
       "../ember-stereo/"
     ]
+  },
+  "dependenciesMeta": {
+    "ember-stereo": {
+      "injected": true
+    }
   },
   "volta": {
     "extends": "../package.json"

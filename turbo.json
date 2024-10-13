@@ -1,0 +1,35 @@
+{
+  "tasks": {
+    "build": {
+      "dependsOn": ["_syncPnpm"],
+      "outputs": ["dist/**"]
+    },
+    "start": {
+      "dependsOn": ["_syncPnpm"],
+      "outputs": [],
+      "persistent": true
+    },
+    "start:addon": {
+      "dependsOn": ["_syncPnpm"],
+      "outputs": ["ember-stereo/dist/**"],
+      "persistent": true
+    },
+    "start:test": {
+      "dependsOn": ["_syncPnpm"],
+      "outputs": ["test-app/dist"],
+      "persistent": true
+    },
+    "start:docs": {
+      "dependsOn": ["_syncPnpm"],
+      "outputs": ["docs/**"],
+      "persistent": true
+    },
+    "lint": {
+      "outputs": []
+    },
+    "_syncPnpm": {
+      "dependsOn": ["^build"],
+      "cache": false
+    }
+  }
+}

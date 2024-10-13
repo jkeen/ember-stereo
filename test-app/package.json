@@ -7,8 +7,7 @@
   "license": "MIT",
   "author": "",
   "directories": {
-    "doc": "doc",
-    "test": "tests"
+    "doc": "doc"
   },
   "scripts": {
     "build": "ember build --environment=production",
@@ -18,12 +17,14 @@
     "lint:hbs:fix": "ember-template-lint . --fix",
     "lint:js": "eslint . --cache",
     "lint:js:fix": "eslint . --fix",
-    "start": "ember test --server",
+    "start": "concurrently 'ember test --server' 'pnpm _syncPnpm --watch' --names 'tests serve,tests sync deps'",
     "test": "concurrently \"npm:lint\" \"npm:test:*\" --names \"lint,test:\"",
     "test:ember": "ember test",
-    "test:ember-try:one": "ember try:one"
+    "test:ember-try:one": "ember try:one",
+    "_syncPnpm": "pnpm sync-dependencies-meta-injected"
   },
   "devDependencies": {
+    "ember-stereo": "workspace:../ember-stereo",
     "@babel/eslint-parser": "^7.22.5",
     "@babel/plugin-proposal-decorators": "^7.22.5",
     "@ember/optional-features": "^2.0.0",
@@ -57,7 +58,6 @@
     "ember-sinon-qunit": "7.1.4",
     "ember-source": "~5.0.0",
     "ember-source-channel-url": "^3.0.0",
-    "ember-stereo": "workspace:../ember-stereo",
     "ember-template-lint": "^5.10.1",
     "ember-try": "^3.0.0-beta.1",
     "eslint": "^8.42.0",
