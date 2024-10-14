@@ -12,14 +12,10 @@ import { add } from 'date-fns';
 
   @class {{sound-position-timestamp}}
   @type {Helper}
-*/
-
-/**
-  @method compute
   @param {Any} identifier url, urls, url objects, promise that resolves to a url
+  @param {Date} startsAt required if currentTime is not provided
   @param {Float} position
   @param {Date} currentTime
-  @param {Date} startsAt
   @return {Date}
 */
 export default class SoundPositionTimestamp extends StereoBaseIsHelper {

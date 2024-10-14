@@ -5,7 +5,7 @@ export default class DocsCustomPositionControlComponent extends Component {
   @tracked lastSelectedPosition;
 
   @action
-  onChangePosition(position, event) {
+  onChangePosition(position /* event */) {
     this.lastSelectedPosition = position;
   }
 }
