@@ -31,11 +31,7 @@ export default class SoundPositionTimestamp extends StereoBaseIsHelper {
     let currentTime = this.sound?.currentTime;
     let startsAt = this.options?.startsAt;
 
-    if (startsAt && !this.sound?.isLoaded) {
-      return new Date(startsAt);
-    }
-
-    if (currentTime) {
+    if (currentTime && this.sound?.isLoaded) {
       result = new Date(currentTime);
     } else if (startsAt) {
       result = add(new Date(startsAt), {

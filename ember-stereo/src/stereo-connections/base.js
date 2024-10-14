@@ -9,6 +9,7 @@ import hasEqualUrls from '../-private/utils/has-equal-urls';
 import { getOwner } from '@ember/application';
 import { registerDestructor } from '@ember/destroyable';
 import { task, animationFrame, timeout, didCancel } from 'ember-concurrency';
+import { macroCondition, isTesting } from '@embroider/macros';
 
 /**
  * This is the base sound object from which other sound objects are derived.
@@ -289,11 +290,15 @@ export default class Sound extends Evented {
       newPosition: v,
     });
 
-    yield timeout(50);
+    if (macroCondition(isTesting())) {
+      // in testing, we don't want to wait for the next animation frame
+    } else {
+      yield timeout(50);
+    }
 
-    next(() => {
-      this._position = this._setPosition(v);
-    });
+    // next(() => {
+    this._position = this._setPosition(v);
+    // });
   }
 
   /* we both want to query for the playing sounds position, and fire change events

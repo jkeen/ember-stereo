@@ -1,7 +1,7 @@
 import { module, test } from 'qunit';
 import { setupRenderingTest } from 'ember-qunit';
 import { setupStereoTest } from 'ember-stereo/test-support/stereo-setup';
-import { render } from '@ember/test-helpers';
+import { render, settled } from '@ember/test-helpers';
 import { hbs } from 'ember-cli-htmlbars';
 import { add } from 'date-fns';
 
@@ -51,5 +51,24 @@ module('Integration | Helper | sound-position-timestamp', function (hooks) {
     await render(hbs`{{sound-position-timestamp position=this.position}}`);
 
     assert.strictEqual(this.element.textContent.trim(), '');
+  });
+
+  test('it returns the correct timestamp when currentTime is provided', async function (assert) {
+    let service = this.owner.lookup('service:stereo');
+
+    this.url = '/good/5000/position.mp3';
+    let { sound } = await service.play(this.url);
+    sound.position = 2000;
+
+    this.startsAt = new Date('2023-10-02T00:00:00Z');
+
+    await render(
+      hbs`{{sound-position-timestamp this.url startsAt=this.startsAt}}`
+    );
+
+    assert.strictEqual(
+      this.element.textContent.trim(),
+      new Date('2023-10-02T00:00:02Z').toString()
+    );
   });
 });
