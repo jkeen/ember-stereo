@@ -78,12 +78,12 @@ export default class HLSSound extends BaseSound {
 
   @waitFor
   async setup() {
-    await this.loadHLS().then(({ HLS }) => {
-      let video = document.createElement('video');
-      video.setAttribute('crossorigin', 'anonymous');
-      this.video = video;
-
-      let options = { debug: false, startFragPrefetch: true };
+    if (!this.hls && !this.video) {
+      this.debug('Setting up HLS');
+      let options = {
+        debug: true,
+        startFragPrefetch: true,
+      };
 
       if (this.options?.xhr) {
         options.xhrSetup = (xhr, url) => {
@@ -105,13 +105,29 @@ export default class HLSSound extends BaseSound {
         delete this.options.xhr;
       }
 
-      let hls = new HLS({ ...options, ...(this.options || {}) });
+      await this.loadHLS().then(({ HLS }) => {
+        if (this.hls) {
+          this.hls.destroy();
+        }
 
-      this.hls = hls;
-      this._setupHLSEvents(hls, HLS);
-      this._setupPlayerEvents(video);
-      hls.attachMedia(video);
-    });
+        if (this.video) {
+          this.video.removeAttribute('src');
+        }
+
+        let hls = new HLS({ ...options, ...(this.options || {}) });
+        this.hls = hls;
+
+        let video = document.createElement('video');
+        video.setAttribute('crossorigin', 'anonymous');
+        video.setAttribute('webkit-playsinline', '');
+        video.setAttribute('playsinline', '');
+        this.video = video;
+
+        this._setupHLSEvents(hls, HLS);
+        this._setupPlayerEvents(this.video);
+        hls.attachMedia(this.video);
+      });
+    }
   }
 
   _setupHLSEvents(instance, HLS) {
@@ -133,35 +149,33 @@ export default class HLSSound extends BaseSound {
     instance.on(HLS.Events.ERROR, (e, data) => this._onHLSError(e, data, HLS));
 
     instance.on(HLS.Events.MEDIA_ATTACHED, () => {
-      this.debug('media attached');
+      this.debug('media attached, loading source');
       instance.loadSource(this.url);
+    });
 
-      instance.on(HLS.Events.MANIFEST_PARSED, (e, data) => {
-        this.debug(
-          `manifest parsed and loaded, found ${data.levels.length} quality level(s)`
-        );
-        this.manifest = data;
-      });
-
-      instance.on(HLS.Events.LEVEL_LOADED, (e, data) => {
-        this.debug(`level ${data.level} loaded`);
-        this.live = data.details.live;
-        this._signalAudioIsReady();
-      });
-
-      instance.on(HLS.Events.AUDIO_TRACK_LOADED, () => {
-        this.debug('audio track loaded');
-        this._signalAudioIsReady();
-      });
-
-      instance.on(HLS.Events.ERROR, (e, data) =>
-        this._onHLSError(e, data, HLS)
+    instance.on(HLS.Events.MANIFEST_PARSED, (e, data) => {
+      this.debug(
+        `manifest parsed and loaded, found ${data.levels.length} quality level(s)`
       );
+      this.manifest = data;
+    });
 
-      instance.on(HLS.Events.FRAG_CHANGED, (e, f) => {
-        // this._updateAudioBuffer(f.frag);
-        this._updateId3Info(f.frag);
-      });
+    instance.on(HLS.Events.LEVEL_LOADED, (e, data) => {
+      this.debug(`level ${data.level} loaded`);
+      this.live = data.details.live;
+      this._signalAudioIsReady();
+    });
+
+    instance.on(HLS.Events.AUDIO_TRACK_LOADED, () => {
+      this.debug('audio track loaded');
+      this._signalAudioIsReady();
+    });
+
+    instance.on(HLS.Events.ERROR, (e, data) => this._onHLSError(e, data, HLS));
+
+    instance.on(HLS.Events.FRAG_CHANGED, (e, f) => {
+      // this._updateAudioBuffer(f.frag);
+      this._updateId3Info(f.frag);
     });
   }
 
@@ -267,7 +281,7 @@ export default class HLSSound extends BaseSound {
 
   _onHLSError(error, data, HLS) {
     if (data.fatal) {
-      this.debug(data);
+      this.debug('HLS fatal error', data);
       switch (data.type) {
         case HLS.ErrorTypes.NETWORK_ERROR:
           this._giveUpAndDie(`${data.details}`);

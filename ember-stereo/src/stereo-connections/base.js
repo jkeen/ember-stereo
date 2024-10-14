@@ -25,9 +25,7 @@ export default class Sound extends Evented {
   static canPlay(url, mimeType) {
     let usablePlatform = this.canUseConnection(url);
     if (!usablePlatform) {
-      debug('ember-stereo:canPlay')(
-        `can not use ${this.debugName} on this platform`
-      );
+      debug('ember-stereo:canPlay')(`can not use connection on this platform`);
       return false;
     }
 
@@ -36,14 +34,20 @@ export default class Sound extends Evented {
     if (mimeType) {
       let result = this.canPlayMimeType(mimeType);
       if (result) {
-        debug(this.debugName)(`can play mime type ${mimeType} (${this.url})`);
+        debug('ember-stereo:canPlay')(
+          `can play mime type ${mimeType} (${this.url})`
+        );
       } else {
-        debug(this.debugName)(`can't play mime type ${mimeType} (${this.url})`);
+        debug('ember-stereo:canPlay')(
+          `can't play mime type ${mimeType} (${this.url})`
+        );
       }
 
       return result;
     } else {
-      debug(this.debugName)(`can't play mime type ${mimeType} (${this.url})`);
+      debug('ember-stereo:canPlay')(
+        `can't play mime type ${mimeType} (${this.url})`
+      );
       /* eslint-enable no-console */
       return true;
     }
