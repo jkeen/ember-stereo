@@ -81,7 +81,7 @@ export default class HLSSound extends BaseSound {
     if (!this.hls && !this.video) {
       this.debug('Setting up HLS');
       let options = {
-        debug: true,
+        debug: false,
         startFragPrefetch: true,
       };
 
