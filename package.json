@@ -22,12 +22,12 @@
     "semantic-release": "pnpm --filter ember-stereo run semantic-release",
     "format": "prettier --write \"**/*.{js,hbs,ts,tsx,md}\""
   },
-  "packageManager": "pnpm@8.5.1",
+  "packageManager": "pnpm@9.4.0",
   "volta": {
     "node": "16.14.0",
     "yarn": "1.22.17",
     "npm": "7.22.0",
-    "pnpm": "8.10.2"
+    "pnpm": "9.4.0"
   },
   "dependencies": {
     "@ember/render-modifiers": "^1.0.2",
