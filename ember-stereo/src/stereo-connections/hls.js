@@ -102,7 +102,6 @@ export default class HLSSound extends BaseSound {
 
           xhr.method = this.options.xhr?.method || 'GET';
         };
-        delete this.options.xhr;
       }
 
       await this.loadHLS().then(({ HLS }) => {
