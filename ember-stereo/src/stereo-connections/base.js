@@ -339,6 +339,26 @@ export default class Sound extends Evented {
   }
 
   /**
+   * get the sound's start time (probably only available on certain HLS sounds)
+   * @property startTime
+   * @type {Integer}
+   * @public
+   */
+  get startTime() {
+    return null;
+  }
+
+    /**
+   * get the sound's end time (probably only available on certain HLS sounds)
+   * @property endTime
+   * @type {Integer}
+   * @public
+   */
+  get endTime() {
+    return null;
+  }
+
+  /**
    * get the sound's reported mimeType
    * @property mimeType
    * @type {Integer}

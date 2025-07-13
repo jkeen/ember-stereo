@@ -75,6 +75,8 @@ export default class HLSSound extends BaseSound {
   @tracked loaded = false;
   @tracked mediaRecoveryAttempts = 0;
   @tracked _currentTime = null;
+  @tracked _startTime = null;
+  @tracked _endTime = null;
 
   @waitFor
   async setup() {
@@ -162,6 +164,7 @@ export default class HLSSound extends BaseSound {
     instance.on(HLS.Events.LEVEL_LOADED, (e, data) => {
       this.debug(`level ${data.level} loaded`);
       this.live = data.details.live;
+      this._updateStartAndEndTimes(data.details);
       this._signalAudioIsReady();
     });
 
@@ -176,6 +179,26 @@ export default class HLSSound extends BaseSound {
       // this._updateAudioBuffer(f.frag);
       this._updateId3Info(f.frag);
     });
+  }
+
+  _updateStartAndEndTimes(levelDetails) {
+    if (levelDetails?.fragments?.length > 0) {
+      const fragments = levelDetails.fragments;
+      const lastFragment = fragments[fragments.length - 1];
+      const firstFragment = fragments[0];
+
+      if (firstFragment?.programDateTime) {
+        if (new Date(firstFragment.programDateTime) != this._startTime) {
+          this._startTime = new Date(firstFragment.programDateTime);
+        }
+      }
+
+      if (lastFragment?.programDateTime) {
+        if (new Date(lastFragment.programDateTime) != this._endTime) {
+          this._endTime = new Date(lastFragment.programDateTime);
+        }
+      }
+    }
   }
 
   _updateId3Info(fragment) {
@@ -332,7 +355,19 @@ export default class HLSSound extends BaseSound {
   /* Public interface to sound */
 
   get currentTime() {
-    return this.hls.playingDate;
+    if (this.hls.playingDate) {
+      return new Date(this.hls.playingDate);
+    }
+
+    return null;
+  }
+
+  get startTime() {
+    return this._startTime;
+  }
+
+  get endTime() {
+    return this._endTime;
   }
 
   get isFastForwardable() {

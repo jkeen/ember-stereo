@@ -1,18 +1,16 @@
-import { module, test } from 'qunit';
+import { module, test, skip } from 'qunit';
 import { setupRenderingTest } from 'ember-qunit';
 import { setupStereoTest } from 'ember-stereo/test-support/stereo-setup';
 import { render } from '@ember/test-helpers';
 import { hbs } from 'ember-cli-htmlbars';
-import { add } from 'date-fns';
 import HLSAudio from 'ember-stereo/stereo-connections/hls';
 import sinon from 'sinon';
-
-module('Integration | Helper | sound-position-timestamp', function (hooks) {
+module('Integration | Helper | sound-start-timestamp', function (hooks) {
   setupRenderingTest(hooks);
   setupStereoTest(hooks);
   test('it renders nothing if not loaded', async function (assert) {
     this.url = '/good/10/position.mp3';
-    await render(hbs`{{sound-position-timestamp this.url}}`);
+    await render(hbs`{{sound-start-timestamp this.url}}`);
 
     assert.strictEqual(this.element.textContent.trim(), '');
   });
@@ -22,7 +20,7 @@ module('Integration | Helper | sound-position-timestamp', function (hooks) {
     this.set('startsAt', new Date('2023-10-01T00:00:00Z'));
 
     await render(
-      hbs`{{sound-position-timestamp this.url startsAt=this.startsAt}}`
+      hbs`{{sound-start-timestamp this.url startsAt=this.startsAt}}`
     );
 
     let expectedDate = new Date('2023-10-01T00:00:00Z');
@@ -33,14 +31,14 @@ module('Integration | Helper | sound-position-timestamp', function (hooks) {
   });
 
   test('it returns the correct timestamp when startsAt is provided', async function (assert) {
-    this.set('position', 144000);
+    this.url = '/good/10000/position.mp3';
     this.set('startsAt', new Date('2023-10-01T00:00:00Z'));
 
     await render(
-      hbs`{{sound-position-timestamp position=this.position startsAt=this.startsAt}}`
+      hbs`{{sound-start-timestamp this.url startsAt=this.startsAt}}`
     );
 
-    let expectedDate = add(new Date('2023-10-01T00:00:00Z'), { seconds: 144 });
+    let expectedDate = this.startsAt;
     assert.strictEqual(
       this.element.textContent.trim(),
       expectedDate.toString()
@@ -50,12 +48,12 @@ module('Integration | Helper | sound-position-timestamp', function (hooks) {
   test('it returns undefined when neither currentTime nor startsAt is provided', async function (assert) {
     this.set('position', 144000);
 
-    await render(hbs`{{sound-position-timestamp position=this.position}}`);
+    await render(hbs`{{sound-start-timestamp position=this.position}}`);
 
     assert.strictEqual(this.element.textContent.trim(), '');
   });
 
-  test('it returns the correct timestamp when currentTime is provided', async function (assert) {
+  test('it returns the correct timestamp when startTime is provided', async function (assert) {
     let time = new Date('2023-10-02T00:00:00Z');
 
     this.sound = new HLSAudio({
@@ -64,8 +62,8 @@ module('Integration | Helper | sound-position-timestamp', function (hooks) {
     });
     sinon.stub(this.sound, 'isLoaded').get(() => true);
 
-    sinon.stub(this.sound, 'currentTime').get(() => time);
-    await render(hbs`{{sound-position-timestamp this.sound}}`);
+    sinon.stub(this.sound, 'startTime').get(() => time);
+    await render(hbs`{{sound-start-timestamp this.sound}}`);
 
     assert.strictEqual(this.element.textContent.trim(), time.toString());
   });
