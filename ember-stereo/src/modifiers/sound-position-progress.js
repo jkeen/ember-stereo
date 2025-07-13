@@ -7,6 +7,9 @@
  *
   @class {{sound-position-progress}}
   @type Modifier
+  @param {Any} identifier url, urls, url objects, promise that resolves to a url
+  @param {Integer} position
+  @param {Integer} duration
 */
 
 import { inject as service } from '@ember/service';

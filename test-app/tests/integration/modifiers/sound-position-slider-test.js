@@ -143,17 +143,17 @@ module('Integration | Modifier | sound-position-slider', function (hooks) {
     this.duration = 10000;
 
     this.onBlueChange = (position) => {
-      assert.ok(true);
+      assert.ok(true, 'blue changed');
       this.bluePosition = position;
     };
 
     this.onGreenChange = (position) => {
-      assert.ok(true);
+      assert.ok(true, 'green changed');
       this.greenPosition = position;
     };
 
     this.onRedChange = (position) => {
-      assert.ok(true);
+      assert.ok(true, 'red changed');
       this.redPosition = position;
     };
 
@@ -196,8 +196,8 @@ module('Integration | Modifier | sound-position-slider', function (hooks) {
       clientY: 100,
     });
 
-    assert.strictEqual(this.bluePosition, 5000);
-    assert.strictEqual(this.greenPosition, 2000);
-    assert.strictEqual(this.redPosition, 9500);
+    assert.strictEqual(this.bluePosition, 5000, 'blue position correct');
+    assert.strictEqual(this.greenPosition, 2000, 'green position correct');
+    assert.strictEqual(this.redPosition, 9500, 'red position correct');
   });
 });
