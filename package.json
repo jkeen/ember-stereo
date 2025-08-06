@@ -31,7 +31,6 @@
   },
   "dependencies": {
     "@ember/render-modifiers": "^1.0.2",
-    "@ember/string": "^4.0.1",
     "@glimmer/tracking": "^1.0.4",
     "can-autoplay": "3.0.1",
     "debug": "4.3.2",
