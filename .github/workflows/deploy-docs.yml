@@ -44,6 +44,6 @@ jobs:
 
       - name: Deploy
         env:
-          DEPLOY_KEY: ${{ secrets.DEPLOY_KEY }}
+          DEPLOY_KEY: ${{ secrets.GITHUB_TOKEN }}
         run: pnpm exec ember deploy production --verbose --activate
         working-directory: 'docs'
