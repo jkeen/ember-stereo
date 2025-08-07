@@ -156,7 +156,7 @@ jobs:
         uses: benc-uk/workflow-dispatch@v1
         with:
           workflow: Deploy Docs
-          token: ${{ secrets.GH_TOKEN }}
+          token: ${{ secrets.GH_PA_TOKEN }}
 
   publish:
     name: Release
@@ -168,4 +168,4 @@ jobs:
         uses: benc-uk/workflow-dispatch@v1
         with:
           workflow: Generate New Release
-          token: ${{ secrets.GH_TOKEN }}
+          token: ${{ secrets.GH_PA_TOKEN }}
