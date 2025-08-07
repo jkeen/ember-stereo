@@ -12,7 +12,7 @@
     "lint": "pnpm --filter '*' run lint",
     "lint:fix": "pnpm --filter '*' run lint:fix",
     "prepare": "pnpm build",
-    "start": "concurrently -n stereo,docs,test --kill-others-on-fail \"pnpm start:addon\" \"pnpm start:docs\" \"pnpm start:test\"",
+    "start": "pnpx concurrently -n stereo,docs,test --kill-others-on-fail \"pnpm start:addon\" \"pnpm start:docs\" \"pnpm start:test\"",
     "start:addon": "turbo run start --filter=ember-stereo",
     "start:test": "turbo run start --filter=test-app",
     "start:docs": "turbo run start --filter=docs",
