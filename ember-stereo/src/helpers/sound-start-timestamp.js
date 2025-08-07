@@ -1,5 +1,4 @@
 import StereoBaseIsHelper from '../-private/helpers/is-helper';
-import { add } from 'date-fns';
 
 /**
   A helper to get a sound's position timestamp based on the playingDate property in an HLS file, or from the position + a startsAt parameter.

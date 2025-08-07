@@ -1,9 +1,8 @@
-import { module, test, skip } from 'qunit';
+import { module, test } from 'qunit';
 import { setupRenderingTest } from 'ember-qunit';
 import { setupStereoTest } from 'ember-stereo/test-support/stereo-setup';
 import { render } from '@ember/test-helpers';
 import { hbs } from 'ember-cli-htmlbars';
-import { add } from 'date-fns';
 import HLSAudio from 'ember-stereo/stereo-connections/hls';
 import sinon from 'sinon';
 
