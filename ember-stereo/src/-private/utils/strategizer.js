@@ -6,6 +6,8 @@ import { isEmpty } from '@ember/utils';
 import { cached } from 'tracked-toolbox';
 import { assert } from '@ember/debug';
 import { getOwner, setOwner } from '@ember/application';
+import debug from 'debug';
+
 export default class Strategizer {
   @tracked urls;
   @tracked options;
@@ -102,7 +104,10 @@ export default class Strategizer {
         strategies.push(this.buildStrategy(connection, url));
       });
     });
+
     if (this.useMobileStrategy) {
+        debug('ember-stereo:strategizer')(`re-rodering to prioritize native audio first`);
+
       /*
        * Take our standard strategy and reorder it to prioritize native audio
        * first since it's most likely to succeed and play immediately with our
