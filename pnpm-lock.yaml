@@ -273,6 +273,9 @@ importers:
 
   docs:
     dependencies:
+      '@ember/string':
+        specifier: ^4.0.1
+        version: 4.0.1
       debug:
         specifier: 4.3.2
         version: 4.3.2(supports-color@5.5.0)
@@ -2731,10 +2734,6 @@ packages:
     peerDependenciesMeta:
       '@glint/template':
         optional: true
-
-  '@ember/string@3.0.1':
-    resolution: {integrity: sha512-ntnmXS+upOWVXE+rVw2l03DjdMnaGdWbYVUxUBuPJqnIGZu2XFRsoXc7E6mOw62s8i1Xh1RgTuFHN41QGIolEQ==}
-    engines: {node: 12.* || 14.* || >= 16}
 
   '@ember/string@3.1.1':
     resolution: {integrity: sha512-UbXJ+k3QOrYN4SRPHgXCqYIJ+yWWUg1+vr0H4DhdQPTy8LJfyqwZ2tc5uqpSSnEXE+/1KopHBE5J8GDagAg5cg==}
@@ -17678,12 +17677,6 @@ snapshots:
       - '@babel/core'
       - supports-color
 
-  '@ember/string@3.0.1':
-    dependencies:
-      ember-cli-babel: 7.26.11
-    transitivePeerDependencies:
-      - supports-color
-
   '@ember/string@3.1.1':
     dependencies:
       ember-cli-babel: 7.26.11
@@ -25287,7 +25280,7 @@ snapshots:
       '@ember-data/serializer': 4.7.3(@babel/core@7.24.3)(webpack@5.81.0)
       '@ember-data/store': 4.7.3(@babel/core@7.24.3)(webpack@5.81.0)
       '@ember/edition-utils': 1.2.0
-      '@ember/string': 3.0.1
+      '@ember/string': 3.1.1
       '@embroider/macros': 1.10.0
       '@glimmer/env': 0.1.7
       broccoli-merge-trees: 4.2.0

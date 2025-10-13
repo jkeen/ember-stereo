@@ -24,7 +24,8 @@
     "_syncPnpm": "pnpm sync-dependencies-meta-injected"
   },
   "dependencies": {
-    "debug": "4.3.2"
+    "debug": "4.3.2",
+    "@ember/string": "^4.0.1"
   },
   "devDependencies": {
     "@ctrl/tinycolor": "^3.6.0",
