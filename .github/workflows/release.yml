@@ -22,8 +22,11 @@ jobs:
         with:
           persist-credentials: false
       - uses: ./.github/actions/pnpm
+      - name: Verify the integrity of provenance attestations and registry signatures for installed dependencies
+        run: npm audit signatures
       - name: Release
         working-directory: ./ember-stereo
         run: node_modules/.bin/semantic-release
         env:
-          GITHUB_TOKEN: ${{ secrets.GH_PA_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
