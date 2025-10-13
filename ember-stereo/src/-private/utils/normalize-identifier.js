@@ -2,7 +2,7 @@ import StereoUrl from './stereo-url';
 import BaseSound from '../../stereo-connections/base';
 
 export default function normalizeIdentifier(identifier) {
-  if (typeof identifier === 'string') {
+  if (typeof identifier === 'string' && identifier !== '') {
     return new StereoUrl(identifier).key;
   } else if (identifier instanceof StereoUrl) {
     return identifier.key;

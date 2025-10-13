@@ -16,4 +16,9 @@ module('Unit | Utility | normalize-identifier', function () {
     );
     assert.strictEqual(result, 'https://koop.org/streaming.mp3');
   });
+
+  test('it does not error on blank strings', function (assert) {
+    let result = normalizeIdentifier('');
+    assert.strictEqual(result, '');
+  });
 });
