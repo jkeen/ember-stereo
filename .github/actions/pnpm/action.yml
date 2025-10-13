@@ -9,6 +9,9 @@ runs:
     - uses: actions/setup-node@v4
       with:
         cache: 'pnpm'
+    - name: 'Ensure latest npm'
+      shell: 'bash'
+      run: pnpm add -g npm@latest
     - name: 'Install dependencies'
       shell: 'bash'
       run: pnpm install
