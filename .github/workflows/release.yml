@@ -4,6 +4,9 @@ name: Generate New Release
 on:
   workflow_dispatch:
 
+permissions:
+  id-token: write  # Required for OIDC
+  contents: read
 env:
   CI: true
   dist: ember-stereo/dist
