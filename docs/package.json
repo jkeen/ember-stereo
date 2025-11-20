@@ -25,7 +25,8 @@
   },
   "dependencies": {
     "debug": "4.3.2",
-    "@ember/string": "^4.0.1"
+    "@ember/string": "^4.0.1",
+    "ember-auto-import": "^2.6.3"
   },
   "devDependencies": {
     "@ctrl/tinycolor": "^3.6.0",
@@ -38,7 +39,6 @@
     "autoprefixer": "^10.4.14",
     "babel-eslint": "^10.1.0",
     "broccoli-asset-rev": "^3.0.0",
-    "ember-auto-import": "^2.6.3",
     "ember-cli": "~4.8.0",
     "ember-cli-addon-docs": "^7.0.0",
     "ember-truth-helpers": "*",
