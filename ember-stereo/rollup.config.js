@@ -1,4 +1,4 @@
-import babel from '@rollup/plugin-babel';
+import { babel } from '@rollup/plugin-babel';
 import { Addon } from '@embroider/addon-dev/rollup';
 
 const addon = new Addon({
@@ -17,7 +17,6 @@ export default {
     addon.publicEntrypoints([
       '-private/**/*.js',
       'helpers/**/*.js',
-      'models/**/*.js',
       'modifiers/**/*.js',
       'services/**/*.js',
       'stereo-connections/**/*.js',
@@ -29,14 +28,10 @@ export default {
     // not everything in publicEntrypoints necessarily needs to go here.
     addon.appReexports([
       '-private/**/*.js',
-      'components/**/*.js',
       'helpers/**/*.js',
-      'models/**/*.js',
       'modifiers/**/*.js',
       'services/**/*.js',
-      'initializers/**/*.js',
       'stereo-connections/**/*.js',
-      'instance-initializers/**/*.js',
     ]),
 
     // This babel config should *not* apply presets or compile away ES modules.
@@ -62,6 +57,6 @@ export default {
     addon.keepAssets(['**/*.css']),
 
     // Remove leftover build artifacts when starting a new build.
-    addon.clean(),
+    // addon.clean(),
   ],
 };

@@ -4,7 +4,7 @@
   </header.link>
 </DocsHeader>
 <DocsViewer as |viewer|>
-  <viewer.nav @media={{this.media}} as |nav|>
+  <viewer.nav as |nav|>
     <nav.section @label='Diagnostic' />
     <nav.item @label='Main' @route='diagnostic.index' />
     <nav.item @label='Sync' @route='diagnostic.sync' />
@@ -12,7 +12,7 @@
 
   </viewer.nav>
 
-  <viewer.main @media={{this.media}}>
+  <viewer.main>
     {{outlet}}
   </viewer.main>
 </DocsViewer>

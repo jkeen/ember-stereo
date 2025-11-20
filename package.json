@@ -12,7 +12,7 @@
     "lint": "pnpm --filter '*' run lint",
     "lint:fix": "pnpm --filter '*' run lint:fix",
     "prepare": "pnpm build",
-    "start": "pnpx concurrently -n stereo,docs,test --kill-others-on-fail \"pnpm start:addon\" \"pnpm start:docs\" \"pnpm start:test\"",
+    "start": "turbo run start",
     "start:addon": "turbo run start --filter=ember-stereo",
     "start:test": "turbo run start --filter=test-app",
     "start:docs": "turbo run start --filter=docs",
@@ -43,6 +43,7 @@
     "eslint-plugin-ember": "^10.4.2",
     "eslint-plugin-ember-concurrency": "^0.3.1",
     "eslint-plugin-node": "^11.1.0",
+    "ember-inflector": "^4.0.3",
     "eslint-plugin-prettier": "^3.4.0",
     "eslint-plugin-qunit": "^6.1.1",
     "loader.js": "^4.7.0",
@@ -57,7 +58,7 @@
     "prettier": "^2.3.0",
     "qunit": "^2.15.0",
     "qunit-dom": "^1.6.0",
-    "turbo": "^2.0.6",
+    "turbo": "^2.6.1",
     "webpack": "^5.50.0"
   },
   "engines": {

@@ -2,9 +2,9 @@ import Route from '@ember/routing/route';
 import { service } from '@ember/service';
 export default class IndexRoute extends Route {
   @service stereo;
-  @service media;
+  @service router;
 
   redirect() {
-    this.replaceWith('docs.index');
+    this.router.replaceWith('docs.index');
   }
 }

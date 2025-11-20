@@ -11,7 +11,7 @@
     },
     "start:addon": {
       "dependsOn": ["_syncPnpm"],
-      "outputs": ["ember-stereo/dist/**"],
+      "outputs": ["ember-stereo/dist"],
       "persistent": true
     },
     "start:test": {
