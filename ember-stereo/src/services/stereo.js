@@ -1171,14 +1171,16 @@ export default class Stereo extends Service.extend(EmberEvented) {
       navigator.mediaSession.setActionHandler('stop', () => {
         sound.stop();
       });
-      navigator.mediaSession.setActionHandler('seekbackward', () => {
+      navigator.mediaSession.setActionHandler('seekbackward', (seekInfo) => {
         if (sound.isRewindable) {
-          sound.rewind(15000);
+          let offset = (seekInfo?.seekOffset || 15) * 1000;
+          sound.rewind(offset);
         }
       });
-      navigator.mediaSession.setActionHandler('seekforward', () => {
+      navigator.mediaSession.setActionHandler('seekforward', (seekInfo) => {
         if (sound.isFastForwardable) {
-          sound.fastForward(15000);
+          let offset = (seekInfo?.seekOffset || 15) * 1000;
+          sound.fastForward(offset);
         }
       });
       navigator.mediaSession.setActionHandler('seekto', (seekInfo) => {
