@@ -1,6 +1,6 @@
 import StereoBaseIsHelper from '../-private/helpers/is-helper';
 import { numericDuration } from './numeric-duration';
-import debugMessage from '..//-private/utils/debug-message';
+import debugMessage from '../-private/utils/debug-message';
 
 /**
   A helper to get a sound's position.
@@ -46,7 +46,7 @@ export default class SoundPosition extends StereoBaseIsHelper {
     } else if (position === undefined && defaultValue) {
       result = defaultValue;
     } else {
-      result = position
+      result = position;
     }
 
     debugMessage(this, `${format} render = ${result}`);
