@@ -1,6 +1,7 @@
 # unconventional js
 blueprints/**/*.js
 /vendor/
+/blueprints/*/files/
 
 # compiled output
 /dist/
@@ -15,12 +16,6 @@ blueprints/**/*.js
 /coverage/
 !.*
 .*/
-.eslintcache
 
 # ember-try
 /.node_modules.ember-try/
-/bower.json.ember-try
-/npm-shrinkwrap.json.ember-try
-/package.json.ember-try
-/package-lock.json.ember-try
-/yarn.lock.ember-try
