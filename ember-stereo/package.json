@@ -24,7 +24,7 @@
     "addon-main.js"
   ],
   "scripts": {
-    "start": "rollup --config --watch",
+    "start": "concurrently 'rollup --config --watch' --names='addon build'",
     "build": "rollup --config",
     "build:js": "rollup -c ./rollup.config.js",
     "build:docs": "cp ../README.md ./README.md",

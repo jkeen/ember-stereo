@@ -17,11 +17,10 @@
     "lint:hbs:fix": "ember-template-lint . --fix",
     "lint:js": "eslint . --cache",
     "lint:js:fix": "eslint . --fix",
-    "start": "concurrently 'ember test --server' 'pnpm _syncPnpm --watch' --names 'tests serve,tests sync deps'",
+    "start": "concurrently 'ember test --server' --names 'tests serve'",
     "test": "pnpm dlx concurrently \"npm:lint\" \"npm:test:*\" --names \"lint,test:\"",
     "test:ember": "ember test",
-    "test:ember-try:one": "ember try:one",
-    "_syncPnpm": "pnpm sync-dependencies-meta-injected"
+    "test:ember-try:one": "ember try:one"
   },
   "devDependencies": {
     "@babel/core": "^7.28.5",
@@ -60,7 +59,7 @@
     "ember-sinon-qunit": "7.1.4",
     "ember-source": "~5.4.1",
     "ember-source-channel-url": "^3.0.0",
-    "ember-stereo": "workspace:../ember-stereo",
+    "ember-stereo": "workspace:^",
     "ember-template-lint": "^5.13.0",
     "ember-try": "^3.0.0",
     "eslint": "^8.57.1",
@@ -70,7 +69,6 @@
     "eslint-plugin-prettier": "^5.5.4",
     "eslint-plugin-qunit": "^8.2.5",
     "loader.js": "^4.7.0",
-    "pnpm-sync-dependencies-meta-injected": "^0.0.10",
     "prettier": "^3.6.2",
     "qunit": "^2.24.2",
     "qunit-dom": "^2.0.0",

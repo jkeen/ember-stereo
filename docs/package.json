@@ -20,10 +20,9 @@
     "lint:hbs:fix": "ember-template-lint . --fix",
     "lint:js": "eslint . --cache",
     "lint:js:fix": "eslint . --fix",
-    "start": "concurrently 'ember serve  -p 4101' 'pnpm _syncPnpm --watch' --names 'docs serve,docs sync deps'",
+    "start": "concurrently 'ember serve -p 4101' --names 'docs serve'",
     "test": "pnpm dlx concurrently \"npm:lint\" \"npm:test:*\" --names \"lint,test:\"",
-    "test:ember": "ember test",
-    "_syncPnpm": "pnpm sync-dependencies-meta-injected"
+    "test:ember": "ember test"
   },
   "dependencies": {
     "@ember/string": "^4.0.1",
@@ -51,7 +50,6 @@
     "ember-cli-addon-docs-yuidoc": "^1.0.0",
     "ember-cli-app-version": "^6.0.1",
     "ember-cli-babel": "^8.2.0",
-    "pnpm-sync-dependencies-meta-injected": "^0.0.10",
     "ember-cli-clean-css": "^3.0.0",
     "ember-cli-dependency-checker": "^3.3.2",
     "ember-cli-deploy": "^1.0.2",
@@ -75,9 +73,9 @@
     "ember-qunit": "^8.0.1",
     "ember-resolver": "^11.0.1",
     "ember-source": "~5.4.0",
-    "ember-stereo": "workspace:../ember-stereo",
+    "ember-stereo": "workspace:^",
     "ember-style-modifier": "4.3.0",
-    "ember-svg-jar": "^2.4.2",
+    "ember-svg-jar": "^2.7.1",
     "ember-template-lint": "^5.11.2",
     "ember-truth-helpers": "*",
     "ember-useragent": "^0.12.0",
