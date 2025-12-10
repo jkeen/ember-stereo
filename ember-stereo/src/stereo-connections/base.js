@@ -571,6 +571,10 @@ export default class Sound extends Evented {
     assert('[ember-stereo] #setup interface not implemented', false);
   }
 
+  _setPlaybackSpeed() {
+    assert('[ember-stereo] #_setPlaybackSpeed interface not implemented', false);
+  }
+
   _setVolume() {
     assert('[ember-stereo] #_setVolume interface not implemented', false);
   }

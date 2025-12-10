@@ -135,6 +135,10 @@ export default class Howler extends BaseSound {
     return this._currentPosition();
   }
 
+  _setPlaybackSpeed(speed) {
+    this.howl?.rate(speed);
+  }
+
   _setVolume(volume) {
     this.howl?.volume(volume / 100);
   }

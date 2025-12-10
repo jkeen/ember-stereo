@@ -87,6 +87,7 @@ export default class Stereo extends Service.extend(EmberEvented) {
     this.loadConnections();
 
     this.defaultVolume = this.systemStereoOptions?.initialVolume || 100;
+    this.defaultPlaybackSpeed = this.systemStereoOptions?.defaultPlaybackSpeed || 1.0;
     this.volume = this.defaultVolume;
 
     this.sharedAudioAccess = new SharedAudioAccess();
@@ -285,6 +286,22 @@ export default class Stereo extends Service.extend(EmberEvented) {
     debug('ember-stereo:service')(`setting volume = ${v}`);
     this.trigger('volume-change', v);
   }
+
+
+  @tracked _playbackSpeed = this.defaultPlaybackSpeed;
+  get playbackSpeed() {
+    return this._playbackSpeed;
+  }
+  set playbackSpeed(v) {
+    if (this.currentSound) {
+      debug('ember-stereo:service')(`setting current sound volume = ${v}`);
+      this.currentSound._setPlaybackSpeed(v);
+    }
+    this._playbackSpeed = v;
+    debug('ember-stereo:service')(`setting playback speed = ${v}`);
+    this.trigger('playback-speed-change', v);
+  }
+
 
   /**
    * Get/set if hifi should treat this as a mobile device

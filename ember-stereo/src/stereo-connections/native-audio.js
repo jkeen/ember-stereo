@@ -362,6 +362,16 @@ export default class NativeAudio extends BaseSound {
     return this._currentPosition();
   }
 
+  _setPlaybackSpeed(speed) {
+    if (macroCondition(isTesting())) {
+      this.debug(`skipping set volume in test env: ${speed}`);
+    } else {
+      this.debug(`_setPlayback: ${speed}`);
+      let audio = this.audioElement;
+      audio.playbackSpeed = speed;
+    }
+  }
+
   _setVolume(volume) {
     if (macroCondition(isTesting())) {
       this.debug(`skipping set volume in test env: ${volume}`);

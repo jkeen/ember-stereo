@@ -407,6 +407,10 @@ export default class HLSSound extends BaseSound {
     return position;
   }
 
+  _setPlaybackSpeed(speed) {
+    this.video.playbackRate = speed;
+  }
+
   _setVolume(volume) {
     this.video.volume = volume / 100;
   }
