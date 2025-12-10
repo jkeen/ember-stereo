@@ -545,7 +545,7 @@ export default class Stereo extends Service.extend(EmberEvented) {
       return { sound: previouslyPlayingSound, failures: [] };
     }
 
-    let loadPromise = this.loadTask.perform(urlsOrPromise, options);
+    let loadPromise = this.loadTask.linked().perform(urlsOrPromise, options);
     this.trigger('new-load-request', { loadPromise, urlsOrPromise, options }); //urls: Promise.resolve(resolveUrls(urlsOrPromise))
     let { sound, failures } = yield loadPromise;
 
