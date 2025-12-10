@@ -324,7 +324,7 @@ export default class Stereo extends Service.extend(EmberEvented) {
    * @public
    */
   get isMuted() {
-    return this.volume === 0;
+    return parseInt(this.volume, 10) === 0;
   }
 
   /**
