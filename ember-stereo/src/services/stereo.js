@@ -530,7 +530,7 @@ export default class Stereo extends Service.extend(EmberEvented) {
    * @return {Sound, failures} A sound that's playing, or an error
    */
 
-  @task({ restartable: true })
+  @task({ restartable: true, evented: true })
   *playTask(urlsOrPromise, options = {}) {
     options = { metadata: {}, ...options };
 

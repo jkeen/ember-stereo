@@ -22,6 +22,9 @@ export default class SoundProxy extends Evented {
     this.stereo.on('loadTask:started', this.onStart.bind(this));
     this.stereo.on('loadTask:errored', this.onFinish.bind(this));
     this.stereo.on('loadTask:succeeded', this.onFinish.bind(this));
+    this.stereo.on('playTask:started', this.onStart.bind(this));
+    this.stereo.on('playTask:errored', this.onFinish.bind(this));
+    this.stereo.on('playTask:succeeded', this.onFinish.bind(this));
 
     registerDestructor(this, this.willDestroy.bind(this));
 
@@ -40,7 +43,7 @@ export default class SoundProxy extends Evented {
 
   @tracked value;
 
-  @task({ debug: true })
+  @task({ debug: true, restartable: true, maxConcurrency: 1 })
   *waitForLoadTask() {
     yield waitForProperty(this, 'identifier', (v) => !!v);
     debug('ember-stereo:sound-proxy')(`waiting for ${this.identifier} to load`);
@@ -62,7 +65,7 @@ export default class SoundProxy extends Evented {
     }
   }
 
-  @task
+  @task({ debug: true, restartable: true, maxConcurrency: 1 })
   *resolveUrlTask(identifier) {
     this.identifier = yield this.stereo.resolveIdentifierTask.perform(
       identifier
