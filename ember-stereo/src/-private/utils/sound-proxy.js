@@ -126,5 +126,8 @@ export default class SoundProxy extends Evented {
     this.stereo.off('loadTask:started', this.onStart.bind(this));
     this.stereo.off('loadTask:errored', this.onFinish.bind(this));
     this.stereo.off('loadTask:succeeded', this.onFinish.bind(this));
+    this.stereo.off('playTask:started', this.onStart.bind(this));
+    this.stereo.off('playTask:errored', this.onFinish.bind(this));
+    this.stereo.off('playTask:succeeded', this.onFinish.bind(this));
   }
 }
