@@ -9,7 +9,7 @@ export default class ServiceExample extends Component {
   @service stereo;
 
   // BEGIN-SNIPPET service-errors-try-catch.js
-  playSound = task(async url => {
+  playSoundTask = task(async (url) => {
     this.error = false;
 
     if (this.sound) {
