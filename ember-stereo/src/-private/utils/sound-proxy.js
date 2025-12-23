@@ -12,6 +12,12 @@ import { registerDestructor } from '@ember/destroyable';
 */
 
 export default class SoundProxy extends Evented {
+  /* FIX ME:
+    In order to upgrade to ember-concurrency 5 which does not include waitForProperty and task events ember stereo will need to move forward with
+    its refactoring plan of moving the service-level methods into the sound object, have the sound object able to switch between connections,
+    and eliminate the need for the sound proxy
+  */
+
   @tracked isLoading = false;
   @tracked identifier;
 
