@@ -72,12 +72,11 @@ export default class SoundPositionSliderModifier extends DidPanModifier {
     }
   }
 
-  @task
-  *afterLoadTask(callback = function () {}) {
-    yield waitForProperty(this, 'url', (v) => v);
-    yield waitForProperty(this, 'loadedSound', (v) => v);
+  afterLoadTask = task(async (callback = function () {}) => {
+    await waitForProperty(this, 'url', (v) => v);
+    await waitForProperty(this, 'loadedSound', (v) => v);
     callback(this.loadedSound);
-  }
+  });
 
   @action
   handleTap(e) {
@@ -104,7 +103,7 @@ export default class SoundPositionSliderModifier extends DidPanModifier {
   modify(element, [identifier], options) {
     this.options = options;
     this.triggers = makeArray(
-      options.triggers || ['click', 'mousedown', 'tap'],
+      options.triggers || ['click', 'mousedown', 'tap']
     );
 
     if (this.identifier != identifier) {
@@ -131,7 +130,7 @@ export default class SoundPositionSliderModifier extends DidPanModifier {
       if (this.loadedSound) {
         this.loadedSound.off(
           'audio-position-changed',
-          this.onPositionChange.bind(this),
+          this.onPositionChange.bind(this)
         );
       }
 
@@ -142,7 +141,7 @@ export default class SoundPositionSliderModifier extends DidPanModifier {
           this.element.addEventListener(
             'change',
             this.onRangeControlChange,
-            true,
+            true
           );
           if (sound.isSeekable) {
             this.element.removeAttribute('disabled');
@@ -198,20 +197,20 @@ export default class SoundPositionSliderModifier extends DidPanModifier {
         if (this.loadedSound) {
           this.loadedSound.off(
             'audio-position-changed',
-            this.onPositionChange.bind(this),
+            this.onPositionChange.bind(this)
           );
         }
         this.element.removeEventListener(
           'change',
           this.onRangeControlChange,
-          true,
+          true
         );
       } else {
         super.willRemove(...arguments);
         if (this.loadedSound) {
           this.loadedSound.off(
             'audio-position-changed',
-            this.onPositionChange.bind(this),
+            this.onPositionChange.bind(this)
           );
         }
         this.triggers.forEach((trigger) => {

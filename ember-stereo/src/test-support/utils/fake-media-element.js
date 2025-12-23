@@ -209,13 +209,12 @@ export default class FakeMediaElement extends Evented {
     return this[name];
   }
 
-  @task
-  *startTickingTask() {
+  startTickingTask = task(async () => {
     let cutoffTime = new Date().getTime() + 2 * 1000;
 
     while (!this.paused && this.src && new Date() < cutoffTime) {
       // don't let a sound live longer than 2 seconds when testing
-      yield animationFrame();
+      await animationFrame();
       var diff = this._previous ? new Date().getTime() - this._previous : 0;
       this._previous = new Date().getTime();
       this.currentTime = this.currentTime + diff / 1000;
@@ -223,7 +222,7 @@ export default class FakeMediaElement extends Evented {
 
       debug('ember-stereo:fake-element')(`${this.src} ${this.currentTime}`);
 
-      yield rawTimeout(50);
+      await rawTimeout(50);
     }
-  }
+  });
 }

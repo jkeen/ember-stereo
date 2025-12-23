@@ -8,16 +8,15 @@ export default class DocsTryMultipleUrlsComponent extends Component {
   @service stereo;
   @tracked sound;
 
-  @task
-  *playTask() {
+  playTask = task(async () => {
     this.error = false;
 
     if (this.sound) {
-      yield this.sound.togglePause();
+      await this.sound.togglePause();
     } else {
       try {
         let { sound /* error, failures */ } =
-          yield this.stereo.playTask.perform([
+          await this.stereo.playTask.perform([
             'https://archive.org/download/KmartOctober1989/Kmart%20October%201989.ogg',
             'https://archive.org/download/KmartOctober1989/Kmart%20October%201989.mp3',
           ]);
@@ -26,6 +25,6 @@ export default class DocsTryMultipleUrlsComponent extends Component {
         this.error = e.message;
       }
     }
-  }
+  });
   // END-SNIPPET try-multiple-urls-via-service.js
 }

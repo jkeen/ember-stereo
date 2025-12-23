@@ -17,7 +17,10 @@ module.exports = function (defaults) {
       sourceDirs: ['public'],
     },
     babel: {
-      plugins: [require.resolve('ember-auto-import/babel-plugin')],
+      plugins: [
+        require.resolve('ember-concurrency/async-arrow-task-transform'),
+        require.resolve('ember-auto-import/babel-plugin'),
+      ],
     },
     postcssOptions: {
       compile: {

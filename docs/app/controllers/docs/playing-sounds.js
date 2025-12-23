@@ -16,10 +16,9 @@ export default class DocsUsageController extends Controller {
   // END-SNIPPET
 
   // BEGIN_SNIPPET play-sound-decorator-promise.js
-  @task
-  *loadAudioUrlTask() {
-    yield timeout(200);
-    return yield [this.onDemandUrl];
-  }
+  loadAudioUrlTask = task(async () => {
+    await timeout(200);
+    return await [this.onDemandUrl];
+  });
   // END-SNIPPET
 }

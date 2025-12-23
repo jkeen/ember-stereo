@@ -23,18 +23,17 @@ export default class EventDisplay extends Component {
     });
   }
 
-  @task({ debug: true })
-  *loadSoundFromUrlTask() {
+  loadSoundFromUrlTask = task({ debug: true }, async () => {
     if (this.args.url) {
       this.soundProxy = this.stereo.soundProxy(this.args.url);
-      yield this.soundProxy.waitForLoadTask.perform();
+      await this.soundProxy.waitForLoadTask.perform();
       this.sound = this.soundProxy.value;
       this.addSoundEvents(this.sound);
     } else {
       this.service = this.stereo;
       this.addServiceEvents(this.stereo);
     }
-  }
+  });
 
   get eventListGroupings() {
     let groupedEvents = [];

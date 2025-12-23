@@ -286,8 +286,7 @@ export default class Sound extends Evented {
     });
   }
 
-  @task({ maxConcurrency: 1, restartable: true })
-  *setPositionTask(v) {
+  setPositionTask = task({ maxConcurrency: 1, restartable: true }, async v => {
     this.trigger('audio-position-will-change', {
       sound: this,
       currentPosition: this._currentPosition(),
@@ -297,22 +296,21 @@ export default class Sound extends Evented {
     if (macroCondition(isTesting())) {
       // in testing, we don't want to wait for the next animation frame
     } else {
-      yield timeout(50);
+      await timeout(50);
     }
 
     // next(() => {
     this._position = this._setPosition(v);
     // });
-  }
+  });
 
   /* we both want to query for the playing sounds position, and fire change events
    more often than an audio element would, as documented in this issue: https://github.com/jkeen/ember-stereo/issues/24  */
 
-  @task({ maxConcurrency: 1, drop: true })
-  *updatePositionTask() {
+  updatePositionTask = task({ maxConcurrency: 1, drop: true }, async () => {
     while (this.isPlaying) {
-      yield animationFrame();
-      yield timeout(50);
+      await animationFrame();
+      await timeout(50);
 
       let previousPosition = this._position;
       let currentPosition = this._currentPosition();
@@ -326,7 +324,7 @@ export default class Sound extends Evented {
         });
       }
     }
-  }
+  });
 
   /**
    * get the sound's current real time position (probably only available on certain HLS sounds)
@@ -348,12 +346,12 @@ export default class Sound extends Evented {
     return null;
   }
 
-    /**
-   * get the sound's end time (probably only available on certain HLS sounds)
-   * @property endTime
-   * @type {Integer}
-   * @public
-   */
+  /**
+ * get the sound's end time (probably only available on certain HLS sounds)
+ * @property endTime
+ * @type {Integer}
+ * @public
+ */
   get endTime() {
     return null;
   }

@@ -71,15 +71,14 @@ export default class SoundPositionProgressModifier extends Modifier {
     }
   }
 
-  @task
-  *watchPositionTask() {
+  watchPositionTask = task(async () => {
     while (true) {
-      yield waitForProperty(this, 'loadedSound', (v) => v);
+      await waitForProperty(this, 'loadedSound', (v) => v);
       let position = this.loadedSound?.position;
-      yield timeout(100);
+      await timeout(100);
 
       if (this.loadedSound) {
-        let result = yield race([
+        let result = await race([
           waitForEvent(this.loadedSound, 'audio-position-will-change').then(
             (event) => {
               this.modifyPosition({
@@ -111,5 +110,5 @@ export default class SoundPositionProgressModifier extends Modifier {
         }
       }
     }
-  }
+  });
 }

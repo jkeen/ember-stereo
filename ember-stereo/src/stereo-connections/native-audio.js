@@ -400,8 +400,7 @@ export default class NativeAudio extends BaseSound {
 
   @tracked _durationHistory = [];
 
-  @task({ restartable: true })
-  *durationWorkaroundTask() {
+  durationWorkaroundTask = task({ restartable: true }, async () => {
     let audio = this.audioElement;
 
     if (macroCondition(isTesting())) {
@@ -412,13 +411,12 @@ export default class NativeAudio extends BaseSound {
         this._durationHistory = this._durationHistory.slice(-20); // only keep last 20 items
         this._durationHistory.push(duration);
 
-        yield timeout(250);
+        await timeout(250);
       }
     }
-  }
+  });
 
-  @task({ restartable: true })
-  *playTask({ position }) {
+  playTask = task({ restartable: true }, async ({ position }) => {
     this.isLoading = true;
     let audio = this.requestControl();
 
@@ -432,7 +430,7 @@ export default class NativeAudio extends BaseSound {
 
     this.debug('telling audio to play');
     try {
-      yield audio.play().catch((e) => {
+      await audio.play().catch((e) => {
         throw e;
       });
     } catch (e) {
@@ -440,7 +438,7 @@ export default class NativeAudio extends BaseSound {
     } finally {
       this.isLoading = false;
     }
-  }
+  });
 
   get shouldRetry() {
     return this.retryCount < 1;
