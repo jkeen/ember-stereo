@@ -385,7 +385,7 @@ export default class Stereo extends Service.extend(EmberEvented) {
     };
   }
 
-  loadTask = task({ restartable: true }, async (urlsOrPromise, _options) => {
+  loadTask = task({ restartable: true, evented: true }, async (urlsOrPromise, _options) => {
     let options = this.prepareLoadOptions(_options);
 
     debug('ember-stereo:service')(`loadTask`, urlsOrPromise, options);
