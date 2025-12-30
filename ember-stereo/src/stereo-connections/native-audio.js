@@ -418,6 +418,8 @@ export default class NativeAudio extends BaseSound {
 
   playTask = task({ restartable: true }, async ({ position }) => {
     this.isLoading = true;
+    this.isBlocked = false;
+
     let audio = this.requestControl();
 
     // since we clear the `src` attr on pause for streams, restore it here

@@ -432,6 +432,7 @@ export default class HLSSound extends BaseSound {
 
   async play() {
     this.isLoading = true;
+    this.isBlocked = false;
 
     if (!this.video.src) {
       this.trigger('audio-loading', this);

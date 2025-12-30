@@ -25,6 +25,6 @@ export default class SoundIsLoading extends StereoBaseIsHelper {
 
   get result() {
     debugMessage(this, `render = ${this.sound?.isLoaded}`);
-    return (this.sound && this.sound.isLoading) || this.isLoading;
+    return (this.sound && this.sound.isLoading && !this.sound.isBlocked) || this.isLoading;
   }
 }
