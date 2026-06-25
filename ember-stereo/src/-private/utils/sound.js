@@ -20,7 +20,12 @@ export default class Sound extends Evented {
   @tracked failures = [];
   @tracked _value = null;
   @tracked _volume;
+  @tracked _castUrl = null;
   @tracked _debug = {};
+
+  // Survives a backend swap. Only explicit pause/stop/togglePause clear it —
+  // an involuntary pause (e.g. an AirPlay route drop) deliberately does not.
+  _playIntent = false;
 
   // Bound event-relay handlers, keyed by event name, so the exact same
   // function reference can be passed to both `on` and `off`. Re-binding on
@@ -48,6 +53,16 @@ export default class Sound extends Evented {
 
   get url() {
     return this.value?.url ?? this.identifier;
+  }
+
+  // A cast receiver fetches this itself, so it can't be an HLS/MSE stream; the
+  // app supplies a natively-playable variant.
+  get castUrl() {
+    return this._castUrl ?? this.url;
+  }
+
+  set castUrl(value) {
+    this._castUrl = value;
   }
 
   get value() {
@@ -106,13 +121,20 @@ export default class Sound extends Evented {
     return this.value?.error;
   }
 
+  // A cast connection carries no metadata — it's built with the castUrl, while
+  // the app stored metadata under the playback identifier.
   get metadata() {
-    // Once resolved, defer to the connection so the Sound and its backend agree
-    // (the connection keys metadata by its resolved url).
     if (this.value) {
-      return this.value.metadata;
+      let connectionMetadata = this.value.metadata;
+      if (connectionMetadata && Object.keys(connectionMetadata).length > 0) {
+        return connectionMetadata;
+      }
     }
     return this.stereo?.metadataCache?.find(this.identifier) ?? {};
+  }
+
+  get audioElement() {
+    return this.value?.audioElement;
   }
 
   set metadata(value) {
@@ -129,27 +151,57 @@ export default class Sound extends Evented {
     return this.loadTask.perform(loadOptions);
   }
 
-  loadTask = task({ restartable: true }, async (loadOptions = {}) => {
-    // Already resolved and healthy — behave like a cache hit.
-    if (this.isResolved && !this.value.isErrored) {
-      return this.value;
-    }
+  // Does the resolved backend match the current cast state (cast while casting,
+  // local while not)?
+  _castStateMatches() {
+    let valueIsCast = this.stereo._isCastConnection(this.value);
+    return this.stereo.isCasting === valueIsCast;
+  }
 
+  loadTask = task({ restartable: true }, async (loadOptions = {}) => {
     let options = this.stereo.prepareLoadOptions({
       ...this.options,
       ...loadOptions,
     });
-    let urls = await this.stereo.urlCache.resolve(this.identifier);
 
-    // Adopt a connection already loaded for these urls (shared sound cache)
-    // rather than building a duplicate one.
-    let cachedConnection = this.stereo.findLoadedSound(urls);
-    if (cachedConnection) {
-      this.value = cachedConnection;
-      return cachedConnection;
+    // The app may hand us a device-fetchable cast URL alongside the playback
+    // urls (it knows the live/archive variant). Keep it, and make it available
+    // to the strategy builder even when it was set earlier (e.g. by prewarm)
+    // rather than passed in these options.
+    if (options.castUrl != null) {
+      this._castUrl = options.castUrl;
+    } else if (this._castUrl != null) {
+      options.castUrl = this._castUrl;
     }
 
-    if (!this.strategies) {
+    if (this.isResolved && !this.value.isErrored) {
+      if (this._castStateMatches()) {
+        return this.value;
+      }
+      let target = this.stereo.isCasting
+        ? options.castUrl
+          ? this.stereo._buildCastConnection(options.castUrl, this.metadata)
+          : null
+        : this.stereo._buildLocalConnection(this);
+      if (target) {
+        return await this.swap(target);
+      }
+      return this.value;
+    }
+
+    let urls = await this.stereo.urlCache.resolve(this.identifier);
+
+    // Not while casting: that must resolve through the cast strategy.
+    if (!this.stereo.isCasting) {
+      let cachedConnection = this.stereo.findLoadedSound(urls);
+      if (cachedConnection) {
+        this.value = cachedConnection;
+        return cachedConnection;
+      }
+    }
+
+    // Rebuild while casting so the cast strategy is (re)injected at the top.
+    if (!this.strategies || this.stereo.isCasting) {
       this.strategies = this.stereo._buildStrategies(urls, options);
       this._debug = this.strategies;
     }
@@ -237,7 +289,28 @@ export default class Sound extends Evented {
     // Drop the relays before detaching, so teardown pause/ended events never
     // reach the Sound.
     this.value = null;
-    outgoing?.detach();
+    // Stop the outgoing's audible playback before releasing it, or it keeps
+    // playing alongside the new backend (a local stream bleeding under a cast).
+    // detach()/teardown() alone don't pause the element, and pause() can fail to
+    // stop a shared element — so also pause the element directly. Each step is
+    // independently guarded: a throw in one must not skip the others (and must
+    // not abort the swap).
+    let outgoingElement = outgoing?.audioElement;
+    try {
+      outgoing?.pause?.();
+    } catch (e) {
+      debug('ember-stereo:sound')(`outgoing pause errored: ${e?.message}`);
+    }
+    try {
+      outgoingElement?.pause?.();
+    } catch (e) {
+      debug('ember-stereo:sound')(`outgoing element pause errored: ${e?.message}`);
+    }
+    try {
+      outgoing?.detach?.();
+    } catch (e) {
+      debug('ember-stereo:sound')(`outgoing detach errored: ${e?.message}`);
+    }
 
     let incoming = targetConnection;
     let engaged = false;
@@ -253,12 +326,21 @@ export default class Sound extends Evented {
         return null;
       }
 
-      if (handoff.position != null && incoming.isSeekable) {
-        incoming.position = handoff.position;
+      if (handoff.position != null) {
+        if (incoming.isSeekable) {
+          incoming.position = handoff.position;
+        } else if (typeof incoming.seedPosition === 'function') {
+          // A live stream can't seek, but seeding its clock keeps elapsed time
+          // continuous instead of restarting from zero.
+          incoming.seedPosition(handoff.position);
+        }
       }
 
       this.value = incoming;
       engaged = true;
+
+      this.stereo?.soundCache?.cache(incoming);
+      this.stereo?.oneAtATime?.register(incoming);
 
       if (handoff.isPlaying) {
         await incoming.play();
@@ -269,7 +351,11 @@ export default class Sound extends Evented {
     } finally {
       // The handoff is deliberately left in place for a superseding swap.
       if (!engaged && incoming && !incoming.isDestroyed) {
-        incoming.detach();
+        try {
+          incoming.detach();
+        } catch (e) {
+          debug('ember-stereo:sound')(`incoming detach errored: ${e?.message}`);
+        }
       }
     }
   });
@@ -278,7 +364,9 @@ export default class Sound extends Evented {
     let connection = this.value;
     return {
       position: connection?.position,
-      isPlaying: connection?.isPlaying ?? false,
+      // Intent, not live isPlaying: a route drop pauses the outgoing
+      // connection, but the swapped-in backend should still resume.
+      isPlaying: this._playIntent,
     };
   }
 
@@ -297,6 +385,9 @@ export default class Sound extends Evented {
   }
 
   _relayEvent(eventName, info = {}) {
+    if (eventName === 'audio-played') {
+      this._playIntent = true;
+    }
     this.trigger(eventName, { ...info, sound: this });
   }
 
@@ -321,18 +412,22 @@ export default class Sound extends Evented {
   // --- Proxied playback methods/state (delegated to the connection) ---
 
   play(...args) {
+    this._playIntent = true;
     return this.value?.play(...args);
   }
 
   pause(...args) {
+    this._playIntent = false;
     return this.value?.pause(...args);
   }
 
   stop(...args) {
+    this._playIntent = false;
     return this.value?.stop(...args);
   }
 
   togglePause(...args) {
+    this._playIntent = !this.isPlaying;
     return this.value?.togglePause(...args);
   }
 

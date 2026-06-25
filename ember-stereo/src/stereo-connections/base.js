@@ -624,9 +624,9 @@ export default class Sound extends Evented {
   /**
    * Release this connection during a Sound swap. For local connections this is
    * a full teardown (free the backend: HLS `hls.destroy()`, Howler `unload()`,
-   * NativeAudio releases shared-element control). The AirPlay connection
-   * (added later) overrides this to keep its service-owned route element while
-   * detaching its state — the element *is* the route.
+   * NativeAudio releases shared-element control). NativeAudioCasting's teardown
+   * keeps the service-owned route element (the element *is* the route) and only
+   * unregisters its listeners.
    *
    * @method detach
    * @public

@@ -133,9 +133,11 @@
       "./-private/utils/untracked-object-cache.js": "./dist/_app_/-private/utils/untracked-object-cache.js",
       "./-private/utils/url-cache.js": "./dist/_app_/-private/utils/url-cache.js",
       "./helpers/autoplay-allowed.js": "./dist/_app_/helpers/autoplay-allowed.js",
+      "./helpers/casting-available.js": "./dist/_app_/helpers/casting-available.js",
       "./helpers/current-sound.js": "./dist/_app_/helpers/current-sound.js",
       "./helpers/fastforward-sound.js": "./dist/_app_/helpers/fastforward-sound.js",
       "./helpers/find-sound.js": "./dist/_app_/helpers/find-sound.js",
+      "./helpers/is-casting.js": "./dist/_app_/helpers/is-casting.js",
       "./helpers/json-stringify.js": "./dist/_app_/helpers/json-stringify.js",
       "./helpers/load-sound.js": "./dist/_app_/helpers/load-sound.js",
       "./helpers/numeric-duration.js": "./dist/_app_/helpers/numeric-duration.js",
@@ -163,6 +165,7 @@
       "./helpers/stop-sound.js": "./dist/_app_/helpers/stop-sound.js",
       "./helpers/toggle-play-sound.js": "./dist/_app_/helpers/toggle-play-sound.js",
       "./helpers/toggle-stereo-mute.js": "./dist/_app_/helpers/toggle-stereo-mute.js",
+      "./modifiers/cast-button.js": "./dist/_app_/modifiers/cast-button.js",
       "./modifiers/sound-position-progress.js": "./dist/_app_/modifiers/sound-position-progress.js",
       "./modifiers/sound-position-slider.js": "./dist/_app_/modifiers/sound-position-slider.js",
       "./modifiers/stereo-volume.js": "./dist/_app_/modifiers/stereo-volume.js",
@@ -170,6 +173,7 @@
       "./stereo-connections/base.js": "./dist/_app_/stereo-connections/base.js",
       "./stereo-connections/hls.js": "./dist/_app_/stereo-connections/hls.js",
       "./stereo-connections/howler.js": "./dist/_app_/stereo-connections/howler.js",
+      "./stereo-connections/native-audio-casting.js": "./dist/_app_/stereo-connections/native-audio-casting.js",
       "./stereo-connections/native-audio.js": "./dist/_app_/stereo-connections/native-audio.js"
     }
   },

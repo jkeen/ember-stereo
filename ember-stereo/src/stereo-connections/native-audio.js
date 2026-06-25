@@ -16,6 +16,7 @@ const AUDIO_EVENTS = [
   'canplaythrough',
   'error',
   'playing',
+  'waiting',
   'pause',
   'ended',
   'seeking',
@@ -71,15 +72,28 @@ export default class NativeAudio extends BaseSound {
   }
 
   _registerEvents(audio) {
+    // Not a class field: setup() runs from BaseSound's constructor, before subclass field initializers would wipe it.
+    this._audioEventHandlers = {};
     AUDIO_EVENTS.forEach((eventName) => {
-      audio.addEventListener(eventName, (e) =>
-        run(() => this._handleAudioEvent(eventName, e))
-      );
+      let handler = (e) => run(() => this._handleAudioEvent(eventName, e));
+      this._audioEventHandlers[eventName] = handler;
+      audio.addEventListener(eventName, handler);
     });
   }
 
   _unregisterEvents(audio) {
-    AUDIO_EVENTS.forEach((eventName) => audio.removeEventListener(eventName));
+    // A single-arg removeEventListener throws in real browsers, aborting teardown.
+    let handlers = this._audioEventHandlers;
+    if (!handlers) {
+      return;
+    }
+    AUDIO_EVENTS.forEach((eventName) => {
+      let handler = handlers[eventName];
+      if (handler) {
+        audio.removeEventListener(eventName, handler);
+      }
+    });
+    this._audioEventHandlers = {};
   }
 
   _handleAudioEvent(eventName, e) {
@@ -115,6 +129,9 @@ export default class NativeAudio extends BaseSound {
         break;
       case 'playing':
         this._onAudioPlayed();
+        break;
+      case 'waiting':
+        this._onAudioWaiting();
         break;
       // the emptied event is triggered by our more reliable stream pause method
       case 'emptied':
@@ -262,6 +279,10 @@ export default class NativeAudio extends BaseSound {
 
   _onAudioEnded() {
     this.trigger('audio-ended', { sound: this });
+  }
+
+  _onAudioWaiting() {
+    this.isLoading = true;
   }
 
   _onAudioError(error) {

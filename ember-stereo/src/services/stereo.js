@@ -6,6 +6,8 @@ import { assert } from '@ember/debug';
 import {
   race,
   task,
+  timeout,
+  forever,
   waitForProperty,
   waitForEvent,
   didCancel,
@@ -15,6 +17,7 @@ import { isTesting, macroCondition } from '@embroider/macros';
 import canAutoplay from 'can-autoplay';
 import debug from 'debug';
 import config from 'ember-get-config';
+import { TrackedSet } from 'tracked-built-ins';
 
 import EmberEvented from '@ember/object/evented';
 import ErrorCache from '../-private/utils/error-cache';
@@ -25,10 +28,13 @@ import SharedAudioAccess from '../-private/utils/shared-audio-access';
 import SoundCache from '../-private/utils/sound-cache';
 import UntrackedObjectCache from '../-private/utils/untracked-object-cache';
 import Strategizer from '../-private/utils/strategizer';
+import Strategy from '../-private/utils/strategy';
 import StereoUrl from '../-private/utils/stereo-url';
 import Sound from '../-private/utils/sound';
 import ConnectionLoader from '../-private/utils/connection-loader';
 import BaseSound from '../stereo-connections/base';
+import NativeAudioCasting from '../stereo-connections/native-audio-casting';
+import hasEqualUrls from '../-private/utils/has-equal-urls';
 import { EVENT_MAP, SERVICE_EVENT_MAP } from '../-private/utils/event-map';
 
 export { EVENT_MAP, SERVICE_EVENT_MAP };
@@ -86,7 +92,9 @@ export default class Stereo extends Service.extend(EmberEvented) {
       // no checks for autoplay as it messes with the fake media element
     } else {
       this._determineAutoplayPermissions();
+      this._detectCastingAvailabilityTask.perform();
     }
+
     this.isReady = true;
   }
 
@@ -152,7 +160,12 @@ export default class Stereo extends Service.extend(EmberEvented) {
    * @public
    */
   get currentMetadata() {
-    return this.metadataCache.find(this.currentSound?.url);
+    // While casting the backend's url is the cast URL, which has no metadata of
+    // its own — fall back to the Sound's identifier.
+    return (
+      this.metadataCache.find(this.currentSound?.url) ||
+      this.metadataCache.find(this.currentSound?.identifier)
+    );
   }
 
   /**
@@ -292,6 +305,25 @@ export default class Stereo extends Service.extend(EmberEvented) {
   */
 
   @tracked isMobileDevice = 'ontouchstart' in window;
+
+  /**
+   * Is audio currently routed to a remote device (AirPlay/Cast)?
+   * @property isCasting
+   * @type {Boolean}
+   * @readOnly
+   * @public
+   */
+  @tracked isCasting = false;
+
+  /**
+   * Name of the current cast device, when the platform exposes it (WebKit
+   * AirPlay does not, so this is usually null while AirPlaying).
+   * @property castDeviceName
+   * @type {String}
+   * @readOnly
+   * @public
+   */
+  @tracked castDeviceName = null;
 
   /**
    * get if hifi should use a shared audio element
@@ -648,6 +680,382 @@ export default class Stereo extends Service.extend(EmberEvented) {
     return await this.urlCache.resolve(identifier);
   });
 
+  /* ----------------------------- CASTING ------------------------------------ */
+  /* -------------------------------------------------------------------------- */
+  /*
+   * Casting is just another connection. The AirPlay route lives on the single
+   * `<audio x-webkit-airplay>` outlet element and outlives every airing. When a
+   * route engages we swap the current sound's backend for a cast connection —
+   * the identity-stable Sound stays put. While casting, `_buildStrategies`
+   * force-injects the cast connection at the top of the waterfall so any new
+   * sound resolves straight to the device; on disengage we swap back to local.
+   * The app supplies the device-fetchable URL as `sound.castUrl`.
+   */
+
+  // The set of available cast transports ('general' = Remote Playback API,
+  // 'airplay' = WebKit). Non-empty ⇒ casting is offerable.
+  castingTypes = new TrackedSet();
+
+  /**
+   * Is casting available in this browser/network right now?
+   * @property isCastingAvailable
+   * @type {Boolean}
+   * @readOnly
+   * @public
+   */
+  get isCastingAvailable() {
+    return this.castingTypes.size > 0;
+  }
+
+  // Never torn down across airings — the AirPlay route lives on this element.
+  get castOutletElement() {
+    if (!this._castOutletElement) {
+      let element = document.createElement('audio');
+      element.setAttribute('x-webkit-airplay', 'allow');
+      element.setAttribute('crossorigin', 'anonymous');
+      element.setAttribute('preload', 'metadata');
+      if ('disableRemotePlayback' in element) {
+        element.disableRemotePlayback = false;
+      }
+
+      element.addEventListener(
+        'webkitcurrentplaybacktargetiswirelesschanged',
+        () => this._onCastTargetChange(!!element.webkitCurrentPlaybackTargetIsWireless)
+      );
+      if (element.remote) {
+        element.remote.onconnect = () => this._onCastTargetChange(true);
+        element.remote.ondisconnect = () => this._onCastTargetChange(false);
+      }
+
+      // The test fake isn't a Node, so skip hosting there.
+      if (element instanceof Node) {
+        this._castOutletHost().appendChild(element);
+      }
+
+      this._castOutletElement = element;
+    }
+    return this._castOutletElement;
+  }
+
+  _castOutletHost() {
+    let id = 'ember-stereo-cast-outlet';
+    let host = document.getElementById(id);
+    if (!host) {
+      host = document.createElement('div');
+      host.setAttribute('id', id);
+      host.setAttribute('aria-hidden', 'true');
+      host.style.position = 'absolute';
+      host.style.width = '1px';
+      host.style.height = '1px';
+      host.style.overflow = 'hidden';
+      host.style.clip = 'rect(0 0 0 0)';
+      host.style.pointerEvents = 'none';
+      document.body.appendChild(host);
+    }
+    return host;
+  }
+
+  _detectCastingAvailabilityTask = task({ maxConcurrency: 1 }, async () => {
+    let element = this.castOutletElement;
+    try {
+      if (element.remote && typeof element.remote.watchAvailability === 'function') {
+        element.remote.watchAvailability((available) => {
+          if (available) {
+            this.castingTypes.add('general');
+          } else {
+            this.castingTypes.delete('general');
+          }
+          this._triggerCastAvailabilityChanged();
+        });
+      }
+
+      if ('webkitShowPlaybackTargetPicker' in element) {
+        element.addEventListener(
+          'webkitplaybacktargetavailabilitychanged',
+          (event) => {
+            if (event.availability === 'available') {
+              this.castingTypes.add('airplay');
+            } else {
+              this.castingTypes.delete('airplay');
+            }
+            this._triggerCastAvailabilityChanged();
+          }
+        );
+      }
+
+      // A route may already exist on load (a reattached session).
+      this._reconcileCastState();
+
+      await forever;
+    } finally {
+      element.remote?.cancelWatchAvailability?.();
+    }
+  });
+
+  _triggerCastAvailabilityChanged() {
+    debug('ember-stereo:service')(
+      `cast availability: ${[...this.castingTypes]}`
+    );
+    this.trigger('audio-cast-availability-changed', {
+      available: this.isCastingAvailable,
+    });
+  }
+
+  /**
+   * Load a sound's cast URL onto the outlet ahead of the picker click — Safari
+   * won't open a picker for an element with no parsed source.
+   *
+   * @method prewarmCast
+   * @param {Array|String|Sound} identifier the sound to prepare (defaults to current)
+   * @public
+   */
+  prewarmCast(identifier) {
+    this._loadOutlet(identifier);
+  }
+
+  /**
+   * Open the device picker for a sound. Must run synchronously inside the
+   * click gesture — Safari blocks the picker otherwise.
+   *
+   * @method showCastMenu
+   * @param {Array|String|Sound} identifier the sound to cast (defaults to current)
+   * @public
+   */
+  showCastMenu(identifier) {
+    if (!this.isCastingAvailable) {
+      return;
+    }
+    this._loadOutlet(identifier);
+
+    let element = this.castOutletElement;
+    if (element.remote && typeof element.remote.prompt === 'function') {
+      element.remote.prompt().catch((error) => {
+        debug('ember-stereo:service')(`cast prompt error: ${error}`);
+      });
+    } else if (typeof element.webkitShowPlaybackTargetPicker === 'function') {
+      element.webkitShowPlaybackTargetPicker();
+    }
+  }
+
+  /**
+   * Hand playback back to the local device; WebKit has no programmatic
+   * disconnect, so it re-opens the picker for the user to disconnect there.
+   *
+   * @method stopCasting
+   * @public
+   */
+  stopCasting() {
+    let element = this.castOutletElement;
+    if (element.remote && typeof element.remote.disconnect === 'function') {
+      element.remote.disconnect();
+    } else if (typeof element.webkitShowPlaybackTargetPicker === 'function') {
+      element.webkitShowPlaybackTargetPicker();
+    }
+  }
+
+  // Point the outlet at the sound's cast URL if it isn't already there.
+  _loadOutlet(identifier) {
+    let sound = identifier ? this.findSound(identifier) : this.currentSound;
+    let castUrl = sound?.castUrl;
+    if (!castUrl) {
+      return;
+    }
+    let element = this.castOutletElement;
+    // hasEqualUrls/StereoUrl throws on an empty input, so don't compare against
+    // an unset src — just set it (first cast, before any prewarm landed).
+    let currentSrc = element.getAttribute('src');
+    if (!currentSrc || !hasEqualUrls(currentSrc, castUrl)) {
+      element.setAttribute('src', castUrl);
+      element.load();
+    }
+  }
+
+  _onCastTargetChange(isWireless) {
+    // Changing the outlet element's `src` (a feed switch, or first engage on a
+    // non-prewarmed url) makes Safari drop then re-establish the AirPlay route,
+    // firing this with wireless=false then true. That flap is OUR doing, not a
+    // genuine user disconnect — ignore it while a programmatic outlet change is
+    // in flight, so it can't trigger a disengage→local→re-engage cascade that
+    // fights the re-cast.
+    if (this._suppressCastTargetChange) {
+      debug('ember-stereo:service')(
+        `cast-target change ignored (programmatic outlet change): wireless=${isWireless}`
+      );
+      return;
+    }
+    debug('ember-stereo:service')(
+      `cast-target change: wireless=${isWireless} -> ${isWireless ? 'engage' : 'disengage'}`
+    );
+    if (isWireless) {
+      this.engageCastTask.perform().catch((e) => {
+        if (!didCancel(e)) throw e;
+      });
+    } else {
+      this.disengageCastTask.perform().catch((e) => {
+        if (!didCancel(e)) throw e;
+      });
+    }
+  }
+
+  // Nestable so an initial engage and a feed-switch re-cast can't clobber
+  // each other's suppression window.
+  _beginOutletChange() {
+    this._outletChangeDepth = (this._outletChangeDepth || 0) + 1;
+    this._suppressCastTargetChange = true;
+    this._castTargetSettleTask.cancelAll();
+  }
+
+  _endOutletChange() {
+    this._outletChangeDepth = Math.max(0, (this._outletChangeDepth || 1) - 1);
+    if (this._outletChangeDepth === 0) {
+      this._castTargetSettleTask.perform().catch((e) => {
+        if (!didCancel(e)) throw e;
+      });
+    }
+  }
+
+  // Holds suppression open until Safari's trailing route flap on the new src
+  // passes; a further outlet change extends the window.
+  _castTargetSettleTask = task({ restartable: true }, async () => {
+    await timeout(1500);
+    this._suppressCastTargetChange = false;
+    this._reconcileCastState();
+  });
+
+  // Self-heal against real route events missed during suppression, using the
+  // outlet element as ground truth.
+  _reconcileCastState() {
+    let element = this._castOutletElement;
+    if (!element || this._suppressCastTargetChange) {
+      return;
+    }
+    let actuallyCasting =
+      !!element.webkitCurrentPlaybackTargetIsWireless ||
+      element.remote?.state === 'connected';
+
+    debug('ember-stereo:service')(
+      `reconcile cast state: actuallyCasting=${actuallyCasting} isCasting=${this.isCasting}`
+    );
+
+    if (actuallyCasting && !this.isCasting) {
+      this.engageCastTask.perform().catch((e) => {
+        if (!didCancel(e)) throw e;
+      });
+    } else if (!actuallyCasting && this.isCasting) {
+      this.disengageCastTask.perform().catch((e) => {
+        if (!didCancel(e)) throw e;
+      });
+    }
+  }
+
+  // Swaps the current sound's backend for a cast connection; later feed
+  // switches route to the device via _buildStrategies instead.
+  engageCastTask = task({ restartable: true }, async () => {
+    this.isCasting = true;
+    // The platform doesn't expose the AirPlay target's real name (WebKit and the
+    // Remote Playback API both withhold it). This is an AirPlay integration
+    // (Chromecast would be a separate Cast SDK), so default to "AirPlay".
+    // Cleared on disengage.
+    this.castDeviceName = 'AirPlay';
+    let sound = this.currentSound;
+    debug('ember-stereo:service')(
+      `engaging cast -> ${sound?.castUrl ?? '(no current sound; route held, awaiting one)'}`
+    );
+    this.trigger('audio-cast-connecting', { sound });
+    if (sound?.castUrl) {
+      let cast = this._buildCastConnection(sound.castUrl, sound.metadata);
+      if (cast) {
+        await sound.swap(cast);
+      }
+    }
+    this.trigger('audio-cast-connected', { sound });
+  });
+
+  disengageCastTask = task({ restartable: true }, async () => {
+    if (!this.isCasting) {
+      return;
+    }
+    let sound = this.currentSound;
+    debug('ember-stereo:service')(
+      `disengaging cast -> keep blessed outlet, resume local (playIntent=${sound?._playIntent})`
+    );
+    this.isCasting = false;
+    this.castDeviceName = null;
+
+    // Do NOT swap to a fresh local connection: a brand-new <audio> element has
+    // no user activation, so Safari blocks its autoplay and the audio pauses.
+    // The outlet element is already "blessed" (it played under the cast), and
+    // when the route drops it outputs locally — so keep the NativeAudioCasting
+    // and just resume it if we were playing. The route drop often pauses the
+    // element involuntarily (which doesn't change _playIntent), so re-issue play
+    // on the blessed element. A later feed switch rebuilds a normal local
+    // connection via _castStateMatches.
+    if (sound && this._isCastConnection(sound.value)) {
+      if (sound._playIntent && !sound.isPlaying) {
+        sound.play();
+      }
+    }
+
+    this.trigger('audio-cast-disconnected', { sound });
+  });
+
+  // Wraps the route-holding outlet so every NativeAudioCasting sound drives
+  // THAT element rather than one of its own.
+  get castSharedAudioAccess() {
+    if (!this._castSharedAudioAccess) {
+      let access = new SharedAudioAccess();
+      access.audioElement = this.castOutletElement;
+      this._castSharedAudioAccess = access;
+    }
+    return this._castSharedAudioAccess;
+  }
+
+  // One definition of "the cast connection": a strategy that builds a
+  // NativeAudioCasting on the route element for `castUrl`. Shared by the engage
+  // swap and the force-injected cast strategy in _buildStrategies.
+  _castStrategy(castUrl, metadata) {
+    let service = this;
+    let strategy = new Strategy(NativeAudioCasting, new StereoUrl(castUrl), {
+      metadata,
+      sharedAudioAccess: this.castSharedAudioAccess,
+      // Changing the routed element's src flaps the AirPlay route, so let the
+      // connection suppress cast-target events across the change.
+      options: {
+        beginOutletChange: () => service._beginOutletChange(),
+        endOutletChange: () => service._endOutletChange(),
+      },
+    });
+    setOwner(strategy, getOwner(this));
+    return strategy;
+  }
+
+  _buildCastConnection(castUrl, metadata) {
+    return this._castStrategy(castUrl, metadata).createSound();
+  }
+
+  _isCastConnection(connection) {
+    return connection?.connectionKey === NativeAudioCasting.key;
+  }
+
+  // Build a fresh local connection for a sound from its (non-cast) strategies.
+  // A sound that adopted a cached connection on load never built strategies, so
+  // rebuild them from its identifier rather than leaving disengage with nothing
+  // to swap back to (which would strand the Sound silent).
+  _buildLocalConnection(sound) {
+    let strategies = sound.strategies;
+    if (!strategies?.length) {
+      strategies = this._buildStrategies(
+        makeArray(sound.identifier),
+        this.prepareLoadOptions(sound.options)
+      );
+    }
+    let strategy = (strategies || []).find(
+      (candidate) =>
+        candidate.canPlay && candidate.connectionKey !== NativeAudioCasting.key
+    );
+    return strategy?.createSound();
+  }
+
   /* ------------------------ PRIVATE(ISH) STUFF ------------------------------ */
   /* -------------------------------------------------------------------------- */
   /* -------------------------------------------------------------------------- */
@@ -659,7 +1067,20 @@ export default class Stereo extends Service.extend(EmberEvented) {
   _buildStrategies(urlsToTry, options) {
     let strategizer = new Strategizer(urlsToTry, options);
     setOwner(strategizer, getOwner(this));
-    return strategizer.strategies;
+    let strategies = [...strategizer.strategies];
+
+    // While casting, force the cast connection to the top so any sound that
+    // loads (a feed switch) resolves straight to the device. The app supplies
+    // the device-fetchable URL via options.castUrl; without it we can't cast, so
+    // that sound just plays locally.
+    if (this.isCasting && options.castUrl) {
+      debug('ember-stereo:service')(
+        `casting active: injecting cast strategy at top for ${options.castUrl}`
+      );
+      strategies.unshift(this._castStrategy(options.castUrl, options.metadata));
+    }
+
+    return strategies;
   }
 
   _handlePlaybackError({ sound, options }) {
@@ -1023,7 +1444,7 @@ export default class Stereo extends Service.extend(EmberEvented) {
         navigator.mediaSession.playbackState = 'paused';
       }
 
-      let { title, artist, album, artwork } = sound.metadata;
+      let { title, artist, album, artwork } = sound.metadata ?? {};
 
       let mediaAttributes = {
         title,
@@ -1141,5 +1562,9 @@ export default class Stereo extends Service.extend(EmberEvented) {
   willDestroy() {
     this.loadTask.cancelAll();
     this.playTask.cancelAll();
+    this.engageCastTask.cancelAll();
+    this.disengageCastTask.cancelAll();
+    this._castTargetSettleTask.cancelAll();
+    this._detectCastingAvailabilityTask.cancelAll();
   }
 }
