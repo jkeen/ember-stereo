@@ -16,6 +16,7 @@ const AUDIO_EVENTS = [
   'canplaythrough',
   'error',
   'playing',
+  'waiting',
   'pause',
   'ended',
   'seeking',
@@ -71,15 +72,32 @@ export default class NativeAudio extends BaseSound {
   }
 
   _registerEvents(audio) {
+    // Keep the exact handler refs so we can remove them. (Not a class field —
+    // setup() runs from BaseSound's constructor before subclass field
+    // initializers, which would wipe it.)
+    this._audioEventHandlers = {};
     AUDIO_EVENTS.forEach((eventName) => {
-      audio.addEventListener(eventName, (e) =>
-        run(() => this._handleAudioEvent(eventName, e))
-      );
+      let handler = (e) => run(() => this._handleAudioEvent(eventName, e));
+      this._audioEventHandlers[eventName] = handler;
+      audio.addEventListener(eventName, handler);
     });
   }
 
   _unregisterEvents(audio) {
-    AUDIO_EVENTS.forEach((eventName) => audio.removeEventListener(eventName));
+    // removeEventListener requires (type, listener) — a single-arg call throws
+    // "Not enough arguments" in real browsers (only the test fake tolerated it),
+    // which previously aborted teardown (and any swap detaching this connection).
+    let handlers = this._audioEventHandlers;
+    if (!handlers) {
+      return;
+    }
+    AUDIO_EVENTS.forEach((eventName) => {
+      let handler = handlers[eventName];
+      if (handler) {
+        audio.removeEventListener(eventName, handler);
+      }
+    });
+    this._audioEventHandlers = {};
   }
 
   _handleAudioEvent(eventName, e) {
@@ -115,6 +133,11 @@ export default class NativeAudio extends BaseSound {
         break;
       case 'playing':
         this._onAudioPlayed();
+        break;
+      // Playback halted waiting for data — surface a buffering state until the
+      // next 'playing'/'canplay' (whose handlers clear isLoading).
+      case 'waiting':
+        this._onAudioWaiting();
         break;
       // the emptied event is triggered by our more reliable stream pause method
       case 'emptied':
@@ -262,6 +285,13 @@ export default class NativeAudio extends BaseSound {
 
   _onAudioEnded() {
     this.trigger('audio-ended', { sound: this });
+  }
+
+  // The element stalled waiting for more data (initial buffer or a mid-stream
+  // rebuffer). Reflect it as loading so the UI can show a spinner; the next
+  // 'playing'/'canplay' clears isLoading via their handlers.
+  _onAudioWaiting() {
+    this.isLoading = true;
   }
 
   _onAudioError(error) {

@@ -23,7 +23,16 @@ export default class Sound extends Evented {
   @tracked failures = [];
   @tracked _value = null;
   @tracked _volume;
+  @tracked _castUrl = null;
   @tracked _debug = {};
+
+  // The *intended* play state, owned by the identity-stable Sound so it survives
+  // a backend swap. Updated by explicit play/pause/togglePause and by a real
+  // audio-played — but NOT by a backend's involuntary pause (e.g. an AirPlay
+  // route drop pausing the outlet element). The swap restores this, so play
+  // state is preserved across engage/disengage instead of following whichever
+  // connection happened to be paused at handoff time.
+  _playIntent = false;
 
   // Bound event-relay handlers, keyed by event name, so the exact same
   // function reference can be passed to both `on` and `off`. Re-binding on
@@ -53,6 +62,18 @@ export default class Sound extends Evented {
     // Once resolved, report the connection's resolved url so the Sound and its
     // backend agree (the raw identifier may be relative or a promise/function).
     return this.value?.url ?? this.identifier;
+  }
+
+  // The device-fetchable URL to hand an AirPlay/cast outlet, which differs from
+  // the playback url: an HLS/MSE stream can't be cast, so casting plays a public
+  // (live) or token-signed (archive) variant natively on the device. Supplied by
+  // the app (it knows the variant); defaults to the playback url for plain files.
+  get castUrl() {
+    return this._castUrl ?? this.url;
+  }
+
+  set castUrl(value) {
+    this._castUrl = value;
   }
 
   get value() {
@@ -116,11 +137,25 @@ export default class Sound extends Evented {
 
   get metadata() {
     // Once resolved, defer to the connection so the Sound and its backend agree
-    // (the connection keys metadata by its resolved url).
+    // (the connection keys metadata by its resolved url). But a cast connection
+    // is keyed by the cast url, which has no metadata of its own — fall back to
+    // the identifier (the playback url the app keyed metadata under). Never
+    // null/undefined — consumers destructure it (e.g. now-playing).
     if (this.value) {
-      return this.value.metadata;
+      let connectionMetadata = this.value.metadata;
+      if (connectionMetadata && Object.keys(connectionMetadata).length > 0) {
+        return connectionMetadata;
+      }
     }
     return this.stereo?.metadataCache?.find(this.identifier) ?? {};
+  }
+
+  // The backing media element, when the connection exposes one (NativeAudio, the
+  // AirPlay outlet). Delegated so consumers that reach for it off a relayed event
+  // — e.g. the visualizer's `sound.audioElement` — get the connection's element
+  // rather than `undefined` on the proxy.
+  get audioElement() {
+    return this.value?.audioElement;
   }
 
   set metadata(value) {
@@ -137,27 +172,64 @@ export default class Sound extends Evented {
     return this.loadTask.perform(loadOptions);
   }
 
-  loadTask = task({ restartable: true }, async (loadOptions = {}) => {
-    // Already resolved and healthy — behave like a cache hit.
-    if (this.isResolved && !this.value.isErrored) {
-      return this.value;
-    }
+  // Does the resolved backend match the current cast state (cast while casting,
+  // local while not)?
+  _castStateMatches() {
+    let valueIsCast = this.stereo._isCastConnection(this.value);
+    return this.stereo.isCasting === valueIsCast;
+  }
 
+  loadTask = task({ restartable: true }, async (loadOptions = {}) => {
     let options = this.stereo.prepareLoadOptions({
       ...this.options,
       ...loadOptions,
     });
+
+    // The app may hand us a device-fetchable cast URL alongside the playback
+    // urls (it knows the live/archive variant). Keep it, and make it available
+    // to the strategy builder even when it was set earlier (e.g. by prewarm)
+    // rather than passed in these options.
+    if (options.castUrl != null) {
+      this._castUrl = options.castUrl;
+    } else if (this._castUrl != null) {
+      options.castUrl = this._castUrl;
+    }
+
+    // Already resolved and healthy AND on the right backend for the cast state —
+    // behave like a cache hit. If it's on the WRONG side (local while casting, or
+    // cast while not), swap to the correct backend rather than returning a stale
+    // connection (which would play locally under a cast, or vice-versa).
+    if (this.isResolved && !this.value.isErrored) {
+      if (this._castStateMatches()) {
+        return this.value;
+      }
+      let target = this.stereo.isCasting
+        ? options.castUrl
+          ? this.stereo._buildCastConnection(options.castUrl, this.metadata)
+          : null
+        : this.stereo._buildLocalConnection(this);
+      if (target) {
+        return await this.swap(target);
+      }
+      return this.value;
+    }
+
     let urls = await this.stereo.urlCache.resolve(this.identifier);
 
     // Adopt a connection already loaded for these urls (shared sound cache)
-    // rather than building a duplicate one.
-    let cachedConnection = this.stereo.findLoadedSound(urls);
-    if (cachedConnection) {
-      this.value = cachedConnection;
-      return cachedConnection;
+    // rather than building a duplicate — but NOT while casting, where we must
+    // resolve through the cast strategy rather than a stale local connection.
+    if (!this.stereo.isCasting) {
+      let cachedConnection = this.stereo.findLoadedSound(urls);
+      if (cachedConnection) {
+        this.value = cachedConnection;
+        return cachedConnection;
+      }
     }
 
-    if (!this.strategies) {
+    // Rebuild while casting so the cast strategy is (re)injected at the top;
+    // otherwise reuse the cached list.
+    if (!this.strategies || this.stereo.isCasting) {
       this.strategies = this.stereo._buildStrategies(urls, options);
       this._debug = this.strategies;
     }
@@ -247,7 +319,28 @@ export default class Sound extends Evented {
     // Source-identity arbitration: drop the outgoing connection's relays before
     // detaching it, so its teardown pause/ended events never reach the Sound.
     this.value = null;
-    outgoing?.detach();
+    // Stop the outgoing's audible playback before releasing it, or it keeps
+    // playing alongside the new backend (a local stream bleeding under a cast).
+    // detach()/teardown() alone don't pause the element, and pause() can fail to
+    // stop a shared element — so also pause the element directly. Each step is
+    // independently guarded: a throw in one must not skip the others (and must
+    // not abort the swap).
+    let outgoingElement = outgoing?.audioElement;
+    try {
+      outgoing?.pause?.();
+    } catch (e) {
+      debug('ember-stereo:sound')(`outgoing pause errored: ${e?.message}`);
+    }
+    try {
+      outgoingElement?.pause?.();
+    } catch (e) {
+      debug('ember-stereo:sound')(`outgoing element pause errored: ${e?.message}`);
+    }
+    try {
+      outgoing?.detach?.();
+    } catch (e) {
+      debug('ember-stereo:sound')(`outgoing detach errored: ${e?.message}`);
+    }
 
     let incoming = targetConnection;
     let engaged = false;
@@ -263,12 +356,27 @@ export default class Sound extends Evented {
         return null;
       }
 
-      if (handoff.position != null && incoming.isSeekable) {
-        incoming.position = handoff.position;
+      if (handoff.position != null) {
+        if (incoming.isSeekable) {
+          incoming.position = handoff.position;
+        } else if (typeof incoming.seedPosition === 'function') {
+          // Not seekable (a live stream): can't seek to a past point, but seed
+          // the connection's clock so elapsed continues across the swap instead
+          // of restarting at zero.
+          incoming.seedPosition(handoff.position);
+        }
       }
 
       this.value = incoming;
       engaged = true;
+
+      // Keep the service caches consistent with the new backend: register the
+      // incoming connection so oneAtATime arbitrates it and the sound cache can
+      // find it. (The outgoing was already detached above.) A cast connection
+      // that loses control falls back to its internal clone, so oneAtATime
+      // pausing a stale one can't pause the live route.
+      this.stereo?.soundCache?.cache(incoming);
+      this.stereo?.oneAtATime?.register(incoming);
 
       if (handoff.isPlaying) {
         await incoming.play();
@@ -281,7 +389,11 @@ export default class Sound extends Evented {
       // its element/HLS instance doesn't leak. (The handoff is intentionally
       // left intact for a superseding swap to reuse.)
       if (!engaged && incoming && !incoming.isDestroyed) {
-        incoming.detach();
+        try {
+          incoming.detach();
+        } catch (e) {
+          debug('ember-stereo:sound')(`incoming detach errored: ${e?.message}`);
+        }
       }
     }
   });
@@ -290,7 +402,10 @@ export default class Sound extends Evented {
     let connection = this.value;
     return {
       position: connection?.position,
-      isPlaying: connection?.isPlaying ?? false,
+      // Use the Sound's intent, not the connection's live isPlaying: a route drop
+      // pauses the outgoing connection before we get here, but the user still
+      // intends playback, so the swapped-in backend should resume.
+      isPlaying: this._playIntent,
     };
   }
 
@@ -309,6 +424,12 @@ export default class Sound extends Evented {
   }
 
   _relayEvent(eventName, info = {}) {
+    // A real play (e.g. the initial load plays the connection directly, not via
+    // the entity) reflects intent to play. Involuntary pauses are deliberately
+    // NOT mirrored here — only explicit pause/stop/togglePause clear intent.
+    if (eventName === 'audio-played') {
+      this._playIntent = true;
+    }
     this.trigger(eventName, { ...info, sound: this });
   }
 
@@ -333,18 +454,24 @@ export default class Sound extends Evented {
   // --- Proxied playback methods/state (delegated to the connection) ---
 
   play(...args) {
+    this._playIntent = true;
     return this.value?.play(...args);
   }
 
   pause(...args) {
+    this._playIntent = false;
     return this.value?.pause(...args);
   }
 
   stop(...args) {
+    this._playIntent = false;
     return this.value?.stop(...args);
   }
 
   togglePause(...args) {
+    // Capture intent from the state we're toggling away from (before the
+    // connection flips it).
+    this._playIntent = !this.isPlaying;
     return this.value?.togglePause(...args);
   }
 
