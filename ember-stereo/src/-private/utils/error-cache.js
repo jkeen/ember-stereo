@@ -3,7 +3,7 @@ import debug from 'debug';
 import { tracked } from '@glimmer/tracking';
 import hasEqualUrls from './has-equal-urls';
 import normalizeIdentifier from './normalize-identifier';
-import { inject as service } from '@ember/service';
+import { service } from '@ember/service';
 
 /**
  * This class caches errors based on urls.

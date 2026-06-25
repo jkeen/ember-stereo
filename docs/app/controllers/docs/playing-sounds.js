@@ -1,5 +1,5 @@
 import Controller from '@ember/controller';
-import { inject as service } from '@ember/service';
+import { service } from '@ember/service';
 import { timeout } from 'ember-concurrency';
 import { task } from 'ember-concurrency';
 export default class DocsUsageController extends Controller {

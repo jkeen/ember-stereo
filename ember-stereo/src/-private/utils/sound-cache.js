@@ -4,7 +4,7 @@ import { tracked } from '@glimmer/tracking';
 import BaseSound from '../../stereo-connections/base';
 import hasEqualUrls from './has-equal-urls';
 import normalizeIdentifier from './normalize-identifier';
-import { inject as service } from '@ember/service';
+import { service } from '@ember/service';
 import { TrackedObject, TrackedArray } from 'tracked-built-ins';
 
 /**

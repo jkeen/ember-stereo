@@ -11,7 +11,7 @@
 
 import { registerDestructor } from '@ember/destroyable';
 import { action } from '@ember/object';
-import { inject as service } from '@ember/service';
+import { service } from '@ember/service';
 import Modifier from 'ember-modifier';
 export default class StereoVolumeModifier extends Modifier {
   @service stereo;

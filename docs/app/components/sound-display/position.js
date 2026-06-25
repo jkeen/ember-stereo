@@ -1,6 +1,6 @@
 import Component from '@glimmer/component';
 import { throttle, next } from '@ember/runloop';
-import { inject as service } from '@ember/service';
+import { service } from '@ember/service';
 import { action } from '@ember/object';
 import { tracked } from '@glimmer/tracking';
 export default class Position extends Component {

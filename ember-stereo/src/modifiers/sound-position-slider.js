@@ -16,7 +16,7 @@
 */
 
 import { action } from '@ember/object';
-import { inject as service } from '@ember/service';
+import { service } from '@ember/service';
 import { task, waitForProperty } from 'ember-concurrency';
 import { next } from '@ember/runloop';
 import DidPanModifier from 'ember-gesture-modifiers/modifiers/did-pan';

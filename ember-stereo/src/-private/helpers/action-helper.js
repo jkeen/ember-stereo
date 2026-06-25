@@ -1,4 +1,4 @@
-import { inject as service } from '@ember/service';
+import { service } from '@ember/service';
 import Helper from '@ember/component/helper';
 import prepareOptions from '../utils/prepare-options';
 import { dedupeTracked } from 'tracked-toolbox';
