@@ -37,11 +37,13 @@ class FakeOutlet {
   }
   removeEventListener(name, handler) {
     this._listeners[name] = (this._listeners[name] || []).filter(
-      (existing) => existing !== handler
+      (existing) => existing !== handler,
     );
   }
   dispatch(name) {
-    (this._listeners[name] || []).forEach((handler) => handler({ target: this }));
+    (this._listeners[name] || []).forEach((handler) =>
+      handler({ target: this }),
+    );
   }
   listenerCount(name) {
     return (this._listeners[name] || []).length;
@@ -78,7 +80,11 @@ function buildAccess() {
 // runloop busy and hang the next test.
 let builtConnections = [];
 
-function buildConnection(access, options = {}, url = 'http://example.com/stream.aac') {
+function buildConnection(
+  access,
+  options = {},
+  url = 'http://example.com/stream.aac',
+) {
   let connection = new NativeAudioCasting({
     url,
     connectionName: 'NativeAudioCasting',
@@ -115,12 +121,12 @@ module('Unit | Connection | NativeAudioCasting', function (hooks) {
     assert.strictEqual(
       connection.audioElement,
       access.audioElement,
-      'plays through the shared route element, not an internal clone'
+      'plays through the shared route element, not an internal clone',
     );
     assert.strictEqual(
       access.audioElement.src,
       'http://example.com/stream.aac',
-      'set the element src to the cast url'
+      'set the element src to the cast url',
     );
 
     assert.false(connection.isReady, 'not ready before the element reports it');
@@ -135,13 +141,21 @@ module('Unit | Connection | NativeAudioCasting', function (hooks) {
 
     connection.pause();
     assert.true(element.paused, 'element paused');
-    assert.strictEqual(element.src, 'http://example.com/stream.aac', 'src kept on pause');
+    assert.strictEqual(
+      element.src,
+      'http://example.com/stream.aac',
+      'src kept on pause',
+    );
 
     connection.stop();
-    assert.strictEqual(element.src, 'http://example.com/stream.aac', 'src kept on stop');
+    assert.strictEqual(
+      element.src,
+      'http://example.com/stream.aac',
+      'src kept on stop',
+    );
   });
 
-  test('does not fake playing — the element\'s real playing event drives it', function (assert) {
+  test("does not fake playing — the element's real playing event drives it", function (assert) {
     let access = buildAccess();
     let connection = buildConnection(access);
     let played = false;
@@ -150,7 +164,7 @@ module('Unit | Connection | NativeAudioCasting', function (hooks) {
     connection.play();
     assert.false(
       played,
-      'play() does not optimistically mark playing (that masked the device buffer)'
+      'play() does not optimistically mark playing (that masked the device buffer)',
     );
 
     access.audioElement.dispatch('playing');
@@ -199,7 +213,10 @@ module('Unit | Connection | NativeAudioCasting', function (hooks) {
     await timeout(80);
     let later = connection._currentPosition();
 
-    assert.ok(later > first, 'position advanced via wall-clock despite a frozen element clock');
+    assert.ok(
+      later > first,
+      'position advanced via wall-clock despite a frozen element clock',
+    );
   });
 
   test('requestControl suppresses the cast-target flap around the src change', function (assert) {
@@ -219,15 +236,22 @@ module('Unit | Connection | NativeAudioCasting', function (hooks) {
     let connection = buildConnection(access);
     let element = access.audioElement;
 
-    assert.ok(element.listenerCount('canplay') > 0, 'registered element listeners');
+    assert.ok(
+      element.listenerCount('canplay') > 0,
+      'registered element listeners',
+    );
 
     connection.teardown();
 
-    assert.strictEqual(element.listenerCount('canplay'), 0, 'removed its listeners');
+    assert.strictEqual(
+      element.listenerCount('canplay'),
+      0,
+      'removed its listeners',
+    );
     assert.strictEqual(
       element.src,
       'http://example.com/stream.aac',
-      'left the route element intact (never destroyed)'
+      'left the route element intact (never destroyed)',
     );
   });
 });

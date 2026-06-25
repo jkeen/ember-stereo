@@ -25,7 +25,9 @@ class FakeController {
     (this._listeners[name] ||= []).push(handler);
   }
   removeEventListener(name, handler) {
-    this._listeners[name] = (this._listeners[name] || []).filter((h) => h !== handler);
+    this._listeners[name] = (this._listeners[name] || []).filter(
+      (h) => h !== handler,
+    );
   }
   dispatch(name) {
     (this._listeners[name] || []).forEach((h) => h());
@@ -85,7 +87,12 @@ function installFakeCastSdk() {
           this.autoplay = true;
         }
       },
-      PlayerState: { IDLE: 'IDLE', PLAYING: 'PLAYING', PAUSED: 'PAUSED', BUFFERING: 'BUFFERING' },
+      PlayerState: {
+        IDLE: 'IDLE',
+        PLAYING: 'PLAYING',
+        PAUSED: 'PAUSED',
+        BUFFERING: 'BUFFERING',
+      },
     },
   };
 }
@@ -156,9 +163,12 @@ module('Unit | Connection | Chromecast', function (hooks) {
     assert.strictEqual(
       session.loadRequest.media.contentId,
       'http://example.com/stream.m3u8',
-      'loaded the cast url'
+      'loaded the cast url',
     );
-    assert.true(session.loadRequest.autoplay, 'auto-plays on load (receiver starts; swap reconciles intent)');
+    assert.true(
+      session.loadRequest.autoplay,
+      'auto-plays on load (receiver starts; swap reconciles intent)',
+    );
 
     await settled();
     assert.true(connection.isReady, 'ready after loadMedia resolves');
@@ -193,7 +203,7 @@ module('Unit | Connection | Chromecast', function (hooks) {
     assert.strictEqual(
       controller.player.isPaused,
       pausedBefore,
-      'play during load (not PAUSED) is a no-op — lets autoplay proceed'
+      'play during load (not PAUSED) is a no-op — lets autoplay proceed',
     );
 
     controller.player.playerState = 'PLAYING';
@@ -209,14 +219,22 @@ module('Unit | Connection | Chromecast', function (hooks) {
     access.player.playerState = 'PAUSED';
     let before = access.player.isPaused;
     a.play(); // a is released — must not touch the shared session
-    assert.strictEqual(access.player.isPaused, before, 'released sound play() is a no-op');
+    assert.strictEqual(
+      access.player.isPaused,
+      before,
+      'released sound play() is a no-op',
+    );
   });
 
   test('seek sets remote currentTime and calls seek (when it owns the session)', function (assert) {
     let { access } = buildAccess();
     let connection = build(access);
     connection._setPosition(5000);
-    assert.strictEqual(access.player.currentTime, 5, 'set remote currentTime (s)');
+    assert.strictEqual(
+      access.player.currentTime,
+      5,
+      'set remote currentTime (s)',
+    );
     assert.strictEqual(access.controller.seekCount, 1, 'issued a seek');
   });
 
@@ -247,7 +265,11 @@ module('Unit | Connection | Chromecast', function (hooks) {
     b.trigger = bTrig;
 
     assert.deepEqual(aEvents, [], 'the released sound relays nothing');
-    assert.deepEqual(bEvents, ['audio-played'], 'only the owner relays audio-played');
+    assert.deepEqual(
+      bEvents,
+      ['audio-played'],
+      'only the owner relays audio-played',
+    );
   });
 
   test('releaseControl pauses the sound locally so its dead-reckon loop exits', function (assert) {
@@ -266,7 +288,10 @@ module('Unit | Connection | Chromecast', function (hooks) {
 
     assert.false(access.hasControl(connection), 'gave up ownership');
     assert.strictEqual(paused, 1, 'relayed a single audio-paused');
-    assert.false(connection.isPlaying, 'no longer playing — position loop exits');
+    assert.false(
+      connection.isPlaying,
+      'no longer playing — position loop exits',
+    );
   });
 
   test('teardown gives up ownership without ending the session', function (assert) {
@@ -284,10 +309,17 @@ module('Unit | Connection | Chromecast', function (hooks) {
     let { access } = buildAccess();
     build(access);
     let controller = access.controller;
-    assert.ok(controller.listenerCount('PLAYER_STATE_CHANGED') > 0, 'registered while attached');
+    assert.ok(
+      controller.listenerCount('PLAYER_STATE_CHANGED') > 0,
+      'registered while attached',
+    );
 
     access.detach();
-    assert.strictEqual(controller.listenerCount('PLAYER_STATE_CHANGED'), 0, 'unregistered on detach');
+    assert.strictEqual(
+      controller.listenerCount('PLAYER_STATE_CHANGED'),
+      0,
+      'unregistered on detach',
+    );
     assert.strictEqual(access.player, null, 'player cleared');
     assert.strictEqual(access.owner, null, 'owner cleared');
   });

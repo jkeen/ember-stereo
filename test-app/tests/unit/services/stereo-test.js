@@ -1077,7 +1077,7 @@ module('Unit | Service | stereo', function (hooks) {
 
     let changes = [];
     service.on('current-sound-changed', ({ sound }) =>
-      changes.push(sound?.url ?? null)
+      changes.push(sound?.url ?? null),
     );
 
     let a = fakeSound('/a.mp3');
@@ -1090,7 +1090,7 @@ module('Unit | Service | stereo', function (hooks) {
     assert.deepEqual(
       changes,
       ['/a.mp3', '/b.mp3', null],
-      'fires exactly once per real change — including a direct assignment and a clear'
+      'fires exactly once per real change — including a direct assignment and a clear',
     );
   });
 
@@ -1112,22 +1112,22 @@ module('Unit | Service | stereo', function (hooks) {
       assert.strictEqual(
         strategies[0].connectionKey,
         'Chromecast',
-        'the Chromecast strategy is tried first'
+        'the Chromecast strategy is tried first',
       );
       assert.strictEqual(
         strategies[0].options.startTime,
         5000,
-        'the start position is threaded onto the strategy'
+        'the start position is threaded onto the strategy',
       );
       assert.ok(
         strategies.length > 1,
-        'the local waterfall is kept as a fallback behind the cast strategy'
+        'the local waterfall is kept as a fallback behind the cast strategy',
       );
       assert.notOk(
         strategies
           .slice(1)
           .some((strategy) => strategy.connectionKey === 'Chromecast'),
-        'only one cast strategy; the rest are local'
+        'only one cast strategy; the rest are local',
       );
     });
 
@@ -1146,11 +1146,11 @@ module('Unit | Service | stereo', function (hooks) {
 
       assert.ok(
         strategies.length >= 1,
-        'it builds the normal waterfall instead of looping on a dead cast'
+        'it builds the normal waterfall instead of looping on a dead cast',
       );
       assert.notOk(
         strategies.some((strategy) => strategy.connectionKey === 'Chromecast'),
-        'no Chromecast strategy is built without a live session'
+        'no Chromecast strategy is built without a live session',
       );
     });
 
@@ -1174,7 +1174,7 @@ module('Unit | Service | stereo', function (hooks) {
       assert.strictEqual(
         buildSpy.firstCall.args[2],
         null,
-        'no start position is handed to a live stream cast'
+        'no start position is handed to a live stream cast',
       );
     });
 
@@ -1191,7 +1191,11 @@ module('Unit | Service | stereo', function (hooks) {
         connectionKey: 'NativeAudio',
         createSound: () => localSound,
       };
-      let sound = { strategies: [castStrategy], identifier: '/a.mp3', options: {} };
+      let sound = {
+        strategies: [castStrategy],
+        identifier: '/a.mp3',
+        options: {},
+      };
 
       let buildStub = sandbox
         .stub(service, '_buildStrategies')
@@ -1201,12 +1205,12 @@ module('Unit | Service | stereo', function (hooks) {
 
       assert.ok(
         buildStub.calledOnce,
-        'rebuilt the waterfall because the cached strategies were all cast'
+        'rebuilt the waterfall because the cached strategies were all cast',
       );
       assert.strictEqual(
         result,
         localSound,
-        'returned a fresh local connection to swap back to'
+        'returned a fresh local connection to swap back to',
       );
     });
 
@@ -1231,7 +1235,7 @@ module('Unit | Service | stereo', function (hooks) {
 
       assert.ok(
         buildSpy.notCalled,
-        'engage is idempotent: it does not re-cast an already-cast sound'
+        'engage is idempotent: it does not re-cast an already-cast sound',
       );
     });
 
@@ -1255,7 +1259,7 @@ module('Unit | Service | stereo', function (hooks) {
       assert.strictEqual(
         buildSpy.firstCall.args[2],
         16000,
-        'the archive resumes at the local position'
+        'the archive resumes at the local position',
       );
     });
   });

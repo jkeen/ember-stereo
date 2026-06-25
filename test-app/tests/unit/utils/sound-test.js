@@ -29,7 +29,7 @@ module('Unit | Utility | sound', function (hooks) {
     assert.strictEqual(
       service.findSound(url),
       sound,
-      'the same Sound instance is returned for the same identifier'
+      'the same Sound instance is returned for the same identifier',
     );
   });
 
@@ -69,7 +69,7 @@ module('Unit | Utility | sound', function (hooks) {
     assert.strictEqual(
       relayedPauses,
       1,
-      'pausing the connection relays an audio-paused event on the Sound'
+      'pausing the connection relays an audio-paused event on the Sound',
     );
   });
 
@@ -98,7 +98,7 @@ module('Unit | Utility | sound', function (hooks) {
     assert.strictEqual(
       relayedPauses,
       0,
-      'events from a detached connection are not relayed by the Sound'
+      'events from a detached connection are not relayed by the Sound',
     );
   });
 
@@ -130,12 +130,12 @@ module('Unit | Utility | sound', function (hooks) {
     assert.strictEqual(
       result,
       rebuilt,
-      'returns the rebuilt cast connection, not the cached value'
+      'returns the rebuilt cast connection, not the cached value',
     );
     assert.notStrictEqual(
       result,
       cached,
-      'did not short-circuit to the stale cached connection'
+      'did not short-circuit to the stale cached connection',
     );
   });
 
@@ -165,7 +165,7 @@ module('Unit | Utility | sound', function (hooks) {
 
     assert.ok(
       played >= 1,
-      'the Sound relays an audio-played for the already-playing backend'
+      'the Sound relays an audio-played for the already-playing backend',
     );
   });
 
@@ -188,9 +188,19 @@ module('Unit | Utility | sound', function (hooks) {
     sound.play();
     sound.togglePause();
 
-    assert.strictEqual(loadStub.callCount, 2, 're-resolves on both play and togglePause');
-    assert.ok(connectionPlay.notCalled, 'does not poke the dead connection on play');
-    assert.ok(connectionToggle.notCalled, 'does not poke the dead connection on togglePause');
+    assert.strictEqual(
+      loadStub.callCount,
+      2,
+      're-resolves on both play and togglePause',
+    );
+    assert.ok(
+      connectionPlay.notCalled,
+      'does not poke the dead connection on play',
+    );
+    assert.ok(
+      connectionToggle.notCalled,
+      'does not poke the dead connection on togglePause',
+    );
   });
 
   test('re-loading a resolved sound while casting with a DEAD session resolves LOCAL, not a doomed cast connection', async function (assert) {
@@ -219,9 +229,13 @@ module('Unit | Utility | sound', function (hooks) {
 
     assert.ok(
       buildCast.notCalled,
-      'does NOT build a cast connection when the session is dead'
+      'does NOT build a cast connection when the session is dead',
     );
-    assert.strictEqual(result, localSound, 'resolves to a local connection instead');
+    assert.strictEqual(
+      result,
+      localSound,
+      'resolves to a local connection instead',
+    );
   });
 
   test('re-loading a resolved sound while casting with a LIVE session resolves to the device', async function (assert) {
@@ -248,7 +262,10 @@ module('Unit | Utility | sound', function (hooks) {
       castUrl: 'https://public.example/archive.m3u8',
     });
 
-    assert.ok(buildCast.calledOnce, 'builds a cast connection when the session is live');
+    assert.ok(
+      buildCast.calledOnce,
+      'builds a cast connection when the session is live',
+    );
     assert.strictEqual(result, castSound, 'resolves to the device');
   });
 
@@ -270,11 +287,11 @@ module('Unit | Utility | sound', function (hooks) {
       sound.value.connectionKey = key;
       assert.true(
         service._isCastConnection(sound.value),
-        `${key} is recognized as a cast connection`
+        `${key} is recognized as a cast connection`,
       );
       assert.false(
         sound._castStateMatches(),
-        `${key} value while not casting is the wrong backend → re-resolves local`
+        `${key} value while not casting is the wrong backend → re-resolves local`,
       );
     }
   });
@@ -293,8 +310,16 @@ module('Unit | Utility | sound', function (hooks) {
     await sound.swap(incoming);
     await settled();
 
-    assert.strictEqual(sound.value, incoming, 'the Sound points at the swap target');
-    assert.notStrictEqual(sound.value, outgoing, 'no longer the original connection');
+    assert.strictEqual(
+      sound.value,
+      incoming,
+      'the Sound points at the swap target',
+    );
+    assert.notStrictEqual(
+      sound.value,
+      outgoing,
+      'no longer the original connection',
+    );
     assert.true(outgoing.isDestroyed, 'the outgoing connection was detached');
   });
 
@@ -316,7 +341,7 @@ module('Unit | Utility | sound', function (hooks) {
     assert.strictEqual(
       Math.floor(sound.value.position),
       Math.floor(expectedPosition),
-      'the new connection resumes at the handoff position'
+      'the new connection resumes at the handoff position',
     );
   });
 
@@ -344,7 +369,7 @@ module('Unit | Utility | sound', function (hooks) {
     assert.deepEqual(
       relayed,
       ['paused'],
-      'the outgoing connection is silenced; only the swapped-in one relays'
+      'the outgoing connection is silenced; only the swapped-in one relays',
     );
   });
 
