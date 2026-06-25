@@ -1,5 +1,6 @@
 import { isTesting, macroCondition } from '@embroider/macros';
 import NativeAudio from './native-audio';
+import DeadReckonClock from '../-private/utils/dead-reckon-clock';
 
 // After a seek, the device's clock keeps reporting the pre-seek position for a
 // beat. Ignore its reported position until it lands within this tolerance of the
@@ -37,7 +38,7 @@ const END_TOLERANCE_MS = 1500;
  * @class NativeAudioCasting
  * @extends NativeAudio
  */
-export default class NativeAudioCasting extends NativeAudio {
+export default class NativeAudioCasting extends DeadReckonClock(NativeAudio) {
   static key = 'NativeAudioCasting';
   static toString() {
     return 'NativeAudioCasting';
@@ -57,11 +58,8 @@ export default class NativeAudioCasting extends NativeAudio {
   // pause the live route.
 
   // ---- dead-reckon clock state ----------------------------------------------
-  // (Not class fields would-be-clobbered concerns: BaseSound's constructor runs
-  // setup() before subclass field initializers, but setup() never touches these,
-  // so plain fields are safe.)
-  _anchorMs = 0;
-  _anchorWall = 0;
+  // _anchorMs/_anchorWall + _anchor()/_estimate() come from the DeadReckonClock
+  // mixin (shared with the Chromecast connection so the two can't drift).
   // The last position the element reported, so we can tell "the clock advanced"
   // (adopt it) from "the clock is frozen" (dead-reckon).
   _lastReportedMs = null;
@@ -116,18 +114,7 @@ export default class NativeAudioCasting extends NativeAudio {
     }
   }
 
-  // ---- clock -----------------------------------------------------------------
-
-  _anchor(positionMs) {
-    this._anchorMs = positionMs;
-    this._anchorWall = Date.now();
-  }
-
-  _estimate() {
-    return this.isPlaying
-      ? this._anchorMs + (Date.now() - this._anchorWall)
-      : this._anchorMs;
-  }
+  // ---- clock (anchor/estimate come from the DeadReckonClock mixin) -----------
 
   // The element's reported position, or null before metadata (so a pre-load 0
   // can't be mistaken for a real position).
@@ -196,6 +183,10 @@ export default class NativeAudioCasting extends NativeAudio {
     let element = this.audioElement;
     let seconds = positionMs / 1000;
     let apply = () => {
+      // The listener (if any) is {once:true} and has now self-removed; clear our
+      // tracking so teardown/a later seek don't try to remove a stale ref.
+      this._pendingSeekElement = null;
+      this._pendingSeekApply = null;
       try {
         // While routed to a device, a plain currentTime write often moves only
         // the local clock without repositioning the remote stream — especially
@@ -220,10 +211,29 @@ export default class NativeAudioCasting extends NativeAudio {
     if (element.readyState >= 1 /* HAVE_METADATA */) {
       apply();
     } else {
+      // Replace any earlier deferred seek so we never leave more than one
+      // listener on the shared element, and so teardown can remove this one.
+      this._cancelPendingSeek();
+      this._pendingSeekElement = element;
+      this._pendingSeekApply = apply;
       element.addEventListener('loadedmetadata', apply, { once: true });
     }
 
     return positionMs;
+  }
+
+  // Drop a deferred seek whose metadata never arrived, so the listener (and the
+  // connection it closes over) doesn't outlive this connection on the shared
+  // route element.
+  _cancelPendingSeek() {
+    if (this._pendingSeekElement && this._pendingSeekApply) {
+      this._pendingSeekElement.removeEventListener(
+        'loadedmetadata',
+        this._pendingSeekApply
+      );
+    }
+    this._pendingSeekElement = null;
+    this._pendingSeekApply = null;
   }
 
   // ---- playback (optimistic state + route preservation) ----------------------
@@ -293,6 +303,7 @@ export default class NativeAudioCasting extends NativeAudio {
   // which would steal the route back from whichever connection now owns it).
   teardown() {
     this.durationWorkaroundTask?.cancelAll?.();
+    this._cancelPendingSeek();
     this.trigger('_will_destroy', { sound: this });
     this._unregisterEvents(this.sharedAudioAccess?.audioElement ?? this.audioElement);
     this.isDestroyed = true;

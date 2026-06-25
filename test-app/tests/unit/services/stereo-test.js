@@ -1058,4 +1058,205 @@ module('Unit | Service | stereo', function (hooks) {
   });
 
   skip('currenly playing sound does not pause until load has succeeded', function () {});
+
+  test('the currentSound setter is the single emitter of current-sound-changed (any path that moves it notifies the app)', function (assert) {
+    let service = this.owner.lookup('service:stereo');
+    let fakeSound = (url) => ({
+      url,
+      identifier: url,
+      isPlaying: false,
+      isDestroyed: false,
+      metadata: {},
+      on() {},
+      off() {},
+      has() {
+        return false;
+      },
+      _setVolume() {},
+    });
+
+    let changes = [];
+    service.on('current-sound-changed', ({ sound }) =>
+      changes.push(sound?.url ?? null)
+    );
+
+    let a = fakeSound('/a.mp3');
+    let b = fakeSound('/b.mp3');
+    service.currentSound = a;
+    service.currentSound = a; // idempotent — no event
+    service.currentSound = b; // a plain assignment (the cast feed-switch path) notifies
+    service.currentSound = null; // clearing notifies too
+
+    assert.deepEqual(
+      changes,
+      ['/a.mp3', '/b.mp3', null],
+      'fires exactly once per real change — including a direct assignment and a clear'
+    );
+  });
+
+  module('chromecast cast strategy', function () {
+    test('puts the Chromecast strategy first (with castStartTime) and keeps the local waterfall as a fallback', function (assert) {
+      let service = this.owner.lookup('service:stereo');
+      service.loadConnections([{ name: 'HLS' }, { name: 'NativeAudio' }]);
+      service.isCasting = true;
+      service._activeCastBackend = 'chromecast';
+      service._castAccess._session = {}; // a live session
+
+      let strategies = service._buildStrategies(['/archive.m3u8'], {
+        ...service.prepareLoadOptions({
+          castUrl: 'https://public.example/archive.m3u8',
+          castStartTime: 5000,
+        }),
+      });
+
+      assert.strictEqual(
+        strategies[0].connectionKey,
+        'Chromecast',
+        'the Chromecast strategy is tried first'
+      );
+      assert.strictEqual(
+        strategies[0].options.startTime,
+        5000,
+        'the start position is threaded onto the strategy'
+      );
+      assert.ok(
+        strategies.length > 1,
+        'the local waterfall is kept as a fallback behind the cast strategy'
+      );
+      assert.notOk(
+        strategies
+          .slice(1)
+          .some((strategy) => strategy.connectionKey === 'Chromecast'),
+        'only one cast strategy; the rest are local'
+      );
+    });
+
+    test('does NOT try to cast when the session is gone (a missed disconnect leaves isCasting stuck) — resolves locally', function (assert) {
+      let service = this.owner.lookup('service:stereo');
+      service.loadConnections([{ name: 'HLS' }, { name: 'NativeAudio' }]);
+      service.isCasting = true; // stuck true after a partial disconnect
+      service._activeCastBackend = 'chromecast';
+      // The shared access has no live session (detached on SESSION_ENDED).
+
+      let strategies = service._buildStrategies(['/archive.m3u8'], {
+        ...service.prepareLoadOptions({
+          castUrl: 'https://public.example/archive.m3u8',
+        }),
+      });
+
+      assert.ok(
+        strategies.length >= 1,
+        'it builds the normal waterfall instead of looping on a dead cast'
+      );
+      assert.notOk(
+        strategies.some((strategy) => strategy.connectionKey === 'Chromecast'),
+        'no Chromecast strategy is built without a live session'
+      );
+    });
+
+    test('engaging cast on a live stream does NOT seek the device (a stream start position buffers forever)', async function (assert) {
+      let service = this.owner.lookup('service:stereo');
+      let buildSpy = sandbox
+        .stub(service, '_buildCastConnection')
+        .returns(null);
+
+      service._activeCastBackend = 'chromecast';
+      service._castAccess._session = {};
+      service._currentSound = {
+        castUrl: 'https://public.example/stream.aac',
+        metadata: {},
+        isStream: true,
+        position: 16000,
+      };
+
+      await service.engageCastTask.perform();
+
+      assert.strictEqual(
+        buildSpy.firstCall.args[2],
+        null,
+        'no start position is handed to a live stream cast'
+      );
+    });
+
+    test('disconnect rebuilds a LOCAL connection even when the sound only has cast strategies (resumes locally instead of going silent)', function (assert) {
+      let service = this.owner
+        .lookup('service:stereo')
+        .loadConnections(['NativeAudio']);
+
+      // While casting, the sound's cached strategies are the cast-only list.
+      let castStrategy = { canPlay: true, connectionKey: 'Chromecast' };
+      let localSound = { id: 'local' };
+      let localStrategy = {
+        canPlay: true,
+        connectionKey: 'NativeAudio',
+        createSound: () => localSound,
+      };
+      let sound = { strategies: [castStrategy], identifier: '/a.mp3', options: {} };
+
+      let buildStub = sandbox
+        .stub(service, '_buildStrategies')
+        .returns([localStrategy]);
+
+      let result = service._buildLocalConnection(sound);
+
+      assert.ok(
+        buildStub.calledOnce,
+        'rebuilt the waterfall because the cached strategies were all cast'
+      );
+      assert.strictEqual(
+        result,
+        localSound,
+        'returned a fresh local connection to swap back to'
+      );
+    });
+
+    test('re-engaging does NOT re-cast a sound already on the device (a spurious SESSION_RESUMED must not re-cast the previous feed)', async function (assert) {
+      let service = this.owner.lookup('service:stereo');
+      let buildSpy = sandbox
+        .stub(service, '_buildCastConnection')
+        .returns(null);
+
+      service._activeCastBackend = 'chromecast';
+      service._castAccess._session = {};
+      // currentSound is ALREADY a cast connection (we're mid-cast).
+      service._currentSound = {
+        castUrl: 'https://public.example/stream.aac',
+        metadata: {},
+        isStream: true,
+        position: 16000,
+        value: { connectionKey: 'Chromecast' },
+      };
+
+      await service.engageCastTask.perform();
+
+      assert.ok(
+        buildSpy.notCalled,
+        'engage is idempotent: it does not re-cast an already-cast sound'
+      );
+    });
+
+    test('engaging cast on a seekable archive preserves the local position', async function (assert) {
+      let service = this.owner.lookup('service:stereo');
+      let buildSpy = sandbox
+        .stub(service, '_buildCastConnection')
+        .returns(null);
+
+      service._activeCastBackend = 'chromecast';
+      service._castAccess._session = {};
+      service._currentSound = {
+        castUrl: 'https://public.example/archive.m3u8',
+        metadata: {},
+        isStream: false,
+        position: 16000,
+      };
+
+      await service.engageCastTask.perform();
+
+      assert.strictEqual(
+        buildSpy.firstCall.args[2],
+        16000,
+        'the archive resumes at the local position'
+      );
+    });
+  });
 });

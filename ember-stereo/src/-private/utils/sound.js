@@ -173,10 +173,14 @@ export default class Sound extends Evented {
   }
 
   // Does the resolved backend match the current cast state (cast while casting,
-  // local while not)?
+  // local while not)? A cast value left over from a prior feed (stale) counts as
+  // a mismatch so it re-resolves to a fresh cast connection.
   _castStateMatches() {
     let valueIsCast = this.stereo._isCastConnection(this.value);
-    return this.stereo.isCasting === valueIsCast;
+    if (this.stereo.isCasting) {
+      return valueIsCast && !this.stereo._isStaleCastValue(this.value);
+    }
+    return !valueIsCast;
   }
 
   loadTask = task({ restartable: true }, async (loadOptions = {}) => {
@@ -200,13 +204,29 @@ export default class Sound extends Evented {
     // cast while not), swap to the correct backend rather than returning a stale
     // connection (which would play locally under a cast, or vice-versa).
     if (this.isResolved && !this.value.isErrored) {
-      if (this._castStateMatches()) {
+      // While casting, an explicit (re)load carrying a device URL must re-issue
+      // the cast loadMedia: the ONE shared Cast session may have moved to another
+      // feed (e.g. switching archive -> live), so a cached cast connection that
+      // "matches" can be stale — its media is no longer what the session plays,
+      // and returning it leaves the session stuck on the previous feed. Rebuild
+      // so loadMedia re-fires for this feed's URL. (A same-feed reload is cheap:
+      // Chromecast.setup()'s adopt-check skips a redundant loadMedia when the
+      // session already plays this URL.)
+      // Shared predicate with _buildStrategies: should this resolution target the
+      // device? (casting + a device URL + a LIVE session — a dead Chromecast
+      // session resolves locally, not to a connection that immediately fails.)
+      let castingThisUrl = this.stereo._shouldCastUrl(options.castUrl);
+      if (!castingThisUrl && this._castStateMatches()) {
         return this.value;
       }
-      let target = this.stereo.isCasting
-        ? options.castUrl
-          ? this.stereo._buildCastConnection(options.castUrl, this.metadata)
-          : null
+      let target = castingThisUrl
+        ? this.stereo._buildCastConnection(
+            options.castUrl,
+            this.metadata,
+            // Only seekable media gets a start position; seeking a live stream
+            // makes the receiver buffer forever (see engageCastTask).
+            this.isStream ? null : this.position
+          )
         : this.stereo._buildLocalConnection(this);
       if (target) {
         return await this.swap(target);
@@ -341,6 +361,12 @@ export default class Sound extends Evented {
     } catch (e) {
       debug('ember-stereo:sound')(`outgoing detach errored: ${e?.message}`);
     }
+    // Evict the now-detached connection from the service caches so it can't be
+    // re-adopted (soundCache) or kept receiving pause() calls (oneAtATime).
+    if (outgoing) {
+      this.stereo?.soundCache?.remove(outgoing);
+      this.stereo?.oneAtATime?.unregister(outgoing);
+    }
 
     let incoming = targetConnection;
     let engaged = false;
@@ -380,6 +406,17 @@ export default class Sound extends Evented {
 
       if (handoff.isPlaying) {
         await incoming.play();
+      }
+
+      // The swapped-in connection may already be playing (e.g. a cast backend
+      // autoplays on the device the moment it loads). Its own audio-played then
+      // fired BEFORE we registered this Sound's relays above, so a listener
+      // watching this Sound for audio-played — like the service's current-sound
+      // transition — would miss it and never mark this the current sound. Emit a
+      // catch-up so the transition is reliable regardless of event timing. (No-op
+      // when not playing; idempotent for downstream observers.)
+      if (this.isPlaying) {
+        this.trigger('audio-played', { sound: this });
       }
 
       this._handoff = null;
@@ -453,8 +490,21 @@ export default class Sound extends Evented {
 
   // --- Proxied playback methods/state (delegated to the connection) ---
 
+  // True when the backing connection is on the WRONG backend for the current
+  // cast state — e.g. a leftover Chromecast connection after the cast session
+  // ended, or a local one while casting. Calling play()/togglePause() on it just
+  // no-ops a dead connection, so we must re-resolve to the correct backend first.
+  // (load() runs the resolved-but-wrong-backend swap path, which plays the
+  // swapped-in connection per _playIntent — set by the caller just above.)
+  _needsBackendReresolve() {
+    return this.isResolved && !this._castStateMatches();
+  }
+
   play(...args) {
     this._playIntent = true;
+    if (this._needsBackendReresolve()) {
+      return this.load();
+    }
     return this.value?.play(...args);
   }
 
@@ -472,6 +522,9 @@ export default class Sound extends Evented {
     // Capture intent from the state we're toggling away from (before the
     // connection flips it).
     this._playIntent = !this.isPlaying;
+    if (this._needsBackendReresolve()) {
+      return this.load();
+    }
     return this.value?.togglePause(...args);
   }
 

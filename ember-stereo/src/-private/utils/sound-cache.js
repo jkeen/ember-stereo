@@ -42,7 +42,11 @@ export default class SoundCache {
       normalizeIdentifier(identity)
     );
     let sounds = emberArray(identifiers).map((url) => cache[url]);
-    let foundSounds = emberArray(sounds).compact();
+    // Never hand back a torn-down connection (e.g. a cast connection left in the
+    // cache after a swap); adopting one leaves the Sound on a dead backend.
+    let foundSounds = emberArray(sounds)
+      .compact()
+      .filter((sound) => !sound.isDestroyed);
 
     if (foundSounds.length > 0) {
       // debug(this.name)(`cache hit for `, foundSounds[0].url);
