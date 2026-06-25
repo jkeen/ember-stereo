@@ -38,6 +38,8 @@ Stereo `connections` are plugins for `ember-stereo` that know how to load partic
 - `Howler`: uses [howler.js](https://github.com/goldfire/howler.js) to play sounds.
 - `HLS` uses [HLS.js](https://github.com/video-dev/hls.js/) to play [.hls streams](https://caniuse.com/http-live-streaming).
 
+Two more connections back [casting](/docs/casting) — `NativeAudioCasting` (AirPlay) and `Chromecast` — but you don't list these in `connections`. The service wires them up on its own when you use the casting API.
+
 Stereo offers three connection options, but only the native audio connection is included by default (to keep bundle size small). To include other audio connections, add them to your environment.js in the order you want them tried.
 
 ```js

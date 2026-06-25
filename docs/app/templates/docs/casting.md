@@ -4,6 +4,20 @@ Casting sends the audio to an AirPlay receiver or a Chromecast device instead of
 
 The addon handles the whole lifecycle — finding cast targets, showing the picker, connecting and disconnecting, keeping the clock in sync, and pausing whatever was playing locally. Your app supplies one thing: a URL the device can fetch on its own.
 
+## Enabling casting
+
+There's nothing to configure. Unlike the optional `connections` (see [What's in the box](/docs/overview)), the casting backends are wired up automatically:
+
+- **AirPlay** is native to Safari and works out of the box.
+- **Chromecast** loads the Google Cast SDK on demand the first time the casting API is used — no script tag, no app id, no setup. (It registers against the default media receiver.)
+
+Two things have to be true at runtime for a device to actually appear:
+
+- The page is served over **HTTPS** (both transports require a secure context).
+- There's a reachable device — an AirPlay receiver for Safari, or a Chromecast on the same network for Chrome.
+
+When neither is true, `{{casting-available}}` stays `false` and the cast button disables itself. That's the expected idle state, not a misconfiguration.
+
 ## Your one job: `sound.castUrl`
 
 When you play locally, the browser fetches the audio. When you cast, the *device* fetches it directly, so it needs a URL it can reach without your app's session or auth headers. That's `sound.castUrl` — a public or signed variant of the stream.

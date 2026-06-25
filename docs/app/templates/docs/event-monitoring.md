@@ -8,15 +8,14 @@ this.stereo.on('audio-played', ({ sound }) => {
   console.log(`${sound.url} started playing`);
 });
 
-let sound = await this.stereo.findSound(this.url);
-if (sound) {
-  // sound is loaded
-  sound.on('audio-ended', ({ sound }) => {
-    this.sendEvent('finished-listening', {
-      episodeId: sound.metadata.episodeId,
-    });
+// findSound is synchronous and returns an identity-stable Sound (which may
+// still be pending) — listeners attached now survive until the sound is evicted.
+let sound = this.stereo.findSound(this.url);
+sound.on('audio-ended', ({ sound }) => {
+  this.sendEvent('finished-listening', {
+    episodeId: sound.metadata.episodeId,
   });
-}
+});
 
 this.stereo.on('current-sound-interrupted', ({ sound }) => {
   this.sendEvent('quit-listening', {
@@ -51,3 +50,12 @@ Here's a long audio file, play around with it and see the events that are trigge
 - `current-sound-interrupted` ({sound, previousSound}) - triggered when a sound has been playing and a new one takes its place by being played, pausing the first one
 - `new-load-request` ({loadPromise, urlsOrPromise, options}) - triggered whenever `.load` or `.play` is called.
 - `pre-load` (urlsToTry) - triggered whenever `.load` or `.play` is called.
+
+### Casting events
+
+These fire as casting connects and disconnects. See [Casting](/docs/casting) for the full surface.
+
+- `audio-cast-availability-changed` - a cast device appeared or disappeared
+- `audio-cast-connecting` - connecting to a device
+- `audio-cast-connected` - audio is now playing on the device
+- `audio-cast-disconnected` - disconnected; playback returned to local
