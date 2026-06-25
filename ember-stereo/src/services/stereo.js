@@ -26,39 +26,17 @@ import SoundCache from '../-private/utils/sound-cache';
 import UntrackedObjectCache from '../-private/utils/untracked-object-cache';
 import Strategizer from '../-private/utils/strategizer';
 import StereoUrl from '../-private/utils/stereo-url';
-import SoundProxy from '../-private/utils/sound-proxy';
+import Sound from '../-private/utils/sound';
 import ConnectionLoader from '../-private/utils/connection-loader';
 import BaseSound from '../stereo-connections/base';
+import { EVENT_MAP, SERVICE_EVENT_MAP } from '../-private/utils/event-map';
+
+export { EVENT_MAP, SERVICE_EVENT_MAP };
 
 const DEFAULT_CONNECTIONS = [
   { name: 'NativeAudio' },
   { name: 'Howler' },
   { name: 'HLS' },
-];
-
-export const EVENT_MAP = [
-  { event: 'audio-played', handler: '_relayPlayedEvent' },
-  { event: 'audio-paused', handler: '_relayPausedEvent' },
-  { event: 'audio-blocked', handler: '_relayBlockedEvent' },
-  { event: 'audio-ended', handler: '_relayEndedEvent' },
-  { event: 'audio-duration-changed', handler: '_relayDurationChangedEvent' },
-  { event: 'audio-position-changed', handler: '_relayPositionChangedEvent' },
-  { event: 'audio-loaded', handler: '_relayLoadedEvent' },
-  { event: 'audio-loading', handler: '_relayLoadingEvent' },
-  {
-    event: 'audio-position-will-change',
-    handler: '_relayPositionWillChangeEvent',
-  },
-  { event: 'audio-will-rewind', handler: '_relayWillRewindEvent' },
-  { event: 'audio-will-fast-forward', handler: '_relayWillFastForwardEvent' },
-  { event: 'audio-metadata-changed', handler: '_relayMetadataChangedEvent' },
-];
-
-export const SERVICE_EVENT_MAP = [
-  { event: 'current-sound-changed' },
-  { event: 'current-sound-interrupted' },
-  { event: 'new-load-request' },
-  { event: 'pre-load' },
 ];
 
 /**
@@ -74,7 +52,12 @@ export default class Stereo extends Service.extend(EmberEvented) {
   @tracked errorCache = new ErrorCache();
   @tracked metadataCache = new MetadataCache();
   @tracked urlCache = new UrlCache();
-  proxyCache = new UntrackedObjectCache();
+  // Identity-stable Sound entities, one per identifier. Untracked to avoid
+  // render thrash.
+  soundEntityCache = new UntrackedObjectCache();
+  // Sounds that already have a current-sound transition loop running, so
+  // repeated (cache-hit) loads don't spawn duplicate loops.
+  _soundsWithTransition = new WeakSet();
 
   constructor() {
     super(...arguments);
@@ -99,7 +82,7 @@ export default class Stereo extends Service.extend(EmberEvented) {
     setOwner(this.errorCache, owner);
     setOwner(this.metadataCache, owner);
     setOwner(this.urlCache, owner);
-    setOwner(this.proxyCache, owner);
+    setOwner(this.soundEntityCache, owner);
 
     if (macroCondition(isTesting())) {
       // no checks for autoplay as it messes with the fake media element
@@ -385,103 +368,61 @@ export default class Stereo extends Service.extend(EmberEvented) {
     };
   }
 
-  loadTask = task({ restartable: true, evented: true }, async (urlsOrPromise, _options) => {
-    let options = this.prepareLoadOptions(_options);
+  loadTask = task(
+    { restartable: true, evented: true },
+    async (urlsOrPromise, _options) => {
+      // The Sound prepares the full load options (incl. audio unlock); the
+      // service only needs metadata/silenceErrors visibility for its own
+      // post-load handling.
+      let options = { metadata: {}, ..._options };
 
-    debug('ember-stereo:service')(`loadTask`, urlsOrPromise, options);
-    let urlsToTry = await this.urlCache.resolve(urlsOrPromise);
-    debug('ember-stereo:service')(`given urls: ${urlsToTry.join(', ')}`);
-    this.trigger('pre-load', urlsToTry);
-    this.errorCache.remove(urlsToTry);
+      debug('ember-stereo:service')(`loadTask`, urlsOrPromise, options);
+      let urlsToTry = await this.urlCache.resolve(urlsOrPromise);
+      debug('ember-stereo:service')(`given urls: ${urlsToTry.join(', ')}`);
+      this.trigger('pre-load', urlsToTry);
+      this.errorCache.remove(urlsToTry);
 
-    var sound = this.findLoadedSound(urlsToTry);
-    if (sound) {
-      debug('ember-stereo:service')('retreived sound from cache');
-      return await { sound };
-    } else {
-      // TODO: refactor so it's more like this
-      // let strategizer = new Strategizer(urlsToTry, options)
-      // let { sound, error } = yield strategizer.tryLoading()
-      // if (sound) {
-      //  this.handleCurrentSoundTransitionTask.perform(sound)
-      //  this.soundCache.cache(sound);
-      //  this.oneAtATime.register(sound)
-      // }
+      // The Sound owns the strategy waterfall, connection creation, caching,
+      // and oneAtATime registration. The service delegates loading to it and
+      // reacts. The resolved connection (sound.value) remains the public
+      // "sound" returned to callers. Key off the *raw* identifier (not the
+      // resolved urls) so a helper observing the same promise/function gets the
+      // exact same Sound entity the service loads.
+      let entity = this.findSound(urlsOrPromise);
+      let connection = await entity.load(_options);
 
-      try {
-        var strategies = this._buildStrategies(urlsToTry, options);
-        if (strategies.filter((s) => s.canPlay).length == 0) {
-          debug('ember-stereo:service')(
-            `all strategies (${strategies
-              .map((s) => s.connectionName)
-              .join(', ')}) reported canPlay = false`
-          );
-          return this._handlePreloadError({ urlsToTry, options, strategies });
+      if (connection) {
+        // currentSound tracks the identity-stable Sound (not the connection),
+        // so a cast/failover swap of its backend stays transparent to the app.
+        if (!this._soundsWithTransition.has(entity)) {
+          this._soundsWithTransition.add(entity);
+          // eslint-disable-next-line ember-concurrency/no-perform-without-catch
+          this.handleCurrentSoundTransitionTask.perform(entity);
         }
-      } catch (e) {
-        debug('ember-stereo:service')('error building strategies', e);
-        return this._handlePreloadError({
-          urlsToTry,
-          options,
-          strategies: strategies || [],
-        });
-      }
-
-      var success = false;
-      let failures = [];
-
-      debug('ember-stereo:service')('strategies', strategies);
-
-      for (let strategy of strategies) {
-        if (strategy.canPlay) {
-          // worth trying
-          let result = await this.tryLoadingSoundTask
-            .perform(strategy)
-            .catch((e) => {
-              strategy.error = e;
-            });
-          if (result.error) {
-            strategy.error = result.error;
-            strategy.erroredSound = result.erroredSound;
-            failures.push(strategy);
-          }
-          if (result.sound) {
-            debug('ember-stereo:service')(
-              `firing sound-ready for ${result.sound.url}`
-            );
-            this.trigger('sound-ready', { sound: result.sound });
-            sound = result.sound;
-            sound._debug = strategies;
-            success = true;
-            break;
-          }
-        }
-      }
-
-      if (success && sound) {
-        // eslint-disable-next-line ember-concurrency/no-perform-without-catch
-        this.handleCurrentSoundTransitionTask.perform(sound);
 
         if (options.metadata) {
-          sound.metadata = {
-            ...sound.metadata,
+          connection.metadata = {
+            ...connection.metadata,
             ...options.metadata,
-          }; // set current sound metadata
+          };
         }
 
-        this.soundCache.cache(sound);
-        this.oneAtATime.register(sound); // On audio-played this pauses all the other sounds. One at a time!
-        return { sound, failures };
-      } else {
-        return this._handleLoadError({
-          urlsToTry,
-          failures,
-          options,
-          strategies: strategies,
-        });
+        return { sound: connection, entity, failures: entity.failures };
       }
+
+      let strategies = entity.strategies || [];
+      if (strategies.filter((strategy) => strategy.canPlay).length === 0) {
+        return this._handlePreloadError({ urlsToTry, options, strategies });
+      }
+
+      return this._handleLoadError({
+        urlsToTry,
+        failures: entity.failures,
+        options,
+        strategies,
+      });
     }
-  });
+  );
 
   handleCurrentSoundTransitionTask = task(async (sound) => {
     // eslint-disable-next-line no-constant-condition
@@ -563,12 +504,17 @@ export default class Stereo extends Service.extend(EmberEvented) {
 
       let loadPromise = this.loadTask.linked().perform(urlsOrPromise, options);
       this.trigger('new-load-request', { loadPromise, urlsOrPromise, options }); //urls: Promise.resolve(resolveUrls(urlsOrPromise))
-      let { sound, failures } = await loadPromise;
+      let { sound, entity, failures } = await loadPromise;
 
       if (sound) {
-        this._registerEvents(sound);
-        this._attemptToPlaySound(sound, options);
+        // Operate on the Sound (entity) — it relays its connection's events and
+        // survives a backend swap; we still return the connection to callers.
+        this._registerEvents(entity);
+        this._attemptToPlaySound(entity, options);
 
+        // Wait on the connection's real tracked props (waitForProperty uses
+        // observers, which fire on the backend's tracked state, not the Sound's
+        // proxy getters).
         await race([
           waitForProperty(sound, 'isPlaying'),
           waitForProperty(sound, 'isErrored'),
@@ -580,14 +526,14 @@ export default class Stereo extends Service.extend(EmberEvented) {
           });
         }
 
-        if (sound && 'position' in options) {
-          sound.position = options.position;
+        if ('position' in options) {
+          entity.position = options.position;
         }
 
-        if (sound.isPlaying) {
-          return { sound, failures };
+        if (entity.isPlaying) {
+          return { sound, entity, failures };
         } else {
-          return this._handlePlaybackError({ sound, options });
+          return this._handlePlaybackError({ sound: entity, options });
         }
       } else {
         return this._handleLoadError({ failures, options });
@@ -910,36 +856,26 @@ export default class Stereo extends Service.extend(EmberEvented) {
   }
 
   findSound(identifier) {
-    if (identifier instanceof BaseSound) {
+    if (identifier instanceof BaseSound || identifier instanceof Sound) {
       return identifier;
-    } else {
-      return this.soundProxy(identifier)?.value;
     }
 
-    //TODO: use a Proxy? it'd be neat to be able to 'find' a sound
-    // that isn't loaded and attach events to it.
-
-    // let soundProxy = this.soundProxy(identifier).value
-
-    // return new Proxy(soundProxy, {
-    //   get: function (target, prop, receiver) {
-    //     if (target.value) {
-    //       return Reflect.get(...[target.value, prop, receiver]);
-    //     } else {
-    //       return Reflect.get(...arguments);
-    //     }
-    //   }
-    // });
-  }
-
-  soundProxy(identifier) {
-    if (this.proxyCache.has(identifier)) {
-      return this.proxyCache.find(identifier);
-    } else if (identifier) {
-      let soundProxy = new SoundProxy(identifier, this);
-      this.proxyCache.store(identifier, soundProxy);
-      return soundProxy;
+    if (!identifier) {
+      return undefined;
     }
+
+    // Key by the primary url string so the cache normalizes to a stable key.
+    // (The raw identifier may be a fresh array each call — `['/a.mp3']` — which
+    // normalizes to a per-instance WeakMap key and would never hit.)
+    let key = makeArray(identifier)[0];
+
+    if (this.soundEntityCache.has(key)) {
+      return this.soundEntityCache.find(key);
+    }
+
+    let sound = new Sound(identifier, { owner: getOwner(this) });
+    this.soundEntityCache.store(key, sound);
+    return sound;
   }
 
   /**
@@ -957,76 +893,13 @@ export default class Stereo extends Service.extend(EmberEvented) {
 
     this.soundCache.remove(url);
     this.errorCache.remove(url);
-    this.proxyCache.remove(url);
+    this.soundEntityCache.remove(url);
     this.metadataCache.remove(url);
 
     if (this.currentSound?.url === url) {
       this.currentSound = null;
     }
   }
-
-  /**
-   * Wait for sound to succeed
-   *
-   * @method waitForSuccessTask
-   * @private
-   * @param {Object} strategy a connection strategy object
-   * @param {Sound} sound a sound object to play
-   * @async
-   * @return {Object} { sound }
-   **/
-  waitForSuccessTask = task(async (strategy, sound) => {
-    await waitForProperty(sound, 'isReady');
-    debug('ember-stereo:service')(
-      `SUCCESS: [${strategy.connectionName}] -> (${strategy.url})`
-    );
-    strategy.success = true;
-    return { sound };
-  });
-
-  /**
-   * Wait for sound to succeed
-   *
-   * @method waitForSuccessTask
-   * @private
-   * @param {Object} strategy a connection strategy object
-   * @param {Sound} sound a sound object to play
-   * @async
-   * @return {Object} { error }
-   **/
-  waitForFailureTask = task(async (strategy, sound) => {
-    await waitForProperty(sound, 'isErrored');
-    debug('ember-stereo:service')(
-      `FAILED: [${strategy.connectionName}] -> ${sound.error} (${strategy.url})`
-    );
-    this._unregisterEvents(sound);
-    strategy.error = sound.error;
-    let result = { error: sound.error, erroredSound: sound };
-
-    return result;
-  });
-
-  /**
-   * Try loading sound
-   *
-   * @method tryLoadingSoundTask
-   * @private
-   * @param {Object} strategy a connection strategy object
-   * @return {Object} { sound } or { error }
-   **/
-  tryLoadingSoundTask = task(async (strategy) => {
-    var newSound = strategy.createSound();
-    this._registerEvents(newSound);
-
-    debug('ember-stereo:service')(
-      `TRYING: [${strategy.connectionName}] -> ${strategy.url}`
-    );
-    strategy.tried = true;
-    return await race([
-      this.waitForSuccessTask.perform(strategy, newSound),
-      this.waitForFailureTask.perform(strategy, newSound),
-    ]);
-  });
 
   /**
    * Register events on a current sound. Audio events triggered on that sound

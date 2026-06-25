@@ -9,7 +9,7 @@ export default class Position extends Component {
   @tracked dragAdjustment = 0;
 
   get loadedSound() {
-    return this.stereo.soundProxy(this.args.url);
+    return this.stereo.findSound(this.args.url);
   }
 
   @action

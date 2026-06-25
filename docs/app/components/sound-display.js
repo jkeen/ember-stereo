@@ -7,12 +7,6 @@ import hasEqualUrls from 'ember-stereo/-private/utils/has-equal-urls';
 export default class SoundDisplay extends Component {
   @service stereo;
   @tracked selectedConnections = this.stereo.connectionLoader.connections;
-  @tracked soundProxy;
-
-  constructor() {
-    super(...arguments);
-    this.soundProxy = this.stereo.soundProxy(this.args.url);
-  }
 
   get loadedSound() {
     return this.stereo.findSound(this.args.url);

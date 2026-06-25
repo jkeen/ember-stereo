@@ -8,7 +8,7 @@ export default class StereoBaseIsHelper extends Helper {
 
   identifier = UNINITIALIZED;
   @dedupeTracked task = UNINITIALIZED;
-  @dedupeTracked soundProxy = UNINITIALIZED;
+  @dedupeTracked foundSound = UNINITIALIZED;
   @dedupeTracked _sound = UNINITIALIZED;
   @dedupeTracked options = UNINITIALIZED;
 
@@ -20,20 +20,14 @@ export default class StereoBaseIsHelper extends Helper {
   */
 
   get isLoading() {
-    return (
-      (this.sound && this.sound.isLoading) ||
-      (this.soundProxy && this.soundProxy.isLoading)
-    );
+    return this.sound?.isLoading;
   }
 
   get sound() {
-    if (this._sound) {
-      return this._sound;
-    } else if (this.soundProxy && this.soundProxy.value) {
-      return this.soundProxy.value;
-    }
-
-    return null;
+    // findSound returns an identity-stable Sound that exists before its
+    // connection loads; result getters read proxied state that's undefined
+    // until it resolves.
+    return this._sound || this.foundSound;
   }
 
   get result() {
@@ -48,15 +42,12 @@ export default class StereoBaseIsHelper extends Helper {
 
       if (identifier && identifier.url && identifier.play) {
         this._sound = identifier;
-      }
-      if (identifier) {
-        this.soundProxy = this.stereo.soundProxy(identifier);
+      } else if (identifier) {
+        this.foundSound = this.stereo.findSound(identifier);
       }
 
-      if (!this.sound) {
-        if (options.load) {
-          this.stereo.load(identifier, this.options);
-        }
+      if (!this.sound?.isResolved && options.load) {
+        this.stereo.load(identifier, this.options);
       }
     }
 

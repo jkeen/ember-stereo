@@ -65,6 +65,13 @@
     },
     "patchedDependencies": {
       "ember-cli-addon-docs@9.0.0": "patches/ember-cli-addon-docs@9.0.0.patch"
+    },
+    "packageExtensions": {
+      "ember-gesture-modifiers": {
+        "peerDependencies": {
+          "@ember/test-helpers": "*"
+        }
+      }
     }
   },
   "engines": {

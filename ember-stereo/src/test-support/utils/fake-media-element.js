@@ -193,8 +193,12 @@ export default class FakeMediaElement extends Evented {
     return this.on(...arguments);
   }
 
-  removeEventListener() {
-    return this.off(...arguments);
+  removeEventListener(name, listener) {
+    // Match DOM semantics: removeEventListener with no listener is a no-op.
+    // (Ember's `off` asserts on a missing method, so we can't blindly forward.)
+    if (listener) {
+      return this.off(name, listener);
+    }
   }
 
   setAttribute(name, value) {
