@@ -1,7 +1,7 @@
 import { A as emberArray } from '@ember/array';
 import debug from 'debug';
 import hasEqualUrls from './has-equal-urls';
-import { inject as service } from '@ember/service';
+import { service } from '@ember/service';
 export default class OneAtATime {
   @service stereo;
 

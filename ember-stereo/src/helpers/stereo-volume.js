@@ -1,5 +1,5 @@
 import Helper from '@ember/component/helper';
-import { inject as service } from '@ember/service';
+import { service } from '@ember/service';
 
 /**
   returns current stereo volume when used as a helper. When used as a modifier it transforms an range input control into a volume control

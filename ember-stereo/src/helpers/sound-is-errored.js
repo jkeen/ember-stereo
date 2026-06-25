@@ -1,7 +1,7 @@
 import Helper from '@ember/component/helper';
 import { dedupeTracked } from 'tracked-toolbox';
 import hasEqualUrls from '../-private/utils/has-equal-urls';
-import { inject as service } from '@ember/service';
+import { service } from '@ember/service';
 
 /**
   A helper to detect if a sound is errored.

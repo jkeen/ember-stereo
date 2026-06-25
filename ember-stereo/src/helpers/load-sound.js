@@ -1,4 +1,4 @@
-import { inject as service } from '@ember/service';
+import { service } from '@ember/service';
 import Helper from '@ember/component/helper';
 import prepareOptions from '../-private/utils/prepare-options';
 import { didCancel } from 'ember-concurrency';

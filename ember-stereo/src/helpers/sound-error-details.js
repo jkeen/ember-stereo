@@ -1,6 +1,6 @@
 import Helper from '@ember/component/helper';
 import { dedupeTracked } from 'tracked-toolbox';
-import { inject as service } from '@ember/service';
+import { service } from '@ember/service';
 import debugMessage from '../-private/utils/debug-message';
 import hasEqualUrls from '../-private/utils/has-equal-urls';
 
