@@ -14,11 +14,11 @@ module('Unit | Utility | dead-reckon-clock', function () {
 
     assert.ok(
       clock._estimate() >= 1000,
-      'estimate is at least the anchored position while playing'
+      'estimate is at least the anchored position while playing',
     );
     assert.ok(
       clock._estimate() < 1000 + 60000,
-      'estimate drifts forward by a sane amount, not wildly'
+      'estimate drifts forward by a sane amount, not wildly',
     );
   });
 
@@ -30,7 +30,7 @@ module('Unit | Utility | dead-reckon-clock', function () {
     assert.strictEqual(
       clock._estimate(),
       2500,
-      'a paused clock reports exactly the anchor, with no drift'
+      'a paused clock reports exactly the anchor, with no drift',
     );
   });
 
