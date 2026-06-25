@@ -22,6 +22,8 @@ Router.map(function () {
     this.route('event-monitoring');
     this.route('waiting-for-sounds');
     this.route('volume');
+    this.route('casting');
+    this.route('casting-internals');
     this.route('advanced');
     this.route('testing');
     this.route('debugging');

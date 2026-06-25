@@ -1,0 +1,62 @@
+<div {{did-insert this.prepare}} {{will-destroy this.teardown}}>
+  <DocsDemo as |demo|>
+    <demo.example @name='cast-player.hbs'>
+      {{! BEGIN-SNIPPET cast-player.hbs }}
+      <Docs::StereoPlayer @identifier={{@identifier}} />
+
+      <div class='flex flex-wrap gap-2 mt-4'>
+        <button type='button' class='ui-button' {{cast-button @identifier}}>
+          {{#if (is-casting)}}
+            Casting to {{this.deviceLabel}}
+          {{else if (casting-available)}}
+            Cast
+          {{else}}
+            No cast targets available
+          {{/if}}
+        </button>
+
+        {{#if (is-casting)}}
+          <button
+            type='button'
+            class='ui-button'
+            {{on 'click' this.stopCasting}}
+          >
+            Stop casting
+          </button>
+        {{/if}}
+      </div>
+
+      <dl class='grid grid-cols-2 gap-x-4 gap-y-1 mt-4 text-sm max-w-md'>
+        <dt class='font-semibold'>Available?</dt>
+        <dd>{{if (casting-available) 'yes' 'no'}}</dd>
+
+        <dt class='font-semibold'>Transports</dt>
+        <dd>{{this.transports}}</dd>
+
+        <dt class='font-semibold'>Casting?</dt>
+        <dd>{{if (is-casting) 'yes' 'no'}}</dd>
+
+        <dt class='font-semibold'>Transport</dt>
+        <dd>{{or this.stereo.castKind '—'}}</dd>
+
+        <dt class='font-semibold'>Device</dt>
+        <dd>{{or this.stereo.castDeviceName '—'}}</dd>
+      </dl>
+
+      <ul class='mt-4 text-sm'>
+        {{#each this.log as |entry|}}
+          <li>
+            <span class='font-mono'>{{entry.name}}</span>
+            &rarr;
+            {{entry.device}}
+          </li>
+        {{else}}
+          <li class='opacity-60'>No cast events yet.</li>
+        {{/each}}
+      </ul>
+      {{! END-SNIPPET }}
+    </demo.example>
+    <demo.snippet @name='cast-player.hbs' />
+    <demo.snippet @name='cast-player.js' />
+  </DocsDemo>
+</div>
