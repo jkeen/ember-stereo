@@ -1,5 +1,6 @@
 import { isTesting, macroCondition } from '@embroider/macros';
 import NativeAudio from './native-audio';
+import DeadReckonClock from '../-private/utils/dead-reckon-clock';
 
 // After a seek, the device keeps reporting the pre-seek position for a beat; ignore it until it lands within tolerance of the target (or the window lapses), so the poll can't snap the playhead back.
 const SEEK_SETTLE_TOLERANCE_MS = 1500;
@@ -14,7 +15,7 @@ const END_TOLERANCE_MS = 1500;
  * @class NativeAudioCasting
  * @extends NativeAudio
  */
-export default class NativeAudioCasting extends NativeAudio {
+export default class NativeAudioCasting extends DeadReckonClock(NativeAudio) {
   static key = 'NativeAudioCasting';
   static toString() {
     return 'NativeAudioCasting';
@@ -25,20 +26,7 @@ export default class NativeAudioCasting extends NativeAudio {
     return true;
   }
 
-  // Single-ownership of the one route element comes from SharedAudioAccess's
-  // requestControl handshake. oneAtATime is fine to participate in: like any
-  // shared-element NativeAudio, a connection that has lost control falls back to
-  // its internal clone, so oneAtATime pausing a stale cast connection can't
-  // pause the live route.
-
-  // ---- dead-reckon clock state ----------------------------------------------
-  // (Not class fields would-be-clobbered concerns: BaseSound's constructor runs
-  // setup() before subclass field initializers, but setup() never touches these,
-  // so plain fields are safe.)
-  _anchorMs = 0;
-  _anchorWall = 0;
-  // The last position the element reported, so we can tell "the clock advanced"
-  // (adopt it) from "the clock is frozen" (dead-reckon).
+  // Distinguishes "clock advanced" (adopt it) from "clock frozen" (dead-reckon).
   _lastReportedMs = null;
   _seekSettleTarget = null;
   _seekSettleUntil = 0;
@@ -76,21 +64,7 @@ export default class NativeAudioCasting extends NativeAudio {
     }
   }
 
-  // ---- clock -----------------------------------------------------------------
-
-  _anchor(positionMs) {
-    this._anchorMs = positionMs;
-    this._anchorWall = Date.now();
-  }
-
-  _estimate() {
-    return this.isPlaying
-      ? this._anchorMs + (Date.now() - this._anchorWall)
-      : this._anchorMs;
-  }
-
-  // The element's reported position, or null before metadata (so a pre-load 0
-  // can't be mistaken for a real position).
+  // A pre-load 0 must not be mistaken for a real position.
   _reportedPosition() {
     let element = this.audioElement;
     if (!element || element.readyState < 1) {
@@ -147,6 +121,9 @@ export default class NativeAudioCasting extends NativeAudio {
     let element = this.audioElement;
     let seconds = positionMs / 1000;
     let apply = () => {
+      // A {once:true} listener has already self-removed by now, so drop the stale ref.
+      this._pendingSeekElement = null;
+      this._pendingSeekApply = null;
       try {
         // While routed, a plain currentTime write often moves only the local clock without repositioning the remote stream; pause → seek → play forces the device to re-fetch at the new position, and the seek-settle window masks the brief pause.
         if (element.webkitCurrentPlaybackTargetIsWireless && !element.paused) {
@@ -167,10 +144,25 @@ export default class NativeAudioCasting extends NativeAudio {
     if (element.readyState >= 1 /* HAVE_METADATA */) {
       apply();
     } else {
+      // At most one deferred seek may sit on the shared element, so teardown can remove it.
+      this._cancelPendingSeek();
+      this._pendingSeekElement = element;
+      this._pendingSeekApply = apply;
       element.addEventListener('loadedmetadata', apply, { once: true });
     }
 
     return positionMs;
+  }
+
+  _cancelPendingSeek() {
+    if (this._pendingSeekElement && this._pendingSeekApply) {
+      this._pendingSeekElement.removeEventListener(
+        'loadedmetadata',
+        this._pendingSeekApply
+      );
+    }
+    this._pendingSeekElement = null;
+    this._pendingSeekApply = null;
   }
 
 
@@ -228,6 +220,7 @@ export default class NativeAudioCasting extends NativeAudio {
   // Never requestControl (as NativeAudio.teardown does): that would steal the route back from whichever connection now owns the shared element.
   teardown() {
     this.durationWorkaroundTask?.cancelAll?.();
+    this._cancelPendingSeek();
     this.trigger('_will_destroy', { sound: this });
     this._unregisterEvents(this.sharedAudioAccess?.audioElement ?? this.audioElement);
     this.isDestroyed = true;
