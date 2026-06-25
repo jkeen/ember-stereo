@@ -9,13 +9,13 @@ export default class ActionHelper extends Helper {
   identifier = null;
   @dedupeTracked options;
   @dedupeTracked _sound;
-  @dedupeTracked soundProxy;
+  @dedupeTracked foundSound;
 
   get sound() {
     if (this._sound) {
       return this._sound;
-    } else if (this.soundProxy && this.soundProxy.isResolved) {
-      return this.soundProxy.value;
+    } else if (this.foundSound?.isResolved) {
+      return this.foundSound;
     }
 
     return null;
@@ -28,10 +28,8 @@ export default class ActionHelper extends Helper {
       this.identifier = identifier;
       if (this.identifier instanceof BaseSound) {
         this._sound = this.identifier;
-      }
-
-      if (this.identifier) {
-        this.soundProxy = this.stereo.soundProxy(identifier);
+      } else if (this.identifier) {
+        this.foundSound = this.stereo.findSound(identifier);
       }
 
       if (!this.sound) {

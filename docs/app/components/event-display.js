@@ -10,7 +10,6 @@ import { task, didCancel } from 'ember-concurrency';
 export default class EventDisplay extends Component {
   @tracked eventsList = emberArray([]);
   @tracked sound;
-  @tracked soundProxy;
   @tracked service;
   @service stereo;
 
@@ -25,9 +24,10 @@ export default class EventDisplay extends Component {
 
   loadSoundFromUrlTask = task({ debug: true }, async () => {
     if (this.args.url) {
-      this.soundProxy = this.stereo.soundProxy(this.args.url);
-      await this.soundProxy.waitForLoadTask.perform();
-      this.sound = this.soundProxy.value;
+      // findSound returns the identity-stable Sound; it relays its connection's
+      // events as its own, so we can attach listeners now without waiting for
+      // the connection to load.
+      this.sound = this.stereo.findSound(this.args.url);
       this.addSoundEvents(this.sound);
     } else {
       this.service = this.stereo;

@@ -822,12 +822,14 @@ module('Unit | Service | stereo', function (hooks) {
       result = sound;
     });
 
-    let { sound: sound1 } = await service.play(s1url);
+    await service.play(s1url);
     await service.play(s2url);
 
+    // current-sound-* events carry the identity-stable Sound (so a backend swap
+    // stays transparent), not the underlying connection that play() returns.
     assert.strictEqual(
       result,
-      sound1,
+      service.findSound(s1url),
       'current sound should be the one that got interrupted',
     );
   });

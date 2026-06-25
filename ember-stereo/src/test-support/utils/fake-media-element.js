@@ -193,8 +193,11 @@ export default class FakeMediaElement extends Evented {
     return this.on(...arguments);
   }
 
-  removeEventListener() {
-    return this.off(...arguments);
+  removeEventListener(name, listener) {
+    // DOM semantics: removeEventListener with no listener is a no-op, but Ember's `off` asserts on a missing method.
+    if (listener) {
+      return this.off(name, listener);
+    }
   }
 
   setAttribute(name, value) {

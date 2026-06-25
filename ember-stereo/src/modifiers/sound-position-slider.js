@@ -74,7 +74,9 @@ export default class SoundPositionSliderModifier extends DidPanModifier {
 
   afterLoadTask = task(async (callback = function () {}) => {
     await waitForProperty(this, 'url', (v) => v);
-    await waitForProperty(this, 'loadedSound', (v) => v);
+    // findSound now returns an identity-stable Sound that exists before its
+    // connection loads, so wait for it to actually resolve a connection.
+    await waitForProperty(this, 'loadedSound', (sound) => sound?.isResolved);
     callback(this.loadedSound);
   });
 
