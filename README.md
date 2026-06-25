@@ -20,7 +20,7 @@ ember install ember-stereo
 
 ### Interactive docs at [ember-stereo.com](https://ember-stereo.com/docs)!
 
-##### Upgrading from `ember-hifi`? Read the [upgrade guide](https://jkeen.github.com/ember-stereo)
+##### Upgrading to 6.0, or coming from `ember-hifi`? Read the [upgrade guide](https://ember-stereo.com/docs/upgrading).
 
 ### API
 
@@ -301,7 +301,7 @@ export default class StereoComponent extends Component {
 - `loadTask(urlsOrPromise, options)` the ember concurrency task that `load` calls.
 
 - `findSound(identifier)`
-  Returns a sound once it loads. This works reactively, so you can do something like:
+  Returns the identity-stable `Sound` for an identifier, creating and caching it on the spot (synchronously — no `await`). The returned `Sound` may still be pending; it answers `isPending`/`isLoading`/`isResolved` while it loads, so this works reactively:
 
 ```javascript
 export default class StereoComponent extends Component {
@@ -361,6 +361,8 @@ export default Component.extend({
 
 ### Sound API
 
+A `Sound` is an identity-stable proxy. Its identity is its URL, so the same object survives a backend swap (failover or casting) — hold references and attach listeners to it freely. It exists before its audio loads and answers its own lifecycle state while you wait. See [The Sound Object](https://ember-stereo.com/docs/waiting-for-sounds) for the full story.
+
 ###### Methods
 
 - `play()`
@@ -373,14 +375,26 @@ export default Component.extend({
   Moves the playhead of the sound forwards by duration (in ms)
 - `rewind(duration)`
   Moves the playhead of the sound backwards by duration (in ms)
+- `hasUrl(identifier)`
+  Whether this sound is the one for `identifier` (compares normalized URLs — use this instead of `sound.url === identifier`)
 
 ###### Gettable/Settable Properties
 
 - `position` (integer, in ms)
+- `castUrl` a device-fetchable variant of the stream, handed to an AirPlay/Chromecast device when [casting](#casting-airplay--chromecast). Defaults to `url`.
 
 ###### Read Only Properties
 
+Lifecycle (owned by the proxy, valid before a backend resolves):
+
+- `isPending` (boolean) — exists but no backend resolved yet
 - `isLoading` (boolean)
+- `isResolved` (boolean) — a backend is attached
+- `isLoaded` (boolean) — ready to play
+- `isErrored` (boolean), `errors` (array), `error`
+
+Playback (proxied from the active backend):
+
 - `isPlaying` (boolean)
 - `isStream` (boolean)
 - `isSeekable` (boolean)
@@ -388,8 +402,25 @@ export default Component.extend({
 - `isRewindable` (boolean)
 
 - `duration` (integer, in ms)
+- `currentTime` / `startTime` / `endTime` — wall-clock times for live/HLS streams
 - `percentLoaded` (integer, not always available)
 - `url` the url of the sound
+
+### Casting (AirPlay & Chromecast)
+
+`ember-stereo` treats a remote device as just another backend: the same `Sound`, the same `currentSound`, the same helpers — the audio just comes out somewhere else. AirPlay (Safari) and Chromecast (the Cast SDK is loaded on demand) are wired up automatically; there's nothing to configure. Your app supplies one thing: `sound.castUrl`, a URL the device can fetch on its own.
+
+```hbs
+<button type='button' {{cast-button @identifier}}>
+  {{#if (is-casting)}}Casting…{{else if (casting-available)}}Cast{{else}}No cast targets{{/if}}
+</button>
+```
+
+Helpers: `{{cast-button identifier}}` (modifier), `{{is-casting}}`, `{{casting-available}}`.
+
+Service surface: `isCasting`, `isCastingAvailable`, `castDeviceName`, `castKind` (`'airplay'`/`'chromecast'`/`null`), `castIconName`, `showCastMenu(identifier)`, `stopCasting()`, `prewarmCast(identifier)`.
+
+See the [casting docs](https://ember-stereo.com/docs/casting) for the full guide and how it stays consistent when you switch feeds mid-stream.
 
 ### Events
 
@@ -415,6 +446,13 @@ The `stereo` service and the `sound` objects are extended with [Ember.Evented](h
 - `new-load-request` ({loadPromise, urlsOrPromise, options}) - triggered whenever `.load` or `.play` is called.
 - `pre-load` ({loadPromise, urlsOrPromise, options}) - triggered whenever `.load` or `.play` is called.
 
+###### Casting events
+
+- `audio-cast-availability-changed` - a cast device appeared or disappeared
+- `audio-cast-connecting` - connecting to a device
+- `audio-cast-connected` - audio is now playing on the device
+- `audio-cast-disconnected` - disconnected; playback returned to local
+
 ## Details
 
 ### Included audio connections
@@ -422,6 +460,8 @@ The `stereo` service and the `sound` objects are extended with [Ember.Evented](h
 1. `NativeAudio` - Uses the native `<audio>` element for playing and streaming audio
 1. `HLS` - Uses HLS.js for playing HLS streams on the desktop.
 1. `Howler` - Uses [howler](http://howlerjs.com) to play audio
+
+Two more connections back [casting](#casting-airplay--chromecast) — `NativeAudioCasting` (AirPlay) and `Chromecast` — but you don't list these; the service wires them up on its own when you use the casting API.
 
 `stereo` will take a list of urls and find the first connection/url combo that works. For desktop browsers, we'll try each url on each connection in the order the urls were specified.
 
