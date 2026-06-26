@@ -33,7 +33,6 @@ module('Unit | Connection | Native Audio', function (hooks) {
       sharedAudioAccess,
     });
 
-    assert.expect(1);
     sound.one('audio-load-error', function () {
       assert.ok(true, 'should have triggered audio load error');
       done();
@@ -56,7 +55,7 @@ module('Unit | Connection | Native Audio', function (hooks) {
     assert.strictEqual(
       sound.audioElement.testFlag,
       testFlag,
-      'should have used passed audio element'
+      'should have used passed audio element',
     );
   });
 
@@ -71,7 +70,7 @@ module('Unit | Connection | Native Audio', function (hooks) {
     assert.strictEqual(
       sound.internalElement,
       sound.audioElement,
-      'internal was used'
+      'internal was used',
     );
   });
 
@@ -82,13 +81,13 @@ module('Unit | Connection | Native Audio', function (hooks) {
 
     let { sound } = await stereo.load(
       '/good/stream/stream.aac',
-      sharedAudioAccess
+      sharedAudioAccess,
     );
 
     let stopSpy = sinon.spy(sound, 'stop');
     let loadSpy = sinon.spy(
       sound.sharedAudioAccess.requestControl(sound),
-      'load'
+      'load',
     );
 
     assert.strictEqual(sound.duration, Infinity, 'sound is stream');
@@ -98,7 +97,7 @@ module('Unit | Connection | Native Audio', function (hooks) {
     assert.equalUrls(
       sound.audioElement.src,
       '/good/stream/stream.aac',
-      'audio src attribute is set'
+      'audio src attribute is set',
     );
 
     sound.pause();
@@ -106,7 +105,7 @@ module('Unit | Connection | Native Audio', function (hooks) {
     assert.strictEqual(
       sound.audioElement.src,
       null,
-      'audio src attribute is not set'
+      'audio src attribute is not set',
     );
     assert.ok(loadSpy.callCount > 0, 'load was called');
     assert.strictEqual(stopSpy.callCount, 1, 'stop was called');
@@ -138,8 +137,6 @@ module('Unit | Connection | Native Audio', function (hooks) {
     stereo.useSharedAudioAccess = true;
     let { sound } = await stereo.load('/good/stream/stream.mp3');
 
-    assert.expect(2);
-
     sound.one('audio-paused', function () {
       assert.ok('pause event was fired');
     });
@@ -148,15 +145,13 @@ module('Unit | Connection | Native Audio', function (hooks) {
     assert.equalUrls(
       sound.audioElement.src,
       '/good/stream/stream.mp3',
-      'audio src attribute is set'
+      'audio src attribute is set',
     );
 
     sound.stop();
   });
 
   test('can play an mp3 twice in a row using a shared audio element', async function (assert) {
-    assert.expect(6);
-
     stereo.useSharedAudioAccess = true;
     let goodUrl = '/good/1000/shared-good.aac';
 
@@ -168,12 +163,12 @@ module('Unit | Connection | Native Audio', function (hooks) {
     assert.equalUrls(
       sound.audioElement.src,
       goodUrl,
-      'audio src attribute is set'
+      'audio src attribute is set',
     );
     assert.strictEqual(
       sound.audioElement,
       stereo.sharedAudioAccess.audioElement,
-      'internal audio tag is shared audio tag'
+      'internal audio tag is shared audio tag',
     );
 
     sound.fastForward(2000);
@@ -185,18 +180,16 @@ module('Unit | Connection | Native Audio', function (hooks) {
     assert.equalUrls(
       sound.audioElement.src,
       goodUrl,
-      'audio src attribute is set'
+      'audio src attribute is set',
     );
     assert.strictEqual(
       sound.audioElement,
       stereo.sharedAudioAccess.audioElement,
-      'internal audio tag is shared audio tag'
+      'internal audio tag is shared audio tag',
     );
   });
 
   test('can play an mp3 twice in a row using internal element', async function (assert) {
-    assert.expect(3);
-
     stereo.useSharedAudioAccess = false;
     let { sound } = await stereo.load('/good/1000/good.aac');
 
@@ -207,7 +200,7 @@ module('Unit | Connection | Native Audio', function (hooks) {
     assert.equalUrls(
       sound.audioElement.src,
       goodUrl,
-      'audio src attribute is set'
+      'audio src attribute is set',
     );
 
     await sound.play();
@@ -215,7 +208,7 @@ module('Unit | Connection | Native Audio', function (hooks) {
     assert.equalUrls(
       sound.audioElement.src,
       goodUrl,
-      'audio src attribute is set'
+      'audio src attribute is set',
     );
   });
 
@@ -234,14 +227,14 @@ module('Unit | Connection | Native Audio', function (hooks) {
 
     assert.ok(
       sound1._currentPosition() >= 200,
-      'sound 1 should have kept its position'
+      'sound 1 should have kept its position',
     );
 
     sound2.play(); // sound 2 has control
 
     assert.ok(
       sound2._currentPosition() >= 500,
-      'sound 2 should have kept its position'
+      'sound 2 should have kept its position',
     );
 
     sound1.pause();
@@ -265,14 +258,14 @@ module('Unit | Connection | Native Audio', function (hooks) {
     assert.strictEqual(
       sound1._currentPosition(),
       10,
-      'sound 1 should have kept its position'
+      'sound 1 should have kept its position',
     );
 
     sound2.play(); // sound 2 has control
 
     assert.ok(
       sound2._currentPosition() >= 100,
-      'sound 2 should have kept its position'
+      'sound 2 should have kept its position',
     );
   });
 
@@ -290,7 +283,7 @@ module('Unit | Connection | Native Audio', function (hooks) {
     assert.strictEqual(
       sound.audioElement,
       sharedAudioAccess.audioElement,
-      'sound should have control on setup'
+      'sound should have control on setup',
     );
   });
 
@@ -309,7 +302,7 @@ module('Unit | Connection | Native Audio', function (hooks) {
     assert.strictEqual(
       sound.audioElement,
       sharedAudioAccess.audioElement,
-      'sound should have control on setup'
+      'sound should have control on setup',
     );
   });
 
@@ -330,12 +323,11 @@ module('Unit | Connection | Native Audio', function (hooks) {
     assert.notEqual(
       sound1.audioElement,
       stereo.sharedAudioAccess.audioElement,
-      'sound should have control while another sound is playing'
+      'sound should have control while another sound is playing',
     );
   });
 
   test('switching sounds with a shared audio element sends pause event on first sound', async function (assert) {
-    assert.expect(1);
     let stereo = this.owner.lookup('service:stereo');
     let url1 = '/good/5000/silence.mp3';
     let url2 = '/good/5000/silence2.mp3';
@@ -358,7 +350,6 @@ module('Unit | Connection | Native Audio', function (hooks) {
   });
 
   test('automatically retries upon CORS failure', async function (assert) {
-    assert.expect(4);
     let stereo = this.owner.lookup('service:stereo');
     let url1 = '/good/5000/silence.mp3';
 
@@ -371,7 +362,7 @@ module('Unit | Connection | Native Audio', function (hooks) {
     assert.strictEqual(
       sound1.audioElement.getAttribute('crossorigin'),
       'anonymous',
-      'first try should be anonymous'
+      'first try should be anonymous',
     );
 
     let { failures } = await stereo.load('/bad/http-301/silence.mp3', {
@@ -384,7 +375,7 @@ module('Unit | Connection | Native Audio', function (hooks) {
     assert.strictEqual(
       erroredSound.audioElement.getAttribute('crossorigin'),
       null,
-      'second try should be null'
+      'second try should be null',
     );
   });
 
@@ -402,7 +393,6 @@ module('Unit | Connection | Native Audio', function (hooks) {
   });
 
   test('audio-position-changed events get fired', async function (assert) {
-    assert.expect(1);
     let stereo = this.owner.lookup('service:stereo');
     let url1 = '/good/2000/silence.mp3';
 

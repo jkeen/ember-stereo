@@ -14,20 +14,20 @@ module('Integration | Helper | sound-is-rewindable', function (hooks) {
     this.set('url', '/good/10/rewindable-test.mp3');
     await service.play(this.url);
     await render(
-      hbs`{{#if (sound-is-rewindable this.url)}}sound-is-rewindable{{else}}is-not-rewindable{{/if}}`
+      hbs`{{#if (sound-is-rewindable this.url)}}sound-is-rewindable{{else}}is-not-rewindable{{/if}}`,
     );
     assert.true(service.isRewindable, 'service says its rewindable');
     assert.strictEqual(
       this.element.textContent.trim(),
       'sound-is-rewindable',
-      'helper says its rewindable'
+      'helper says its rewindable',
     );
 
     this.set('url', '/good/stream/stream.mp3');
     assert.strictEqual(
       this.element.textContent.trim(),
       'is-not-rewindable',
-      'helper updated when url changed'
+      'helper updated when url changed',
     );
   });
 });

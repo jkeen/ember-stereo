@@ -14,7 +14,7 @@ module('Integration | Helper | stereo-volume', function (hooks) {
     assert.strictEqual(
       this.element.textContent.trim(),
       service.volume.toString(),
-      'stereo volume reports service volume'
+      'stereo volume reports service volume',
     );
   });
 });

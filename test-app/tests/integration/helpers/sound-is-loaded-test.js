@@ -13,7 +13,7 @@ module('Integration | Helper | sound-is-loaded', function (hooks) {
 
     this.set('url', '/good/10/loaded.mp3');
     await render(
-      hbs`{{#if (sound-is-loaded this.url)}}sound-is-loaded{{else}}is-not-loaded{{/if}}`
+      hbs`{{#if (sound-is-loaded this.url)}}sound-is-loaded{{else}}is-not-loaded{{/if}}`,
     );
     assert.strictEqual(this.element.textContent.trim(), 'is-not-loaded');
     await service.load(this.url);
@@ -29,7 +29,7 @@ module('Integration | Helper | sound-is-loaded', function (hooks) {
       '/good/10000/loaded-array-2.mp3',
     ]);
     await render(
-      hbs`{{#if (sound-is-loaded this.url)}}sound-is-loaded{{else}}is-not-loaded{{/if}}`
+      hbs`{{#if (sound-is-loaded this.url)}}sound-is-loaded{{else}}is-not-loaded{{/if}}`,
     );
     assert.strictEqual(this.element.textContent.trim(), 'is-not-loaded');
     await service.load(this.url);

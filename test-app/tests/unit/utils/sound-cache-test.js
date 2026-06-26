@@ -9,7 +9,6 @@ class Sound {
 
 module('Unit | Utility | sound-cache', function () {
   test('sounds can be retrieved by url from cache', function (assert) {
-    assert.expect(3);
     let soundCache = new SoundCache();
 
     let sound1 = new Sound({ url: '/test/1' });

@@ -13,7 +13,7 @@ module('Integration | Helper | toggle-play-sound', function (hooks) {
     this.url = '/good/1000/toggle.mp3';
     assert.false(service.isPlaying, 'not playing');
     await render(
-      hbs`<button type="button" {{on 'click' (toggle-play-sound this.url)}}>toggle</button>`
+      hbs`<button type="button" {{on 'click' (toggle-play-sound this.url)}}>toggle</button>`,
     );
     await click('button');
     assert.true(service.isPlaying, 'is playing');

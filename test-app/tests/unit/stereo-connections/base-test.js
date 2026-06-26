@@ -20,7 +20,7 @@ module('Unit | Connection | base', function (hooks) {
     baseSound.trigger('audio-played');
     assert.true(
       baseSound.isPlaying,
-      'is playing should be true after firing event'
+      'is playing should be true after firing event',
     );
   });
   test("isPlaying gets set to false when an 'audio-paused' event is fired", function (assert) {
@@ -30,7 +30,7 @@ module('Unit | Connection | base', function (hooks) {
     baseSound.trigger('audio-paused');
     assert.false(
       baseSound.isPlaying,
-      'is playing should be false after firing event'
+      'is playing should be false after firing event',
     );
   });
   test("isPlaying gets set to false when an 'audio-ended' event is fired", function (assert) {
@@ -40,14 +40,14 @@ module('Unit | Connection | base', function (hooks) {
     baseSound.trigger('audio-ended', { sound: baseSound });
     assert.false(
       baseSound.isPlaying,
-      'is playing should be false after firing event'
+      'is playing should be false after firing event',
     );
   });
   test('base sound will eagerly accept unknown mime types', function (assert) {
     let unknownMimeType = 'http://www.example.come/audio';
     assert.true(
       baseSound.constructor.canPlay(unknownMimeType),
-      'defaults to true if the mime type cannot be determined'
+      'defaults to true if the mime type cannot be determined',
     );
   });
   test('hasPlayed gets set after a sound has played', function (assert) {
@@ -56,21 +56,21 @@ module('Unit | Connection | base', function (hooks) {
     baseSound.trigger('audio-played');
     assert.true(
       baseSound.isPlaying,
-      'isPlaying should be true after firing play event'
+      'isPlaying should be true after firing play event',
     );
     assert.true(
       baseSound.hasPlayed,
-      'hasPlayed should be true after firing play event'
+      'hasPlayed should be true after firing play event',
     );
 
     baseSound.trigger('audio-paused');
     assert.false(
       baseSound.isPlaying,
-      'isPlaying should be false after firing pause event'
+      'isPlaying should be false after firing pause event',
     );
     assert.true(
       baseSound.hasPlayed,
-      'hasPlayed should still be true after firing pause event'
+      'hasPlayed should still be true after firing pause event',
     );
   });
   test('error property gets set when audio-load-error is fired', function (assert) {
@@ -81,7 +81,7 @@ module('Unit | Connection | base', function (hooks) {
     assert.strictEqual(
       baseSound.error,
       'big time error message',
-      'error should be set'
+      'error should be set',
     );
     assert.true(baseSound.isErrored, 'isErrored should be true if errored');
   });

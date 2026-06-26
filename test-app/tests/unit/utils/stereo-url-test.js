@@ -16,7 +16,7 @@ module('Unit | Utility | stereo-url', function () {
 
   test('it keys without query strings and protocols', function (assert) {
     let stereoUrl = new StereoUrl(
-      'http://example.com/url.mp3?access_key=125125125&t=12125'
+      'http://example.com/url.mp3?access_key=125125125&t=12125',
     );
     assert.strictEqual(stereoUrl.key, 'http://example.com/url.mp3');
   });

@@ -13,7 +13,7 @@ module('Integration | Helper | toggle-mute', function (hooks) {
 
     service.volume = 73;
     await render(
-      hbs`<button type="button" {{on 'click' (toggle-stereo-mute)}}>mute</button>`
+      hbs`<button type="button" {{on 'click' (toggle-stereo-mute)}}>mute</button>`,
     );
     await click('button');
     assert.strictEqual(service.volume, 0, 'volume is 0');

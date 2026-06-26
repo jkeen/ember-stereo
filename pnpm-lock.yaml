@@ -536,6 +536,9 @@ importers:
       ember-cli-terser:
         specifier: ^4.0.2
         version: 4.0.2
+      ember-concurrency:
+        specifier: ^4.0.6
+        version: 4.0.6(@babel/core@7.28.5)
       ember-data:
         specifier: ~5.3.13
         version: 5.3.13(@ember/string@3.1.1)(@ember/test-helpers@3.3.1(@babel/core@7.28.5)(ember-source@5.4.1(@babel/core@7.28.5)(@glimmer/component@1.1.2(@babel/core@7.28.5))(rsvp@4.8.5)(webpack@5.103.0))(webpack@5.103.0))(@ember/test-waiters@4.1.1)(ember-inflector@4.0.3(ember-source@5.4.1(@babel/core@7.28.5)(@glimmer/component@1.1.2(@babel/core@7.28.5))(rsvp@4.8.5)(webpack@5.103.0)))(ember-source@5.4.1(@babel/core@7.28.5)(@glimmer/component@1.1.2(@babel/core@7.28.5))(rsvp@4.8.5)(webpack@5.103.0))(qunit@2.24.2)
@@ -11804,7 +11807,7 @@ snapshots:
   '@eslint/eslintrc@0.4.3':
     dependencies:
       ajv: 6.12.6
-      debug: 4.4.3(supports-color@5.5.0)
+      debug: 4.3.2
       espree: 7.3.1
       globals: 13.24.0
       ignore: 4.0.6
@@ -12098,7 +12101,7 @@ snapshots:
   '@humanwhocodes/config-array@0.5.0':
     dependencies:
       '@humanwhocodes/object-schema': 1.2.1
-      debug: 4.4.3(supports-color@5.5.0)
+      debug: 4.3.2
       minimatch: 3.1.2
     transitivePeerDependencies:
       - supports-color
@@ -12472,7 +12475,7 @@ snapshots:
     dependencies:
       '@semantic-release/error': 4.0.0
       aggregate-error: 3.1.0
-      debug: 4.3.2(supports-color@5.5.0)
+      debug: 4.3.2
       execa: 9.6.0
       lodash-es: 4.17.21
       parse-json: 8.3.0
@@ -19144,7 +19147,7 @@ snapshots:
   https-proxy-agent@7.0.6:
     dependencies:
       agent-base: 7.1.4
-      debug: 4.4.3(supports-color@5.5.0)
+      debug: 4.3.2
     transitivePeerDependencies:
       - supports-color
 
@@ -22175,7 +22178,7 @@ snapshots:
 
   stagehand@1.0.1:
     dependencies:
-      debug: 4.4.3(supports-color@5.5.0)
+      debug: 4.3.2
     transitivePeerDependencies:
       - supports-color
 

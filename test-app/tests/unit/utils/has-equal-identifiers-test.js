@@ -5,19 +5,19 @@ module('Unit | Utility | has-equal-identifiers', function () {
   test('it works', async function (assert) {
     let result = await hasEqualIdentifiers(
       [{ url: '/good/url.mp3' }],
-      '/good/url.mp3'
+      '/good/url.mp3',
     );
     assert.true(result);
 
     result = await hasEqualIdentifiers(
       [{ url: '/good/url.mp3' }, { url: '/good/foo.mp3' }],
-      '/good/url.mp3'
+      '/good/url.mp3',
     );
     assert.true(result);
 
     result = await hasEqualIdentifiers(
       [{ url: '/good/url2.mp3' }, { url: '/good/foo.mp3' }],
-      '/good/url.mp3'
+      '/good/url.mp3',
     );
     assert.false(result);
   });
@@ -28,13 +28,13 @@ module('Unit | Utility | has-equal-identifiers', function () {
 
     result = await hasEqualIdentifiers(
       [{ url: '/good/url.mp3' }, { url: '/good/foo.mp3' }],
-      undefined
+      undefined,
     );
     assert.false(result);
 
     result = await hasEqualIdentifiers(
       [{ url: '/good/url2.mp3' }, { url: '/good/foo.mp3' }],
-      []
+      [],
     );
     assert.false(result);
   });

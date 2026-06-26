@@ -20,7 +20,7 @@ module('Integration | Helper | current-sound', function (hooks) {
     assert.equalUrls(
       this.element.textContent.trim(),
       this.url,
-      'returns current sound'
+      'returns current sound',
     );
   });
 });

@@ -19,7 +19,7 @@ module('Integration | Helper | find-sound', function (hooks) {
     assert.equalUrls(
       this.element.textContent.trim(),
       this.url,
-      'returns loaded sound'
+      'returns loaded sound',
     );
   });
 });

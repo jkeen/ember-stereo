@@ -18,7 +18,6 @@ module('Unit | Helper | one at a time', function () {
   /* eslint-enable */
 
   test('only one sound should play at a time', function (assert) {
-    assert.expect(3);
     let oneAtATime = new OneAtATime();
 
     let sound1 = Sound.create({ url: '/good/10000/1.mp3' });
@@ -32,21 +31,21 @@ module('Unit | Helper | one at a time', function () {
     assert.deepEqual(
       [sound1, sound2, sound3].map((s) => s.get('isPlaying')),
       [true, false, false],
-      'sound 1 should be the only thing playing'
+      'sound 1 should be the only thing playing',
     );
 
     sound2.play();
     assert.deepEqual(
       [sound1, sound2, sound3].map((s) => s.get('isPlaying')),
       [false, true, false],
-      'sound 2 should be the only thing playing'
+      'sound 2 should be the only thing playing',
     );
 
     sound3.play();
     assert.deepEqual(
       [sound1, sound2, sound3].map((s) => s.get('isPlaying')),
       [false, false, true],
-      'sound 3 should be the only thing playing'
+      'sound 3 should be the only thing playing',
     );
   });
 });

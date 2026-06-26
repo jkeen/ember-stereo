@@ -34,7 +34,7 @@ module('Unit | Utility | shared audio element', function (hooks) {
     sharedAudioAccess.releaseControl(foo);
     assert.notOk(
       sharedAudioAccess.hasControl(bar),
-      'bar does not have access until it requests it'
+      'bar does not have access until it requests it',
     );
     sharedAudioAccess.requestControl(bar);
     assert.ok(sharedAudioAccess.hasControl(bar), 'bar now can have access');

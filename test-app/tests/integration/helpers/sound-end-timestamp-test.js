@@ -25,7 +25,7 @@ module('Integration | Helper | sound-end-timestamp', function (hooks) {
     let expectedDate = new Date('2023-10-01T00:00:00Z');
     assert.strictEqual(
       this.element.textContent.trim(),
-      expectedDate.toString()
+      expectedDate.toString(),
     );
   });
 

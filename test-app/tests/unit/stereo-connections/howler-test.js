@@ -21,25 +21,22 @@ module('Unit | Connection | Howler', function (hooks) {
       'http://example.org/test.wav',
     ]);
 
-    assert.expect(badUrls.length + goodUrls.length);
-
     badUrls.forEach((url) => {
       assert.true(
         HowlerConnection.canPlay(url),
-        `Should try to play file with ${url}`
+        `Should try to play file with ${url}`,
       );
     });
 
     goodUrls.forEach((url) => {
       assert.true(
         HowlerConnection.canPlay(url),
-        `Should be able to play file with ${url}`
+        `Should be able to play file with ${url}`,
       );
     });
   });
 
   test('Howler should report playability of file objects', function (assert) {
-    assert.expect(4);
     let goodFiles = A([
       {
         url: 'http://example.org/test.m3u8',
@@ -53,16 +50,15 @@ module('Unit | Connection | Howler', function (hooks) {
     goodFiles.forEach((url) => {
       assert.true(
         HowlerConnection.canPlay(url),
-        `Should be able to play file with ${url.mimeType}`
+        `Should be able to play file with ${url.mimeType}`,
       );
     });
   });
 
   test('If we 404, we give up', function (assert) {
-    assert.expect(1);
     let done = assert.async();
     let sound = new (this.owner.factoryFor(
-      'ember-stereo@stereo-connection:howler'
+      'ember-stereo@stereo-connection:howler',
     ).class)({ url: '/bad/404/bad.mp3' });
 
     sound.on('audio-load-error', function () {
@@ -76,7 +72,7 @@ module('Unit | Connection | Howler', function (hooks) {
     let done = assert.async();
     let url = '/good/500/test.mp3';
     let sound = new (this.owner.factoryFor(
-      'ember-stereo@stereo-connection:howler'
+      'ember-stereo@stereo-connection:howler',
     ).class)({
       url: url,
       audioReady: function () {

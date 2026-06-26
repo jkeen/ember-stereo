@@ -11,22 +11,22 @@ module('Integration | Helper | stereo-volume-is-adjustable', function (hooks) {
     let service = this.owner.lookup('service:stereo');
     service.isMobileDevice = false;
     await render(
-      hbs`{{#if (stereo-volume-is-adjustable)}}Adjustable{{else}}Not Adjustable{{/if}}`
+      hbs`{{#if (stereo-volume-is-adjustable)}}Adjustable{{else}}Not Adjustable{{/if}}`,
     );
     assert.strictEqual(
       this.element.textContent.trim(),
       'Adjustable',
-      'stereo volume reports service volume adjustable'
+      'stereo volume reports service volume adjustable',
     );
 
     service.isMobileDevice = true;
     await render(
-      hbs`{{#if (stereo-volume-is-adjustable)}}Adjustable{{else}}Not Adjustable{{/if}}`
+      hbs`{{#if (stereo-volume-is-adjustable)}}Adjustable{{else}}Not Adjustable{{/if}}`,
     );
     assert.strictEqual(
       this.element.textContent.trim(),
       'Not Adjustable',
-      'stereo volume reports service volume not adjustable'
+      'stereo volume reports service volume not adjustable',
     );
   });
 });

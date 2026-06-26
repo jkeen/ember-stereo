@@ -36,12 +36,12 @@ module('Unit | Service | stereo', function (hooks) {
 
     assert.ok(
       service.connectionLoader.get('NativeAudio'),
-      'it activated the NativeAudio'
+      'it activated the NativeAudio',
     );
     assert.strictEqual(
       service.connectionLoader.get('NativeAudio').config.testOption,
       'dummy',
-      'it passes config options to the NativeAudio'
+      'it passes config options to the NativeAudio',
     );
   });
 
@@ -68,17 +68,17 @@ module('Unit | Service | stereo', function (hooks) {
 
     assert.ok(
       howlerSpy.callCount > 0,
-      'howler canPlay should have been called'
+      'howler canPlay should have been called',
     );
     assert.ok(
       nativeSpy.callCount > 0,
-      'nativeSpy canPlay should have been called'
+      'nativeSpy canPlay should have been called',
     );
 
     assert.strictEqual(
       sound.connectionName,
       'Native Audio',
-      'Native Audio connection should have been used'
+      'Native Audio connection should have been used',
     );
   });
 
@@ -111,32 +111,32 @@ module('Unit | Service | stereo', function (hooks) {
     assert.equalUrls(
       expectedUrl,
       goodUrl,
-      'sound returned should have the successful url'
+      'sound returned should have the successful url',
     );
     assert.strictEqual(
       A(expectedFailures).mapBy('url').length,
       2,
-      'should only have two failures'
+      'should only have two failures',
     );
     assert.strictEqual(
       expectedFailures[0].error,
       error1,
-      `first url should have error: ${error1}`
+      `first url should have error: ${error1}`,
     );
     assert.strictEqual(
       expectedFailures[1].error,
       error2,
-      `second url should have error: ${error2}`
+      `second url should have error: ${error2}`,
     );
     assert.equalUrls(
       expectedFailures[0].url,
       badUrl1,
-      `first bad url should be: ${badUrl1}`
+      `first bad url should be: ${badUrl1}`,
     );
     assert.equalUrls(
       expectedFailures[1].url,
       badUrl2,
-      `second bad url should be: ${badUrl2}`
+      `second bad url should be: ${badUrl2}`,
     );
   });
 
@@ -157,7 +157,7 @@ module('Unit | Service | stereo', function (hooks) {
     assert.equalUrls(
       expectedUrl,
       goodUrl,
-      'sound returned should have the successful url'
+      'sound returned should have the successful url',
     );
   });
 
@@ -172,7 +172,7 @@ module('Unit | Service | stereo', function (hooks) {
     assert.deepEqual(
       service.get('oneAtATime.sounds.firstObject'),
       sound,
-      'sound should be registered with one at a time'
+      'sound should be registered with one at a time',
     );
   });
 
@@ -185,28 +185,27 @@ module('Unit | Service | stereo', function (hooks) {
 
     assert.notOk(
       service.currentSound,
-      'sound should not be set as current sound yet'
+      'sound should not be set as current sound yet',
     );
 
     await sound1.play();
     assert.strictEqual(
       service.currentSound?.url,
       sound1.url,
-      'sound1 should be set as current sound'
+      'sound1 should be set as current sound',
     );
 
     await sound2.play();
     assert.strictEqual(
       service.currentSound?.url,
       sound2.url,
-      'sound2 should be set as current sound'
+      'sound2 should be set as current sound',
     );
     sound2.stop();
     sound1.stop();
   });
 
   test('Setting currentSound multiple times will not register duplicate events on the sound', async function (assert) {
-    assert.expect(2);
     let service = this.owner
       .lookup('service:stereo')
       .loadConnections([{ name: 'NativeAudio' }]);
@@ -223,7 +222,7 @@ module('Unit | Service | stereo', function (hooks) {
       () => {
         return callCount == 1;
       },
-      { timeout: 5000 }
+      { timeout: 5000 },
     );
 
     assert.strictEqual(callCount, 1, 'ended event should have been fired once');
@@ -236,14 +235,13 @@ module('Unit | Service | stereo', function (hooks) {
       () => {
         return callCount == 2;
       },
-      { timeout: 5000 }
+      { timeout: 5000 },
     );
 
     assert.strictEqual(callCount, 2, 'ended event should have been fired once');
   });
 
   test('The second time a url is requested it will be pulled from the cache', async function (assert) {
-    assert.expect(5);
     let service = this.owner
       .lookup('service:stereo')
       .loadConnections([{ name: 'NativeAudio' }]);
@@ -255,7 +253,7 @@ module('Unit | Service | stereo', function (hooks) {
     assert.strictEqual(
       findSpy.callCount,
       0,
-      'cache should not have been checked'
+      'cache should not have been checked',
     );
 
     let { sound: sound1 } = await service.load(url);
@@ -263,7 +261,7 @@ module('Unit | Service | stereo', function (hooks) {
     assert.strictEqual(
       cacheSpy.callCount,
       1,
-      'sound should be registered with sound cache'
+      'sound should be registered with sound cache',
     );
     sound1.identification = 'yo';
 
@@ -271,13 +269,12 @@ module('Unit | Service | stereo', function (hooks) {
     assert.strictEqual(
       sound2.identification,
       'yo',
-      'should be the same sound in sound cache'
+      'should be the same sound in sound cache',
     );
     assert.strictEqual(findSpy.callCount, 3, 'cache should have been checked');
   });
 
   test('The second time a url (with a mime type specified) is requested it will be pulled from the cache', async function (assert) {
-    assert.expect(4);
     let service = this.owner
       .lookup('service:stereo')
       .loadConnections([{ name: 'NativeAudio' }]);
@@ -293,7 +290,7 @@ module('Unit | Service | stereo', function (hooks) {
     assert.strictEqual(
       cacheSpy.callCount,
       1,
-      'sound should be registered with sound cache'
+      'sound should be registered with sound cache',
     );
     sound.identification = 'yo';
 
@@ -301,13 +298,12 @@ module('Unit | Service | stereo', function (hooks) {
     assert.strictEqual(
       sound2.identification,
       'yo',
-      'should be the same sound in sound cache'
+      'should be the same sound in sound cache',
     );
     assert.strictEqual(findSpy.callCount, 3, 'cache should have been checked');
   });
 
   test('volume changes are set on the current sound', function (assert) {
-    assert.expect(7);
     const service = this.owner
       .lookup('service:stereo')
       .loadConnections(['NativeAudio']);
@@ -327,7 +323,7 @@ module('Unit | Service | stereo', function (hooks) {
     assert.strictEqual(
       service.get('volume'),
       service.get('defaultVolume'),
-      'service should have default volume'
+      'service should have default volume',
     );
 
     assert.strictEqual(spy1.callCount, 0, 'volume should not be set');
@@ -336,35 +332,35 @@ module('Unit | Service | stereo', function (hooks) {
 
     assert.ok(
       spy1.withArgs(defaultVolume).calledOnce,
-      'volume on sound 1 should be set to default volume'
+      'volume on sound 1 should be set to default volume',
     );
 
     service.currentSound = sound2;
 
     assert.ok(
       spy2.withArgs(defaultVolume).calledOnce,
-      'volume on sound 2 should be set to default volume after current sound change'
+      'volume on sound 2 should be set to default volume after current sound change',
     );
 
     service.set('volume', 55);
 
     assert.ok(
       spy2.withArgs(55).calledOnce,
-      'volume on sound 2 should be set to new system volume'
+      'volume on sound 2 should be set to new system volume',
     );
 
     service.currentSound = sound1;
 
     assert.ok(
       spy1.withArgs(55).calledOnce,
-      'volume on sound 1 should be set to new system volume after current sound change'
+      'volume on sound 1 should be set to new system volume after current sound change',
     );
 
     sound1._setVolume(0);
     assert.strictEqual(
       service.get('volume'),
       55,
-      'setting sound volume individually should have no effect on system volume. Relationship is one way.'
+      'setting sound volume individually should have no effect on system volume. Relationship is one way.',
     );
   });
 
@@ -376,7 +372,7 @@ module('Unit | Service | stereo', function (hooks) {
     assert.strictEqual(
       service.get('volume'),
       service.defaultVolume,
-      'service should have default volume'
+      'service should have default volume',
     );
     service.set('volume', 75);
     assert.strictEqual(service.get('volume'), 75, 'volume should be 75');
@@ -387,7 +383,7 @@ module('Unit | Service | stereo', function (hooks) {
     assert.strictEqual(
       service.get('volume'),
       75,
-      'volume should be reset to previous level'
+      'volume should be reset to previous level',
     );
   });
 
@@ -398,7 +394,7 @@ module('Unit | Service | stereo', function (hooks) {
     let nativeAudioSpy = stubConnectionCreateWithSuccess(
       service,
       'NativeAudio',
-      sandbox
+      sandbox,
     );
     await service.load('/good/10000/test.mp3', {
       useConnections: ['NativeAudio'],
@@ -406,7 +402,7 @@ module('Unit | Service | stereo', function (hooks) {
     assert.strictEqual(
       nativeAudioSpy.callCount,
       1,
-      'Native connection should have been called'
+      'Native connection should have been called',
     );
   });
 
@@ -417,12 +413,12 @@ module('Unit | Service | stereo', function (hooks) {
     let nativeAudioSpy = stubConnectionCreateWithFailure(
       service,
       'NativeAudio',
-      sandbox
+      sandbox,
     );
     let localAudioSpy = stubConnectionCreateWithSuccess(
       service,
       'LocalDummyConnection',
-      sandbox
+      sandbox,
     );
 
     await service.load('/good/1000/test.mp3', {
@@ -432,16 +428,16 @@ module('Unit | Service | stereo', function (hooks) {
     assert.strictEqual(
       nativeAudioSpy.callCount,
       1,
-      'Native connection should have been called'
+      'Native connection should have been called',
     );
     assert.strictEqual(
       localAudioSpy.callCount,
       1,
-      'local connection should have been called'
+      'local connection should have been called',
     );
     assert.ok(
       nativeAudioSpy.calledBefore(localAudioSpy),
-      'native audio should have been tried before local'
+      'native audio should have been tried before local',
     );
 
     await service.play('/good/1000/test-2.mp3', {
@@ -451,7 +447,7 @@ module('Unit | Service | stereo', function (hooks) {
     assert.strictEqual(
       nativeAudioSpy.callCount,
       2,
-      'Native connection should have been called'
+      'Native connection should have been called',
     );
   });
 
@@ -465,7 +461,7 @@ module('Unit | Service | stereo', function (hooks) {
     };
 
     let LocalDummyConnection = service.connectionLoader.get(
-      'LocalDummyConnection'
+      'LocalDummyConnection',
     );
 
     let mimeTypeSpy = sandbox
@@ -480,11 +476,11 @@ module('Unit | Service | stereo', function (hooks) {
 
     assert.ok(
       mimeTypeSpy.callCount > 0,
-      'local canPlayMimeType should have been called'
+      'local canPlayMimeType should have been called',
     );
     assert.ok(
       createSpy.callCount > 0,
-      'A sound should have been created using the local dummy connection'
+      'A sound should have been created using the local dummy connection',
     );
   });
 
@@ -495,7 +491,7 @@ module('Unit | Service | stereo', function (hooks) {
     let mysteryFile = '/test/sound-without-extension';
 
     let LocalDummyConnection = service.connectionLoader.get(
-      'LocalDummyConnection'
+      'LocalDummyConnection',
     );
 
     let createSpy = sandbox
@@ -543,12 +539,12 @@ module('Unit | Service | stereo', function (hooks) {
     let strategies = strategyOrderSpy.getCall(0).returnValue;
 
     let sharedAudioAccesss = A(
-      A(strategies).map((s) => s.sharedAudioAccess)
+      A(strategies).map((s) => s.sharedAudioAccess),
     ).compact();
     assert.strictEqual(
       sharedAudioAccesss.length,
       strategies.length,
-      'audio element should have been included with the strategies'
+      'audio element should have been included with the strategies',
     );
   });
 
@@ -566,7 +562,7 @@ module('Unit | Service | stereo', function (hooks) {
     assert.strictEqual(
       sound2._currentPosition(),
       0,
-      'second sound should have its own position'
+      'second sound should have its own position',
     );
 
     sound2.play();
@@ -575,31 +571,30 @@ module('Unit | Service | stereo', function (hooks) {
     assert.strictEqual(
       Math.floor(sound1._currentPosition()),
       100,
-      'first sound should still have its own position'
+      'first sound should still have its own position',
     );
     assert.strictEqual(
       Math.floor(sound2._currentPosition()),
       125,
-      'second sound should still have its own position'
+      'second sound should still have its own position',
     );
 
     sound1.play();
     assert.strictEqual(
       Math.floor(sound1._currentPosition()),
       100,
-      'first sound should still have its own position'
+      'first sound should still have its own position',
     );
     sound2.position = 300;
     sound2.play();
     assert.strictEqual(
       Math.floor(sound2._currentPosition()),
       300,
-      'second sound should still have its own position'
+      'second sound should still have its own position',
     );
   });
 
   test('sound can play on native audio using shared element one after the other', async function (assert) {
-    assert.expect(4);
     const service = this.owner
       .lookup('service:stereo')
       .loadConnections(['NativeAudio']);
@@ -614,7 +609,7 @@ module('Unit | Service | stereo', function (hooks) {
     assert.strictEqual(
       sharedAccess.audioElement.id,
       silence1.audioElement.id,
-      'sound should be using its shared element'
+      'sound should be using its shared element',
     );
 
     await silence1.play();
@@ -626,12 +621,12 @@ module('Unit | Service | stereo', function (hooks) {
       assert.strictEqual(
         sharedAccess.audioElement.id,
         silence2.audioElement.id,
-        'second sound should be using shared element'
+        'second sound should be using shared element',
       );
       assert.notEqual(
         sharedAccess.audioElement.id,
         silence1.audioElement.id,
-        'second sound should be using shared element'
+        'second sound should be using shared element',
       );
     });
     silence1.position = 10 * 60 * 1000;
@@ -671,7 +666,7 @@ module('Unit | Service | stereo', function (hooks) {
     await settled();
     assert.true(
       sound1PlayEventTriggered,
-      'sound 1 play event should have been triggered'
+      'sound 1 play event should have been triggered',
     );
 
     let { sound } = await service.play(s2url);
@@ -679,22 +674,20 @@ module('Unit | Service | stereo', function (hooks) {
 
     assert.true(
       sound1PauseEventTriggered,
-      'sound 1 pause event should have been triggered'
+      'sound 1 pause event should have been triggered',
     );
     assert.true(
       sound2PlayEventTriggered,
-      'sound 2 play event should have been triggered'
+      'sound 2 play event should have been triggered',
     );
     sound.pause();
     assert.false(
       sound2PauseEventTriggered,
-      'sound 2 pause event should not have been triggered'
+      'sound 2 pause event should not have been triggered',
     );
   });
 
   test('service triggers `current-sound-changed` event when sounds change', async function (assert) {
-    assert.expect(4);
-
     const service = this.owner
       .lookup('service:stereo')
       .loadConnections(['NativeAudio']);
@@ -705,12 +698,12 @@ module('Unit | Service | stereo', function (hooks) {
       assert.strictEqual(
         previousSound,
         null,
-        'there should not a previous sound'
+        'there should not a previous sound',
       );
       assert.equalUrls(
         sound.url,
         s1url,
-        'current sound should be the first sound'
+        'current sound should be the first sound',
       );
     });
 
@@ -720,7 +713,7 @@ module('Unit | Service | stereo', function (hooks) {
       assert.equalUrls(
         previousSound.url,
         s1url,
-        'previous sound should be this sound'
+        'previous sound should be this sound',
       );
       assert.equalUrls(sound.url, s2url);
     });
@@ -744,23 +737,22 @@ module('Unit | Service | stereo', function (hooks) {
     assert.strictEqual(
       sound1.metadata.storyId,
       storyId,
-      'storyId should be in metadata'
+      'storyId should be in metadata',
     );
     let { sound: sound2 } = await service.play(s2url);
     assert.strictEqual(
       sound2.metadata.storyId,
       undefined,
-      "metadata hasn't been set and shouldn't exist"
+      "metadata hasn't been set and shouldn't exist",
     );
     assert.strictEqual(
       sound1.metadata.storyId,
       storyId,
-      'storyId should be in saved sound'
+      'storyId should be in saved sound',
     );
   });
 
   test('current-sound-interrupted event gets fired when a new `play` request happens while a sound is playing (independent elements)', async function (assert) {
-    assert.expect(2);
     const service = this.owner
       .lookup('service:stereo')
       .loadConnections(['NativeAudio']);
@@ -772,7 +764,7 @@ module('Unit | Service | stereo', function (hooks) {
       assert.equalUrls(
         sound.url,
         s1url,
-        'current sound should be reported as changed'
+        'current sound should be reported as changed',
       );
     });
 
@@ -780,7 +772,7 @@ module('Unit | Service | stereo', function (hooks) {
       assert.equalUrls(
         sound.url,
         s1url,
-        'current sound should be reported as interrupted'
+        'current sound should be reported as interrupted',
       );
     });
 
@@ -790,7 +782,6 @@ module('Unit | Service | stereo', function (hooks) {
   });
 
   test('current-sound-interrupted event gets fired when a new `play` request happens while a sound is playing (shared elements)', async function (assert) {
-    assert.expect(2);
     const service = this.owner
       .lookup('service:stereo')
       .loadConnections(['NativeAudio']);
@@ -802,7 +793,7 @@ module('Unit | Service | stereo', function (hooks) {
       assert.equalUrls(
         sound.url,
         s1url,
-        'current sound should be reported as changed'
+        'current sound should be reported as changed',
       );
     });
 
@@ -810,7 +801,7 @@ module('Unit | Service | stereo', function (hooks) {
       assert.equalUrls(
         sound.url,
         s1url,
-        'current sound should be reported as interrupted'
+        'current sound should be reported as interrupted',
       );
     });
 
@@ -837,7 +828,7 @@ module('Unit | Service | stereo', function (hooks) {
     assert.strictEqual(
       result,
       sound1,
-      'current sound should be the one that got interrupted'
+      'current sound should be the one that got interrupted',
     );
   });
 
@@ -860,7 +851,6 @@ module('Unit | Service | stereo', function (hooks) {
   });
 
   test('new-load-request gets fired on new load and play requests', async function (assert) {
-    assert.expect(4);
     const service = this.owner
       .lookup('service:stereo')
       .loadConnections(['NativeAudio']);
@@ -877,26 +867,26 @@ module('Unit | Service | stereo', function (hooks) {
         assert.strictEqual(
           urlsOrPromise,
           s1url,
-          'url should equal url passed in'
+          'url should equal url passed in',
         );
         // eslint-disable-next-line qunit/no-conditional-assertions
         assert.strictEqual(
           options.metadata.id,
           1,
-          'metadata id should be equal'
+          'metadata id should be equal',
         );
       } else if (count === 1) {
         // eslint-disable-next-line qunit/no-conditional-assertions
         assert.strictEqual(
           urlsOrPromise,
           s2url,
-          'url should equal url passed in'
+          'url should equal url passed in',
         );
         // eslint-disable-next-line qunit/no-conditional-assertions
         assert.strictEqual(
           options.metadata.id,
           undefined,
-          'metadata id should be undefined'
+          'metadata id should be undefined',
         );
         service.off('new-load-request', handler);
         // done();
@@ -916,8 +906,6 @@ module('Unit | Service | stereo', function (hooks) {
       .loadConnections(['NativeAudio']);
     let s1url = '/good/1000/silence.mp3';
 
-    assert.expect(4);
-
     let count = 0;
     service.on('new-load-request', ({ urlsOrPromise, options }) => {
       if (count == 0) {
@@ -925,20 +913,20 @@ module('Unit | Service | stereo', function (hooks) {
         assert.equalUrls(
           urlsOrPromise,
           s1url,
-          'url should equal url passed in'
+          'url should equal url passed in',
         );
         // eslint-disable-next-line qunit/no-conditional-assertions
         assert.strictEqual(
           options.metadata.id,
           1,
-          'metadata id should be equale'
+          'metadata id should be equale',
         );
       } else if (count === 1) {
         // eslint-disable-next-line qunit/no-conditional-assertions
         assert.equalUrls(
           urlsOrPromise,
           s1url,
-          'url should equal url passed in'
+          'url should equal url passed in',
         );
         // eslint-disable-next-line qunit/no-conditional-assertions
         assert.strictEqual(options.metadata.id, 2, 'metadata id should be 2');
@@ -956,18 +944,16 @@ module('Unit | Service | stereo', function (hooks) {
       .loadConnections(['NativeAudio']);
     let s1url = '/good/15000/test';
 
-    assert.expect(2);
-
     service.one(
       'audio-position-will-change',
       ({ currentPosition, newPosition }) => {
         assert.strictEqual(
           currentPosition,
           0,
-          'current position should be zero'
+          'current position should be zero',
         );
         assert.strictEqual(newPosition, 5000, 'new position should be 5000');
-      }
+      },
     );
 
     await service.play(s1url);
@@ -975,7 +961,6 @@ module('Unit | Service | stereo', function (hooks) {
   });
 
   test('audio-will-rewind gets fired on rewind', async function (assert) {
-    assert.expect(4);
     const service = this.owner
       .lookup('service:stereo')
       .loadConnections(['NativeAudio']);
@@ -989,7 +974,7 @@ module('Unit | Service | stereo', function (hooks) {
         assert.strictEqual(
           currentPosition,
           5000,
-          'current position should be 5000'
+          'current position should be 5000',
         );
         // eslint-disable-next-line qunit/no-conditional-assertions
         assert.strictEqual(newPosition, 4000, 'new position should be 4000');
@@ -999,7 +984,7 @@ module('Unit | Service | stereo', function (hooks) {
         assert.strictEqual(
           currentPosition,
           4000,
-          'current position should be 4000'
+          'current position should be 4000',
         );
         // eslint-disable-next-line qunit/no-conditional-assertions
         assert.strictEqual(newPosition, 0, 'new position should be 0');
@@ -1018,7 +1003,6 @@ module('Unit | Service | stereo', function (hooks) {
       .lookup('service:stereo')
       .loadConnections(['NativeAudio']);
     let s1url = '/good/15000/1.mp3';
-    assert.expect(2);
 
     service.on(
       'audio-will-fast-forward',
@@ -1026,10 +1010,10 @@ module('Unit | Service | stereo', function (hooks) {
         assert.strictEqual(
           currentPosition,
           5000,
-          'current position should be 5000'
+          'current position should be 5000',
         );
         assert.strictEqual(newPosition, 6000, 'new position should be 6000');
-      }
+      },
     );
 
     let { sound } = await service.play(s1url, { position: 5000 });
@@ -1062,12 +1046,12 @@ module('Unit | Service | stereo', function (hooks) {
     assert.equalUrls(
       cacheSpy.firstCall.args[0].url,
       `${url}?foo=bar`,
-      'cache lookup with expected value'
+      'cache lookup with expected value',
     );
     assert.equalUrls(
       findSpy.secondCall.args[0],
       [cacheSpy.firstCall.args[0].url],
-      'lookup key is the same as the cached key'
+      'lookup key is the same as the cached key',
     );
   });
 

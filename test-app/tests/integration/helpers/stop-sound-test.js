@@ -14,7 +14,7 @@ module('Integration | Helper | stop-sound', function (hooks) {
     await service.play(this.url);
     assert.true(service.isPlaying, 'playing');
     await render(
-      hbs`<button type="button" {{on 'click' (stop-sound this.url)}}>stop</button>`
+      hbs`<button type="button" {{on 'click' (stop-sound this.url)}}>stop</button>`,
     );
     await click('button');
     assert.false(service.isPlaying, 'is not playing');

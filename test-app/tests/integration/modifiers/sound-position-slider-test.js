@@ -23,7 +23,7 @@ module('Integration | Modifier | sound-position-slider', function (hooks) {
         <div style="color:#FFF; background-color: blue; width: 1000px; height:200px" data-url='{{this.url1}}' {{sound-position-slider this.url1}}>{{sound-position this.url1}}</div>
         <div style="color:#FFF; background-color: green; width: 1000px; height:200px" data-url='{{this.url2}}' {{sound-position-slider this.url2}}>{{sound-position this.url2}}</div>
         <div style="color:#FFF; background-color: red; width: 1000px; height:200px" data-url='{{this.url3}}' {{sound-position-slider this.url3}}>{{sound-position this.url3}}</div>
-        `
+        `,
     );
 
     assert.dom('[data-sound-position-slider]').exists({ count: 3 });
@@ -94,7 +94,7 @@ module('Integration | Modifier | sound-position-slider', function (hooks) {
           {{sound-position this.url3}}
         </div>
         {{this.redPosition}}
-      `
+      `,
     );
 
     assert.dom('[data-sound-position-slider]').exists({ count: 3 });
@@ -131,8 +131,6 @@ module('Integration | Modifier | sound-position-slider', function (hooks) {
   });
 
   test('change callbacks work with manual data', async function (assert) {
-    assert.expect(13);
-
     this.id1 = 'blue';
     this.id2 = 'green';
     this.id3 = 'red';
@@ -168,7 +166,7 @@ module('Integration | Modifier | sound-position-slider', function (hooks) {
         <div style="color:#FFF; background-color: red; width: 1000px; height:200px" data-id='{{this.id3}}' {{sound-position-slider position=this.redPosition duration=this.duration onChangePosition=this.onRedChange}}>
           {{sound-position position=this.redPosition}}
         </div>
-      `
+      `,
     );
 
     assert.dom('[data-sound-position-slider]').exists({ count: 3 });

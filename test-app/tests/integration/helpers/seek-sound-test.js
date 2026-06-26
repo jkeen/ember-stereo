@@ -15,7 +15,7 @@ module('Integration | Helper | seek-sound', function (hooks) {
     sound.position = 6000;
     assert.strictEqual(sound.position, 6000, 'position is 6000');
     await render(
-      hbs`<button type="button" {{on 'click' (seek-sound this.url position=2 unit='seconds')}}>seek</button>`
+      hbs`<button type="button" {{on 'click' (seek-sound this.url position=2 unit='seconds')}}>seek</button>`,
     );
     await click('button');
     assert.strictEqual(sound.position, 2000, 'position is 15000');
@@ -29,7 +29,7 @@ module('Integration | Helper | seek-sound', function (hooks) {
     sound.position = 6000;
     assert.strictEqual(sound.position, 6000, 'position is 6000');
     await render(
-      hbs`<button type="button" {{on 'click' (seek-sound this.url position=0 unit='percentage')}}>seek</button>`
+      hbs`<button type="button" {{on 'click' (seek-sound this.url position=0 unit='percentage')}}>seek</button>`,
     );
     await click('button');
     assert.strictEqual(sound.position, 0, 'position is 0');

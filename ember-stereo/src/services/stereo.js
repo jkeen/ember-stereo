@@ -484,6 +484,7 @@ export default class Stereo extends Service.extend(EmberEvented) {
   });
 
   handleCurrentSoundTransitionTask = task(async (sound) => {
+    // eslint-disable-next-line no-constant-condition
     while (true) {
       await waitForEvent(sound, 'audio-played');
       debug('ember-stereo:service')('handling sound transition');

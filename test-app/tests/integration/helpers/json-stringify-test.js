@@ -15,7 +15,7 @@ module('Integration | Helper | json-stringify', function (hooks) {
 
     assert.strictEqual(
       this.element.textContent.trim(),
-      '{"title":"Morning Edition"}'
+      '{"title":"Morning Edition"}',
     );
   });
 

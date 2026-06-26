@@ -16,12 +16,12 @@ module('Unit | Service | stereo integration test.js', function (hooks) {
     assert.deepEqual(
       service.connectionLoader.names,
       ['LocalDummyConnection'],
-      'it activated the LocalDummyConnection'
+      'it activated the LocalDummyConnection',
     );
     assert.strictEqual(
       service.connectionLoader.get('LocalDummyConnection').config.testOption,
       'dummy',
-      'it passes config options to the LocalDummyConnection'
+      'it passes config options to the LocalDummyConnection',
     );
   });
 
@@ -33,8 +33,6 @@ module('Unit | Service | stereo integration test.js', function (hooks) {
   });
 
   test('playing a blank url fails', async function (assert) {
-    assert.expect(1);
-
     let service = this.owner.lookup('service:audio');
     let failures, results;
 
@@ -64,7 +62,6 @@ module('Unit | Service | stereo integration test.js', function (hooks) {
   });
 
   test('it can not rewind before 0', async function (assert) {
-    assert.expect(1);
     let done = assert.async();
     let stereo = this.owner.lookup('service:stereo');
 
@@ -78,8 +75,6 @@ module('Unit | Service | stereo integration test.js', function (hooks) {
   });
 
   test('it can not fast forward past duration', async function (assert) {
-    assert.expect(2);
-
     let service = this.owner.lookup('service:audio');
     let stereo = service.get('stereo');
 
@@ -90,13 +85,12 @@ module('Unit | Service | stereo integration test.js', function (hooks) {
     assert.strictEqual(
       stereo.position,
       0,
-      'sound should be back at the beginning'
+      'sound should be back at the beginning',
     );
   });
 
   test('it sends an audio-ended event when the sound ends', async function (assert) {
     let done = assert.async();
-    assert.expect(1);
 
     let stereo = this.owner.lookup('service:stereo');
     stereo.one('audio-ended', ({ sound }) => {

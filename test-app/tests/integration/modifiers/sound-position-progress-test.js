@@ -18,7 +18,7 @@ module('Integration | Modifier | sound-position-progress', function (hooks) {
         <div style="background-color: blue" data-url='{{this.url1}}' {{sound-position-progress this.url1}}>one</div>
         <div style="background-color: green" data-url='{{this.url2}}' {{sound-position-progress this.url2}}>two</div>
         <div style="background-color: red" data-url='{{this.url3}}' {{sound-position-progress this.url3}}>three</div>
-        `
+        `,
     );
 
     let service = this.owner.lookup('service:stereo');
@@ -41,19 +41,19 @@ module('Integration | Modifier | sound-position-progress', function (hooks) {
       .dom(`[data-url='${this.url1}']`)
       .hasAttribute(
         'style',
-        'background-color: blue; width: 20%; pointer-events: none;'
+        'background-color: blue; width: 20%; pointer-events: none;',
       );
     assert
       .dom(`[data-url='${this.url2}']`)
       .hasAttribute(
         'style',
-        'background-color: green; width: 30%; pointer-events: none;'
+        'background-color: green; width: 30%; pointer-events: none;',
       );
     assert
       .dom(`[data-url='${this.url3}']`)
       .hasAttribute(
         'style',
-        'background-color: red; width: 80%; pointer-events: none;'
+        'background-color: red; width: 80%; pointer-events: none;',
       );
 
     sound2.position = 8000;
@@ -63,13 +63,13 @@ module('Integration | Modifier | sound-position-progress', function (hooks) {
       .dom(`[data-url='${this.url1}']`)
       .hasAttribute(
         'style',
-        'background-color: blue; width: 20%; pointer-events: none;'
+        'background-color: blue; width: 20%; pointer-events: none;',
       );
     assert
       .dom(`[data-url='${this.url2}']`)
       .hasAttribute(
         'style',
-        'background-color: green; width: 80%; pointer-events: none;'
+        'background-color: green; width: 80%; pointer-events: none;',
       );
   });
 
@@ -83,7 +83,7 @@ module('Integration | Modifier | sound-position-progress', function (hooks) {
         <div style="background-color: blue" data-id='{{this.id1}}' {{sound-position-progress duration=1000 position=500}}>one</div>
         <div style="background-color: green" data-id='{{this.id2}}' {{sound-position-progress duration=0 position=0}}>two</div>
         <div style="background-color: red" data-id='{{this.id3}}' {{sound-position-progress position=5000 duration=50000}}>three</div>
-        `
+        `,
     );
 
     assert.dom('[data-sound-position-progress]').exists({ count: 3 });
@@ -93,19 +93,19 @@ module('Integration | Modifier | sound-position-progress', function (hooks) {
       .dom(`[data-id='${this.id1}']`)
       .hasAttribute(
         'style',
-        'background-color: blue; width: 50%; pointer-events: none;'
+        'background-color: blue; width: 50%; pointer-events: none;',
       );
     assert
       .dom(`[data-id='${this.id2}']`)
       .hasAttribute(
         'style',
-        'background-color: green; width: 0%; pointer-events: none;'
+        'background-color: green; width: 0%; pointer-events: none;',
       );
     assert
       .dom(`[data-id='${this.id3}']`)
       .hasAttribute(
         'style',
-        'background-color: red; width: 10%; pointer-events: none;'
+        'background-color: red; width: 10%; pointer-events: none;',
       );
   });
 });

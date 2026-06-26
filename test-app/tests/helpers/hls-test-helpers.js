@@ -5,7 +5,7 @@ async function setupHLSSpies(sound, sandbox) {
     () => {
       return !!sound.hls;
     },
-    { timeout: 3000 }
+    { timeout: 3000 },
   );
 
   return {

@@ -15,7 +15,7 @@ module('Integration | Helper | rewind-sound', function (hooks) {
     sound.position = 6000;
     assert.strictEqual(sound.position, 6000, 'position is 6000');
     await render(
-      hbs`<button type="button" {{on 'click' (rewind-sound this.url)}}>fast forward</button>`
+      hbs`<button type="button" {{on 'click' (rewind-sound this.url)}}>fast forward</button>`,
     );
     await click('button');
     assert.strictEqual(sound.position, 0, 'position is 0');
@@ -28,7 +28,7 @@ module('Integration | Helper | rewind-sound', function (hooks) {
     sound.position = 6000;
     assert.strictEqual(sound.position, 6000, 'position is 6000');
     await render(
-      hbs`<button type="button" {{on 'click' (rewind-sound this.url increment=1500)}}>fast forward</button>`
+      hbs`<button type="button" {{on 'click' (rewind-sound this.url increment=1500)}}>fast forward</button>`,
     );
     await click('button');
     assert.strictEqual(sound.position, 4500, 'position is 4500');

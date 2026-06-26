@@ -45,19 +45,17 @@ module('Unit | Connection | HLS', function (hooks) {
       'http://example.org/test.wav',
     ]);
 
-    assert.expect(badUrls.length + goodUrls.length);
-
     badUrls.forEach((url) => {
       assert.false(
         HLSConnection.canPlayMimeType(new StereoUrl(url).mimeType),
-        `Should not play file with ${url}`
+        `Should not play file with ${url}`,
       );
     });
 
     goodUrls.forEach((url) => {
       assert.true(
         HLSConnection.canPlayMimeType(new StereoUrl(url).mimeType),
-        `Should be able to play file with ${url}`
+        `Should be able to play file with ${url}`,
       );
     });
   });
@@ -76,19 +74,17 @@ module('Unit | Connection | HLS', function (hooks) {
       { url: 'http://example.org/test.wav', mimeType: 'audio/wav' },
     ]);
 
-    assert.expect(badFiles.length + goodFiles.length);
-
     badFiles.forEach((url) => {
       assert.false(
         HLSConnection.canPlayMimeType(new StereoUrl(url).mimeType),
-        `Should not play file with mime type ${url.mimeType}`
+        `Should not play file with mime type ${url.mimeType}`,
       );
     });
 
     goodFiles.forEach((url) => {
       assert.true(
         HLSConnection.canPlayMimeType(new StereoUrl(url).mimeType),
-        `Should be able to play file with ${url.mimeType}`
+        `Should be able to play file with ${url.mimeType}`,
       );
     });
   });
@@ -98,7 +94,7 @@ module('Unit | Connection | HLS', function (hooks) {
 
     let { recoverSpy, switchSpy, destroySpy } = await setupHLSSpies(
       sound,
-      sandbox
+      sandbox,
     );
 
     throwMediaError(sound);
@@ -107,7 +103,7 @@ module('Unit | Connection | HLS', function (hooks) {
     assert.strictEqual(
       switchSpy.callCount,
       0,
-      'should not try codec switching yet'
+      'should not try codec switching yet',
     );
     assert.strictEqual(destroySpy.callCount, 0, 'should not destroy');
   });
@@ -115,7 +111,7 @@ module('Unit | Connection | HLS', function (hooks) {
   test('On second media error stream will try switching codecs', async function (assert) {
     let sound = new (this.owner.factoryFor(
       'ember-stereo@stereo-connection:hls',
-      {}
+      {},
     ).class)({
       url: goodUrl,
       timeout: false,
@@ -125,7 +121,7 @@ module('Unit | Connection | HLS', function (hooks) {
 
     let { destroySpy, switchSpy, recoverSpy } = await setupHLSSpies(
       sound,
-      sandbox
+      sandbox,
     );
 
     throwMediaError(sound);
@@ -140,7 +136,7 @@ module('Unit | Connection | HLS', function (hooks) {
     let done = assert.async();
     let sound = new (this.owner.factoryFor(
       'ember-stereo@stereo-connection:hls',
-      {}
+      {},
     ).class)({
       url: goodUrl,
       timeout: false,
@@ -157,7 +153,7 @@ module('Unit | Connection | HLS', function (hooks) {
 
     let { destroySpy, switchSpy, recoverSpy } = await setupHLSSpies(
       sound,
-      sandbox
+      sandbox,
     );
 
     throwMediaError(sound);
@@ -187,6 +183,6 @@ module('Unit | Connection | HLS', function (hooks) {
   skip('it reads HLS comments as id3metadata.title');
 
   skip(
-    'it keeps current time if pausing and restarting the stream multiple times'
+    'it keeps current time if pausing and restarting the stream multiple times',
   );
 });

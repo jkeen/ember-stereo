@@ -72,6 +72,7 @@ export default class SoundPositionProgressModifier extends Modifier {
   }
 
   watchPositionTask = task(async () => {
+    // eslint-disable-next-line no-constant-condition
     while (true) {
       await waitForProperty(this, 'loadedSound', (v) => v);
       let position = this.loadedSound?.position;

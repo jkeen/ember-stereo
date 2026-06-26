@@ -13,11 +13,11 @@ module('Integration | Helper | load-sound', function (hooks) {
     this.url = '/good/1000/load.mp3';
     assert.strictEqual(service.currentSound, null, 'not loaded');
     await render(
-      hbs`<button type="button" {{on 'click' (load-sound this.url)}}>load</button>`
+      hbs`<button type="button" {{on 'click' (load-sound this.url)}}>load</button>`,
     );
     await click('button');
     await render(
-      hbs`{{#if (sound-is-loaded this.url)}}sound-is-loaded{{else}}is-not-loaded{{/if}}`
+      hbs`{{#if (sound-is-loaded this.url)}}sound-is-loaded{{else}}is-not-loaded{{/if}}`,
     );
     assert.strictEqual(this.element.textContent.trim(), 'sound-is-loaded');
   });

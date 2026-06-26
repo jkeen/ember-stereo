@@ -14,20 +14,20 @@ module('Integration | Helper | sound-is-fastforwardable', function (hooks) {
     this.set('url', '/good/10/fastforwardable-test.mp3');
     await service.play(this.url);
     await render(
-      hbs`{{#if (sound-is-fastforwardable this.url)}}sound-is-fastforwardable{{else}}is-not-fastforwardable{{/if}}`
+      hbs`{{#if (sound-is-fastforwardable this.url)}}sound-is-fastforwardable{{else}}is-not-fastforwardable{{/if}}`,
     );
     assert.true(service.isFastForwardable, 'service says its fastforwardable');
     assert.strictEqual(
       this.element.textContent.trim(),
       'sound-is-fastforwardable',
-      'helper says its fastforwardable'
+      'helper says its fastforwardable',
     );
 
     this.set('url', '/good/stream/stream.mp3');
     assert.strictEqual(
       this.element.textContent.trim(),
       'is-not-fastforwardable',
-      'helper updated when url changed'
+      'helper updated when url changed',
     );
   });
 });

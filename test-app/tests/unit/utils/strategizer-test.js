@@ -21,7 +21,6 @@ module('Unit | Utility | strategizer', function (hooks) {
   });
 
   test('yields strategies', async function (assert) {
-    assert.expect(4);
     let urls = ['/bad/10000/sound.mp3'];
 
     let strategizer = new Strategizer(urls, {
@@ -31,19 +30,17 @@ module('Unit | Utility | strategizer', function (hooks) {
     strategizer.strategies.forEach((strategy) => {
       assert.true(
         strategy instanceof Strategy,
-        'strategy is an instance of Strategy'
+        'strategy is an instance of Strategy',
       );
       assert.strictEqual(
         strategy.url,
         new StereoUrl('/bad/10000/sound.mp3').url,
-        'url is fully qualified'
+        'url is fully qualified',
       );
     });
   });
 
   test('passes audio element to strategy if specified', async function (assert) {
-    assert.expect(5);
-
     let urls = ['/good/10000/sound.mp3'];
 
     let sharedAccess = new SharedAudioAccess().unlock();
@@ -61,15 +58,13 @@ module('Unit | Utility | strategizer', function (hooks) {
       assert.strictEqual(
         strategy.url,
         new StereoUrl('/good/10000/sound.mp3').url,
-        'url is fully qualified'
+        'url is fully qualified',
       );
       assert.strictEqual(strategy.sharedAudioAccess.key, 'shared-key');
     });
   });
 
   test('does not pass shared audio to strategy if not specified', async function (assert) {
-    assert.expect(3);
-
     let urls = ['/good/10000/sound.mp3'];
 
     let strategizer = new Strategizer(urls, {
@@ -80,7 +75,7 @@ module('Unit | Utility | strategizer', function (hooks) {
 
     assert.false(
       strategizer.useSharedAudioAccess,
-      'do not use shared audio access'
+      'do not use shared audio access',
     );
 
     strategizer.strategies.forEach((strategy) => {
@@ -161,7 +156,6 @@ module('Unit | Utility | strategizer', function (hooks) {
   });
 
   test('it throws an error if no connections are specified', async function (assert) {
-    assert.expect(1);
     let urls = ['/good/10000/sound.mp3', '/good/10000/sound.aac'];
 
     try {

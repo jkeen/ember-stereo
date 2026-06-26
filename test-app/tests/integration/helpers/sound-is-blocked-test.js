@@ -16,7 +16,7 @@ module('Integration | Helper | sound-is-blocked', function (hooks) {
     assert.strictEqual(
       this.element.textContent.trim(),
       '',
-      'does not need user input'
+      'does not need user input',
     );
     await service.play(this.url);
 
@@ -26,7 +26,7 @@ module('Integration | Helper | sound-is-blocked', function (hooks) {
     assert.strictEqual(
       this.element.textContent.trim(),
       'needs input',
-      'needs user input'
+      'needs user input',
     );
   });
 });

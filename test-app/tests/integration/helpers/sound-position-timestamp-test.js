@@ -22,13 +22,13 @@ module('Integration | Helper | sound-position-timestamp', function (hooks) {
     this.set('startsAt', new Date('2023-10-01T00:00:00Z'));
 
     await render(
-      hbs`{{sound-position-timestamp this.url startsAt=this.startsAt}}`
+      hbs`{{sound-position-timestamp this.url startsAt=this.startsAt}}`,
     );
 
     let expectedDate = new Date('2023-10-01T00:00:00Z');
     assert.strictEqual(
       this.element.textContent.trim(),
-      expectedDate.toString()
+      expectedDate.toString(),
     );
   });
 
@@ -37,13 +37,13 @@ module('Integration | Helper | sound-position-timestamp', function (hooks) {
     this.set('startsAt', new Date('2023-10-01T00:00:00Z'));
 
     await render(
-      hbs`{{sound-position-timestamp position=this.position startsAt=this.startsAt}}`
+      hbs`{{sound-position-timestamp position=this.position startsAt=this.startsAt}}`,
     );
 
     let expectedDate = add(new Date('2023-10-01T00:00:00Z'), { seconds: 144 });
     assert.strictEqual(
       this.element.textContent.trim(),
-      expectedDate.toString()
+      expectedDate.toString(),
     );
   });
 

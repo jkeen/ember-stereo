@@ -44,7 +44,7 @@ module('Integration | Helper | sound-metadata', function (hooks) {
     this.url = '/good/1000/metadata.mp3';
     service.metadataCache.store(this.url, { title: 'my title' });
     await render(
-      hbs`{{sound-metadata (current-sound) key='title'}} {{sound-metadata (current-sound) key='artist'}}`
+      hbs`{{sound-metadata (current-sound) key='title'}} {{sound-metadata (current-sound) key='artist'}}`,
     );
     await service.play(this.url, { metadata: { artist: 'prince' } });
 

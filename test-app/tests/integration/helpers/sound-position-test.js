@@ -63,17 +63,17 @@ module('Integration | Helper | sound-position', function (hooks) {
     assert.strictEqual(this.element.textContent.trim(), '5000');
 
     await render(
-      hbs`{{sound-position position=5000 duration=10000 format='time'}}`
+      hbs`{{sound-position position=5000 duration=10000 format='time'}}`,
     );
     assert.strictEqual(this.element.textContent.trim(), '00:05');
 
     await render(
-      hbs`{{sound-position position=5000 duration=10000 format='percentage'}}`
+      hbs`{{sound-position position=5000 duration=10000 format='percentage'}}`,
     );
     assert.strictEqual(this.element.textContent.trim(), '50');
 
     await render(
-      hbs`{{sound-position position=0 duration=10000 format='percent'}}`
+      hbs`{{sound-position position=0 duration=10000 format='percent'}}`,
     );
     assert.strictEqual(this.element.textContent.trim(), '0');
   });

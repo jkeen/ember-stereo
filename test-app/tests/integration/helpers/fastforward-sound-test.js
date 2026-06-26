@@ -14,7 +14,7 @@ module('Integration | Helper | fastforward-sound', function (hooks) {
     let { sound } = await service.load(this.url);
     assert.strictEqual(sound.position, 0, 'position is zero');
     await render(
-      hbs`<button type="button" {{on 'click' (fastforward-sound this.url)}}>fast forward</button>`
+      hbs`<button type="button" {{on 'click' (fastforward-sound this.url)}}>fast forward</button>`,
     );
     await click('button');
     assert.strictEqual(sound.position, 15000, 'position is 15000');
@@ -27,7 +27,7 @@ module('Integration | Helper | fastforward-sound', function (hooks) {
     let { sound } = await service.load(this.url);
     assert.strictEqual(sound.position, 0, 'position is zero');
     await render(
-      hbs`<button type="button" {{on 'click'(fastforward-sound this.url increment=1500)}}>fast forward</button>`
+      hbs`<button type="button" {{on 'click'(fastforward-sound this.url increment=1500)}}>fast forward</button>`,
     );
     await click('button');
     assert.strictEqual(sound.position, 1500, 'position is 1500');
