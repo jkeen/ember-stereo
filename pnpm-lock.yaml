@@ -7,6 +7,11 @@ settings:
 overrides:
   ember-concurrency: ^4.0.6
 
+patchedDependencies:
+  ember-cli-addon-docs@9.0.0:
+    hash: cf249ca7ca0271d454970fab61a124f3f31e390e3acae4da81c9bbca0a90a5a2
+    path: patches/ember-cli-addon-docs@9.0.0.patch
+
 importers:
 
   .:
@@ -153,7 +158,7 @@ importers:
         version: 5.4.2(@types/node@25.0.3)(babel-core@6.26.3)(debug@4.3.2)(handlebars@4.7.8)(underscore@1.13.7)
       ember-cli-addon-docs:
         specifier: ^9.0.0
-        version: 9.0.0(dae5f4b1cff51e921a66e97651bfcdd4)
+        version: 9.0.0(patch_hash=cf249ca7ca0271d454970fab61a124f3f31e390e3acae4da81c9bbca0a90a5a2)(dae5f4b1cff51e921a66e97651bfcdd4)
       ember-cli-addon-docs-yuidoc:
         specifier: ^1.0.0
         version: 1.1.0
@@ -16047,7 +16052,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  ember-cli-addon-docs@9.0.0(dae5f4b1cff51e921a66e97651bfcdd4):
+  ember-cli-addon-docs@9.0.0(patch_hash=cf249ca7ca0271d454970fab61a124f3f31e390e3acae4da81c9bbca0a90a5a2)(dae5f4b1cff51e921a66e97651bfcdd4):
     dependencies:
       '@csstools/postcss-sass': 5.1.1(postcss@8.5.6)
       '@ember/render-modifiers': 2.1.0(@babel/core@7.28.5)(ember-source@5.4.1(@babel/core@7.28.5)(@glimmer/component@1.1.2(@babel/core@7.28.5))(rsvp@4.8.5)(webpack@5.103.0))

@@ -1,0 +1,52 @@
+diff --git a/lib/utils/find-and-replace-in-directory.js b/lib/utils/find-and-replace-in-directory.js
+index 78daa633dcf8b868f6083ea3ffcd623bffae3609..7354fcb68c5ccc17484e682f518dc77bc585013a 100644
+--- a/lib/utils/find-and-replace-in-directory.js
++++ b/lib/utils/find-and-replace-in-directory.js
+@@ -12,14 +12,42 @@ function replaceAddonDocsRootURL(contents, addonDocsRootURL, encodedVersion) {
+     .replace(/%22ADDON_DOCS_DEPLOY_VERSION%22/g, encodedVersion);
+ }
+ 
++// The rootURL/version placeholders only ever appear in text-based build output.
++// Reading a binary asset (mp3, ico, images, fonts, ...) as utf-8 and writing it
++// back replaces every non-utf-8 byte with U+FFFD, corrupting the file, so we
++// only process files with a known text extension.
++const TEXT_EXTENSIONS = new Set([
++  '.html',
++  '.htm',
++  '.js',
++  '.mjs',
++  '.cjs',
++  '.css',
++  '.json',
++  '.map',
++  '.svg',
++  '.txt',
++  '.xml',
++  '.webmanifest',
++]);
++
+ function processFile(filePath, addonDocsRootURL, encodedVersion) {
+-  const contents = fs.readFileSync(filePath, 'utf-8');
++  const extension = path.extname(filePath).toLowerCase();
++  if (!TEXT_EXTENSIONS.has(extension)) {
++    return;
++  }
+ 
+-  // Write the updated content to the file
+-  fs.writeFileSync(
+-    filePath,
+-    replaceAddonDocsRootURL(contents, addonDocsRootURL, encodedVersion),
++  const contents = fs.readFileSync(filePath, 'utf-8');
++  const updated = replaceAddonDocsRootURL(
++    contents,
++    addonDocsRootURL,
++    encodedVersion,
+   );
++
++  // Only rewrite the file if something actually changed
++  if (updated !== contents) {
++    fs.writeFileSync(filePath, updated);
++  }
+ }
+ 
+ function findAndReplaceInDirectory(
