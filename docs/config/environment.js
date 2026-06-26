@@ -55,7 +55,9 @@ module.exports = function (environment) {
   if (environment === 'production') {
     // Allow ember-cli-addon-docs to update the rootURL in compiled assets
     ENV.rootURL = '/ADDON_DOCS_ROOT_URL/';
-    ENV.locationType = 'auto';
+    // 'auto' (AutoLocation) was removed in Ember 4.0; 'history' is the modern
+    // equivalent and matches the non-production default above.
+    ENV.locationType = 'history';
   }
 
   return ENV;

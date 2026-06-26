@@ -7,6 +7,14 @@ module.exports = function (deployTarget) {
     git: {
       repo: 'git@github.com:jkeen/ember-stereo.git',
     },
+    'git-ci': {
+      // Pass the key as a file PATH, never as the `deployKey` value.
+      // ember-cli-deploy logs config values (including defaults like
+      // `deployKey`, which is read from process.env.DEPLOY_KEY) under
+      // --verbose, which would print the private key into the CI logs. A path
+      // is not secret, so this keeps the key out of the log entirely.
+      deployKeyPath: process.env.DEPLOY_KEY_PATH,
+    },
   };
 
   if (deployTarget === 'development') {

@@ -42,9 +42,20 @@ jobs:
 
       - name: Deploy
         env:
-          # ember-cli-deploy-git-ci runs `ssh-add` on this value, so it must be the
-          # text of an SSH private key (not a PAT). The matching public key is added
-          # as a write-enabled Deploy Key on jkeen/ember-stereo.
-          DEPLOY_KEY: ${{ secrets.DOCS_DEPLOY_KEY }}
-        run: pnpm exec ember deploy production --verbose --activate
+          # Transport the key base64-encoded (DOCS_DEPLOY_KEY_B64) to survive
+          # newline trimming / CRLF mangling. Decode it to a file and hand
+          # ember-cli-deploy-git-ci the PATH (DEPLOY_KEY_PATH -> deployKeyPath in
+          # config/deploy.js), never the key value itself. ember-cli-deploy logs
+          # config values under --verbose, so passing the key as a value (the
+          # `deployKey`/DEPLOY_KEY default) would print the private key into the
+          # logs. The matching public key is a write-enabled Deploy Key on
+          # jkeen/ember-stereo.
+          DOCS_DEPLOY_KEY_B64: ${{ secrets.DOCS_DEPLOY_KEY_B64 }}
+        run: |
+          set -euo pipefail
+          KEY_FILE="$RUNNER_TEMP/docs_deploy_key"
+          printf '%s' "$DOCS_DEPLOY_KEY_B64" | base64 -d | tr -d '\r' > "$KEY_FILE"
+          chmod 600 "$KEY_FILE"
+          export DEPLOY_KEY_PATH="$KEY_FILE"
+          pnpm exec ember deploy production --activate
         working-directory: 'docs'
