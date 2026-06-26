@@ -346,6 +346,6 @@ let b=[c,s,i,u,e.KMART_SHOPPERS={title:"Attention K-Mart Shoppers",url:"https://
 e.default=b}),define("docs/utils/touch-utils",["exports"],function(e){Object.defineProperty(e,"__esModule",{value:!0}),e.findTouchById=function(e,t){for(let n=0;n<e.length;n++){let o=e.item(n)
 if(o.identifier===t)return o}},e.isSimulatedMouseEvent=function(e){if(e){const t=e.sourceCapabilities&&!0===e.sourceCapabilities.firesTouchEvents,n=5===e.mozInputSource,o=!0===e.forwardedTouchEvent
 return t||n||o}return!1}}),define("docs/config/environment",[],function(){try{var e="docs/config/environment",t=document.querySelector('meta[name="'+e+'"]').getAttribute("content"),n={default:JSON.parse(decodeURIComponent(t))}
-return Object.defineProperty(n,"__esModule",{value:!0}),n}catch(o){throw new Error('Could not read config from meta tag with name "'+e+'".')}}),runningTests||require("docs/app").default.create({name:"docs",version:"0.0.0+1fb615b5"})
+return Object.defineProperty(n,"__esModule",{value:!0}),n}catch(o){throw new Error('Could not read config from meta tag with name "'+e+'".')}}),runningTests||require("docs/app").default.create({name:"docs",version:"0.0.0+bcc07c88"})
 
-//# sourceMappingURL=docs-95ec10c8515ff9ba42c697e7919c0b07.map
+//# sourceMappingURL=docs-485b3a48f5d084214c79d41edfa09bda.map
