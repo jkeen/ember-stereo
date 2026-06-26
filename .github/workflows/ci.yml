@@ -94,8 +94,9 @@ jobs:
       max-parallel: 1
       matrix:
         ember-try-scenario:
-          - ember-lts-4.8
-          - ember-4.12
+          - ember-lts-4.12
+          - ember-lts-5.12
+          - ember-lts-6.12
           - embroider-safe
           - embroider-optimized
         allow-failure: [false]
@@ -105,15 +106,7 @@ jobs:
       - uses: ./.github/actions/download-built-package
       - name: Run Tests
         working-directory: ./test-app
-        run: |
-          if [[ "${{matrix.ember-try-scenario}}" == "'ember-lts-4.8 + embroider-optimized'" ]]; then
-            echo 'Running custom try scenario due to peer deps resolving incorrectly (due to installation issues)'
-            pnpm add --save-dev ember-source@~4.8.0
-            pnpm add --save-dev @embroider/core @embroider/webpack @embroider/compat
-            pnpm test:ember
-          else
-            pnpm test:ember-try:one ${{ matrix.ember-try-scenario }} --skip-cleanup
-          fi
+        run: pnpm test:ember-try:one ${{ matrix.ember-try-scenario }} --skip-cleanup
 
   ember-try-optional:
     if: "! contains(toJSON(github.event.commits.*.message), '[skip ci]')"
@@ -136,15 +129,7 @@ jobs:
       - uses: ./.github/actions/download-built-package
       - name: Run Tests
         working-directory: ./test-app
-        run: |
-          if [[ "${{matrix.ember-try-scenario}}" == "'ember-lts-4.8 + embroider-optimized'" ]]; then
-            echo 'Running custom try scenario due to peer deps resolving incorrectly (due to installation issues)'
-            pnpm add --save-dev ember-source@~4.8.0
-            pnpm add --save-dev @embroider/core @embroider/webpack @embroider/compat
-            pnpm test:ember
-          else
-            pnpm test:ember-try:one ${{ matrix.ember-try-scenario }} --skip-cleanup
-          fi
+        run: pnpm test:ember-try:one ${{ matrix.ember-try-scenario }} --skip-cleanup
 
   deploy:
     name: Deploy
