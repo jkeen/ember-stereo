@@ -42,6 +42,9 @@ jobs:
 
       - name: Deploy
         env:
-          DEPLOY_KEY: ${{ secrets.GH_PA_TOKEN }}
+          # ember-cli-deploy-git-ci runs `ssh-add` on this value, so it must be the
+          # text of an SSH private key (not a PAT). The matching public key is added
+          # as a write-enabled Deploy Key on jkeen/ember-stereo.
+          DEPLOY_KEY: ${{ secrets.DOCS_DEPLOY_KEY }}
         run: pnpm exec ember deploy production --verbose --activate
         working-directory: 'docs'
