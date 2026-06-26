@@ -477,7 +477,7 @@ break}}s||(u=!0,(s=document.createElement("script")).charset="utf-8",s.timeout=1
 var h=(t,r)=>{s.onerror=s.onload=null,clearTimeout(m)
 var o=i[e]
 if(delete i[e],s.parentNode&&s.parentNode.removeChild(s),o&&o.forEach((e=>e(r))),t)return t(r)},m=setTimeout(h.bind(null,void 0,{type:"timeout",target:s}),12e4)
-s.onerror=h.bind(null,s.onerror),s.onload=h.bind(null,s.onload),u&&document.head.appendChild(s)}},a.r=e=>{"undefined"!=typeof Symbol&&Symbol.toStringTag&&Object.defineProperty(e,Symbol.toStringTag,{value:"Module"}),Object.defineProperty(e,"__esModule",{value:!0})},a.nmd=e=>(e.paths=[],e.children||(e.children=[]),e),a.p="/ADDON_DOCS_ROOT_URL/assets/",(()=>{var e={143:0}
+s.onerror=h.bind(null,s.onerror),s.onload=h.bind(null,s.onload),u&&document.head.appendChild(s)}},a.r=e=>{"undefined"!=typeof Symbol&&Symbol.toStringTag&&Object.defineProperty(e,Symbol.toStringTag,{value:"Module"}),Object.defineProperty(e,"__esModule",{value:!0})},a.nmd=e=>(e.paths=[],e.children||(e.children=[]),e),a.p="/assets/",(()=>{var e={143:0}
 a.f.j=(t,r)=>{var i=a.o(e,t)?e[t]:void 0
 if(0!==i)if(i)r.push(i[2])
 else{var o=new Promise(((r,o)=>i=e[t]=[r,o]))
