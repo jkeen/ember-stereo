@@ -70,6 +70,7 @@
     "@nullvoxpopuli/eslint-configs": "2.2.14",
     "@rollup/plugin-babel": "5.3.1",
     "@semantic-release/changelog": "^6.0.1",
+    "@semantic-release/exec": "^7.1.0",
     "@semantic-release/git": "^10.0.1",
     "semantic-release": "^24.2.9",
     "babel-eslint": "10.1.0",
@@ -248,7 +249,18 @@
           "changelogFile": "../CHANGELOG.md"
         }
       ],
-      "@semantic-release/npm",
+      [
+        "@semantic-release/npm",
+        {
+          "npmPublish": false
+        }
+      ],
+      [
+        "@semantic-release/exec",
+        {
+          "publishCmd": "npm publish --tag ${nextRelease.channel || 'latest'}"
+        }
+      ],
       "@semantic-release/github",
       [
         "@semantic-release/git",
