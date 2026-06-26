@@ -97,7 +97,9 @@ export default class Stereo extends Service.extend(EmberEvented) {
       // no checks for autoplay as it messes with the fake media element
     } else {
       this._determineAutoplayPermissions();
-      this._detectCastingAvailabilityTask.perform();
+      this._detectCastingAvailabilityTask.perform().catch((e) => {
+        if (!didCancel(e)) throw e;
+      });
     }
 
     this.isReady = true;
@@ -782,6 +784,7 @@ export default class Stereo extends Service.extend(EmberEvented) {
 
       // Keep the handler reference so willDestroy can remove it — otherwise the
       // long-lived outlet element pins this service (and its caches) forever.
+      // eslint-disable-next-line ember/no-side-effects -- lazy-init cache of a DOM-derived singleton
       this._onOutletWirelessChange = () =>
         this._onCastTargetChange(
           !!element.webkitCurrentPlaybackTargetIsWireless
@@ -801,6 +804,7 @@ export default class Stereo extends Service.extend(EmberEvented) {
         this._castOutletHost().appendChild(element);
       }
 
+      // eslint-disable-next-line ember/no-side-effects -- lazy-init cache of a DOM-derived singleton
       this._castOutletElement = element;
     }
     return this._castOutletElement;
@@ -1211,6 +1215,7 @@ export default class Stereo extends Service.extend(EmberEvented) {
     if (!this._castSharedAudioAccess) {
       let access = new SharedAudioAccess();
       access.audioElement = this.castOutletElement;
+      // eslint-disable-next-line ember/no-side-effects -- lazy-init cache of a DOM-derived singleton
       this._castSharedAudioAccess = access;
     }
     return this._castSharedAudioAccess;
