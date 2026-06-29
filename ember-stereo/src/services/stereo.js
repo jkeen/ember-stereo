@@ -857,9 +857,12 @@ export default class Stereo extends Service.extend(EmberEvented) {
         );
       }
 
-      // Chromecast (Google Cast SDK) — an independent, second availability source
-      // alongside the webkit/Remote-Playback AirPlay sources above.
-      this._setupChromecast();
+      // Chromecast (Google Cast SDK) is NOT set up here. Unlike the native
+      // AirPlay/Remote-Playback sources above, detecting it requires loading the
+      // Cast SDK from gstatic.com, which is wasteful (and noisy in environments
+      // without a receiver, e.g. Electron) for apps that never cast. It's loaded
+      // lazily the first time a casting UI mounts — see ensureChromecastSetup,
+      // called by the {{cast-button}} modifier and {{casting-available}} helper.
 
       // In case a route already exists on load (a reattached session), sync
       // once now; the settle task keeps it reconciled thereafter.
@@ -871,8 +874,30 @@ export default class Stereo extends Service.extend(EmberEvented) {
     }
   });
 
-  // Lazily load the Cast SDK and wire Chromecast availability + session events.
-  // No-ops cleanly where Cast isn't supported (the loader resolves null).
+  // Whether the Chromecast SDK load has been kicked off, so the lazy trigger
+  // (ensureChromecastSetup) only runs once no matter how many cast UIs mount.
+  _chromecastSetupStarted = false;
+
+  /**
+   * Lazily start Chromecast detection: load the Google Cast SDK and wire its
+   * availability + session events. Idempotent — safe to call on every cast UI
+   * render. Called by the `{{cast-button}}` modifier and `{{casting-available}}`
+   * helper so the SDK is only fetched when the app actually surfaces casting.
+   *
+   * @method ensureChromecastSetup
+   * @public
+   */
+  ensureChromecastSetup() {
+    if (this._chromecastSetupStarted) {
+      return;
+    }
+    this._chromecastSetupStarted = true;
+    this._setupChromecast();
+  }
+
+  // Load the Cast SDK and wire Chromecast availability + session events. No-ops
+  // cleanly where Cast isn't supported (the loader resolves null). Don't call
+  // directly — go through ensureChromecastSetup so it only runs once.
   async _setupChromecast() {
     let context = await loadCastSdk();
     if (!context || this.isDestroyed) {

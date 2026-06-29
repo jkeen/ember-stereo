@@ -1094,6 +1094,39 @@ module('Unit | Service | stereo', function (hooks) {
     );
   });
 
+  module('chromecast lazy setup', function () {
+    test('ensureChromecastSetup loads the Cast SDK at most once', function (assert) {
+      let service = this.owner.lookup('service:stereo');
+      let setupSpy = sandbox.stub(service, '_setupChromecast').resolves();
+
+      service.ensureChromecastSetup();
+      service.ensureChromecastSetup();
+      service.ensureChromecastSetup();
+
+      assert.true(
+        setupSpy.calledOnce,
+        'the Cast SDK setup runs once no matter how many cast UIs mount'
+      );
+    });
+
+    test('the Cast SDK is not loaded until a casting UI asks for it', function (assert) {
+      let service = this.owner.lookup('service:stereo');
+      let setupSpy = sandbox.stub(service, '_setupChromecast').resolves();
+
+      assert.false(
+        setupSpy.called,
+        'just looking up the service does not load the Cast SDK'
+      );
+
+      service.ensureChromecastSetup();
+
+      assert.true(
+        setupSpy.calledOnce,
+        'asking for casting (cast-button / casting-available) loads it'
+      );
+    });
+  });
+
   module('chromecast cast strategy', function () {
     test('puts the Chromecast strategy first (with castStartTime) and keeps the local waterfall as a fallback', function (assert) {
       let service = this.owner.lookup('service:stereo');
