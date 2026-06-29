@@ -137,15 +137,12 @@ export default class SoundPositionSliderModifier extends DidPanModifier {
 
     if (this.isRangeControl) {
       if (this.loadedSound) {
-        this.loadedSound.off(
-          'audio-position-changed',
-          this.onPositionChange.bind(this)
-        );
+        this.loadedSound.off('audio-position-changed', this.onPositionChange);
       }
 
       this.afterLoadTask
         .perform((sound) => {
-          sound.on('audio-position-changed', this.onPositionChange.bind(this));
+          sound.on('audio-position-changed', this.onPositionChange);
 
           this.element.addEventListener(
             'change',
@@ -204,10 +201,7 @@ export default class SoundPositionSliderModifier extends DidPanModifier {
     try {
       if (this.isRangeControl) {
         if (this.loadedSound) {
-          this.loadedSound.off(
-            'audio-position-changed',
-            this.onPositionChange.bind(this)
-          );
+          this.loadedSound.off('audio-position-changed', this.onPositionChange);
         }
         this.element.removeEventListener(
           'change',
@@ -217,10 +211,7 @@ export default class SoundPositionSliderModifier extends DidPanModifier {
       } else {
         super.willRemove(...arguments);
         if (this.loadedSound) {
-          this.loadedSound.off(
-            'audio-position-changed',
-            this.onPositionChange.bind(this)
-          );
+          this.loadedSound.off('audio-position-changed', this.onPositionChange);
         }
         this.triggers.forEach((trigger) => {
           this.element.removeEventListener(trigger, this.handleTap);
