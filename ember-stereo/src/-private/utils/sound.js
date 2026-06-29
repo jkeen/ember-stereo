@@ -1,7 +1,7 @@
 import { getOwner, setOwner } from '@ember/application';
 import { tracked } from '@glimmer/tracking';
 import { isEmpty } from '@ember/utils';
-import { task, race, waitForEvent } from 'ember-concurrency';
+import { task, race, waitForEvent, rawTimeout } from 'ember-concurrency';
 import debug from 'debug';
 import Evented from './evented';
 import { EVENT_MAP } from './event-map';
@@ -309,8 +309,24 @@ export default class Sound extends Evented {
   });
 
   waitForErrorTask = task(async (connection) => {
-    if (!connection.isErrored) {
-      await waitForEvent(connection, 'audio-load-error');
+    // Resolve only once the connection is *terminally* errored. Two things make
+    // the raw audio-load-error event unreliable as the signal:
+    //   1. A connection can emit it transiently and then retry (NativeAudio
+    //      re-attempts once without crossorigin) — only a terminal failure sets
+    //      isErrored/error, so resolving on the first event would report a null
+    //      error and skip the retry.
+    //   2. Some connections set isErrored a tick after emitting the event
+    //      (Howler triggers outside a runloop), so the flag lags the event.
+    // So poll the flag level-triggered (like the deprecated waitForProperty):
+    // wake on the event for responsiveness and on a real-time tick (rawTimeout
+    // is not fast-forwarded in tests, so this doesn't busy-spin) as a safety net
+    // against a lagging flag or a missed edge. If a retry instead succeeds,
+    // waitForReadyTask wins the race and cancels this task.
+    while (!connection.isErrored) {
+      await race([
+        waitForEvent(connection, 'audio-load-error'),
+        rawTimeout(50),
+      ]);
     }
     return { error: connection.error, erroredSound: connection };
   });
