@@ -18,12 +18,11 @@ import debug from 'debug';
 
 import { task, waitForEvent, timeout, race } from 'ember-concurrency';
 
-// How often the loop re-checks for a sound to appear / re-syncs position when no
-// position event fires. Polling replaces ember-concurrency's deprecated
-// (observer-based) waitForProperty; the task is canceled when the modifier is
-// destroyed, so neither loop can outlive the host.
+// How often the loop polls for a sound to appear, since there's no event to
+// wait on for that. Replaces ember-concurrency's deprecated (observer-based)
+// waitForProperty; the task is canceled when the modifier is destroyed, so the
+// loop can't outlive the host.
 const SOUND_POLL_MS = 100;
-const POSITION_RESYNC_MS = 250;
 
 export default class SoundPositionProgressModifier extends Modifier {
   @service stereo;
@@ -77,25 +76,26 @@ export default class SoundPositionProgressModifier extends Modifier {
       while (!this.loadedSound) {
         await timeout(SOUND_POLL_MS);
       }
-      await timeout(SOUND_POLL_MS);
 
-      if (this.loadedSound) {
-        // will-change carries the upcoming position, changed carries the new
-        // one, and the timeout is a resync tick that fires no event (e.g. a
-        // direct position set; replaces the old observer-based wait). All three
-        // converge on the same thing: re-render the bar from whatever position
-        // we can read.
+      let sound = this.loadedSound;
+      // Paint the current position immediately, then update on each change.
+      // Parking on the events (rather than a polling timeout) keeps the task
+      // idle between updates — both that it doesn't busy-spin in production and
+      // that it settles in tests, where ember-concurrency fast-forwards
+      // timeout() and a timeout-driven loop would never go idle.
+      this.modifyPosition({ sound });
+
+      while (this.loadedSound === sound) {
+        // will-change carries the upcoming position (direct sets, fast-forward,
+        // rewind); changed carries the new position during playback.
         let event = await race([
-          waitForEvent(this.loadedSound, 'audio-position-will-change'),
-          waitForEvent(this.loadedSound, 'audio-position-changed'),
-          timeout(POSITION_RESYNC_MS),
+          waitForEvent(sound, 'audio-position-will-change'),
+          waitForEvent(sound, 'audio-position-changed'),
         ]);
 
-        // modifyPosition falls back to sound.position when position is
-        // undefined, so the resync tick re-syncs without any special-casing.
         this.modifyPosition({
-          sound: this.loadedSound,
-          position: event?.newPosition,
+          sound,
+          position: event?.newPosition ?? event?.position,
         });
       }
     }

@@ -1,7 +1,7 @@
 import { getOwner, setOwner } from '@ember/application';
 import { tracked } from '@glimmer/tracking';
 import { isEmpty } from '@ember/utils';
-import { task, race, waitForEvent } from 'ember-concurrency';
+import { task, race, waitForEvent, rawTimeout } from 'ember-concurrency';
 import debug from 'debug';
 import Evented from './evented';
 import { EVENT_MAP } from './event-map';
@@ -271,8 +271,15 @@ export default class Sound extends Evented {
   });
 
   waitForErrorTask = task(async (connection) => {
-    if (!connection.isErrored) {
-      await waitForEvent(connection, 'audio-load-error');
+    // audio-load-error is unreliable: NativeAudio emits it then retries without
+    // crossorigin, and Howler sets isErrored a tick late (it triggers outside
+    // the runloop). So poll the flag, waking on the event or a real-time tick
+    // (rawTimeout isn't fast-forwarded in tests).
+    while (!connection.isErrored) {
+      await race([
+        waitForEvent(connection, 'audio-load-error'),
+        rawTimeout(50),
+      ]);
     }
     return { error: connection.error, erroredSound: connection };
   });
