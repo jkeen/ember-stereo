@@ -48,7 +48,7 @@ export default class CastPlayer extends Component {
   @action
   teardown() {
     (this._handlers ?? []).forEach(({ name, handler }) =>
-      this.stereo.off(name, handler)
+      this.stereo.off(name, handler),
     );
   }
 

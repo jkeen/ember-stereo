@@ -25,7 +25,7 @@ export default class StrategyBreakdown extends Component {
     return this.stereo.connectionLoader.connections.map((connection) => {
       return new Strategy(
         connection,
-        this.args.url ? new StereoUrl(this.args.url) : new StereoUrl('./')
+        this.args.url ? new StereoUrl(this.args.url) : new StereoUrl('./'),
       );
     });
   }
@@ -42,7 +42,7 @@ export default class StrategyBreakdown extends Component {
       } else {
         return new Strategy(
           connection,
-          this.args.url ? new StereoUrl(this.args.url) : new StereoUrl('./')
+          this.args.url ? new StereoUrl(this.args.url) : new StereoUrl('./'),
         );
       }
     });

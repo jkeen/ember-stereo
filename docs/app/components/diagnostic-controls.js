@@ -24,7 +24,7 @@ export default class DiagnosticControls extends Component {
   get useConnections() {
     if (this.connectionStrategy === 'choose') {
       return this.stereo.connectionLoader.names.filter((name) =>
-        this.selectedConnections.includes(name)
+        this.selectedConnections.includes(name),
       );
     }
 
@@ -35,7 +35,7 @@ export default class DiagnosticControls extends Component {
   updateSelectedStrategies(name, op) {
     if (op) {
       this.selectedConnections = this.selectedConnections.filter(
-        (d) => d !== name
+        (d) => d !== name,
       );
     } else {
       this.selectedConnections = [name].concat(this.selectedConnections);
