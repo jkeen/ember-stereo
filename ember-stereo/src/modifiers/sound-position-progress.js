@@ -16,13 +16,14 @@ import { service } from '@ember/service';
 import Modifier from 'ember-modifier';
 import debug from 'debug';
 
-import {
-  task,
-  waitForProperty,
-  waitForEvent,
-  timeout,
-  race,
-} from 'ember-concurrency';
+import { task, waitForEvent, timeout, race } from 'ember-concurrency';
+
+// How often the loop re-checks for a sound to appear / re-syncs position when no
+// position event fires. Polling replaces ember-concurrency's deprecated
+// (observer-based) waitForProperty; the task is canceled when the modifier is
+// destroyed, so neither loop can outlive the host.
+const SOUND_POLL_MS = 100;
+const POSITION_RESYNC_MS = 250;
 
 export default class SoundPositionProgressModifier extends Modifier {
   @service stereo;
@@ -74,41 +75,30 @@ export default class SoundPositionProgressModifier extends Modifier {
   watchPositionTask = task(async () => {
     // eslint-disable-next-line no-constant-condition
     while (true) {
-      await waitForProperty(this, 'loadedSound', (v) => v);
-      let position = this.loadedSound?.position;
+      // Poll until a sound exists for this identifier (no event to wait on).
+      while (!this.loadedSound) {
+        await timeout(SOUND_POLL_MS);
+      }
       await timeout(100);
 
       if (this.loadedSound) {
-        let result = await race([
-          waitForEvent(this.loadedSound, 'audio-position-will-change').then(
-            (event) => {
-              this.modifyPosition({
-                sound: this.loadedSound,
-                position: event.newPosition, // Set the position from the will-change event
-              });
-              return { ...event, willChange: true }; // Indicate that will-change event fired
-            }
-          ),
+        // will-change carries the upcoming position, changed carries the new
+        // one, and the timeout is a resync tick that fires no event (e.g. a
+        // direct position set; replaces the old observer-based wait). All three
+        // converge on the same thing: re-render the bar from whatever position
+        // we can read.
+        let event = await race([
+          waitForEvent(this.loadedSound, 'audio-position-will-change'),
           waitForEvent(this.loadedSound, 'audio-position-changed'),
-          waitForProperty(
-            this,
-            'loadedSound',
-            (sound) => sound?.position != position
-          ),
+          timeout(POSITION_RESYNC_MS),
         ]);
 
-        if (result?.willChange) {
-          // If audio-position-will-change was the event, wait for a delay before letting the sound update again
-        } else if (result?.sound) {
-          // Handle audio-position-changed or other position updates
-          this.modifyPosition({
-            sound: result.sound,
-            position: result?.newPosition,
-          });
-        } else if (this.loadedSound) {
-          // Fallback to update the position based on the current sound
-          this.modifyPosition({ sound: this.loadedSound });
-        }
+        // modifyPosition falls back to sound.position when position is
+        // undefined, so the resync tick re-syncs without any special-casing.
+        this.modifyPosition({
+          sound: this.loadedSound,
+          position: event?.newPosition,
+        });
       }
     }
   });

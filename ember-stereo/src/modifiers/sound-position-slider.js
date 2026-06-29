@@ -17,11 +17,17 @@
 
 import { action } from '@ember/object';
 import { service } from '@ember/service';
-import { task, waitForProperty } from 'ember-concurrency';
+import { task, timeout } from 'ember-concurrency';
 import { next } from '@ember/runloop';
 import DidPanModifier from 'ember-gesture-modifiers/modifiers/did-pan';
 import { registerDestructor } from '@ember/destroyable';
 import { makeArray } from '@ember/array';
+
+// How often afterLoadTask re-checks for the sound to resolve. Polling replaces
+// ember-concurrency's deprecated (observer-based) waitForProperty; the task is
+// canceled when the modifier is destroyed, so the loop can't outlive the host.
+const SOUND_RESOLVE_POLL_MS = 100;
+
 export default class SoundPositionSliderModifier extends DidPanModifier {
   @service stereo;
   options = {};
@@ -73,10 +79,11 @@ export default class SoundPositionSliderModifier extends DidPanModifier {
   }
 
   afterLoadTask = task(async (callback = function () {}) => {
-    await waitForProperty(this, 'url', (v) => v);
-    // findSound now returns an identity-stable Sound that exists before its
-    // connection loads, so wait for it to actually resolve a connection.
-    await waitForProperty(this, 'loadedSound', (sound) => sound?.isResolved);
+    // findSound returns an identity-stable Sound that exists before its
+    // connection loads, so poll until it actually resolves a connection.
+    while (!this.loadedSound?.isResolved) {
+      await timeout(SOUND_RESOLVE_POLL_MS);
+    }
     callback(this.loadedSound);
   });
 
