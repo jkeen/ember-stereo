@@ -35,6 +35,10 @@ export default class CastButtonModifier extends Modifier {
     this.element = element;
     this.identifier = positional[0];
 
+    // A cast button is on screen, so the app uses casting — kick off the lazy
+    // Chromecast SDK load (idempotent) so this button can reflect Cast targets.
+    this.stereo.ensureChromecastSetup();
+
     if (!this._wired) {
       element.addEventListener('click', this._onClick);
       CAST_EVENTS.forEach((event) => this.stereo.on(event, this._updateState));

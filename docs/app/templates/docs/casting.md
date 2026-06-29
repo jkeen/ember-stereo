@@ -8,8 +8,8 @@ The addon handles the whole lifecycle — finding cast targets, showing the pick
 
 There's nothing to configure. Unlike the optional `connections` (see [What's in the box](/docs/overview)), the casting backends are wired up automatically:
 
-- **AirPlay** is native to Safari and works out of the box.
-- **Chromecast** loads the Google Cast SDK on demand the first time the casting API is used — no script tag, no app id, no setup. (It registers against the default media receiver.)
+- **AirPlay** is native to Safari and works out of the box, using browser APIs with no network requests.
+- **Chromecast** loads the Google Cast SDK from `gstatic.com` — no script tag, no app id, no setup. (It registers against the default media receiver.) The SDK is fetched lazily, the first time a casting UI mounts: a `{{cast-button}}` modifier or a `{{casting-available}}` helper. Apps that never surface casting never load it.
 
 Two things have to be true at runtime for a device to actually appear:
 
@@ -17,6 +17,8 @@ Two things have to be true at runtime for a device to actually appear:
 - There's a reachable device — an AirPlay receiver for Safari, or a Chromecast on the same network for Chrome.
 
 When neither is true, `{{casting-available}}` stays `false` and the cast button disables itself. That's the expected idle state, not a misconfiguration.
+
+> **Electron / no-receiver environments:** because the Cast SDK only loads once a casting UI is rendered, apps that don't use casting won't see the `gstatic.com` requests at all. If you *do* render a cast button in an environment without a Cast receiver, those requests may fail and log `ERR_UNEXPECTED` / `ERR_FAILED` — that's harmless (the loader fails gracefully and casting just stays unavailable), and only happens where casting is actually offered.
 
 ## Your one job: `sound.castUrl`
 

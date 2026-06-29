@@ -823,9 +823,9 @@ export default class Stereo extends Service.extend(EmberEvented) {
         );
       }
 
-      // Chromecast (Google Cast SDK) — an independent, second availability source
-      // alongside the webkit/Remote-Playback AirPlay sources above.
-      this._setupChromecast();
+      // Chromecast is NOT set up here: detecting it requires fetching the Cast
+      // SDK from gstatic.com, so it loads lazily the first time a casting UI
+      // mounts (see ensureChromecastSetup).
 
       // A route may already exist on load (a reattached session).
       this._reconcileCastState();
@@ -836,8 +836,24 @@ export default class Stereo extends Service.extend(EmberEvented) {
     }
   });
 
-  // Lazily load the Cast SDK and wire Chromecast availability + session events.
-  // No-ops cleanly where Cast isn't supported (the loader resolves null).
+  _chromecastSetupStarted = false;
+
+  /**
+   * Lazily load the Google Cast SDK and wire its availability and session
+   * events; idempotent, so cast UI can call it on every render.
+   *
+   * @method ensureChromecastSetup
+   * @public
+   */
+  ensureChromecastSetup() {
+    if (this._chromecastSetupStarted) {
+      return;
+    }
+    this._chromecastSetupStarted = true;
+    this._setupChromecast();
+  }
+
+  // Call through ensureChromecastSetup — this fetches the SDK and must run once.
   async _setupChromecast() {
     let context = await loadCastSdk();
     if (!context || this.isDestroyed) {
