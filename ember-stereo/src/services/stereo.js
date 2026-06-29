@@ -8,7 +8,6 @@ import {
   task,
   timeout,
   forever,
-  waitForProperty,
   waitForEvent,
   didCancel,
 } from 'ember-concurrency';
@@ -546,13 +545,16 @@ export default class Stereo extends Service.extend(EmberEvented) {
         this._registerEvents(entity);
         this._attemptToPlaySound(entity, options);
 
-        // Wait on the connection's real tracked props (waitForProperty uses
-        // observers, which fire on the backend's tracked state, not the Sound's
-        // proxy getters).
-        await race([
-          waitForProperty(sound, 'isPlaying'),
-          waitForProperty(sound, 'isErrored'),
-        ]);
+        // Wait on the connection's real events — isPlaying/isErrored are set in
+        // response to audio-played / audio-load-error on the backend itself, not
+        // the Sound's proxy getters. Guard the already-settled case the way the
+        // old observer-based waitForProperty did (it checked the value up front).
+        if (!sound.isPlaying && !sound.isErrored) {
+          await race([
+            waitForEvent(sound, 'audio-played'),
+            waitForEvent(sound, 'audio-load-error'),
+          ]);
+        }
 
         if (previouslyPlayingSound) {
           this.trigger('current-sound-interrupted', {

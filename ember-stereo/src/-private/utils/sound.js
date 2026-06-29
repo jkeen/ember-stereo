@@ -1,7 +1,7 @@
 import { getOwner, setOwner } from '@ember/application';
 import { tracked } from '@glimmer/tracking';
 import { isEmpty } from '@ember/utils';
-import { task, race, waitForProperty } from 'ember-concurrency';
+import { task, race, waitForEvent } from 'ember-concurrency';
 import debug from 'debug';
 import Evented from './evented';
 import { EVENT_MAP } from './event-map';
@@ -297,13 +297,21 @@ export default class Sound extends Evented {
     return null;
   });
 
+  // The connection sets isReady/isErrored in response to its own audio-ready /
+  // audio-load-error events (see BaseSound), so wait on the event rather than
+  // observing the flag. Guard the already-in-state case the way waitForProperty
+  // did — its predicate ran immediately against the current value.
   waitForReadyTask = task(async (connection) => {
-    await waitForProperty(connection, 'isReady');
+    if (!connection.isReady) {
+      await waitForEvent(connection, 'audio-ready');
+    }
     return { sound: connection };
   });
 
   waitForErrorTask = task(async (connection) => {
-    await waitForProperty(connection, 'isErrored');
+    if (!connection.isErrored) {
+      await waitForEvent(connection, 'audio-load-error');
+    }
     return { error: connection.error, erroredSound: connection };
   });
 
