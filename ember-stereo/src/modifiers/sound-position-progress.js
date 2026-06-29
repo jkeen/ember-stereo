@@ -36,7 +36,7 @@ export default class SoundPositionProgressModifier extends Modifier {
 
   modifyPosition({ sound, position, duration }) {
     let dur = duration || sound?.duration || 1;
-    let pos = position || sound?.position || 0;
+    let pos = position ?? sound?.position ?? 0;
 
     let percent = Math.max(0, Math.min((pos / dur) * 100, 100));
 
@@ -45,8 +45,6 @@ export default class SoundPositionProgressModifier extends Modifier {
   }
 
   modify(element, [identifier], options) {
-    this.options = options;
-
     if (this.identifier != identifier) {
       this.identifier = identifier;
     }
@@ -72,14 +70,14 @@ export default class SoundPositionProgressModifier extends Modifier {
     }
   }
 
-  watchPositionTask = task(async () => {
+  watchPositionTask = task({ restartable: true }, async () => {
     // eslint-disable-next-line no-constant-condition
     while (true) {
       // Poll until a sound exists for this identifier (no event to wait on).
       while (!this.loadedSound) {
         await timeout(SOUND_POLL_MS);
       }
-      await timeout(100);
+      await timeout(SOUND_POLL_MS);
 
       if (this.loadedSound) {
         // will-change carries the upcoming position, changed carries the new
