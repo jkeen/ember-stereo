@@ -2,13 +2,11 @@
 
 module.exports = {
   root: true,
-  parser: 'babel-eslint',
+  parser: '@babel/eslint-parser',
   parserOptions: {
-    ecmaVersion: 2018,
+    ecmaVersion: 'latest',
     sourceType: 'module',
-    ecmaFeatures: {
-      legacyDecorators: true,
-    },
+    requireConfigFile: true,
   },
   plugins: ['ember', 'ember-concurrency'],
   extends: ['eslint:recommended', 'plugin:ember/recommended'],

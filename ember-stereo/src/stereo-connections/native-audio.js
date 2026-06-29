@@ -369,8 +369,6 @@ export default class NativeAudio extends BaseSound {
 
   /* Public interface */
 
-  _durationHistory = [];
-
   _audioDuration() {
     let audio = this.audioElement;
     if (audio.duration > 172800000 || this.probablyAStream) {

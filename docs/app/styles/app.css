@@ -11,9 +11,11 @@ html {
 :root {
   --brand-primary: #00bcb8;
 }
+
 .docs-border-r {
   border-right: 0;
 }
+
 .docs-md__h4 {
   font-weight: bold;
   margin: 0.5rem 0;
@@ -32,6 +34,7 @@ body > .ember-view {
 
 input[type='range'] {
   @apply w-full h-2 rounded-lg outline-none appearance-none border-surface-2;
+
   margin: auto;
 
   /* --range-color: red; */
@@ -47,15 +50,18 @@ input[type='range']::-webkit-range-track,
 input[type='range']::-moz-range-track,
 input[type='range']::range-track {
   @apply h-2 rounded-lg cursor-pointer border-surface-2;
+
   /* background-color: var(--range-color); */
 }
 
 input[type='range']::-moz-range-progress {
   @apply h-2 rounded-lg cursor-pointer bg-accent-0;
 }
+
 input[type='range']::-webkit-range-progress {
   @apply h-2 rounded-lg cursor-pointer bg-accent-0;
 }
+
 input[type='range']::range-progress {
   @apply h-2 rounded-lg cursor-pointer bg-accent-0;
 }
@@ -92,6 +98,7 @@ pre.htmlbars,
 
 .stereo-player-position-thumb {
   @apply bg-on-surface-3 absolute h-4 w-4 flex rounded-lg shadow-sm;
+
   top: 15px;
 }
 

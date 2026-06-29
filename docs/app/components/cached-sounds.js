@@ -5,7 +5,7 @@ export default class CachedSound extends Component {
 
   get loadedItems() {
     return this.stereo.soundCache.cachedList.map((url) =>
-      this.stereo.soundCache.find(url)
+      this.stereo.soundCache.find(url),
     );
   }
 

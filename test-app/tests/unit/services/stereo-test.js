@@ -1105,7 +1105,7 @@ module('Unit | Service | stereo', function (hooks) {
 
       assert.true(
         setupSpy.calledOnce,
-        'the Cast SDK setup runs once no matter how many cast UIs mount'
+        'the Cast SDK setup runs once no matter how many cast UIs mount',
       );
     });
 
@@ -1115,14 +1115,14 @@ module('Unit | Service | stereo', function (hooks) {
 
       assert.false(
         setupSpy.called,
-        'just looking up the service does not load the Cast SDK'
+        'just looking up the service does not load the Cast SDK',
       );
 
       service.ensureChromecastSetup();
 
       assert.true(
         setupSpy.calledOnce,
-        'asking for casting (cast-button / casting-available) loads it'
+        'asking for casting (cast-button / casting-available) loads it',
       );
     });
   });

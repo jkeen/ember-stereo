@@ -20,7 +20,7 @@ export default class Queued extends Component {
     let sound = await this.playNext();
     sound.audioElement.setAttribute(
       'id',
-      `id-${Math.floor(Math.random() * 10000)}`
+      `id-${Math.floor(Math.random() * 10000)}`,
     );
 
     this.stereo.on('audio-ended', ({ sound }) => {
