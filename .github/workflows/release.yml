@@ -24,6 +24,25 @@ jobs:
       - uses: ./.github/actions/pnpm
       - name: Verify the integrity of provenance attestations and registry signatures for installed dependencies
         run: npm audit signatures
+      - name: Remove orphaned prerelease tags
+        run: |
+          git fetch --tags --force
+          # Find the most recent tag that IS reachable from the current branch HEAD.
+          # Any orphaned prerelease tag with a higher semver than this could conflict
+          # with semantic-release's next computed version (which builds on the last
+          # reachable release). Such tags arise when a prerelease branch is
+          # force-pushed after semantic-release already created a tag, leaving the
+          # tag pointing to a commit no longer in the branch history.
+          LAST_MERGED=$(git tag --merged HEAD | sort -V | tail -1)
+          for tag in $(git tag --no-merged HEAD | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+-(beta|alpha)\.' || true); do
+            if [ "$(printf '%s\n%s' "$LAST_MERGED" "$tag" | sort -V | tail -1)" = "$tag" ]; then
+              echo "Removing orphaned prerelease tag: $tag"
+              gh release delete "$tag" --yes --cleanup-tag 2>/dev/null || true
+              git tag -d "$tag" 2>/dev/null || true
+            fi
+          done
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Release
         working-directory: ./ember-stereo
         run: node_modules/.bin/semantic-release
