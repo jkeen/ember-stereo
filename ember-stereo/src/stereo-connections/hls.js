@@ -71,9 +71,12 @@ export default class HLSSound extends BaseSound {
     return 'HLS';
   }
 
+  static MAX_FRAGMENT_SKIPS = 10;
+
   @tracked live = false;
   @tracked loaded = false;
   @tracked mediaRecoveryAttempts = 0;
+  @tracked skippedFragments = 0;
   @tracked _currentTime = null;
   @tracked _startTime = null;
   @tracked _endTime = null;
@@ -176,7 +179,7 @@ export default class HLSSound extends BaseSound {
     instance.on(HLS.Events.ERROR, (e, data) => this._onHLSError(e, data, HLS));
 
     instance.on(HLS.Events.FRAG_CHANGED, (e, f) => {
-      // this._updateAudioBuffer(f.frag);
+      this.skippedFragments = 0;
       this._updateId3Info(f.frag);
     });
   }
@@ -309,6 +312,9 @@ export default class HLSSound extends BaseSound {
           this._giveUpAndDie(`${data.details}`);
           break;
         case HLS.ErrorTypes.MEDIA_ERROR:
+          if (this._skipUnparseableFragment(data, HLS)) {
+            return;
+          }
           this._tryToRecoverFromMediaError(`${data.details}`);
           break;
         default:
@@ -341,6 +347,44 @@ export default class HLSSound extends BaseSound {
     }
 
     this.mediaRecoveryAttempts = this.mediaRecoveryAttempts + 1;
+  }
+
+  // recoverMediaError() loops on the same bad fragment, so seek past it instead.
+  _skipUnparseableFragment(data, HLS) {
+    if (data.details !== HLS.ErrorDetails.FRAG_PARSING_ERROR) {
+      return false;
+    }
+
+    const fragment = data.frag;
+    if (!fragment || !Number.isFinite(fragment.end)) {
+      return false;
+    }
+
+    if (this.skippedFragments >= HLSSound.MAX_FRAGMENT_SKIPS) {
+      this.debug(`gave up after skipping ${this.skippedFragments} fragments`);
+      return false;
+    }
+
+    const resumePosition = fragment.end + 0.1;
+    this.debug(
+      `skipping unparseable fragment (${fragment.start}s–${fragment.end}s), resuming at ${resumePosition}s`
+    );
+
+    this.skippedFragments = this.skippedFragments + 1;
+    this._setVideoCurrentTime(resumePosition);
+    this.hls.startLoad();
+    return true;
+  }
+
+  // video.currentTime throws on non-finite values, which NaN becomes once media detaches.
+  _setVideoCurrentTime(seconds) {
+    if (!Number.isFinite(seconds)) {
+      this.debug(`ignoring non-finite currentTime write: ${seconds}`);
+      return false;
+    }
+
+    this.video.currentTime = seconds;
+    return true;
   }
 
   _giveUpAndDie(error) {
@@ -399,7 +443,7 @@ export default class HLSSound extends BaseSound {
   }
 
   _setPosition(position) {
-    this.video.currentTime = position / 1000;
+    this._setVideoCurrentTime(position / 1000);
     if (!this.isPlaying) {
       this.hls.startLoad();
     }
