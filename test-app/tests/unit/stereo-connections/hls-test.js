@@ -4,7 +4,12 @@ import sinon from 'sinon';
 import { module, test, skip } from 'qunit';
 import { settled } from '@ember/test-helpers';
 import HLSConnection from 'ember-stereo/stereo-connections/hls';
-import { setupHLSSpies, throwMediaError } from '../../helpers/hls-test-helpers';
+import {
+  setupHLSSpies,
+  throwMediaError,
+  throwFragParsingError,
+  firePlayedFragment,
+} from '../../helpers/hls-test-helpers';
 import StereoUrl from 'ember-stereo/-private/utils/stereo-url';
 
 let sandbox;
@@ -164,6 +169,105 @@ module('Unit | Connection | HLS', function (hooks) {
     assert.strictEqual(switchSpy.callCount, 1, 'should try switching yet');
     assert.strictEqual(destroySpy.callCount, 1, 'should destroy');
     assert.ok(loadErrorFired, 'should have triggered audio load error');
+  });
+
+  test('On a fatal fragParsingError we skip past the fragment instead of destroying', async function (assert) {
+    let sound = new (this.owner.factoryFor(
+      'ember-stereo@stereo-connection:hls',
+      {},
+    ).class)({
+      url: goodUrl,
+      timeout: false,
+    });
+
+    await settled();
+
+    let { destroySpy, recoverSpy, startLoadSpy } = await setupHLSSpies(
+      sound,
+      sandbox,
+    );
+    let setTimeSpy = sandbox.spy(sound, '_setVideoCurrentTime');
+
+    throwFragParsingError(sound, { start: 100, end: 110 });
+
+    assert.strictEqual(sound.skippedFragments, 1, 'counts the skip');
+    assert.ok(
+      setTimeSpy.calledWith(110.1),
+      'seeks just past the offending fragment',
+    );
+    assert.ok(startLoadSpy.called, 'resumes loading');
+    assert.strictEqual(
+      recoverSpy.callCount,
+      0,
+      'does not enter the recover ladder',
+    );
+    assert.strictEqual(destroySpy.callCount, 0, 'does not destroy the player');
+  });
+
+  test('After MAX_FRAGMENT_SKIPS consecutive skips it stops skipping and falls back to recovery', async function (assert) {
+    let sound = new (this.owner.factoryFor(
+      'ember-stereo@stereo-connection:hls',
+      {},
+    ).class)({
+      url: goodUrl,
+      timeout: false,
+    });
+
+    await settled();
+
+    let { recoverSpy, destroySpy } = await setupHLSSpies(sound, sandbox);
+    sound.skippedFragments = sound.constructor.MAX_FRAGMENT_SKIPS;
+
+    throwFragParsingError(sound);
+
+    assert.strictEqual(
+      recoverSpy.callCount,
+      1,
+      'falls back to media recovery once the skip budget is spent',
+    );
+    assert.strictEqual(
+      destroySpy.callCount,
+      0,
+      'does not destroy on this pass',
+    );
+  });
+
+  test('A cleanly played fragment resets the skip budget', async function (assert) {
+    let sound = new (this.owner.factoryFor(
+      'ember-stereo@stereo-connection:hls',
+      {},
+    ).class)({
+      url: goodUrl,
+      timeout: false,
+    });
+
+    await settled();
+    await setupHLSSpies(sound, sandbox);
+
+    sound.skippedFragments = 5;
+    firePlayedFragment(sound);
+
+    assert.strictEqual(
+      sound.skippedFragments,
+      0,
+      'resets after a fragment plays cleanly',
+    );
+  });
+
+  test('_setVideoCurrentTime ignores non-finite values', async function (assert) {
+    let sound = new (this.owner.factoryFor(
+      'ember-stereo@stereo-connection:hls',
+      {},
+    ).class)({
+      url: goodUrl,
+      timeout: false,
+    });
+
+    await settled();
+
+    assert.false(sound._setVideoCurrentTime(NaN), 'refuses NaN');
+    assert.false(sound._setVideoCurrentTime(Infinity), 'refuses Infinity');
+    assert.true(sound._setVideoCurrentTime(5), 'accepts a finite position');
   });
 
   // this takes so long and not sure what to stub

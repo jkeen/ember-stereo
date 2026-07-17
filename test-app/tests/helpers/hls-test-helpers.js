@@ -1,5 +1,11 @@
 import { waitUntil } from '@ember/test-helpers';
 
+// The connection loads hls.js dynamically, so the test app can't import it
+// directly. Pull the enums off the live instance's class instead.
+function hlsClassFor(sound) {
+  return sound.hls.constructor;
+}
+
 async function setupHLSSpies(sound, sandbox) {
   await waitUntil(
     () => {
@@ -12,6 +18,7 @@ async function setupHLSSpies(sound, sandbox) {
     recoverSpy: sandbox.spy(sound.hls, 'recoverMediaError'),
     switchSpy: sandbox.spy(sound.hls, 'swapAudioCodec'),
     destroySpy: sandbox.spy(sound.hls, 'destroy'),
+    startLoadSpy: sandbox.spy(sound.hls, 'startLoad'),
   };
 }
 
@@ -28,4 +35,28 @@ function throwMediaError(sound) {
   sound._onVideoError(fakeError);
 }
 
-export { throwMediaError, setupHLSSpies };
+function throwFragParsingError(sound, { start = 100, end = 110 } = {}) {
+  let HLS = hlsClassFor(sound);
+  let data = {
+    fatal: true,
+    type: HLS.ErrorTypes.MEDIA_ERROR,
+    details: HLS.ErrorDetails.FRAG_PARSING_ERROR,
+    frag: { start, end },
+  };
+
+  sound._onHLSError('hlsError', data, HLS);
+}
+
+function firePlayedFragment(sound) {
+  let HLS = hlsClassFor(sound);
+  sound.hls.trigger(HLS.Events.FRAG_CHANGED, {
+    frag: { title: '', programDateTime: null, rawProgramDateTime: null },
+  });
+}
+
+export {
+  throwMediaError,
+  throwFragParsingError,
+  firePlayedFragment,
+  setupHLSSpies,
+};
