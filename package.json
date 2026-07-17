@@ -64,14 +64,8 @@
       "ember-concurrency": "^4.0.6"
     },
     "patchedDependencies": {
-      "ember-cli-addon-docs@9.0.0": "patches/ember-cli-addon-docs@9.0.0.patch"
-    },
-    "packageExtensions": {
-      "ember-gesture-modifiers": {
-        "peerDependencies": {
-          "@ember/test-helpers": "*"
-        }
-      }
+      "ember-cli-addon-docs@9.0.0": "patches/ember-cli-addon-docs@9.0.0.patch",
+      "ember-gesture-modifiers@5.0.1": "patches/ember-gesture-modifiers@5.0.1.patch"
     }
   },
   "engines": {
