@@ -7,12 +7,13 @@ settings:
 overrides:
   ember-concurrency: ^4.0.6
 
-packageExtensionsChecksum: sha256-YJPJP+12MGfWc7vcl180E16nqGSWW4w5dyuc8UoVEu8=
-
 patchedDependencies:
   ember-cli-addon-docs@9.0.0:
     hash: cf249ca7ca0271d454970fab61a124f3f31e390e3acae4da81c9bbca0a90a5a2
     path: patches/ember-cli-addon-docs@9.0.0.patch
+  ember-gesture-modifiers@5.0.1:
+    hash: 2c84ef844c47cf7d5bb5618362697f570318b74ccef3195f04f3c9a0a0a41bf8
+    path: patches/ember-gesture-modifiers@5.0.1.patch
 
 importers:
 
@@ -247,7 +248,7 @@ importers:
         version: 5.4.1(@babel/core@7.28.5)(@glimmer/component@1.1.2(@babel/core@7.28.5))(rsvp@4.8.5)(webpack@5.103.0)
       ember-stereo:
         specifier: workspace:^
-        version: file:ember-stereo(@babel/core@7.28.5)(@ember/string@4.0.1)(@ember/test-helpers@3.3.1(@babel/core@7.28.5)(ember-source@5.4.1(@babel/core@7.28.5)(@glimmer/component@1.1.2(@babel/core@7.28.5))(rsvp@4.8.5)(webpack@5.103.0))(webpack@5.103.0))(@ember/test-waiters@4.1.1)(ember-source@5.4.1(@babel/core@7.28.5)(@glimmer/component@1.1.2(@babel/core@7.28.5))(rsvp@4.8.5)(webpack@5.103.0))(webpack@5.103.0)
+        version: file:ember-stereo(@babel/core@7.28.5)(@ember/string@4.0.1)(@ember/test-waiters@4.1.1)(ember-source@5.4.1(@babel/core@7.28.5)(@glimmer/component@1.1.2(@babel/core@7.28.5))(rsvp@4.8.5)(webpack@5.103.0))(webpack@5.103.0)
       ember-style-modifier:
         specifier: 4.3.0
         version: 4.3.0(@ember/string@4.0.1)(ember-source@5.4.1(@babel/core@7.28.5)(@glimmer/component@1.1.2(@babel/core@7.28.5))(rsvp@4.8.5)(webpack@5.103.0))
@@ -358,7 +359,7 @@ importers:
         version: 4.0.6(@babel/core@7.28.5)
       ember-gesture-modifiers:
         specifier: ^5.0.0
-        version: 5.0.1(@babel/core@7.28.5)(@ember/test-helpers@3.3.1(@babel/core@7.28.5)(ember-source@5.4.1(@babel/core@7.28.5)(@glimmer/component@1.1.2(@babel/core@7.28.5))(rsvp@4.8.5)(webpack@5.104.1))(webpack@5.104.1))(ember-source@5.4.1(@babel/core@7.28.5)(@glimmer/component@1.1.2(@babel/core@7.28.5))(rsvp@4.8.5)(webpack@5.104.1))(webpack@5.104.1)
+        version: 5.0.1(patch_hash=2c84ef844c47cf7d5bb5618362697f570318b74ccef3195f04f3c9a0a0a41bf8)(@babel/core@7.28.5)(ember-source@5.4.1(@babel/core@7.28.5)(@glimmer/component@1.1.2(@babel/core@7.28.5))(rsvp@4.8.5)(webpack@5.104.1))(webpack@5.104.1)
       ember-get-config:
         specifier: ^2.0
         version: 2.1.1
@@ -455,7 +456,7 @@ importers:
         version: 11.1.0(eslint@7.32.0)
       eslint-plugin-prettier:
         specifier: 4.0.0
-        version: 4.0.0(eslint-config-prettier@8.5.0(eslint@7.32.0))(eslint@7.32.0)(prettier@2.8.8)
+        version: 4.0.0(eslint-config-prettier@8.5.0(eslint@7.32.0))(eslint@7.32.0)(prettier@3.6.2)
       eslint-plugin-simple-import-sort:
         specifier: 7.0.0
         version: 7.0.0(eslint@7.32.0)
@@ -587,7 +588,7 @@ importers:
         version: 3.0.0
       ember-stereo:
         specifier: workspace:^
-        version: file:ember-stereo(@babel/core@7.28.5)(@ember/string@3.1.1)(@ember/test-helpers@3.3.1(@babel/core@7.28.5)(ember-source@5.4.1(@babel/core@7.28.5)(@glimmer/component@1.1.2(@babel/core@7.28.5))(rsvp@4.8.5)(webpack@5.103.0))(webpack@5.103.0))(@ember/test-waiters@4.1.1)(ember-source@5.4.1(@babel/core@7.28.5)(@glimmer/component@1.1.2(@babel/core@7.28.5))(rsvp@4.8.5)(webpack@5.103.0))(webpack@5.103.0)
+        version: file:ember-stereo(@babel/core@7.28.5)(@ember/string@3.1.1)(@ember/test-waiters@4.1.1)(ember-source@5.4.1(@babel/core@7.28.5)(@glimmer/component@1.1.2(@babel/core@7.28.5))(rsvp@4.8.5)(webpack@5.103.0))(webpack@5.103.0)
       ember-template-lint:
         specifier: ^5.13.0
         version: 5.13.0
@@ -4901,7 +4902,6 @@ packages:
     resolution: {integrity: sha512-25vRcw8bn0+GnOZDWUk0IrRjMQtpSe8jac0hZskQ1IxGQ5+cZSLS5etziQQqWAUMk/+ylG8cgHHian3sM6CnQA==}
     engines: {node: 14.* || 16.* || >= 18}
     peerDependencies:
-      '@ember/test-helpers': '*'
       ember-source: '>=3.28.0'
 
   ember-get-config@2.1.1:
@@ -11607,24 +11607,6 @@ snapshots:
       - supports-color
       - webpack
 
-  '@ember/test-helpers@3.3.1(@babel/core@7.28.5)(ember-source@5.4.1(@babel/core@7.28.5)(@glimmer/component@1.1.2(@babel/core@7.28.5))(rsvp@4.8.5)(webpack@5.104.1))(webpack@5.104.1)':
-    dependencies:
-      '@ember/test-waiters': 3.1.0
-      '@embroider/macros': 1.19.4
-      '@simple-dom/interface': 1.4.0
-      broccoli-debug: 0.6.5
-      broccoli-funnel: 3.0.8
-      dom-element-descriptors: 0.5.1
-      ember-auto-import: 2.11.2(webpack@5.104.1)
-      ember-cli-babel: 8.2.0(@babel/core@7.28.5)
-      ember-cli-htmlbars: 6.3.0
-      ember-source: 5.4.1(@babel/core@7.28.5)(@glimmer/component@1.1.2(@babel/core@7.28.5))(rsvp@4.8.5)(webpack@5.104.1)
-    transitivePeerDependencies:
-      - '@babel/core'
-      - '@glint/template'
-      - supports-color
-      - webpack
-
   '@ember/test-waiters@3.1.0':
     dependencies:
       calculate-cache-key-for-tree: 2.0.0
@@ -16874,9 +16856,8 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  ember-gesture-modifiers@5.0.1(@babel/core@7.28.5)(@ember/test-helpers@3.3.1(@babel/core@7.28.5)(ember-source@5.4.1(@babel/core@7.28.5)(@glimmer/component@1.1.2(@babel/core@7.28.5))(rsvp@4.8.5)(webpack@5.103.0))(webpack@5.103.0))(ember-source@5.4.1(@babel/core@7.28.5)(@glimmer/component@1.1.2(@babel/core@7.28.5))(rsvp@4.8.5)(webpack@5.103.0))(webpack@5.103.0):
+  ember-gesture-modifiers@5.0.1(patch_hash=2c84ef844c47cf7d5bb5618362697f570318b74ccef3195f04f3c9a0a0a41bf8)(@babel/core@7.28.5)(ember-source@5.4.1(@babel/core@7.28.5)(@glimmer/component@1.1.2(@babel/core@7.28.5))(rsvp@4.8.5)(webpack@5.103.0))(webpack@5.103.0):
     dependencies:
-      '@ember/test-helpers': 3.3.1(@babel/core@7.28.5)(ember-source@5.4.1(@babel/core@7.28.5)(@glimmer/component@1.1.2(@babel/core@7.28.5))(rsvp@4.8.5)(webpack@5.103.0))(webpack@5.103.0)
       ember-auto-import: 2.12.0(webpack@5.103.0)
       ember-cli-babel: 7.26.11
       ember-cli-htmlbars: 6.3.0
@@ -16888,9 +16869,8 @@ snapshots:
       - supports-color
       - webpack
 
-  ember-gesture-modifiers@5.0.1(@babel/core@7.28.5)(@ember/test-helpers@3.3.1(@babel/core@7.28.5)(ember-source@5.4.1(@babel/core@7.28.5)(@glimmer/component@1.1.2(@babel/core@7.28.5))(rsvp@4.8.5)(webpack@5.104.1))(webpack@5.104.1))(ember-source@5.4.1(@babel/core@7.28.5)(@glimmer/component@1.1.2(@babel/core@7.28.5))(rsvp@4.8.5)(webpack@5.104.1))(webpack@5.104.1):
+  ember-gesture-modifiers@5.0.1(patch_hash=2c84ef844c47cf7d5bb5618362697f570318b74ccef3195f04f3c9a0a0a41bf8)(@babel/core@7.28.5)(ember-source@5.4.1(@babel/core@7.28.5)(@glimmer/component@1.1.2(@babel/core@7.28.5))(rsvp@4.8.5)(webpack@5.104.1))(webpack@5.104.1):
     dependencies:
-      '@ember/test-helpers': 3.3.1(@babel/core@7.28.5)(ember-source@5.4.1(@babel/core@7.28.5)(@glimmer/component@1.1.2(@babel/core@7.28.5))(rsvp@4.8.5)(webpack@5.104.1))(webpack@5.104.1)
       ember-auto-import: 2.12.0(webpack@5.104.1)
       ember-cli-babel: 7.26.11
       ember-cli-htmlbars: 6.3.0
@@ -17199,7 +17179,7 @@ snapshots:
       - supports-color
       - webpack
 
-  ember-stereo@file:ember-stereo(@babel/core@7.28.5)(@ember/string@3.1.1)(@ember/test-helpers@3.3.1(@babel/core@7.28.5)(ember-source@5.4.1(@babel/core@7.28.5)(@glimmer/component@1.1.2(@babel/core@7.28.5))(rsvp@4.8.5)(webpack@5.103.0))(webpack@5.103.0))(@ember/test-waiters@4.1.1)(ember-source@5.4.1(@babel/core@7.28.5)(@glimmer/component@1.1.2(@babel/core@7.28.5))(rsvp@4.8.5)(webpack@5.103.0))(webpack@5.103.0):
+  ember-stereo@file:ember-stereo(@babel/core@7.28.5)(@ember/string@3.1.1)(@ember/test-waiters@4.1.1)(ember-source@5.4.1(@babel/core@7.28.5)(@glimmer/component@1.1.2(@babel/core@7.28.5))(rsvp@4.8.5)(webpack@5.103.0))(webpack@5.103.0):
     dependencies:
       '@babel/core': 7.28.5
       '@ember/string': 3.1.1
@@ -17213,7 +17193,7 @@ snapshots:
       ember-cli-babel: 7.26.11
       ember-cli-htmlbars: 6.3.0
       ember-concurrency: 4.0.6(@babel/core@7.28.5)
-      ember-gesture-modifiers: 5.0.1(@babel/core@7.28.5)(@ember/test-helpers@3.3.1(@babel/core@7.28.5)(ember-source@5.4.1(@babel/core@7.28.5)(@glimmer/component@1.1.2(@babel/core@7.28.5))(rsvp@4.8.5)(webpack@5.103.0))(webpack@5.103.0))(ember-source@5.4.1(@babel/core@7.28.5)(@glimmer/component@1.1.2(@babel/core@7.28.5))(rsvp@4.8.5)(webpack@5.103.0))(webpack@5.103.0)
+      ember-gesture-modifiers: 5.0.1(patch_hash=2c84ef844c47cf7d5bb5618362697f570318b74ccef3195f04f3c9a0a0a41bf8)(@babel/core@7.28.5)(ember-source@5.4.1(@babel/core@7.28.5)(@glimmer/component@1.1.2(@babel/core@7.28.5))(rsvp@4.8.5)(webpack@5.103.0))(webpack@5.103.0)
       ember-get-config: 2.1.1
       ember-modifier: 4.2.2(@babel/core@7.28.5)
       ember-sinon: 5.0.0
@@ -17222,13 +17202,12 @@ snapshots:
       tracked-built-ins: 3.4.0(@babel/core@7.28.5)
       tracked-toolbox: 2.0.0(@babel/core@7.28.5)(ember-source@5.4.1(@babel/core@7.28.5)(@glimmer/component@1.1.2(@babel/core@7.28.5))(rsvp@4.8.5)(webpack@5.103.0))
     transitivePeerDependencies:
-      - '@ember/test-helpers'
       - '@glint/template'
       - ember-source
       - supports-color
       - webpack
 
-  ember-stereo@file:ember-stereo(@babel/core@7.28.5)(@ember/string@4.0.1)(@ember/test-helpers@3.3.1(@babel/core@7.28.5)(ember-source@5.4.1(@babel/core@7.28.5)(@glimmer/component@1.1.2(@babel/core@7.28.5))(rsvp@4.8.5)(webpack@5.103.0))(webpack@5.103.0))(@ember/test-waiters@4.1.1)(ember-source@5.4.1(@babel/core@7.28.5)(@glimmer/component@1.1.2(@babel/core@7.28.5))(rsvp@4.8.5)(webpack@5.103.0))(webpack@5.103.0):
+  ember-stereo@file:ember-stereo(@babel/core@7.28.5)(@ember/string@4.0.1)(@ember/test-waiters@4.1.1)(ember-source@5.4.1(@babel/core@7.28.5)(@glimmer/component@1.1.2(@babel/core@7.28.5))(rsvp@4.8.5)(webpack@5.103.0))(webpack@5.103.0):
     dependencies:
       '@babel/core': 7.28.5
       '@ember/string': 4.0.1
@@ -17242,7 +17221,7 @@ snapshots:
       ember-cli-babel: 7.26.11
       ember-cli-htmlbars: 6.3.0
       ember-concurrency: 4.0.6(@babel/core@7.28.5)
-      ember-gesture-modifiers: 5.0.1(@babel/core@7.28.5)(@ember/test-helpers@3.3.1(@babel/core@7.28.5)(ember-source@5.4.1(@babel/core@7.28.5)(@glimmer/component@1.1.2(@babel/core@7.28.5))(rsvp@4.8.5)(webpack@5.103.0))(webpack@5.103.0))(ember-source@5.4.1(@babel/core@7.28.5)(@glimmer/component@1.1.2(@babel/core@7.28.5))(rsvp@4.8.5)(webpack@5.103.0))(webpack@5.103.0)
+      ember-gesture-modifiers: 5.0.1(patch_hash=2c84ef844c47cf7d5bb5618362697f570318b74ccef3195f04f3c9a0a0a41bf8)(@babel/core@7.28.5)(ember-source@5.4.1(@babel/core@7.28.5)(@glimmer/component@1.1.2(@babel/core@7.28.5))(rsvp@4.8.5)(webpack@5.103.0))(webpack@5.103.0)
       ember-get-config: 2.1.1
       ember-modifier: 4.2.2(@babel/core@7.28.5)
       ember-sinon: 5.0.0
@@ -17251,7 +17230,6 @@ snapshots:
       tracked-built-ins: 3.4.0(@babel/core@7.28.5)
       tracked-toolbox: 2.0.0(@babel/core@7.28.5)(ember-source@5.4.1(@babel/core@7.28.5)(@glimmer/component@1.1.2(@babel/core@7.28.5))(rsvp@4.8.5)(webpack@5.103.0))
     transitivePeerDependencies:
-      - '@ember/test-helpers'
       - '@glint/template'
       - ember-source
       - supports-color
@@ -17888,10 +17866,10 @@ snapshots:
     optionalDependencies:
       eslint-config-prettier: 8.5.0(eslint@7.32.0)
 
-  eslint-plugin-prettier@4.0.0(eslint-config-prettier@8.5.0(eslint@7.32.0))(eslint@7.32.0)(prettier@2.8.8):
+  eslint-plugin-prettier@4.0.0(eslint-config-prettier@8.5.0(eslint@7.32.0))(eslint@7.32.0)(prettier@3.6.2):
     dependencies:
       eslint: 7.32.0
-      prettier: 2.8.8
+      prettier: 3.6.2
       prettier-linter-helpers: 1.0.0
     optionalDependencies:
       eslint-config-prettier: 8.5.0(eslint@7.32.0)
