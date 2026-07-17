@@ -8,7 +8,7 @@
   "-latest": {
     "path": "",
     "name": "Latest",
-    "sha": "c7757c03f5fffa3d3669307fb51656faf8b761c5",
+    "sha": "b599ce8e801ffe41f7fcbd6e436c79734967d049",
     "tag": null
   },
   "v2.0": {
@@ -38,7 +38,7 @@
   "beta": {
     "path": "versions/beta",
     "name": "beta",
-    "sha": "c7757c03f5fffa3d3669307fb51656faf8b761c5",
+    "sha": "b599ce8e801ffe41f7fcbd6e436c79734967d049",
     "tag": null
   }
 }
