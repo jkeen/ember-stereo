@@ -390,6 +390,27 @@ export default class NativeAudio extends BaseSound {
     return this._currentPosition();
   }
 
+  // The base connection infers "not seekable" from `duration == Infinity`. That's wrong for a live/event HLS stream
+  // e.g. rewinding a still-airing show's recorded archive, whose manifest has no #EXT-X-ENDLIST so the element reports
+  // an infinite, growing duration (see probablyAStream), yet it is fully seekable within its buffered window.
+  get _seekableWindowMs() {
+    let seekable = this.audioElement?.seekable;
+    if (!seekable || seekable.length === 0) return 0;
+    return (seekable.end(seekable.length - 1) - seekable.start(0)) * 1000;
+  }
+
+  get isSeekable() {
+    return this._seekableWindowMs > 0 || super.isSeekable;
+  }
+
+  get isRewindable() {
+    return this._seekableWindowMs > 0 || super.isRewindable;
+  }
+
+  get isFastForwardable() {
+    return this._seekableWindowMs > 0 || super.isFastForwardable;
+  }
+
   _setPlaybackSpeed(speed) {
     if (macroCondition(isTesting())) {
       this.debug(`skipping set volume in test env: ${speed}`);
