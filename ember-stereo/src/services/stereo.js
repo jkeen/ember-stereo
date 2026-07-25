@@ -501,23 +501,43 @@ export default class Stereo extends Service.extend(EmberEvented) {
   }
 
   /**
-   * Warm a connection ahead of the sound that will need it — for connections
-   * that lazy-load a library (HLS pulls in hls.js), this moves the chunk
-   * download off the critical path so the first load is audio-only. No-op for
-   * connections that have nothing to preload.
+   * Download what a connection needs (hls.js, howler, the Cast SDK) ahead of the
+   * sound that needs it, so the first load is audio-only.
    *
-   * @method warmConnection
+   * @method prewarmConnection
    * @public
    * @param {String} connectionKey e.g. 'HLS'
+   * @return {Promise}
    */
 
-  warmConnection(connectionKey) {
-    let connection =
+  prewarmConnection(connectionKey) {
+    let connection = this._findConnection(connectionKey);
+
+    if (!connection) {
+      debug('ember-stereo:service')(
+        `can't warm unknown connection ${connectionKey}`
+      );
+      return Promise.resolve();
+    }
+
+    return connection.preload();
+  }
+
+  _findConnection(connectionKey) {
+    let registered =
       this.connectionLoader.get(connectionKey) ||
       this.connectionLoader.connections.find(
         (candidate) => candidate.key === connectionKey
       );
-    return connection?.preload?.();
+
+    if (registered) {
+      return registered;
+    }
+
+    // Casting connections are service-built and force-injected, never registered.
+    return [Chromecast, NativeAudioCasting].find(
+      (candidate) => candidate.key === connectionKey
+    );
   }
 
   /**
@@ -1012,8 +1032,7 @@ export default class Stereo extends Service.extend(EmberEvented) {
       return;
     }
     let element = this.castOutletElement;
-    // hasEqualUrls/StereoUrl throws on an empty input, so don't compare against
-    // an unset src — just set it (first cast, before any prewarm landed).
+    // hasEqualUrls throws on empty input, so never compare an unset src.
     let currentSrc = element.getAttribute('src');
     if (!currentSrc || !hasEqualUrls(currentSrc, castUrl)) {
       element.setAttribute('src', castUrl);
@@ -1022,12 +1041,8 @@ export default class Stereo extends Service.extend(EmberEvented) {
   }
 
   _onCastTargetChange(isWireless) {
-    // Changing the outlet element's `src` (a feed switch, or first engage on a
-    // non-prewarmed url) makes Safari drop then re-establish the AirPlay route,
-    // firing this with wireless=false then true. That flap is OUR doing, not a
-    // genuine user disconnect — ignore it while a programmatic outlet change is
-    // in flight, so it can't trigger a disengage→local→re-engage cascade that
-    // fights the re-cast.
+    // Changing the outlet's `src` makes Safari drop then re-establish the
+    // AirPlay route; ignoring that flap avoids a disengage→re-engage cascade.
     if (this._suppressCastTargetChange) {
       debug('ember-stereo:service')(
         `cast-target change ignored (programmatic outlet change): wireless=${isWireless}`

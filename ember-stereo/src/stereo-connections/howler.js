@@ -165,9 +165,14 @@ export default class Howler extends BaseSound {
     this.howl.stop();
   }
 
+  // A lazy chunk, same as hls.js. See HLSSound.preload.
+  static preload() {
+    return import('howler');
+  }
+
   @waitFor
   loadHowler() {
-    return import('howler')
+    return Howler.preload()
       .then((module) => module.default)
       .then((mod) => {
         return Promise.resolve({

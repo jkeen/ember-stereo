@@ -22,6 +22,11 @@ let Sound = class Sounds extends BaseSound {
     return true;
   }
 
+  static preload() {
+    // optional: pull down whatever this connection needs before it can play
+    return import('your-third-party-library');
+  }
+
   setup() {
     let url   = this.args.url;
     let sound = this;
@@ -80,6 +85,25 @@ let Sound = class Sounds extends BaseSound {
 ```
 
 `canPlayMimeType` and `canUseConnection` are called when `stereo` is looking for connections to try with a url. Give your best guess here. For instance, our built-in HLS.js library won't work on mobile, so `canUseConnection` returns false on a mobile device and true on a desktop browser. Similary, HLS only plays `application/vnd.apple.mpegurl` files, so we just check for that extension in `canPlayMimeType`.
+
+##### Optional: `preload()`, so the app can prewarm your connection
+
+If your connection lazy-loads a library or an external script, the first sound that needs it pays for that download before any audio is fetched. Implement `static preload()` to expose it, and use it wherever you'd otherwise import:
+
+```javascript
+static preload() {
+  return import('your-third-party-library');
+}
+
+async loadLibrary() {
+  let module = await DashConnection.preload();
+  // ...
+}
+```
+
+An app can then pull it down ahead of time with `stereo.prewarmConnection('DashConnection')` — using the same name you registered the connection under. Keep it idempotent; `import()` already caches, so repeat calls resolve against the same promise.
+
+If your connection has nothing to download, skip this — the base class provides a no-op, and prewarming it simply resolves.
 
 ##### Implement methods to bridge communication between stereo and your third party library.
 

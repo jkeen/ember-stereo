@@ -165,10 +165,7 @@ export default class Sound extends Evented {
       ...loadOptions,
     });
 
-    // The app may hand us a device-fetchable cast URL alongside the playback
-    // urls (it knows the live/archive variant). Keep it, and make it available
-    // to the strategy builder even when it was set earlier (e.g. by prewarm)
-    // rather than passed in these options.
+    // prewarmCast may have set the cast url before this load ran.
     if (options.castUrl != null) {
       this._castUrl = options.castUrl;
     } else if (this._castUrl != null) {
