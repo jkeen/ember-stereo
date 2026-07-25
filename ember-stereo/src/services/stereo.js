@@ -510,6 +510,26 @@ export default class Stereo extends Service.extend(EmberEvented) {
   }
 
   /**
+   * Warm a connection ahead of the sound that will need it — for connections
+   * that lazy-load a library (HLS pulls in hls.js), this moves the chunk
+   * download off the critical path so the first load is audio-only. No-op for
+   * connections that have nothing to preload.
+   *
+   * @method warmConnection
+   * @public
+   * @param {String} connectionKey e.g. 'HLS'
+   */
+
+  warmConnection(connectionKey) {
+    let connection =
+      this.connectionLoader.get(connectionKey) ||
+      this.connectionLoader.connections.find(
+        (candidate) => candidate.key === connectionKey
+      );
+    return connection?.preload?.();
+  }
+
+  /**
    * Given an array of URLs, return a sound and play it.
    *
    * @method playTask
