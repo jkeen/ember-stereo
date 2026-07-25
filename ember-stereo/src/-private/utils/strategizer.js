@@ -26,6 +26,11 @@ export default class Strategizer {
     if (this.options.xhr) {
       passthroughOptions.xhr = this.options?.xhr;
     }
+    // Where to begin loading, in seconds. Handed over at construction so the
+    // first fetch is the right one; seeking after load refetches it all.
+    if (this.options.startPosition != null) {
+      passthroughOptions.startPosition = this.options.startPosition;
+    }
     let strategyOptions = {
       metadata: this.options.metadata,
       sharedAudioAccess: this.useSharedAudioAccess

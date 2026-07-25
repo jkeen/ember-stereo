@@ -90,6 +90,10 @@ export default class HLSSound extends BaseSound {
         startFragPrefetch: true,
       };
 
+      // Kept out of the hls.js config: it re-consults `config.startPosition` after every stopLoad/startLoad and live playlist reload, dragging playback back to it.
+      let { startPosition, ...connectionOptions } = this.options || {};
+      let startsAtPosition = typeof startPosition === 'number';
+
       if (this.options?.xhr) {
         options.xhrSetup = (xhr, url) => {
           if (this.url !== url && this.options.xhr?.manifestOnly) {
@@ -118,8 +122,14 @@ export default class HLSSound extends BaseSound {
           this.video.removeAttribute('src');
         }
 
-        let hls = new HLS({ ...options, ...(this.options || {}) });
+        // hls.js only honours startLoad(position) when not already loading.
+        if (startsAtPosition) {
+          options.autoStartLoad = false;
+        }
+
+        let hls = new HLS({ ...options, ...connectionOptions });
         this.hls = hls;
+        this.startPosition = startsAtPosition ? startPosition : null;
 
         let video = document.createElement('video');
         video.setAttribute('crossorigin', 'anonymous');
@@ -155,6 +165,13 @@ export default class HLSSound extends BaseSound {
     instance.on(HLS.Events.MEDIA_ATTACHED, () => {
       this.debug('media attached, loading source');
       instance.loadSource(this.url);
+
+      // One shot: later loads must resume from the actual playback position.
+      if (this.startPosition != null) {
+        this.debug(`starting load at ${this.startPosition}s`);
+        instance.startLoad(this.startPosition);
+        this.startPosition = null;
+      }
     });
 
     instance.on(HLS.Events.MANIFEST_PARSED, (e, data) => {
@@ -443,10 +460,15 @@ export default class HLSSound extends BaseSound {
   }
 
   _setPosition(position) {
-    this._setVideoCurrentTime(position / 1000);
-    if (!this.isPlaying) {
-      this.hls.startLoad();
+    let seconds = position / 1000;
+
+    // Restart the loader AT the target so the first fragment fetched is it.
+    if (this.loadStopped || !this.isPlaying) {
+      this.hls.startLoad(seconds);
+      this.loadStopped = false;
     }
+
+    this._setVideoCurrentTime(seconds);
 
     return position;
   }
