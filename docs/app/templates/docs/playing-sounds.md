@@ -24,6 +24,24 @@ When loading a streaming URL, the duration is ∞ and the position-related contr
 
 <Docs::StereoPlayer @identifier="https://streaming.koop.org/stream.mp3"/>
 
+## Load options
+
+`play` and `load` take an options hash alongside the identifier:
+
+```js
+this.stereo.play(url, {
+  useConnections: ['HLS', 'NativeAudio'],
+  metadata: { title: 'Works Just Like A VCR' },
+  startPosition: 90,
+});
+```
+
+- **`metadata`** stores whatever you want alongside the sound, and feeds the OS media controls. See [Metadata](/docs/metadata).
+- **`useConnections`** limits which connections may be tried, in order of preference, instead of the full waterfall.
+- **`startPosition`** (seconds) begins playback part way in. The connection is handed the offset as it's built, so the first thing it fetches is the piece you asked for. Seeking after load would throw away the buffer it just filled and fetch it again.
+- **`streamPauseGraceMs`** keeps a paused stream's connection open for this long before stopping it, so a listener who pauses briefly doesn't pay for a reconnect. Holding it costs bandwidth and, on a live stream, a slot on the streaming server, so the default is to stop as soon as it's paused. Pass `Infinity` to hold it until something explicitly stops it.
+- **`xhr`** passes `headers`, `withCredentials` and `method` through to connections that fetch over XHR.
+
 ## Interacting with the service
 
 You might need to trigger a sound from javascript land by talking directly to the `stereo` service. It's cool, back in the ember-hifi days this is how we _had_ to play sounds… and _we liked it!_

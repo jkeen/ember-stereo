@@ -457,12 +457,17 @@ export default class NativeAudio extends BaseSound {
   playTask = task({ restartable: true }, async ({ position }) => {
     this.isLoading = true;
     this.isBlocked = false;
+    this.stopStreamAfterGraceTask.cancelAll();
 
     let audio = this.requestControl();
 
-    // since we clear the `src` attr on pause for streams, restore it here
-    this.loadAudio(audio);
-    this.restoreState();
+    if (this.isStream && this._streamConnectionIsWarm(audio)) {
+      this._seekToLiveEdge(audio);
+    } else {
+      // pause clears the `src` attr for streams, so restore it here
+      this.loadAudio(audio);
+      this.restoreState();
+    }
 
     if (typeof position !== 'undefined') {
       this._setPosition(position);
@@ -500,17 +505,63 @@ export default class NativeAudio extends BaseSound {
   pause() {
     this.debug('#pause');
     let audio = this.audioElement;
+    audio.pause();
 
-    if (this.isStream) {
+    if (!this.isStream) {
+      return;
+    }
+
+    let grace = this.streamPauseGraceMs;
+
+    if (!grace) {
       this.stop(); // we don't want the stream to continue loading while paused
-    } else {
-      audio.pause();
+    } else if (grace !== Infinity) {
+      this.stopStreamAfterGraceTask.perform(grace).catch((e) => {
+        if (!didCancel(e)) {
+          console.error(e);
+        }
+      });
+    }
+  }
+
+  // How long a paused stream holds its connection open. Holding costs bandwidth and a listener slot, so the default is stop on pause; Infinity holds indefinitely.
+  get streamPauseGraceMs() {
+    return this.options?.streamPauseGraceMs ?? 0;
+  }
+
+  stopStreamAfterGraceTask = task({ restartable: true }, async (graceMs) => {
+    await timeout(graceMs);
+
+    // The shared element may now belong to another sound; stopping it would kill that sound's playback instead of ours.
+    if (this.sharedAudioAccess && !this.sharedAudioAccess.hasControl(this)) {
+      this.debug('grace period expired but we no longer own the element');
+      return;
+    }
+
+    this.debug('stream pause grace period expired, stopping');
+    this.stop();
+  });
+
+  // Paused, but the grace timer hasn't yet stopped this stream's connection, so rejoining beats a fresh connect.
+  _streamConnectionIsWarm(audio) {
+    return !!audio?.src && this.urlsAreEqual(audio.src, this.url);
+  }
+
+  // A rejoined stream resumes at the stale paused instant; the end of the seekable range is "now".
+  _seekToLiveEdge(audio) {
+    try {
+      if (audio.seekable?.length) {
+        audio.currentTime = audio.seekable.end(audio.seekable.length - 1);
+      }
+    } catch (e) {
+      this.debug('could not seek to the live edge, playing from where we are');
     }
   }
 
   stop() {
     this.debug('#stop');
     let audio = this.audioElement;
+    this.stopStreamAfterGraceTask.cancelAll();
     audio.pause();
 
     // calling pause halts playback but does not stop downloading streaming
@@ -558,6 +609,7 @@ export default class NativeAudio extends BaseSound {
   teardown() {
     let audio = this.requestControl();
     this.durationWorkaroundTask.cancelAll();
+    this.stopStreamAfterGraceTask.cancelAll();
     this.trigger('_will_destroy', { sound: this });
     this._unregisterEvents(audio);
     super.teardown();
