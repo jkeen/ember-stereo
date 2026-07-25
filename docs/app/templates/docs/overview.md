@@ -53,3 +53,21 @@ Stereo offers three connection options, but only the native audio connection is 
     ]
   }
 ```
+
+### Prewarming a connection
+
+`Howler` and `HLS` pull their library down as a lazy chunk, and `Chromecast` fetches the Google Cast sender script from `gstatic.com`. Whichever sound needs one first pays for that download before a single byte of audio is fetched.
+
+If you know ahead of time which connection is coming, `prewarmConnection` moves the download off the critical path so the first load is audio-only:
+
+```js
+// e.g. a live stream that can rewind into a recorded HLS archive
+this.stereo.prewarmConnection('HLS');
+
+// or when a cast control is about to mount
+this.stereo.prewarmConnection('Chromecast');
+```
+
+It takes the name a connection is registered under and returns a promise that resolves once the connection is warm. It's purely an optimization — safe to call repeatedly, safe to skip, and safe to call for any connection at all: those with nothing to download resolve immediately. Prewarming `Chromecast` only fetches the SDK; it doesn't start device detection or make a cast UI appear.
+
+This works for [your own connections](https://github.com/jkeen/ember-stereo/blob/main/ember-stereo/CUSTOM_CONNECTIONS.md) too — implement `static preload()` on the connection class and it becomes prewarmable like any built-in.

@@ -6,6 +6,7 @@ import { waitUntil, settled } from '@ember/test-helpers';
 import sinon from 'sinon';
 import hasEqualIdentifiers from 'ember-stereo/-private/utils/has-equal-identifiers';
 import SoundCache from 'ember-stereo/-private/utils/sound-cache';
+import Chromecast from 'ember-stereo/stereo-connections/chromecast';
 import setupCustomAssertions from 'ember-cli-custom-assertions/test-support';
 import {
   setupStereoTest,
@@ -1293,6 +1294,64 @@ module('Unit | Service | stereo', function (hooks) {
         buildSpy.firstCall.args[2],
         16000,
         'the archive resumes at the local position',
+      );
+    });
+  });
+
+  module('prewarmConnection', function () {
+    test('it preloads a connection the app registered', async function (assert) {
+      let service = this.owner
+        .lookup('service:stereo')
+        .loadConnections(['HLS', 'NativeAudio']);
+
+      let HLS = service.connectionLoader.get('HLS');
+      let preloadSpy = sandbox.stub(HLS, 'preload').resolves();
+
+      await service.prewarmConnection('HLS');
+
+      assert.ok(preloadSpy.calledOnce, 'it preloaded the HLS connection');
+    });
+
+    test('it preloads a service-owned connection that never goes through the loader', async function (assert) {
+      let service = this.owner
+        .lookup('service:stereo')
+        .loadConnections(['NativeAudio']);
+
+      let preloadSpy = sandbox.stub(Chromecast, 'preload').resolves();
+
+      assert.notOk(
+        service.connectionLoader.get('Chromecast'),
+        'Chromecast is not a registered connection',
+      );
+
+      await service.prewarmConnection('Chromecast');
+
+      assert.ok(
+        preloadSpy.calledOnce,
+        'it still preloaded the Cast sender script',
+      );
+    });
+
+    test('it resolves for a connection with nothing to preload', async function (assert) {
+      let service = this.owner
+        .lookup('service:stereo')
+        .loadConnections(['NativeAudio']);
+
+      await service.prewarmConnection('NativeAudio');
+
+      assert.ok(true, 'warming a connection with no preload work resolves');
+    });
+
+    test('it resolves for an unknown connection key', async function (assert) {
+      let service = this.owner
+        .lookup('service:stereo')
+        .loadConnections(['NativeAudio']);
+
+      await service.prewarmConnection('NotAConnection');
+
+      assert.ok(
+        true,
+        'warming an unknown connection resolves without throwing',
       );
     });
   });

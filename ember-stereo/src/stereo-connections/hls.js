@@ -552,10 +552,9 @@ export default class HLSSound extends BaseSound {
     super.teardown();
   }
 
-  // hls.js is a lazy chunk, so the first sound that needs it pays for the
-  // download before a single byte of audio is fetched. An app that knows HLS is
-  // coming (e.g. a live stream that can rewind into a recorded archive) can warm
-  // the chunk ahead of time via `stereo.warmConnection('HLS')`.
+  // A lazy chunk, so the first sound that needs it waits on the download before
+  // any audio. An app expecting HLS can warm it with
+  // `stereo.prewarmConnection('HLS')`.
   static preload() {
     return import('hls.js');
   }

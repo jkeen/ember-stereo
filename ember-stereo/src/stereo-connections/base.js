@@ -22,6 +22,19 @@ export default class Sound extends Evented {
     this.config = config;
   }
 
+  /**
+   * Download what this connection needs before it can play. Must be idempotent.
+   * Connections with nothing to fetch inherit this no-op.
+   *
+   * @method preload
+   * @static
+   * @return {Promise}
+   */
+
+  static preload() {
+    return Promise.resolve();
+  }
+
   static canPlay(url, mimeType) {
     let usablePlatform = this.canUseConnection(url);
     if (!usablePlatform) {

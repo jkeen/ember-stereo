@@ -2,6 +2,7 @@ import { isTesting, macroCondition } from '@embroider/macros';
 import BaseSound from './base';
 import DeadReckonClock from '../-private/utils/dead-reckon-clock';
 import { getMimeType } from '../-private/utils/mime-types';
+import { loadCastSdk } from '../-private/utils/cast-sdk-loader';
 
 // Honor an 'ended' only once the clock has reached the media's end (the receiver
 // reports IDLE on stop too, not just finish).
@@ -32,6 +33,13 @@ export default class Chromecast extends DeadReckonClock(BaseSound) {
   // Only ever force-injected by the service while casting; never gates on mime.
   static canPlay() {
     return true;
+  }
+
+  // Fetches the Cast sender script, deliberately not loaded at startup (see the
+  // service's outlet task). Only warms the script; ensureChromecastSetup still
+  // does the event wiring, reusing this cached load.
+  static preload() {
+    return loadCastSdk();
   }
 
   // The shared Cast session/player/controller (one per session, service-owned).
