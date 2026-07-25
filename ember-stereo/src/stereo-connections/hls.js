@@ -529,13 +529,21 @@ export default class HLSSound extends BaseSound {
   pause() {
     this.debug('#pause');
     this.video.pause();
-    this.hls.stopLoad();
-    this.loadStopped = true;
+
+    // Only a live playlist pulls fragments forever, so only it needs halting on
+    // pause. An archive's buffer is worth keeping warm: stopping the loader
+    // means rebuffering from scratch when the listener comes back.
+    if (this.live) {
+      this.hls.stopLoad();
+      this.loadStopped = true;
+    }
   }
 
   stop() {
     this.debug('#stop');
     this.pause();
+    this.hls.stopLoad();
+    this.loadStopped = true;
     this.video.removeAttribute('src');
   }
 

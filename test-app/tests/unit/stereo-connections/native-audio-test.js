@@ -1,5 +1,6 @@
 import { module, test, skip } from 'qunit';
 import { setupTest } from 'ember-qunit';
+import { waitUntil } from '@ember/test-helpers';
 import sinon from 'sinon';
 import SharedAudioAccess from 'ember-stereo/-private/utils/shared-audio-access';
 import NativeAudio from 'ember-stereo/stereo-connections/native-audio';
@@ -74,15 +75,48 @@ module('Unit | Connection | Native Audio', function (hooks) {
     );
   });
 
-  test("If it's a stream, we stop on pause", async function (assert) {
+  test("If it's a stream and the app asked for no grace period, we stop on pause", async function (assert) {
     stereo.useSharedAudioAccess = true;
 
     let sharedAudioAccess = new SharedAudioAccess().unlock();
 
-    let { sound } = await stereo.load(
-      '/good/stream/stream.aac',
+    let { sound } = await stereo.load('/good/stream/stream.aac', {
       sharedAudioAccess,
+    });
+
+    let stopSpy = sinon.spy(sound, 'stop');
+    let loadSpy = sinon.spy(
+      sound.sharedAudioAccess.requestControl(sound),
+      'load',
     );
+
+    assert.strictEqual(
+      sound.streamPauseGraceMs,
+      0,
+      'holding a paused stream open is opt-in',
+    );
+
+    await sound.play();
+    sound.pause();
+
+    assert.strictEqual(
+      sound.audioElement.src,
+      null,
+      'audio src attribute is not set',
+    );
+    assert.ok(loadSpy.callCount > 0, 'load was called');
+    assert.strictEqual(stopSpy.callCount, 1, 'stop was called');
+  });
+
+  test('A stream given a grace period holds its connection open on pause, then stops', async function (assert) {
+    stereo.useSharedAudioAccess = true;
+
+    let sharedAudioAccess = new SharedAudioAccess().unlock();
+
+    let { sound } = await stereo.load('/good/stream/stream.aac', {
+      sharedAudioAccess,
+      streamPauseGraceMs: 10,
+    });
 
     let stopSpy = sinon.spy(sound, 'stop');
     let loadSpy = sinon.spy(
@@ -102,13 +136,54 @@ module('Unit | Connection | Native Audio', function (hooks) {
 
     sound.pause();
 
+    // The connection stays open through the grace period so a listener who
+    // flips away and back doesn't pay for a reconnect.
+    assert.strictEqual(stopSpy.callCount, 0, 'stop was not called immediately');
+    assert.equalUrls(
+      sound.audioElement.src,
+      '/good/stream/stream.aac',
+      'audio src attribute is still set',
+    );
+
+    await waitUntil(() => stopSpy.callCount === 1);
+
     assert.strictEqual(
       sound.audioElement.src,
       null,
-      'audio src attribute is not set',
+      'audio src attribute is not set once the grace period expires',
     );
     assert.ok(loadSpy.callCount > 0, 'load was called');
-    assert.strictEqual(stopSpy.callCount, 1, 'stop was called');
+  });
+
+  test('Replaying a stream inside the grace period rejoins it instead of reconnecting', async function (assert) {
+    stereo.useSharedAudioAccess = true;
+
+    let sharedAudioAccess = new SharedAudioAccess().unlock();
+
+    let { sound } = await stereo.load('/good/stream/stream.aac', {
+      sharedAudioAccess,
+      streamPauseGraceMs: 10000,
+    });
+
+    await sound.play();
+    let loadSpy = sinon.spy(
+      sound.sharedAudioAccess.requestControl(sound),
+      'load',
+    );
+
+    sound.pause();
+    await sound.play();
+
+    assert.strictEqual(
+      loadSpy.callCount,
+      0,
+      'the element was not reloaded — the open connection was reused',
+    );
+    assert.equalUrls(
+      sound.audioElement.src,
+      '/good/stream/stream.aac',
+      'audio src attribute is still set',
+    );
   });
 
   test("Don't fire audio-played events on position changes", async function (assert) {

@@ -31,6 +31,11 @@ export default class Strategizer {
     if (this.options.startPosition != null) {
       passthroughOptions.startPosition = this.options.startPosition;
     }
+    // How long a paused stream holds its connection open. The app's call, not
+    // ours. See NativeAudio#streamPauseGraceMs.
+    if (this.options.streamPauseGraceMs != null) {
+      passthroughOptions.streamPauseGraceMs = this.options.streamPauseGraceMs;
+    }
     let strategyOptions = {
       metadata: this.options.metadata,
       sharedAudioAccess: this.useSharedAudioAccess
