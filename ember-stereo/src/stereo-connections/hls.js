@@ -90,6 +90,15 @@ export default class HLSSound extends BaseSound {
         startFragPrefetch: true,
       };
 
+      // Where this sound should begin, in seconds. Deliberately kept OUT of the
+      // hls.js config and applied once, below: `config.startPosition` is a
+      // standing value that hls.js re-consults every time it recomputes a start
+      // position, including after the stopLoad/startLoad a pause triggers, and
+      // on every reload of a live playlist, which drags playback back to it
+      // (or to the start of the available window, if it has since slid past).
+      let { startPosition, ...connectionOptions } = this.options || {};
+      let startsAtPosition = typeof startPosition === 'number';
+
       if (this.options?.xhr) {
         options.xhrSetup = (xhr, url) => {
           if (this.url !== url && this.options.xhr?.manifestOnly) {
@@ -118,8 +127,15 @@ export default class HLSSound extends BaseSound {
           this.video.removeAttribute('src');
         }
 
-        let hls = new HLS({ ...options, ...(this.options || {}) });
+        // Driving the load ourselves: hls.js only honours startLoad(position)
+        // when it isn't already loading from wherever it chose.
+        if (startsAtPosition) {
+          options.autoStartLoad = false;
+        }
+
+        let hls = new HLS({ ...options, ...connectionOptions });
         this.hls = hls;
+        this.startPosition = startsAtPosition ? startPosition : null;
 
         let video = document.createElement('video');
         video.setAttribute('crossorigin', 'anonymous');
@@ -155,6 +171,14 @@ export default class HLSSound extends BaseSound {
     instance.on(HLS.Events.MEDIA_ATTACHED, () => {
       this.debug('media attached, loading source');
       instance.loadSource(this.url);
+
+      // One shot: from here on the loader resumes from wherever playback
+      // actually is, so a pause can't drag it back to where we started.
+      if (this.startPosition != null) {
+        this.debug(`starting load at ${this.startPosition}s`);
+        instance.startLoad(this.startPosition);
+        this.startPosition = null;
+      }
     });
 
     instance.on(HLS.Events.MANIFEST_PARSED, (e, data) => {
@@ -447,10 +471,16 @@ export default class HLSSound extends BaseSound {
   }
 
   _setPosition(position) {
-    this._setVideoCurrentTime(position / 1000);
-    if (!this.isPlaying) {
-      this.hls.startLoad();
+    let seconds = position / 1000;
+
+    // Restart the loader AT the target, so the first fragment it fetches is the
+    // one we need.
+    if (this.loadStopped || !this.isPlaying) {
+      this.hls.startLoad(seconds);
+      this.loadStopped = false;
     }
+
+    this._setVideoCurrentTime(seconds);
 
     return position;
   }
