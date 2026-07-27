@@ -463,7 +463,17 @@ export default class HLSSound extends BaseSound {
   }
 
   _audioDuration() {
-    return this.video.duration * 1000;
+    let duration = this.video.duration * 1000;
+    if (Number.isFinite(duration)) {
+      return duration;
+    }
+
+    // No #EXT-X-ENDLIST means an infinite reported duration, but what's recorded
+    // so far is a real timeline, the one a rewound listener is moving through.
+    let seekable = this.video.seekable;
+    return seekable?.length
+      ? seekable.end(seekable.length - 1) * 1000
+      : duration;
   }
 
   _currentPosition() {
