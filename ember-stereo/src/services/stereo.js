@@ -37,6 +37,7 @@ import NativeAudioCasting from '../stereo-connections/native-audio-casting';
 import Chromecast from '../stereo-connections/chromecast';
 import { loadCastSdk } from '../-private/utils/cast-sdk-loader';
 import hasEqualUrls from '../-private/utils/has-equal-urls';
+import normalizeIdentifier from '../-private/utils/normalize-identifier';
 import { EVENT_MAP, SERVICE_EVENT_MAP } from '../-private/utils/event-map';
 
 export { EVENT_MAP, SERVICE_EVENT_MAP };
@@ -45,6 +46,17 @@ const DEFAULT_CONNECTIONS = [
   { name: 'NativeAudio' },
   { name: 'Howler' },
   { name: 'HLS' },
+];
+
+const MEDIA_SESSION_ACTIONS = [
+  'play',
+  'pause',
+  'stop',
+  'seekbackward',
+  'seekforward',
+  'seekto',
+  'previoustrack',
+  'nexttrack',
 ];
 
 /**
@@ -1557,6 +1569,7 @@ export default class Stereo extends Service.extend(EmberEvented) {
       sound._setVolume(this.volume);
       debug('ember-stereo:service')(`setting current sound -> ${sound.url}`);
     } else {
+      this._clearNowPlaying();
       debug('ember-stereo:service')(`setting current sound -> null`);
     }
 
@@ -1755,12 +1768,18 @@ export default class Stereo extends Service.extend(EmberEvented) {
     this._relayEvent('audio-paused', info);
   }
   _relayEndedEvent(info) {
+    this._updateNowPlaying(this.currentSound);
     this._relayEvent('audio-ended', info);
   }
   _relayDurationChangedEvent(info) {
+    // The OS scrubber can't be drawn without a duration, which usually arrives
+    // after playback starts. Throttled: a live playlist re-reports it constantly.
+    this._updatePositionStateThrottled();
     this._relayEvent('audio-duration-changed', info);
   }
   _relayPositionChangedEvent(info) {
+    // Keeps the OS scrubber moving with playback, not just at play/pause.
+    this._updatePositionStateThrottled();
     this._relayEvent('audio-position-changed', info);
   }
   _relayLoadedEvent(info) {
@@ -1817,52 +1836,225 @@ export default class Stereo extends Service.extend(EmberEvented) {
         album,
       };
 
+      let current = navigator.mediaSession.metadata;
+
       if (makeArray(artwork).length > 0 && artwork[0]?.src) {
         mediaAttributes.artwork = makeArray(artwork);
+      } else if (current?.artwork?.length) {
+        // MediaMetadata defaults a missing artwork to empty, so leaving it off
+        // strips the art rather than keeping it.
+        mediaAttributes.artwork = current.artwork;
       }
 
-      navigator.mediaSession.metadata = new MediaMetadata(mediaAttributes);
+      // An update with nothing to say must not wipe the card the OS is showing:
+      // metadata is re-derived from scratch every time, so a moment where the
+      // app can't name what's playing would otherwise blank the lock screen
+      // mid-playback. Better stale than empty.
+      if (title || artist || album || !current) {
+        navigator.mediaSession.metadata = new MediaMetadata(mediaAttributes);
+      }
 
-      navigator.mediaSession.setActionHandler('play', () => {
-        if (!sound.isPlaying) {
-          sound.play();
+      this._updatePositionState(sound);
+
+      let actions = this._mediaSessionActionsFor(sound);
+
+      // A handler is what makes the OS draw the button: say nothing for the
+      // library default, pass one to override, pass null to drop the control.
+      let handlerFor = (action, fallback, argument = (info) => info) => {
+        if (!(action in actions)) {
+          return fallback;
         }
-      });
-      navigator.mediaSession.setActionHandler('pause', () => {
-        if (sound.isPlaying) {
-          sound.pause();
-        }
-      });
-      navigator.mediaSession.setActionHandler('stop', () => {
-        sound.stop();
-      });
-      navigator.mediaSession.setActionHandler('seekbackward', (seekInfo) => {
-        if (sound.isRewindable) {
-          let offset = (seekInfo?.seekOffset || 15) * 1000;
-          sound.rewind(offset);
-        }
-      });
-      navigator.mediaSession.setActionHandler('seekforward', (seekInfo) => {
-        if (sound.isFastForwardable) {
-          let offset = (seekInfo?.seekOffset || 15) * 1000;
-          sound.fastForward(offset);
-        }
-      });
-      navigator.mediaSession.setActionHandler('seekto', (seekInfo) => {
-        if (sound.isSeekable) {
-          sound.position = seekInfo.seekTime * 1000;
-        }
-      });
-      // navigator.mediaSession.setActionHandler('previoustrack', () => {
-      //   /* Code excerpted. */
-      // });
-      // navigator.mediaSession.setActionHandler('nexttrack', () => {
-      //   /* Code excerpted. */
-      // });
-      // navigator.mediaSession.setActionHandler('skipad', () => {
-      //   /* Code excerpted. */
-      // });
+
+        let override = actions[action];
+        return override ? (info) => override(argument(info)) : null;
+      };
+
+      let seekOffsetMs = (seekInfo) => (seekInfo?.seekOffset || 15) * 1000;
+      let seekToMs = (seekInfo) => seekInfo.seekTime * 1000;
+
+      navigator.mediaSession.setActionHandler(
+        'play',
+        handlerFor('play', () => {
+          if (!sound.isPlaying) {
+            sound.play();
+          }
+        })
+      );
+      navigator.mediaSession.setActionHandler(
+        'pause',
+        handlerFor('pause', () => {
+          if (sound.isPlaying) {
+            sound.pause();
+          }
+        })
+      );
+      navigator.mediaSession.setActionHandler(
+        'stop',
+        handlerFor('stop', () => sound.stop())
+      );
+      navigator.mediaSession.setActionHandler(
+        'seekbackward',
+        handlerFor(
+          'seekbackward',
+          (seekInfo) => {
+            if (sound.isRewindable) {
+              sound.rewind(seekOffsetMs(seekInfo));
+            }
+          },
+          seekOffsetMs
+        )
+      );
+      navigator.mediaSession.setActionHandler(
+        'seekforward',
+        handlerFor(
+          'seekforward',
+          (seekInfo) => {
+            if (sound.isFastForwardable) {
+              sound.fastForward(seekOffsetMs(seekInfo));
+            }
+          },
+          seekOffsetMs
+        )
+      );
+      navigator.mediaSession.setActionHandler(
+        'seekto',
+        handlerFor(
+          'seekto',
+          (seekInfo) => {
+            if (sound.isSeekable) {
+              sound.position = seekToMs(seekInfo);
+            }
+          },
+          seekToMs
+        )
+      );
+      // A sound has no idea what the next track is; offered only if the app does.
+      navigator.mediaSession.setActionHandler(
+        'previoustrack',
+        handlerFor('previoustrack', null)
+      );
+      navigator.mediaSession.setActionHandler(
+        'nexttrack',
+        handlerFor('nexttrack', null)
+      );
     }
+  }
+
+  // Position arrives every ~50ms; the OS extrapolates between updates, and no
+  // lock screen renders finer than a second.
+  _positionStateUpdatedAt = 0;
+  static POSITION_STATE_INTERVAL_MS = 1000;
+
+  // Per-sound control overrides, keyed by normalized identifier, for apps that
+  // know more than the media does, like seeking back on a live broadcast.
+  _mediaSessionActions = new Map();
+
+  registerMediaSessionActions(identifier, actions) {
+    this._mediaSessionActions.set(normalizeIdentifier(identifier), actions);
+  }
+
+  unregisterMediaSessionActions(identifier) {
+    this._mediaSessionActions.delete(normalizeIdentifier(identifier));
+  }
+
+  _mediaSessionActionsFor(sound) {
+    let identifier = sound?.identifier ?? sound?.url;
+    if (!identifier) {
+      return {};
+    }
+    return this._mediaSessionActions.get(normalizeIdentifier(identifier)) ?? {};
+  }
+
+  // Hands the controls back: the registered handlers close over a gone sound.
+  _clearNowPlaying() {
+    if (typeof navigator === 'undefined' || !('mediaSession' in navigator)) {
+      return;
+    }
+
+    navigator.mediaSession.playbackState = 'none';
+    navigator.mediaSession.metadata = null;
+
+    try {
+      navigator.mediaSession.setPositionState();
+    } catch (e) {
+      // nothing to clear
+    }
+
+    MEDIA_SESSION_ACTIONS.forEach((action) => {
+      try {
+        navigator.mediaSession.setActionHandler(action, null);
+      } catch (e) {
+        // this platform doesn't offer the action
+      }
+    });
+  }
+
+  /**
+   * The OS scrubber: length, position, rate. Without it the lock screen shows
+   * transport buttons but no timeline, and can't offer scrubbing.
+   *
+   * @method _updatePositionState
+   * @param {Object} sound
+   * @private
+   */
+
+  _updatePositionState(sound) {
+    if (
+      !sound ||
+      sound.isDestroyed ||
+      typeof navigator === 'undefined' ||
+      !('mediaSession' in navigator) ||
+      typeof navigator.mediaSession.setPositionState !== 'function'
+    ) {
+      return;
+    }
+
+    // An app can describe a timeline the media lacks, like a live broadcast's
+    // airing window. Supplying one also asserts there's something to scrub.
+    let timeline = sound.metadata?.timeline;
+    let duration = timeline ? timeline.duration : sound.duration;
+
+    // Otherwise isSeekable is the connection's own answer. The numeric check is
+    // setPositionState's contract, not a second opinion about seekability.
+    if (
+      (!timeline && !sound.isSeekable) ||
+      !Number.isFinite(duration) ||
+      duration <= 0
+    ) {
+      try {
+        navigator.mediaSession.setPositionState();
+      } catch (e) {
+        // nothing to clear
+      }
+      return;
+    }
+
+    let reported = timeline ? timeline.position : sound.position;
+    let position = Number.isFinite(reported) ? reported : 0;
+    this._positionStateUpdatedAt = Date.now();
+
+    try {
+      navigator.mediaSession.setPositionState({
+        duration: duration / 1000,
+        position: Math.min(Math.max(position, 0), duration) / 1000,
+        playbackRate: this.playbackSpeed || 1,
+      });
+    } catch (e) {
+      // Browsers throw on a position past the duration, which a sound that's
+      // mid-seek can briefly report. The next update corrects it.
+      debug('ember-stereo:service')(`could not set position state`, e);
+    }
+  }
+
+  _updatePositionStateThrottled() {
+    if (
+      Date.now() - this._positionStateUpdatedAt <
+      Stereo.POSITION_STATE_INTERVAL_MS
+    ) {
+      return;
+    }
+
+    this._updatePositionState(this.currentSound);
   }
 
   /**
