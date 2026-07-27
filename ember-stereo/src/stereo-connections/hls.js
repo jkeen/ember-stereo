@@ -452,7 +452,16 @@ export default class HLSSound extends BaseSound {
   }
 
   _audioDuration() {
-    return this.video.duration * 1000;
+    let duration = this.video.duration * 1000;
+    if (Number.isFinite(duration)) {
+      return duration;
+    }
+
+    // A playlist with no #EXT-X-ENDLIST reports Infinity; the seekable range is the real recorded timeline.
+    let seekable = this.video.seekable;
+    return seekable?.length
+      ? seekable.end(seekable.length - 1) * 1000
+      : duration;
   }
 
   _currentPosition() {
