@@ -8,7 +8,7 @@ import Evented from '../-private/utils/evented';
 import hasEqualUrls from '../-private/utils/has-equal-urls';
 import { getOwner } from '@ember/application';
 import { registerDestructor } from '@ember/destroyable';
-import { task, animationFrame, timeout, didCancel } from 'ember-concurrency';
+import { task, timeout, didCancel } from 'ember-concurrency';
 import { macroCondition, isTesting } from '@embroider/macros';
 
 /**
@@ -322,8 +322,13 @@ export default class Sound extends Evented {
 
   updatePositionTask = task({ maxConcurrency: 1, drop: true }, async () => {
     while (this.isPlaying) {
-      await animationFrame();
-      await timeout(50);
+      // Never use an animation frame here! rAF stops on a backgrounded tab or a locked
+      // screen, and `position` returns what this loop caches, so the scrubber, the media card,
+      // and track selection freeze until the page wakes. Timeout is the way.
+
+      // Backed off while hidden: nothing is painting, so the only cost of the
+      // finer rate is re-rendering everything bound to position.
+      await timeout(document.hidden ? 250 : 50);
 
       let previousPosition = this._position;
       let currentPosition = this._currentPosition();
