@@ -8,7 +8,7 @@ import Evented from '../-private/utils/evented';
 import hasEqualUrls from '../-private/utils/has-equal-urls';
 import { getOwner } from '@ember/application';
 import { registerDestructor } from '@ember/destroyable';
-import { task, animationFrame, timeout, didCancel } from 'ember-concurrency';
+import { task, timeout, didCancel } from 'ember-concurrency';
 import { macroCondition, isTesting } from '@embroider/macros';
 
 /**
@@ -309,8 +309,9 @@ export default class Sound extends Evented {
 
   updatePositionTask = task({ maxConcurrency: 1, drop: true }, async () => {
     while (this.isPlaying) {
-      await animationFrame();
-      await timeout(50);
+      // rAF stops on a backgrounded tab or a locked screen, so position would freeze until the page wakes.
+
+      await timeout(document.hidden ? 250 : 50);
 
       let previousPosition = this._position;
       let currentPosition = this._currentPosition();

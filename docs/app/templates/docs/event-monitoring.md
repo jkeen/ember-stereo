@@ -43,7 +43,7 @@ Here's a long audio file, play around with it and see the events that are trigge
 - `audio-will-rewind` ({sound, currentPosition, newPosition}) - fired before rewinding a sound
 - `audio-will-fast-forward` ({sound, currentPosition, newPosition}) - fired before fast-forwarding a sound
 - `audio-position-will-change` ({sound, currentPosition, newPosition}) - fired before audio position change
-- `audio-position-changed` ({sound})
+- `audio-position-changed` ({sound}) - the playing sound's position moved. Polled about every 50ms while the page is visible, and every 250ms while it's hidden, since nothing is painting then. It fires only when the position actually changes, so a paused or stalled sound is quiet.
 
 ### Stereo service-only events
 
