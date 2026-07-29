@@ -128,7 +128,7 @@ export default class NativeAudio extends BaseSound {
         break;
       case 'onloadedmetadata':
         this._onAudioDurationChanged();
-        this.duration = this._audioDuration();
+        this.duration = this._resolveDuration();
         break;
       case 'playing':
         this._onAudioPlayed();
@@ -145,7 +145,7 @@ export default class NativeAudio extends BaseSound {
         break;
       case 'durationchange':
         this._onAudioDurationChanged();
-        this.duration = this._audioDuration();
+        this.duration = this._resolveDuration();
         break;
       case 'ended':
         this._onAudioEnded();
@@ -265,7 +265,7 @@ export default class NativeAudio extends BaseSound {
   _onAudioDurationChanged() {
     this.trigger('audio-duration-changed', {
       sound: this,
-      duration: this._audioDuration(),
+      duration: this._resolveDuration(),
     });
   }
 
@@ -371,7 +371,8 @@ export default class NativeAudio extends BaseSound {
       // this is a bug in Opera and was reported on 5/25/2017
 
       // ...except a recording still being written grows the same way, and it
-      // can be seeked back to its own beginning. A live stream can't.
+      // can be seeked back to its own beginning. A live stream can't, unless
+      // it's a relay that offers one anyway (see BaseSound#declaredDuration).
       let recorded = this._recordedDuration() ?? this._lastRecordedDuration;
       return recorded ?? Infinity;
     }
