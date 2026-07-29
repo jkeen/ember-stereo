@@ -136,10 +136,7 @@ export default class NativeAudio extends BaseSound {
       case 'waiting':
         this._onAudioWaiting();
         break;
-      // the emptied event is triggered by our more reliable stream pause method
-      case 'emptied':
-        this._onAudioEmptied();
-        break;
+      // 'emptied' is deliberately not treated as a pause: loadAudio and retry empty the element on the way into playing, and #stop reports its own.
       case 'pause':
         this._onAudioPaused();
         break;
@@ -323,10 +320,6 @@ export default class NativeAudio extends BaseSound {
         event: error,
       });
     }
-  }
-
-  _onAudioEmptied() {
-    this.trigger('audio-paused', { sound: this });
   }
 
   _onAudioPaused() {
@@ -596,9 +589,11 @@ export default class NativeAudio extends BaseSound {
 
     // calling pause halts playback but does not stop downloading streaming
     // media. this is the method recommended by MDN: https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/Using_HTML5_audio_and_video#Stopping_the_download_of_media
-    // NOTE: this fires an `'emptied'` event, which we treat the same way as `'pause'`
     audio.removeAttribute('src');
     audio.load();
+
+    // load() discards the pause event audio.pause() just queued.
+    this._onAudioPaused();
   }
 
   loadAudio(audio) {
