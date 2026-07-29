@@ -14,7 +14,6 @@ import { cancel, later, next } from '@ember/runloop';
 import { isTesting, macroCondition } from '@embroider/macros';
 import canAutoplay from 'can-autoplay';
 import debug from 'debug';
-import config from 'ember-get-config';
 
 import EmberEvented from '@ember/object/evented';
 import ErrorCache from '../-private/utils/error-cache';
@@ -712,8 +711,10 @@ export default class Stereo extends Service.extend(EmberEvented) {
   /* -------------------------------------------------------------------------- */
   /* -------------------------------------------------------------------------- */
 
+  config = getOwner(this).resolveRegistration('config:environment');
+
   get systemStereoOptions() {
-    return config?.emberStereo;
+    return this.config?.emberStereo;
   }
 
   _buildStrategies(urlsToTry, options) {

@@ -354,9 +354,6 @@ importers:
       ember-gesture-modifiers:
         specifier: ^5.0.0
         version: 5.0.1(@babel/core@7.28.5)(ember-source@5.4.1(@babel/core@7.28.5)(@glimmer/component@1.1.2(@babel/core@7.28.5))(rsvp@4.8.5)(webpack@5.104.1))(webpack@5.104.1)
-      ember-get-config:
-        specifier: ^2.0
-        version: 2.1.1
       ember-modifier:
         specifier: ^4.1.0
         version: 4.2.2(@babel/core@7.28.5)
@@ -17190,7 +17187,6 @@ snapshots:
       ember-cli-htmlbars: 6.3.0
       ember-concurrency: 4.0.6(@babel/core@7.28.5)
       ember-gesture-modifiers: 5.0.1(@babel/core@7.28.5)(ember-source@5.4.1(@babel/core@7.28.5)(@glimmer/component@1.1.2(@babel/core@7.28.5))(rsvp@4.8.5)(webpack@5.103.0))(webpack@5.103.0)
-      ember-get-config: 2.1.1
       ember-modifier: 4.2.2(@babel/core@7.28.5)
       ember-sinon: 5.0.0
       hls.js: 1.6.15
@@ -17218,7 +17214,6 @@ snapshots:
       ember-cli-htmlbars: 6.3.0
       ember-concurrency: 4.0.6(@babel/core@7.28.5)
       ember-gesture-modifiers: 5.0.1(@babel/core@7.28.5)(ember-source@5.4.1(@babel/core@7.28.5)(@glimmer/component@1.1.2(@babel/core@7.28.5))(rsvp@4.8.5)(webpack@5.103.0))(webpack@5.103.0)
-      ember-get-config: 2.1.1
       ember-modifier: 4.2.2(@babel/core@7.28.5)
       ember-sinon: 5.0.0
       hls.js: 1.6.15
