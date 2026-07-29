@@ -25,6 +25,10 @@ const AUDIO_EVENTS = [
   'timeupdate',
 ];
 
+// Seconds from zero a seekable window may start and still count as reaching the
+// beginning of the media.
+const SEEKABLE_START_TOLERANCE = 1;
+
 // Ready state values
 // const HAVE_NOTHING = 0;
 // const HAVE_METADATA = 1;
@@ -376,9 +380,35 @@ export default class NativeAudio extends BaseSound {
       // assume it's a stream, and set duration to infinity as it should be
       // this is a bug in Opera and was reported on 5/25/2017
 
-      return Infinity;
+      // ...except a recording still being written grows the same way, and it
+      // can be seeked back to its own beginning. A live stream can't.
+      let recorded = this._recordedDuration() ?? this._lastRecordedDuration;
+      return recorded ?? Infinity;
     }
     return audio.duration * 1000;
+  }
+
+  // An element not holding this sound's media measures nothing at all, and that
+  // silence is not evidence of a live stream.
+  _lastRecordedDuration = null;
+
+  // Milliseconds recorded so far, or null when the seekable window doesn't
+  // reach the beginning of the media.
+  _recordedDuration() {
+    let seekable = this.audioElement?.seekable;
+    if (!seekable?.length) {
+      return null;
+    }
+
+    let start = seekable.start(0);
+    let end = seekable.end(seekable.length - 1);
+
+    if (start > SEEKABLE_START_TOLERANCE || !Number.isFinite(end) || end <= 0) {
+      return null;
+    }
+
+    this._lastRecordedDuration = end * 1000;
+    return this._lastRecordedDuration;
   }
 
   _currentPosition() {
