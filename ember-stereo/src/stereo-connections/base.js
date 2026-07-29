@@ -238,6 +238,23 @@ export default class Sound extends Evented {
   }
 
   /**
+   * The duration the app passed in the load options, in ms. `Infinity` says
+   * live. Overrides measurement, which can't always get there.
+   *
+   * @property declaredDuration
+   * @type {Number}
+   * @readOnly
+   * @private
+   */
+  get declaredDuration() {
+    return this.options?.duration;
+  }
+
+  _resolveDuration() {
+    return this.declaredDuration ?? this._audioDuration();
+  }
+
+  /**
    * is the sound a stream?
    * @property isStream
    * @type {Boolean}
@@ -449,7 +466,7 @@ export default class Sound extends Evented {
 
     this.on('audio-ready', () => {
       this.isReady = true;
-      this.duration = this._audioDuration();
+      this.duration = this._resolveDuration();
       if (audioReady) {
         audioReady(this);
       }
@@ -496,7 +513,7 @@ export default class Sound extends Evented {
     });
 
     this.on('audio-duration-changed', () => {
-      this.duration = this._audioDuration();
+      this.duration = this._resolveDuration();
     });
 
     this.on('audio-blocked', () => {

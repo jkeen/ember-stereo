@@ -36,6 +36,10 @@ export default class Strategizer {
     if (this.options.streamPauseGraceMs != null) {
       passthroughOptions.streamPauseGraceMs = this.options.streamPauseGraceMs;
     }
+    // See BaseSound#declaredDuration.
+    if (this.options.duration != null) {
+      passthroughOptions.duration = this.options.duration;
+    }
     let strategyOptions = {
       metadata: this.options.metadata,
       sharedAudioAccess: this.useSharedAudioAccess
