@@ -42,25 +42,21 @@ export default class SharedAudioAccess {
     return this;
   }
 
+  // Only a different sound is a handoff. Re-taking an element you already hold
+  // would run your own releaseControl, which reports a pause.
   requestControl(who) {
     let owner = this.owner;
 
-    if (owner !== who && owner) {
+    if (owner && owner !== who) {
       who.debug('[shared-audio-access] I need audio control');
       this.debug('coordinating peaceful transfer of power');
-    }
 
-    if (owner) {
       owner.releaseControl();
-      if (owner !== who && owner) {
-        owner.debug("[shared-audio-access] I've released audio control");
-      }
+      owner.debug("[shared-audio-access] I've released audio control");
+      who.debug('[shared-audio-access] I have control now');
     }
 
     this.owner = who;
-    if (owner !== who) {
-      who.debug('[shared-audio-access] I have control now');
-    }
     return this.audioElement;
   }
 
