@@ -1759,16 +1759,26 @@ export default class Stereo extends Service.extend(EmberEvented) {
 
   // Named functions so Ember Evented can successfully register/unregister them
 
+  // The event names the transition, rather than _updateNowPlaying reading it
+  // back off the sound where the next event can beat it to the write. A sound
+  // that's been replaced still pauses on its way out; ignore it, or the card
+  // reads paused while its replacement plays.
+  _relayStateChange(info, playbackState) {
+    if (info?.sound && info.sound !== this.currentSound) {
+      return;
+    }
+    this._updateNowPlaying(this.currentSound, playbackState);
+  }
   _relayPlayedEvent(info) {
-    this._updateNowPlaying(this.currentSound);
+    this._relayStateChange(info, 'playing');
     this._relayEvent('audio-played', info);
   }
   _relayPausedEvent(info) {
-    this._updateNowPlaying(this.currentSound);
+    this._relayStateChange(info, 'paused');
     this._relayEvent('audio-paused', info);
   }
   _relayEndedEvent(info) {
-    this._updateNowPlaying(this.currentSound);
+    this._relayStateChange(info, 'paused');
     this._relayEvent('audio-ended', info);
   }
   _relayDurationChangedEvent(info) {
@@ -1812,7 +1822,7 @@ export default class Stereo extends Service.extend(EmberEvented) {
    * @private
 
    */
-  _updateNowPlaying(sound) {
+  _updateNowPlaying(sound, playbackState) {
     if (!sound) return;
     if (sound.isDestroyed) return;
 
@@ -1822,11 +1832,8 @@ export default class Stereo extends Service.extend(EmberEvented) {
       'mediaSession' in navigator &&
       'MediaMetadata' in window
     ) {
-      if (sound.isPlaying) {
-        navigator.mediaSession.playbackState = 'playing';
-      } else {
-        navigator.mediaSession.playbackState = 'paused';
-      }
+      navigator.mediaSession.playbackState =
+        playbackState ?? (sound.isPlaying ? 'playing' : 'paused');
 
       let { title, artist, album, artwork } = sound.metadata ?? {};
 
@@ -1861,12 +1868,17 @@ export default class Stereo extends Service.extend(EmberEvented) {
       // A handler is what makes the OS draw the button: say nothing for the
       // library default, pass one to override, pass null to drop the control.
       let handlerFor = (action, fallback, argument = (info) => info) => {
-        if (!(action in actions)) {
-          return fallback;
+        let declined = action in actions && !actions[action];
+        if (declined || (!fallback && !(action in actions))) {
+          return null;
         }
 
-        let override = actions[action];
-        return override ? (info) => override(argument(info)) : null;
+        // Looked up when pressed, not now: an app can register its overrides
+        // after the handlers are installed.
+        return (info) => {
+          let override = this._mediaSessionActionsFor(sound)[action];
+          return override ? override(argument(info)) : fallback?.(info);
+        };
       };
 
       let seekOffsetMs = (seekInfo) => (seekInfo?.seekOffset || 15) * 1000;
