@@ -414,7 +414,7 @@ export default class Stereo extends Service.extend(EmberEvented) {
   }
 
   loadTask = task(
-    { restartable: true, evented: true },
+    { restartable: true },
     async (urlsOrPromise, _options) => {
       // The Sound builds the full load options (via prepareLoadOptions); the
       // service keeps only what its own post-load handling reads.
@@ -562,7 +562,7 @@ export default class Stereo extends Service.extend(EmberEvented) {
    */
 
   playTask = task(
-    { restartable: true, evented: true },
+    { restartable: true },
     async (urlsOrPromise, options = {}) => {
       options = { metadata: {}, ...options };
 
