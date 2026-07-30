@@ -11,7 +11,7 @@
  *
  * @function DeadReckonClock
  * @param {Class} Base the connection class to extend
- * @returns {Class}
+ * @return {Class}
  */
 export default function DeadReckonClock(Base) {
   return class extends Base {

@@ -1,8 +1,8 @@
+@import url('https://fonts.googleapis.com/css?family=Montserrat:400,600');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-@import url('https://fonts.googleapis.com/css?family=Montserrat:400,600');
 
 html {
   --brand-primary: #00bcb8;
@@ -41,14 +41,12 @@ input[type='range'] {
 }
 
 input[type='range']::-webkit-slider-thumb,
-input[type='range']::-moz-slider-thumb,
-input[type='range']::slider-thumb {
+input[type='range']::-moz-slider-thumb {
   @apply w-6 h-5 appearance-none rounded-xl cursor-move-x;
 }
 
 input[type='range']::-webkit-range-track,
-input[type='range']::-moz-range-track,
-input[type='range']::range-track {
+input[type='range']::-moz-range-track {
   @apply h-2 rounded-lg cursor-pointer border-surface-2;
 
   /* background-color: var(--range-color); */
@@ -59,10 +57,6 @@ input[type='range']::-moz-range-progress {
 }
 
 input[type='range']::-webkit-range-progress {
-  @apply h-2 rounded-lg cursor-pointer bg-accent-0;
-}
-
-input[type='range']::range-progress {
   @apply h-2 rounded-lg cursor-pointer bg-accent-0;
 }
 

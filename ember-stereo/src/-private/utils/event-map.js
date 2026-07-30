@@ -1,9 +1,7 @@
-/**
+/*
  * The set of audio events that get relayed up the chain:
  * connection → Sound → stereo service. The `event` is the public event name;
  * the `handler` is the service method that re-triggers it at the service level.
- *
- * @private
  */
 export const EVENT_MAP = [
   { event: 'audio-played', handler: '_relayPlayedEvent' },
