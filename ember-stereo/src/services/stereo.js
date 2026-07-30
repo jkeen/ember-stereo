@@ -417,7 +417,7 @@ export default class Stereo extends Service.extend(EmberEvented) {
   }
 
   loadTask = task(
-    { restartable: true, evented: true },
+    { restartable: true },
     async (urlsOrPromise, _options) => {
       // The Sound prepares the full load options (incl. audio unlock); the
       // service only needs metadata/silenceErrors visibility for its own
@@ -574,7 +574,7 @@ export default class Stereo extends Service.extend(EmberEvented) {
    */
 
   playTask = task(
-    { restartable: true, evented: true },
+    { restartable: true },
     async (urlsOrPromise, options = {}) => {
       options = { metadata: {}, ...options };
 
