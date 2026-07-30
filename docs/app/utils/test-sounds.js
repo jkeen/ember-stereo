@@ -25,7 +25,7 @@ export const STREAM_WITHOUT_EXTENSION = {
 
 export const THE_CURRENT_STREAM = {
   title: 'The Current Live Stream (aac)',
-  url: 'https://current.stream.publicradio.org/kcmp.aac',
+  url: 'https://current.stream.publicradio.org/current.aac',
 };
 
 export const KOOP_STREAM = {
@@ -40,7 +40,7 @@ export const INVALID_STREAM = {
 
 export const OGG_FILE = {
   title: 'Test Sound (ogg)',
-  url: 'https://file-examples-com.github.io/uploads/2017/11/file_example_OOG_1MG.ogg',
+  url: 'https://upload.wikimedia.org/wikipedia/commons/c/c8/Example.ogg',
 };
 
 export const OGG_WITH_CORS = {
@@ -48,24 +48,29 @@ export const OGG_WITH_CORS = {
   url: 'https://filesamples.com/samples/audio/ogg/sample4.ogg',
 };
 
-export const KUT_STREAM = {
-  title: 'KUT (aac)',
-  url: 'https://kut.streamguys1.com/kut-web.aac',
+export const KEXP_STREAM = {
+  title: 'KEXP (aac)',
+  url: 'https://kexp-aacplus-64.streamguys1.com/kexp64.aac',
 };
 
-export const KUTX_STREAM = {
-  title: 'KUTX (aac)',
-  url: 'https://kut.streamguys1.com/kutx-free.aac',
+export const KLKT_STREAM = {
+  title: 'KLKT Live Stream (mp3)',
+  url: 'https://klkt.broadcasttool.stream/play',
 };
 
-export const HLS_LIVE_STREAM = {
-  title: 'KUTX Live Stream (hls)',
-  url: 'https://kut-hls.streamguys1.com/kutx/playlist.m3u8',
+export const WFMU_STREAM = {
+  title: 'WFMU (mp3, no extension)',
+  url: 'https://stream0.wfmu.org/freeform-128k',
 };
 
 export const HLS_FIXED_TEST = {
   title: 'HLS Fixed Test',
-  url: 'https://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8',
+  url: 'https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8',
+};
+
+export const HLS_BIPBOP = {
+  title: 'Apple BipBop (hls)',
+  url: 'https://devstreaming-cdn.apple.com/videos/streaming/examples/img_bipbop_adv_example_ts/master.m3u8',
 };
 
 export const KMART_SHOPPERS = {
@@ -74,19 +79,20 @@ export const KMART_SHOPPERS = {
 };
 
 let testSounds = [
-  KUT_STREAM,
+  KEXP_STREAM,
   KOOP_STREAM,
   THE_CURRENT_STREAM,
   OGG_WITH_CORS,
   KMART_SHOPPERS,
   OGG_FILE,
-  KUTX_STREAM,
+  KLKT_STREAM,
   WNYC_HLS_STREAM,
   WNYC_AAC_STREAM,
   MP3_ON_DEMAND_2,
   MP3_ON_DEMAND,
   HLS_FIXED_TEST,
-  HLS_LIVE_STREAM,
+  HLS_BIPBOP,
+  WFMU_STREAM,
   STREAM_WITHOUT_EXTENSION,
   INVALID_STREAM,
 ].map((sound) => {
@@ -103,23 +109,4 @@ let testSounds = [
   return sound;
 });
 
-// let testSoundObjects = testSounds.map(sound => {
-//   return {
-//     url: `${sound.url}`
-//   }
-// });
-
-// let testSoundPromises = testSounds.map(sound => {
-//   return new Promise((resolve) => {
-//     setTimeout(() => {
-//       console.log(`resolving promise: ${sound.url}`)
-//       resolve({url: `${sound.url}`})
-//     }, 2000)
-//   })
-// });
-
 export default testSounds;
-
-// export {
-//   testSounds, testSoundPromises, testSoundObjects
-// }
