@@ -3,13 +3,16 @@ description: Setup node and install dependencies using pnpm
 runs:
   using: 'composite'
   steps:
-    - uses: pnpm/action-setup@v4
-    - uses: actions/setup-node@v4
+    - uses: pnpm/action-setup@v6
+    - uses: actions/setup-node@v7
       with:
         cache: 'pnpm'
-    - name: 'Ensure latest npm'
+    - name: 'Ensure npm'
+      # Was npm@latest, but npm 12.0.0 ships a broken publish (its tarball omits
+      # the bundled sigstore that libnpmpublish requires for provenance, so OIDC
+      # trusted publishing crashes). Pin 11.x until a patched 12.x lands.
       shell: 'bash'
-      run: pnpm add -g npm@latest
+      run: pnpm add -g npm@11
     - name: 'Install dependencies'
       shell: 'bash'
       run: pnpm install

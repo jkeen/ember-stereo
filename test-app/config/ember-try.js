@@ -1,6 +1,5 @@
 'use strict';
 
-const getChannelURL = require('ember-source-channel-url');
 const { embroiderSafe, embroiderOptimized } = require('@embroider/test-setup');
 
 module.exports = async function () {
@@ -10,23 +9,7 @@ module.exports = async function () {
       embroiderSafe(),
       embroiderOptimized(),
       {
-        name: 'ember-lts-4.4',
-        npm: {
-          devDependencies: {
-            'ember-source': '~4.4.0',
-          },
-        },
-      },
-      {
-        name: 'ember-lts-4.8',
-        npm: {
-          devDependencies: {
-            'ember-source': '~4.8.0',
-          },
-        },
-      },
-      {
-        name: 'ember-4.12',
+        name: 'ember-lts-4.12',
         npm: {
           devDependencies: {
             'ember-source': '~4.12.0',
@@ -34,10 +17,26 @@ module.exports = async function () {
         },
       },
       {
+        name: 'ember-lts-5.12',
+        npm: {
+          devDependencies: {
+            'ember-source': '~5.12.0',
+          },
+        },
+      },
+      {
+        name: 'ember-lts-6.12',
+        npm: {
+          devDependencies: {
+            'ember-source': '~6.12.0',
+          },
+        },
+      },
+      {
         name: 'ember-release',
         npm: {
           devDependencies: {
-            'ember-source': await getChannelURL('release'),
+            'ember-source': 'latest',
           },
         },
       },
@@ -45,7 +44,7 @@ module.exports = async function () {
         name: 'ember-beta',
         npm: {
           devDependencies: {
-            'ember-source': await getChannelURL('beta'),
+            'ember-source': 'beta',
           },
         },
       },
@@ -53,30 +52,10 @@ module.exports = async function () {
         name: 'ember-canary',
         npm: {
           devDependencies: {
-            'ember-source': await getChannelURL('canary'),
+            'ember-source': 'alpha',
           },
         },
       },
-      {
-        name: 'ember-classic',
-        env: {
-          EMBER_OPTIONAL_FEATURES: JSON.stringify({
-            'application-template-wrapper': true,
-            'default-async-observers': false,
-            'template-only-glimmer-components': false,
-          }),
-        },
-        npm: {
-          devDependencies: {
-            'ember-source': '~3.28.0',
-          },
-          ember: {
-            edition: 'classic',
-          },
-        },
-      },
-      embroiderSafe(),
-      embroiderOptimized(),
     ],
   };
 };
