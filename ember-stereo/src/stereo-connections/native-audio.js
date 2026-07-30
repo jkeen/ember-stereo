@@ -193,6 +193,10 @@ export default class NativeAudio extends BaseSound {
       return;
     }
 
+    // The grace period holds a connection belonging to the element we're giving
+    // up. Firing later, it would stop whatever is playing on it by then.
+    this.stopStreamAfterGraceTask.cancelAll();
+
     // Send a pause event to ensure playback status is updated correctly.
     // If this doesn't happen, the audio can get stuck in a playing state,
     // even though it's not playing. https://github.com/jkeen/ember-stereo/issues/22
@@ -355,11 +359,12 @@ export default class NativeAudio extends BaseSound {
 
       let total = A(totals).reduce((a, b) => a + b, 0);
 
-      this.debug(`ms loaded: ${total * 1000}`);
-      this.debug(`duration: ${this._audioDuration()}`);
-      this.debug(`percent loaded = ${(total / audio.duration) * 100}`);
+      let percentLoaded = total / audio.duration;
+      this.debug(
+        `buffered ${Math.round(percentLoaded * 100)}% (${Math.round(total * 1000)}ms of ${Math.round(this._audioDuration())}ms)`
+      );
 
-      return { percentLoaded: total / audio.duration };
+      return { percentLoaded };
     } else {
       return 0;
     }
@@ -546,14 +551,19 @@ export default class NativeAudio extends BaseSound {
     audio.pause();
 
     if (!this.isStream) {
+      this.debug('paused a recording, so the element keeps its media');
       return;
     }
 
     let grace = this.streamPauseGraceMs;
 
     if (!grace) {
+      this.debug('no grace period, stopping the stream now');
       this.stop(); // we don't want the stream to continue loading while paused
-    } else if (grace !== Infinity) {
+    } else if (grace === Infinity) {
+      this.debug('holding this stream open until something stops it');
+    } else {
+      this.debug(`holding this stream open for ${grace}ms`);
       this.stopStreamAfterGraceTask.perform(grace).catch((e) => {
         if (!didCancel(e)) {
           console.error(e);
