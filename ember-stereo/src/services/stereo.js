@@ -13,7 +13,6 @@ import {
 } from 'ember-concurrency';
 import { cancel, later, next } from '@ember/runloop';
 import { isTesting, macroCondition } from '@embroider/macros';
-import canAutoplay from 'can-autoplay';
 import debug from 'debug';
 import { TrackedSet } from 'tracked-built-ins';
 
@@ -101,9 +100,13 @@ export default class Stereo extends Service.extend(EmberEvented) {
     setOwner(this.urlCache, owner);
     setOwner(this.soundEntityCache, owner);
 
+    // Only exists when the host app installs ember-cli-fastboot.
+    const fastboot = owner.lookup('service:fastboot');
+
     if (macroCondition(isTesting())) {
       // no checks for autoplay as it messes with the fake media element
-    } else {
+    } else if (!fastboot?.isFastBoot) {
+      // Both probes need a real DOM; the service still instantiates in FastBoot.
       this._determineAutoplayPermissions();
       this._detectCastingAvailabilityTask.perform().catch((e) => {
         if (!didCancel(e)) throw e;
@@ -627,10 +630,14 @@ export default class Stereo extends Service.extend(EmberEvented) {
   }
 
   _determineAutoplayPermissions() {
-    canAutoplay.audio().then(({ result }) => {
-      if (result) {
-        this.autoPlayAllowed = true;
-      }
+    // can-autoplay touches Blob/Audio at module scope, which crashes FastBoot's
+    // sandbox, so import it only once we're in a browser.
+    import('can-autoplay').then(({ default: canAutoplay }) => {
+      canAutoplay.audio().then(({ result }) => {
+        if (result) {
+          this.autoPlayAllowed = true;
+        }
+      });
     });
   }
 

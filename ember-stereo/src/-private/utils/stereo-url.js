@@ -1,10 +1,25 @@
 import { getMimeType } from './mime-types';
 import { tracked } from '@glimmer/tracking';
 import { isArray } from '@ember/array';
+
+// Resolve relative URLs the way an anchor element would (against the page URL), but without touching
+// the DOM so identifiers can be normalized in FastBoot, where `document` doesn't exist.
+
+// FastBoot's sandbox binds the global URL to node's `url` module, which shadows the WHATWG constructor
+// but re-exports it as URL.URL.
+const WhatwgURL = URL.URL ?? URL;
+
+function parseUrl(url) {
+  let base =
+    typeof document !== 'undefined' ? document.baseURI : 'http://localhost/';
+  return new WhatwgURL(url, base);
+}
+
 export default class StereoUrl {
   @tracked options = {};
+  parsed = null;
+
   constructor(input, options = {}) {
-    this.el = document.createElement('a');
     if (!input) {
       throw new Error("can't create URL without any input");
     }
@@ -17,9 +32,9 @@ export default class StereoUrl {
       this.input = input;
 
       if (input.url) {
-        this.el.href = input.url;
+        this.parsed = parseUrl(input.url);
       } else if (typeof input === 'string') {
-        this.el.href = input;
+        this.parsed = parseUrl(input);
       }
 
       if (input.mimeType) {
@@ -40,28 +55,28 @@ export default class StereoUrl {
 
   // this is the key used for comparisons
   get key() {
-    return `${this.el.origin}${this.el.pathname}`;
+    return `${this.parsed?.origin ?? ''}${this.parsed?.pathname ?? ''}`;
   }
 
   get href() {
-    return this.el.href;
+    return this.parsed?.href ?? '';
   }
   set href(u) {
-    this.el.href = u;
+    this.parsed = parseUrl(u);
   }
 
   get pathname() {
-    return this.el.pathname;
+    return this.parsed?.pathname ?? '';
   }
 
   get url() {
-    return this.el.href;
+    return this.parsed?.href ?? '';
   }
   set url(u) {
-    this.el.href = u;
+    this.parsed = parseUrl(u);
   }
 
   toString() {
-    return this.el.href;
+    return this.parsed?.href ?? '';
   }
 }
