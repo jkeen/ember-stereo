@@ -61,7 +61,7 @@
   },
   "pnpm": {
     "overrides": {
-      "ember-concurrency": "^4.0.6"
+      "ember-concurrency": "^5.2.0"
     },
     "patchedDependencies": {
       "ember-cli-addon-docs@9.0.0": "patches/ember-cli-addon-docs@9.0.0.patch"
