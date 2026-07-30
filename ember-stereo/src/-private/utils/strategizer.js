@@ -1,9 +1,8 @@
-import { tracked } from '@glimmer/tracking';
+import { tracked, cached } from '@glimmer/tracking';
 import Strategy from './strategy';
 import StereoUrl from './stereo-url';
 import { makeArray, A as emberArray } from '@ember/array';
 import { isEmpty } from '@ember/utils';
-import { cached } from 'tracked-toolbox';
 import { assert } from '@ember/debug';
 import { getOwner, setOwner } from '@ember/application';
 import debug from 'debug';

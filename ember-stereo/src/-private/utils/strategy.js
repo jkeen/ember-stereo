@@ -1,5 +1,4 @@
-import { tracked } from '@glimmer/tracking';
-import { cached } from 'tracked-toolbox';
+import { tracked, cached } from '@glimmer/tracking';
 import { setOwner, getOwner } from '@ember/application';
 
 export default class Strategy {
