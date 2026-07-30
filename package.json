@@ -23,7 +23,7 @@
   },
   "packageManager": "pnpm@10.17.0",
   "volta": {
-    "node": "20.19.0",
+    "node": "22.23.2",
     "yarn": "1.22.17",
     "npm": "7.22.0",
     "pnpm": "10.17.1"
@@ -64,12 +64,12 @@
       "ember-concurrency": "^5.2.0"
     },
     "patchedDependencies": {
-      "ember-cli-addon-docs@9.0.0": "patches/ember-cli-addon-docs@9.0.0.patch",
-      "ember-gesture-modifiers@5.0.1": "patches/ember-gesture-modifiers@5.0.1.patch"
+      "ember-gesture-modifiers@5.0.1": "patches/ember-gesture-modifiers@5.0.1.patch",
+      "ember-cli-addon-docs@11.0.0": "patches/ember-cli-addon-docs@11.0.0.patch"
     }
   },
   "engines": {
-    "node": ">= 20.19.0"
+    "node": ">= 22.21.1"
   },
   "homepage": "https://ember-stereo.com"
 }

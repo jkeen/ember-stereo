@@ -10,6 +10,13 @@ module.exports = function (defaults) {
     'ember-cli-addon-docs': {
       documentingAddonAt: '../ember-stereo/',
     },
+    // addon-docs 11 pre-renders every route through prember/FastBoot by
+    // default. The app boots in FastBoot fine, but pre-rendering hangs: some
+    // demo routes never settle into the render-complete state prember waits
+    // for. Ship the client-rendered SPA (same as addon-docs 9 always did).
+    prember: {
+      urls: [],
+    },
     sourcemaps: {
       enabled: true,
     },

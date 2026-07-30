@@ -1,0 +1,64 @@
+diff --git a/addon/components/docs-viewer/x-nav-item/index.js b/addon/components/docs-viewer/x-nav-item/index.js
+index 049a5143f5b295319fce0c9d455133d8ac936217..3e4046c093510725fcda71e59f958c176c3d1c79 100644
+--- a/addon/components/docs-viewer/x-nav-item/index.js
++++ b/addon/components/docs-viewer/x-nav-item/index.js
+@@ -13,13 +13,21 @@ export default class XNavItem extends Component {
+       return;
+     }
+ 
++    // Materialize the service while the owner is alive. In FastBoot the
++    // owner can be torn down before the scheduled callback below (or
++    // willDestroy) runs, and a first-time @service lookup then throws.
++    this._docsRoutes = this.docsRoutes;
++
+     next(() => {
+-      this.docsRoutes.items.addObject(this);
++      if (this.isDestroying || this.isDestroyed) {
++        return;
++      }
++      this._docsRoutes.items.addObject(this);
+     });
+   }
+ 
+   willDestroy() {
+     super.willDestroy(...arguments);
+-    this.docsRoutes.items.removeObject(this);
++    this._docsRoutes?.items.removeObject(this);
+   }
+ }
+diff --git a/lib/utils/find-and-replace-in-directory.js b/lib/utils/find-and-replace-in-directory.js
+index ed067af87f7ea13c2752614b9a9c6ce56a88311d..b87f286d8431b6004a9d0019da085cb5cf4b0a42 100644
+--- a/lib/utils/find-and-replace-in-directory.js
++++ b/lib/utils/find-and-replace-in-directory.js
+@@ -38,7 +38,31 @@ function replaceDeployTokens(contents, addonDocsRootURL, encodedVersion) {
+   );
+ }
+ 
++// The rootURL/version placeholders only ever appear in text-based build output.
++// Reading a binary asset (mp3, ico, images, fonts, ...) as utf-8 and writing it
++// back replaces every non-utf-8 byte with U+FFFD, corrupting the file, so we
++// only process files with a known text extension.
++const TEXT_EXTENSIONS = new Set([
++  '.html',
++  '.htm',
++  '.js',
++  '.mjs',
++  '.cjs',
++  '.css',
++  '.json',
++  '.map',
++  '.svg',
++  '.txt',
++  '.xml',
++  '.webmanifest',
++]);
++
+ function processFile(filePath, addonDocsRootURL, encodedVersion) {
++  const extension = path.extname(filePath).toLowerCase();
++  if (!TEXT_EXTENSIONS.has(extension)) {
++    return;
++  }
++
+   const contents = fs.readFileSync(filePath, 'utf-8');
+   const updated = replaceDeployTokens(
+     contents,
