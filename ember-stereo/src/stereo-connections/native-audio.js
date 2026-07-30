@@ -1,9 +1,8 @@
-import { tracked } from '@glimmer/tracking';
+import { tracked, cached } from '@glimmer/tracking';
 import { A } from '@ember/array';
 import { run } from '@ember/runloop';
 import { isTesting, macroCondition } from '@embroider/macros';
 import { task, timeout, didCancel } from 'ember-concurrency';
-import { cached } from 'tracked-toolbox';
 import BaseSound from './base';
 // These are the events we're watching for
 const AUDIO_EVENTS = [
