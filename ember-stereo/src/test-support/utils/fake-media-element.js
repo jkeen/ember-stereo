@@ -144,8 +144,13 @@ export default class FakeMediaElement extends Evented {
     this.pause();
   }
 
+  // Mirrors HTMLMediaElement#seekable's TimeRanges shape; a live stream (infinite duration) reports an empty window.
   get seekable() {
-    return this.duration === Infinity;
+    if (!this.loaded || !Number.isFinite(this.duration)) {
+      return { length: 0, start: () => 0, end: () => 0 };
+    }
+
+    return { length: 1, start: () => 0, end: () => this.duration };
   }
 
   @tracked _currentTime = 0;
