@@ -48,8 +48,8 @@ importers:
         specifier: ^10.6.1
         version: 10.6.1(eslint@7.32.0)
       eslint-plugin-ember-concurrency:
-        specifier: ^0.3.1
-        version: 0.3.1(eslint@7.32.0)
+        specifier: ^0.5.1
+        version: 0.5.1(eslint@7.32.0)
       eslint-plugin-node:
         specifier: ^11.1.0
         version: 11.1.0(eslint@7.32.0)
@@ -5316,11 +5316,6 @@ packages:
     engines: {node: '>=8.3'}
     peerDependencies:
       eslint: ^7.31.0
-
-  eslint-plugin-ember-concurrency@0.3.1:
-    resolution: {integrity: sha512-ihhW9cTv4WU4j3a458gwVIsQQ3FdEJKgwBgNRvUC3pMJzSCqizpbMGO5KJihT2JLWaHtCuibvGaO1ZTJEwwBUQ==}
-    peerDependencies:
-      eslint: 6.* || 7.*
 
   eslint-plugin-ember-concurrency@0.5.1:
     resolution: {integrity: sha512-sQjDs/pZt2+882M15hnEdmcxh7LIObP9d8kt5yw5nKNR6tGF5SIBPx00Jji61KYISakFHzSgcZfgquK3dfY8xA==}
@@ -17723,10 +17718,6 @@ snapshots:
       ember-rfc176-data: 0.3.18
       eslint: 7.32.0
       snake-case: 3.0.4
-
-  eslint-plugin-ember-concurrency@0.3.1(eslint@7.32.0):
-    dependencies:
-      eslint: 7.32.0
 
   eslint-plugin-ember-concurrency@0.5.1(eslint@7.32.0):
     dependencies:
