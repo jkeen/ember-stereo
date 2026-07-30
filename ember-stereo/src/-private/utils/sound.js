@@ -166,6 +166,10 @@ export default class Sound extends Evented {
     if (options.castUrl != null) {
       this._castUrl = options.castUrl;
     } else if (this._castUrl != null) {
+    // Only a load attempt promotes into the loaded list; findSound alone is
+    // speculative — helpers probe urls constantly.
+    this.stereo?.loadedSounds?.add(this);
+
       options.castUrl = this._castUrl;
     }
 

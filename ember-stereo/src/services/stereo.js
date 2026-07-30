@@ -79,8 +79,9 @@ export default class Stereo extends Service.extend(EmberEvented) {
   @tracked metadataCache = new MetadataCache();
   @tracked urlCache = new UrlCache();
   soundEntityCache = new UntrackedObjectCache();
-  // Sounds that already have a current-sound transition loop running, so
-  // repeated (cache-hit) loads don't spawn duplicate loops.
+  // Only entities actually asked to load; the entity cache also fills with
+  // speculative findSound lookups.
+  loadedSounds = new TrackedSet();
   _soundsWithTransition = new WeakSet();
 
   constructor() {
@@ -1591,6 +1592,17 @@ export default class Stereo extends Service.extend(EmberEvented) {
    * @param {Array} identifier [..{Promise|String}]
    * @private
    * @return {Sound} A sound that's ready to be played, or an error
+  /**
+   * The Sound entities asked to load, newest last, including loading and
+   * errored ones.
+   *
+   * @property sounds
+   * @return {Array<Sound>}
+   */
+  get sounds() {
+    return [...this.loadedSounds];
+  }
+
    */
 
   removeSound(identifier) {
