@@ -9,6 +9,8 @@ const SEEK_SETTLE_WINDOW_MS = 4000;
 // Safari fires a spurious 'ended' after a fresh-src seek while AirPlaying; only honor 'ended' once the clock has reached the media's end.
 const END_TOLERANCE_MS = 1500;
 
+const HAVE_METADATA = 1;
+
 /**
  * NativeAudio that always drives the shared, route-holding outlet element, using the `SharedAudioAccess` handshake for single ownership of the AirPlay route. Never part of the normal strategy waterfall; the service force-injects it at the top of the strategy list only while casting.
  *
@@ -58,7 +60,7 @@ export default class NativeAudioCasting extends DeadReckonClock(NativeAudio) {
       this.debug(`casting: pointing outlet at ${this.url}`);
       element.src = this.url;
       element.load();
-    } else if (element.readyState >= 1 /* HAVE_METADATA */) {
+    } else if (element.readyState >= HAVE_METADATA) {
       this.debug('casting: outlet already loaded this url; not reloading');
       this._onAudioReady();
     }
@@ -67,7 +69,7 @@ export default class NativeAudioCasting extends DeadReckonClock(NativeAudio) {
   // A pre-load 0 must not be mistaken for a real position.
   _reportedPosition() {
     let element = this.audioElement;
-    if (!element || element.readyState < 1) {
+    if (!element || element.readyState < HAVE_METADATA) {
       return null;
     }
     return (element.currentTime || 0) * 1000;
@@ -141,7 +143,7 @@ export default class NativeAudioCasting extends DeadReckonClock(NativeAudio) {
       }
     };
 
-    if (element.readyState >= 1 /* HAVE_METADATA */) {
+    if (element.readyState >= HAVE_METADATA) {
       apply();
     } else {
       // At most one deferred seek may sit on the shared element, so teardown can remove it.

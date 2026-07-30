@@ -363,26 +363,17 @@ export default class NativeAudio extends BaseSound {
   _audioDuration() {
     let audio = this.audioElement;
     if (audio.duration > 172800000 || this.probablyAStream) {
-      // if audio is longer than 3 days in milliseconds,
-      // assume it's a stream, and set duration to infinity as it should be
-      // this is a bug in Opera and was reported on 5/25/2017
-
-      // ...except a recording still being written grows the same way, and it
-      // can be seeked back to its own beginning. A live stream can't, unless
-      // it's a relay that offers one anyway (see BaseSound#declaredDuration).
-      let recorded = this._recordedDuration() ?? this._lastRecordedDuration;
+      // A duration over 3 days means a stream (Opera reports huge finite durations instead of Infinity). But a recording still being written grows the same way, and unlike a live stream it seeks back to its own beginning.
+      let recorded = this._recordedDurationMs() ?? this._lastRecordedDurationMs;
       return recorded ?? Infinity;
     }
     return audio.duration * 1000;
   }
 
-  // An element not holding this sound's media measures nothing at all, and that
-  // silence is not evidence of a live stream.
-  _lastRecordedDuration = null;
+  // An element not holding this sound's media measures nothing; that silence is not evidence of a live stream.
+  _lastRecordedDurationMs = null;
 
-  // Milliseconds recorded so far, or null when the seekable window doesn't
-  // reach the beginning of the media.
-  _recordedDuration() {
+  _recordedDurationMs() {
     let seekable = this.audioElement?.seekable;
     if (!seekable?.length) {
       return null;
@@ -395,8 +386,8 @@ export default class NativeAudio extends BaseSound {
       return null;
     }
 
-    this._lastRecordedDuration = end * 1000;
-    return this._lastRecordedDuration;
+    this._lastRecordedDurationMs = end * 1000;
+    return this._lastRecordedDurationMs;
   }
 
   _currentPosition() {

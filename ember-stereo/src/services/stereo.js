@@ -46,6 +46,14 @@ const DEFAULT_CONNECTIONS = [
   { name: 'HLS' },
 ];
 
+const CASTING_TYPE = {
+  REMOTE_PLAYBACK_API: 'general',
+  WEBKIT_AIRPLAY: 'airplay',
+  CAST_SDK: 'chromecast',
+};
+
+const CAST_TARGET_SETTLE_MS = 1500;
+
 const MEDIA_SESSION_ACTIONS = [
   'play',
   'pause',
@@ -790,8 +798,10 @@ export default class Stereo extends Service.extend(EmberEvented) {
   get castIconName() {
     let kind =
       this._activeCastBackend ||
-      (this.castingTypes.has('chromecast') ? 'chromecast' : 'airplay');
-    return kind === 'chromecast' ? 'cast' : 'airplay';
+      (this.castingTypes.has(CASTING_TYPE.CAST_SDK)
+        ? CASTING_TYPE.CAST_SDK
+        : CASTING_TYPE.WEBKIT_AIRPLAY);
+    return kind === CASTING_TYPE.CAST_SDK ? 'cast' : 'airplay';
   }
 
   // Never torn down across airings — the AirPlay route lives on this element.
@@ -856,9 +866,9 @@ export default class Stereo extends Service.extend(EmberEvented) {
       if (element.remote && typeof element.remote.watchAvailability === 'function') {
         element.remote.watchAvailability((available) => {
           if (available) {
-            this.castingTypes.add('general');
+            this.castingTypes.add(CASTING_TYPE.REMOTE_PLAYBACK_API);
           } else {
-            this.castingTypes.delete('general');
+            this.castingTypes.delete(CASTING_TYPE.REMOTE_PLAYBACK_API);
           }
           this._triggerCastAvailabilityChanged();
         });
@@ -867,9 +877,9 @@ export default class Stereo extends Service.extend(EmberEvented) {
       if ('webkitShowPlaybackTargetPicker' in element) {
         this._onOutletAvailabilityChange = (event) => {
           if (event.availability === 'available') {
-            this.castingTypes.add('airplay');
+            this.castingTypes.add(CASTING_TYPE.WEBKIT_AIRPLAY);
           } else {
-            this.castingTypes.delete('airplay');
+            this.castingTypes.delete(CASTING_TYPE.WEBKIT_AIRPLAY);
           }
           this._triggerCastAvailabilityChanged();
         };
@@ -921,9 +931,9 @@ export default class Stereo extends Service.extend(EmberEvented) {
 
     let syncAvailability = () => {
       if (context.getCastState() !== CastState.NO_DEVICES_AVAILABLE) {
-        this.castingTypes.add('chromecast');
+        this.castingTypes.add(CASTING_TYPE.CAST_SDK);
       } else {
-        this.castingTypes.delete('chromecast');
+        this.castingTypes.delete(CASTING_TYPE.CAST_SDK);
       }
       this._triggerCastAvailabilityChanged();
     };
@@ -942,10 +952,7 @@ export default class Stereo extends Service.extend(EmberEvented) {
       sessionState === SessionState.SESSION_STARTED ||
       sessionState === SessionState.SESSION_RESUMED
     ) {
-      this._activeCastBackend = 'chromecast';
-      // Bind the shared access to this session's single player/controller — the
-      // analogue of the persistent AirPlay outlet element. The access now owns
-      // the session (`_castSession` reads back through it).
+      this._activeCastBackend = CASTING_TYPE.CAST_SDK;
       this._castAccess.attach(
         this._castContext.getCurrentSession(),
         window.cast.framework
@@ -995,9 +1002,8 @@ export default class Stereo extends Service.extend(EmberEvented) {
       return;
     }
 
-    // Chromecast: open the Cast device chooser; the session it starts drives
-    // engage via SESSION_STATE_CHANGED (no outlet element to prewarm).
-    if (this.castingTypes.has('chromecast') && this._castContext) {
+    // The session the chooser starts drives engage via SESSION_STATE_CHANGED.
+    if (this.castingTypes.has(CASTING_TYPE.CAST_SDK) && this._castContext) {
       this._castContext.requestSession().catch((error) => {
         debug('ember-stereo:service')(`cast requestSession error: ${error}`);
       });
@@ -1024,8 +1030,11 @@ export default class Stereo extends Service.extend(EmberEvented) {
    * @public
    */
   stopCasting() {
-    // Chromecast: end the session directly → SESSION_ENDED drives disengage.
-    if (this._activeCastBackend === 'chromecast' && this._castContext) {
+    // SESSION_ENDED drives the disengage.
+    if (
+      this._activeCastBackend === CASTING_TYPE.CAST_SDK &&
+      this._castContext
+    ) {
       this._castContext.endCurrentSession(true);
       return;
     }
@@ -1038,10 +1047,15 @@ export default class Stereo extends Service.extend(EmberEvented) {
     }
   }
 
-  // Point the outlet at the sound's cast URL if it isn't already there.
+  _castsWithoutOutletElement() {
+    return (
+      this.castingTypes.has(CASTING_TYPE.CAST_SDK) &&
+      !this.castingTypes.has(CASTING_TYPE.WEBKIT_AIRPLAY)
+    );
+  }
+
   _loadOutlet(identifier) {
-    // Chromecast has no outlet element; nothing to prewarm there.
-    if (this.castingTypes.has('chromecast') && !this.castingTypes.has('airplay')) {
+    if (this._castsWithoutOutletElement()) {
       return;
     }
     let sound = identifier ? this.findSound(identifier) : this.currentSound;
@@ -1071,7 +1085,7 @@ export default class Stereo extends Service.extend(EmberEvented) {
       `cast-target change: wireless=${isWireless} -> ${isWireless ? 'engage' : 'disengage'}`
     );
     if (isWireless) {
-      this._activeCastBackend = 'airplay';
+      this._activeCastBackend = CASTING_TYPE.WEBKIT_AIRPLAY;
       this.engageCastTask.perform().catch((e) => {
         if (!didCancel(e)) throw e;
       });
@@ -1102,7 +1116,7 @@ export default class Stereo extends Service.extend(EmberEvented) {
   // Holds suppression open until Safari's trailing route flap on the new src
   // passes; a further outlet change extends the window.
   _castTargetSettleTask = task({ restartable: true }, async () => {
-    await timeout(1500);
+    await timeout(CAST_TARGET_SETTLE_MS);
     this._suppressCastTargetChange = false;
     this._reconcileCastState();
   });
@@ -1114,10 +1128,9 @@ export default class Stereo extends Service.extend(EmberEvented) {
     if (!element || this._suppressCastTargetChange) {
       return;
     }
-    // This reconcile reads the AirPlay outlet element. Chromecast isn't
-    // element-based and has no route flap, so don't let it disengage an active
-    // Cast session by reading the (always-false) webkit flag.
-    if (this._activeCastBackend === 'chromecast') {
+    // Chromecast isn't element-based: the webkit flag is always false here and
+    // would disengage a live Cast session.
+    if (this._activeCastBackend === CASTING_TYPE.CAST_SDK) {
       return;
     }
     let actuallyCasting =
@@ -1129,7 +1142,7 @@ export default class Stereo extends Service.extend(EmberEvented) {
     );
 
     if (actuallyCasting && !this.isCasting) {
-      this._activeCastBackend = 'airplay';
+      this._activeCastBackend = CASTING_TYPE.WEBKIT_AIRPLAY;
       this.engageCastTask.perform().catch((e) => {
         if (!didCancel(e)) throw e;
       });
@@ -1150,16 +1163,11 @@ export default class Stereo extends Service.extend(EmberEvented) {
       `engaging cast -> ${sound?.castUrl ?? '(no current sound; route held, awaiting one)'}`
     );
     this.trigger('audio-cast-connecting', { sound });
-    // Only hand a LOCAL current sound to the device. engage is the initial
-    // local->device handoff; if the current sound is ALREADY a cast connection
-    // we're engaged — re-running engage (e.g. a spurious SESSION_RESUMED, or
-    // while a feed switch is mid-flight) would re-cast the wrong/previous feed,
-    // race the in-flight load on the one session, and pin currentSound to it.
-    if (sound?.castUrl && !this._isCastConnection(sound.value)) {
-      // Start the device at the current local position — but ONLY for seekable
-      // media. A live stream has no seekable timeline; handing the receiver a
-      // currentTime it can't reach makes it buffer forever (never plays). The
-      // swap still seeds the live clock so elapsed continues across the handoff.
+    // Re-engaging an already-cast sound (spurious SESSION_RESUMED, mid-flight
+    // feed switch) would re-cast the wrong feed.
+    if (this._isLocalSoundReadyToCast(sound)) {
+      // A live stream handed a currentTime it can't reach buffers forever on
+      // the receiver.
       let startTime = sound.isStream ? null : sound.position;
       let cast = this._buildCastConnection(
         sound.castUrl,
@@ -1187,10 +1195,9 @@ export default class Stereo extends Service.extend(EmberEvented) {
     this._activeCastBackend = null;
 
     if (sound && this._isCastConnection(sound.value)) {
-      if (backend === 'chromecast') {
-        // Chromecast: swap back to a fresh local connection. There's no blessed
-        // element / autoplay trap, and a user-initiated stop carries activation,
-        // so the local resume is allowed. The swap restores the play intent.
+      if (backend === CASTING_TYPE.CAST_SDK) {
+        // A user-initiated stop carries activation, so a fresh local
+        // connection is allowed to resume.
         let local = this._buildLocalConnection(sound);
         if (local) {
           await sound.swap(local);
@@ -1210,10 +1217,13 @@ export default class Stereo extends Service.extend(EmberEvented) {
     this.trigger('audio-cast-disconnected', { sound });
   });
 
-  // The label shown while casting. Chromecast exposes the device's friendly name;
-  // AirPlay/WebKit withholds it, so we fall back to the transport name.
+  _isLocalSoundReadyToCast(sound) {
+    return !!sound?.castUrl && !this._isCastConnection(sound.value);
+  }
+
+  // AirPlay/WebKit withholds the device name, so fall back to the transport.
   _castDeviceLabel() {
-    if (this._activeCastBackend === 'chromecast') {
+    if (this._activeCastBackend === CASTING_TYPE.CAST_SDK) {
       let device = this._castSession?.getCastDevice?.();
       return device?.friendlyName || 'Chromecast';
     }
@@ -1233,7 +1243,7 @@ export default class Stereo extends Service.extend(EmberEvented) {
   }
 
   _castStrategy(castUrl, metadata, startTime) {
-    if (this._activeCastBackend === 'chromecast') {
+    if (this._activeCastBackend === CASTING_TYPE.CAST_SDK) {
       return this._chromecastStrategy(castUrl, metadata, startTime);
     }
     return this._airplayStrategy(castUrl, metadata);
@@ -1284,7 +1294,8 @@ export default class Stereo extends Service.extend(EmberEvented) {
     return (
       this.isCasting &&
       castUrl != null &&
-      (this._activeCastBackend !== 'chromecast' || !!this._castAccess.session)
+      (this._activeCastBackend !== CASTING_TYPE.CAST_SDK ||
+        !!this._castAccess.session)
     );
   }
 
@@ -1292,7 +1303,7 @@ export default class Stereo extends Service.extend(EmberEvented) {
   // session, so its entity must re-resolve rather than count as still-cast.
   _isStaleCastValue(connection) {
     return (
-      this._activeCastBackend === 'chromecast' &&
+      this._activeCastBackend === CASTING_TYPE.CAST_SDK &&
       connection?.connectionKey === Chromecast.key &&
       !this._castAccess.hasControl(connection)
     );
@@ -1377,7 +1388,7 @@ export default class Stereo extends Service.extend(EmberEvented) {
     return { sound, failures: [strategy], error: strategy.error };
   }
 
-  _handleLoadError({ /* urlsToTry */ failures, options, strategies }) {
+  _handleLoadError({ /* urlsToTry */ failures, options }) {
     let errorMessage = this._errorMessageFromFailures(failures);
 
     let url = null;
@@ -1850,7 +1861,7 @@ export default class Stereo extends Service.extend(EmberEvented) {
 
   // Position arrives every ~50ms; the OS extrapolates between updates, and no
   // lock screen renders finer than a second.
-  _positionStateUpdatedAt = 0;
+
   static POSITION_STATE_INTERVAL_MS = 1000;
 
   _mediaSessionActions = new Map();
@@ -1874,6 +1885,7 @@ export default class Stereo extends Service.extend(EmberEvented) {
   _clearNowPlaying() {
     if (typeof navigator === 'undefined' || !('mediaSession' in navigator)) {
       return;
+  _positionStateUpdatedAt = 0;
     }
 
     navigator.mediaSession.playbackState = 'none';

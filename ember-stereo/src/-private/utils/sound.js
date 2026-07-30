@@ -27,10 +27,7 @@ export default class Sound extends Evented {
   // an involuntary pause (e.g. an AirPlay route drop) deliberately does not.
   _playIntent = false;
 
-  // Bound event-relay handlers, keyed by event name, so the exact same
-  // function reference can be passed to both `on` and `off`. Re-binding on
-  // unregister (the previous bug) meant relays were never actually removed.
-  _relayHandlers = new Map();
+  _boundRelayHandlers = new Map();
 
   constructor(identifier, options = {}) {
     super(...arguments);
@@ -185,10 +182,10 @@ export default class Sound extends Evented {
         ? this.stereo._buildCastConnection(
             options.castUrl,
             this.metadata,
-            // Only seekable media gets a start position; seeking a live stream
-            // makes the receiver buffer forever (see engageCastTask).
-            this.isStream ? null : this.position
+            castStartPosition
           )
+      // Seeking a live stream makes the receiver buffer forever.
+      let castStartPosition = this.isStream ? null : this.position;
         : this.stereo._buildLocalConnection(this);
       if (target) {
         return await this.swap(target);
@@ -213,14 +210,7 @@ export default class Sound extends Evented {
       this._debug = this.strategies;
     }
 
-    // Retry-reset: clear prior attempt state so re-loading an errored Sound
-    // actually retries instead of being a no-op.
-    this.failures = [];
-    this.strategies.forEach((strategy) => {
-      strategy.tried = false;
-      strategy.error = null;
-      strategy.success = false;
-    });
+    this._clearPreviousAttempts();
 
     for (let strategy of this.strategies) {
       if (!strategy.canPlay || strategy.tried) {
@@ -256,10 +246,18 @@ export default class Sound extends Evented {
     return null;
   });
 
-  // The connection sets isReady/isErrored in response to its own audio-ready /
-  // audio-load-error events (see BaseSound), so wait on the event rather than
-  // observing the flag. Guard the already-in-state case the way waitForProperty
-  // did — its predicate ran immediately against the current value.
+  // Without this, re-loading an errored Sound would skip every already-tried
+  // strategy and resolve to nothing.
+  _clearPreviousAttempts() {
+    this.failures = [];
+    this.strategies.forEach((strategy) => {
+      strategy.tried = false;
+      strategy.error = null;
+      strategy.success = false;
+    });
+  }
+
+  // The connection may already be ready, and audio-ready won't fire again.
   waitForReadyTask = task(async (connection) => {
     if (!connection.isReady) {
       await waitForEvent(connection, 'audio-ready');
@@ -311,30 +309,7 @@ export default class Sound extends Evented {
     // Drop the relays before detaching, so teardown pause/ended events never
     // reach the Sound.
     this.value = null;
-    // Stop the outgoing's audible playback before releasing it, or it keeps
-    // playing alongside the new backend (a local stream bleeding under a cast).
-    // detach()/teardown() alone don't pause the element, and pause() can fail to
-    // stop a shared element — so also pause the element directly. Each step is
-    // independently guarded: a throw in one must not skip the others (and must
-    // not abort the swap).
-    let outgoingElement = outgoing?.audioElement;
-    try {
-      outgoing?.pause?.();
-    } catch (e) {
-      debug('ember-stereo:sound')(`outgoing pause errored: ${e?.message}`);
-    }
-    try {
-      outgoingElement?.pause?.();
-    } catch (e) {
-      debug('ember-stereo:sound')(`outgoing element pause errored: ${e?.message}`);
-    }
-    try {
-      outgoing?.detach?.();
-    } catch (e) {
-      debug('ember-stereo:sound')(`outgoing detach errored: ${e?.message}`);
-    }
-    // Evict the now-detached connection from the service caches so it can't be
-    // re-adopted (soundCache) or kept receiving pause() calls (oneAtATime).
+    this._silenceAndReleaseOutgoing(outgoing);
     if (outgoing) {
       this.stereo?.soundCache?.remove(outgoing);
       this.stereo?.oneAtATime?.unregister(outgoing);
@@ -413,7 +388,7 @@ export default class Sound extends Evented {
 
     EVENT_MAP.forEach(({ event }) => {
       let handler = (info) => this._relayEvent(event, info);
-      this._relayHandlers.set(event, handler);
+      this._boundRelayHandlers.set(event, handler);
       connection.on(event, handler);
     });
   }
@@ -431,14 +406,14 @@ export default class Sound extends Evented {
     }
 
     EVENT_MAP.forEach(({ event }) => {
-      let handler = this._relayHandlers.get(event);
+      let handler = this._boundRelayHandlers.get(event);
       if (handler) {
         try {
           connection.off(event, handler);
         } catch (e) {
           // unregistering errors are not important
         }
-        this._relayHandlers.delete(event);
+        this._boundRelayHandlers.delete(event);
       }
     });
   }
