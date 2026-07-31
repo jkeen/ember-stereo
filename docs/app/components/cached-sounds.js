@@ -4,13 +4,11 @@ export default class CachedSound extends Component {
   @service stereo;
 
   get loadedItems() {
-    return this.stereo.soundCache.cachedList.map((url) =>
-      this.stereo.soundCache.find(url),
-    );
+    return this.stereo.sounds;
   }
 
   get loadedSoundCountSentence() {
-    let count = this.stereo.soundCache.cachedCount;
+    let count = this.stereo.sounds.length;
     if (count === 1) {
       return '1 Loaded Sound';
     } else if (count > 1) {

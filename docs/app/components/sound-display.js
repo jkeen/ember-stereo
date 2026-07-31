@@ -44,6 +44,28 @@ export default class SoundDisplay extends Component {
     );
   }
 
+  get connectionChoices() {
+    let strategies = this.loadedSound?.strategies || [];
+    return strategies.filter((strategy) => strategy.canPlay);
+  }
+
+  get canSwitchConnections() {
+    return this.connectionChoices.length > 1;
+  }
+
+  @action
+  async switchConnection(event) {
+    let sound = this.loadedSound;
+    let key = event.target.value;
+    if (!sound || key === sound.connectionKey) {
+      return;
+    }
+
+    // Shorter-than-default timeout: someone is watching this switch happen,
+    // and picking another option mid-swap aborts the one in flight.
+    await sound.swap(key, { timeout: 10000 });
+  }
+
   @action inspectSound(sound) {
     window.$E = sound;
     console.log(`$E = `, sound);
@@ -51,9 +73,6 @@ export default class SoundDisplay extends Component {
 
   @action
   async removeSound() {
-    if (this.loadedSound) {
-      this.loadedSound.stop();
-    }
     this.stereo.removeSound(this.url);
 
     if (this.args.onRemoval) {
