@@ -21,7 +21,7 @@ Since the `Sound` comes back before its audio does, it answers its own loading s
 | `isErrored` | Every playable strategy was tried and none succeeded. |
 | `errors` / `error` | The per-strategy failures, and the most recent error. |
 
-These are reactive, so you can render straight off them — the template updates as the sound moves from pending to loaded:
+These are reactive, so you can render straight off them — and because `findSound` hands back the same identity-stable `Sound` no matter who asks first, an indicator can render *before* anything loads the sound and still update when a load or play happens somewhere else entirely. The demo below splits those roles: the left panel only watches, the right panel only acts, and neither knows about the other.
 
 <Docs::ProxyExample />
 
@@ -43,4 +43,4 @@ The template helpers (`sound-is-playing`, `sound-position`, and friends) are thi
 Two pieces of the proxy come up when you start moving a sound between backends:
 
 - **`sound.castUrl`** — a device-fetchable variant of the stream, used when [casting](/docs/casting). See the casting docs for why a separate URL is needed.
-- **`sound.swap(connection)`** — replaces the backing connection while keeping the `Sound`'s identity and all your references intact. This is the mechanism behind failover and casting; you rarely call it yourself, but it's why `currentSound` never changes out from under you when the backend does.
+- **`sound.swap(target)`** — replaces the backing connection while keeping the `Sound`'s identity and all your references intact, carrying position and play-state across. Pass a connection key from the sound's own strategies — `sound.swap('hls')` — or a connection instance. Swaps are latest-wins: performing a new one aborts the one in flight, and a failed swap records its error and re-resolves a working backend. This is the same mechanism behind failover and casting, and it's why `currentSound` never changes out from under you when the backend does.
