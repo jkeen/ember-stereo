@@ -1,3 +1,32 @@
+diff --git a/addon/components/docs-header/search-box/index.js b/addon/components/docs-header/search-box/index.js
+index 786d1e13817e0c577808b19c32a4811831a648aa..34385bcada4a44945e835eb22f31801054d77590 100644
+--- a/addon/components/docs-header/search-box/index.js
++++ b/addon/components/docs-header/search-box/index.js
+@@ -1,6 +1,7 @@
+ import Component from '@glimmer/component';
+ import { task } from 'ember-concurrency';
+ import { action } from '@ember/object';
++import { next } from '@ember/runloop';
+ import { inject as service } from '@ember/service';
+ import { formElementHasFocus } from 'ember-cli-addon-docs/keyboard-config';
+ import { addonDocsConfig } from 'ember-cli-addon-docs/-private/config';
+@@ -11,7 +12,15 @@ export default class DocsHeaderSearchBox extends Component {
+   constructor() {
+     super(...arguments);
+ 
+-    this.fetchProject.perform();
++    // Defer out of the render pass: in FastBoot the store loads its payload
++    // synchronously (fs, not fetch), and mutating the store mid-render trips
++    // the tracked-value backtracking assertion.
++    next(() => {
++      if (this.isDestroying || this.isDestroyed) {
++        return;
++      }
++      this.fetchProject.perform();
++    });
+   }
+ 
+   @addonDocsConfig config;
 diff --git a/addon/components/docs-viewer/x-nav-item/index.js b/addon/components/docs-viewer/x-nav-item/index.js
 index 049a5143f5b295319fce0c9d455133d8ac936217..3e4046c093510725fcda71e59f958c176c3d1c79 100644
 --- a/addon/components/docs-viewer/x-nav-item/index.js
