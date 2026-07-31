@@ -36,6 +36,12 @@ export default class Sound extends Evented {
   }
 
   static canPlay(url, mimeType) {
+    // No backend can play audio without a DOM (FastBoot), and the probes
+    // below touch Audio/MediaSource, so answer for all connections here.
+    if (typeof document === 'undefined') {
+      return false;
+    }
+
     let usablePlatform = this.canUseConnection(url);
     if (!usablePlatform) {
       debug('ember-stereo:canPlay')(`can not use connection on this platform`);
