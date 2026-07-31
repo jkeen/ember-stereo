@@ -94,7 +94,12 @@ export default class Sound extends Evented {
   }
 
   get isLoading() {
-    return this.loadTask.isRunning || this.value?.isLoading || false;
+    return (
+      this.loadTask.isRunning ||
+      this.swapTask.isRunning ||
+      this.value?.isLoading ||
+      false
+    );
   }
 
   get isErrored() {
@@ -297,8 +302,21 @@ export default class Sound extends Evented {
    * @param {Object} [connectionArgs] constructor overrides for a key-built connection (e.g. `{ timeout: 10000 }`)
    * @return {Promise<BaseSound|null>} the engaged connection, or null if superseded/failed
    */
-  swap(targetConnection) {
-    return this.swapTask.perform(targetConnection);
+  swap(target, connectionArgs = {}) {
+    if (typeof target === 'string') {
+      let strategy = (this.strategies || []).find(
+        (candidate) => candidate.key === target && candidate.canPlay
+      );
+      if (!strategy) {
+        return Promise.reject(
+          new Error(
+            `[ember-stereo] no eligible '${target}' connection for ${this.url}`
+          )
+        );
+      }
+      target = strategy.createSound(connectionArgs);
+    }
+    return this.swapTask.perform(target);
   }
 
   swapTask = task({ restartable: true }, async (targetConnection) => {
@@ -323,13 +341,45 @@ export default class Sound extends Evented {
     let engaged = false;
 
     try {
-      let { sound } = await race([
+      let { sound, error } = await race([
         this.waitForReadyTask.perform(incoming),
         this.waitForErrorTask.perform(incoming),
       ]);
 
-      // Incoming failed to load, or a newer swap superseded this one.
-      if (!sound || generation !== this._swapGen) {
+      // The newer swap owns recovery, and the handoff it will reuse.
+      let supersededByNewerSwap = generation !== this._swapGen;
+      if (supersededByNewerSwap) {
+        return null;
+      }
+
+      // The outgoing is already torn down, so re-resolve through the waterfall
+      // rather than strand the Sound with no connection.
+      if (!sound) {
+        let failure = {
+          url: this.url,
+          error: error || 'failed to engage swapped connection',
+          connectionKey: incoming.connectionKey,
+        };
+        this.trigger('audio-load-error', {
+          sound: this,
+          failures: [failure],
+          error: failure.error,
+        });
+
+        await this.loadTask.perform();
+
+        // Recorded after the reload — _clearPreviousAttempts wipes failures.
+        this.failures = [...this.failures, failure];
+
+        if (this.value) {
+          if (handoff.position != null && this.value.isSeekable) {
+            this.value.position = handoff.position;
+          }
+          if (handoff.isPlaying) {
+            await this.value.play();
+          }
+          this._handoff = null;
+        }
         return null;
       }
 

@@ -4,6 +4,7 @@ import { settled } from '@ember/test-helpers';
 import sinon from 'sinon';
 import setupCustomAssertions from 'ember-cli-custom-assertions/test-support';
 import { setupStereoTest } from 'ember-stereo/test-support/stereo-setup';
+import NativeAudio from 'ember-stereo/stereo-connections/native-audio';
 
 module('Unit | Utility | sound', function (hooks) {
   setupTest(hooks);

@@ -79,13 +79,14 @@ export default class Strategy {
     return this.connection.canPlay(this.url, this.mimeType);
   }
 
-  createSound() {
+  createSound(overrides = {}) {
     let sound = new this.connection({
       url: this.url,
       connectionName: this.connectionName,
       connectionKey: this.connectionKey,
       sharedAudioAccess: this.sharedAudioAccess,
       options: this.options,
+      ...overrides,
     });
 
     setOwner(sound, getOwner(this));
