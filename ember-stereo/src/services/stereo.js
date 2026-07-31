@@ -17,7 +17,7 @@ import debug from 'debug';
 import { TrackedSet } from 'tracked-built-ins';
 
 import EmberEvented from '@ember/object/evented';
-import ErrorCache from '../-private/utils/error-cache';
+
 import OneAtATime from '../-private/utils/one-at-a-time';
 import UrlCache from '../-private/utils/url-cache';
 import MetadataCache from '../-private/utils/metadata-cache';
@@ -75,7 +75,8 @@ export default class Stereo extends Service.extend(EmberEvented) {
   @tracked autoPlayAllowed = false;
 
   @tracked soundCache = new SoundCache();
-  @tracked errorCache = new ErrorCache();
+  // Sounds key metadata by identifier, connections by resolved url (which
+  // diverges, most sharply for casting); this cache is where the two agree.
   @tracked metadataCache = new MetadataCache();
   @tracked urlCache = new UrlCache();
   soundEntityCache = new UntrackedObjectCache();
@@ -104,7 +105,7 @@ export default class Stereo extends Service.extend(EmberEvented) {
 
     setOwner(this.oneAtATime, owner);
     setOwner(this.soundCache, owner);
-    setOwner(this.errorCache, owner);
+
     setOwner(this.metadataCache, owner);
     setOwner(this.urlCache, owner);
     setOwner(this.soundEntityCache, owner);
@@ -436,14 +437,7 @@ export default class Stereo extends Service.extend(EmberEvented) {
       let urlsToTry = await this.urlCache.resolve(urlsOrPromise);
       debug('ember-stereo:service')(`given urls: ${urlsToTry.join(', ')}`);
       this.trigger('pre-load', urlsToTry);
-      this.errorCache.remove(urlsToTry);
 
-      // The Sound owns the strategy waterfall, connection creation, caching,
-      // and oneAtATime registration. The service delegates loading to it and
-      // reacts. The resolved connection (sound.value) remains the public
-      // "sound" returned to callers. Key off the *raw* identifier (not the
-      // resolved urls) so a helper observing the same promise/function gets the
-      // exact same Sound entity the service loads.
       let entity = this.findSound(urlsOrPromise);
       let connection = await entity.load(_options);
 
@@ -1314,6 +1308,9 @@ export default class Stereo extends Service.extend(EmberEvented) {
     return (strategies || []).find(
       (candidate) => candidate.canPlay && !this._isCastConnection(candidate)
     );
+    // Cached strategies can be the cast-only list (or empty, for a sound that
+    // adopted a cached connection); disengage has cleared isCasting, so a
+    // rebuild from the identifier yields the normal local waterfall.
   }
 
   _buildLocalConnection(sound) {
@@ -1368,11 +1365,7 @@ export default class Stereo extends Service.extend(EmberEvented) {
       error: sound.error,
       connectionKey: sound.connectionKey,
     };
-    this.errorCache.cache({
-      url: sound.url,
-      error: sound.error,
-      connectionKey: sound.connectionKey,
-    });
+
     this.trigger('audio-load-error', {
       sound: sound,
       failures: [strategy],
@@ -1392,16 +1385,7 @@ export default class Stereo extends Service.extend(EmberEvented) {
   _handleLoadError({ /* urlsToTry */ failures, options }) {
     let errorMessage = this._errorMessageFromFailures(failures);
 
-    let url = null;
-    makeArray(failures).forEach((sound) => {
-      this.errorCache.cache({
-        url: sound.url,
-        error: sound.error,
-        connectionKey: sound.connectionKey,
-        debugInfo: strategies,
-      });
-      url = sound.url;
-    });
+    let url = makeArray(failures).at(-1)?.url ?? null;
     this.trigger('audio-load-error', {
       sound: { url },
       failures: failures,
@@ -1428,7 +1412,11 @@ export default class Stereo extends Service.extend(EmberEvented) {
       throw new Error(errorMessage, failure);
     }
 
-    this.errorCache.cache(failure);
+    // No strategy ran, so nothing else will record this for cachedErrors.
+    let entity = this.findSound(url);
+    if (entity) {
+      entity.failures = [...entity.failures, failure];
+    }
     this.trigger('audio-load-error', {
       sound: { url },
       failures: [failure],
@@ -1542,7 +1530,22 @@ export default class Stereo extends Service.extend(EmberEvented) {
   }
 
   get cachedErrors() {
-    return this.errorCache.cachedErrors;
+    let entries = [];
+    for (let sound of this.loadedSounds) {
+      let errors = {};
+      for (let failure of sound.failures || []) {
+        if (failure.error) {
+          errors[failure.connectionKey || 'generic'] = failure.error;
+        }
+      }
+      if (sound.value?.error) {
+        errors[sound.value.connectionKey || 'generic'] = sound.value.error;
+      }
+      if (Object.keys(errors).length > 0) {
+        entries.push({ url: sound.url, errors, _debug: sound._debug });
+      }
+    }
+    return entries;
   }
 
   /**
@@ -1609,8 +1612,7 @@ export default class Stereo extends Service.extend(EmberEvented) {
     let url = new StereoUrl(identifier).url;
 
     this.soundCache.remove(url);
-    this.errorCache.remove(url);
-    this.soundEntityCache.remove(url);
+
     this.metadataCache.remove(url);
 
     if (this.currentSound?.url === url) {
