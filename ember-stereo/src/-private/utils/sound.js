@@ -162,6 +162,10 @@ export default class Sound extends Evented {
   }
 
   loadTask = task({ restartable: true }, async (loadOptions = {}) => {
+    // Only a load attempt promotes into the loaded list; findSound alone is
+    // speculative — helpers probe urls constantly.
+    this.stereo?.loadedSounds?.add(this);
+
     let options = this.stereo.prepareLoadOptions({
       ...this.options,
       ...loadOptions,
@@ -171,10 +175,6 @@ export default class Sound extends Evented {
     if (options.castUrl != null) {
       this._castUrl = options.castUrl;
     } else if (this._castUrl != null) {
-    // Only a load attempt promotes into the loaded list; findSound alone is
-    // speculative — helpers probe urls constantly.
-    this.stereo?.loadedSounds?.add(this);
-
       options.castUrl = this._castUrl;
     }
 
@@ -187,14 +187,14 @@ export default class Sound extends Evented {
       if (!castingThisUrl && this._castStateMatches()) {
         return this.value;
       }
+      // Seeking a live stream makes the receiver buffer forever.
+      let castStartPosition = this.isStream ? null : this.position;
       let target = castingThisUrl
         ? this.stereo._buildCastConnection(
             options.castUrl,
             this.metadata,
             castStartPosition
           )
-      // Seeking a live stream makes the receiver buffer forever.
-      let castStartPosition = this.isStream ? null : this.position;
         : this.stereo._buildLocalConnection(this);
       if (target) {
         return await this.swap(target);
@@ -422,6 +422,64 @@ export default class Sound extends Evented {
       }
     }
   });
+
+  // detach() alone doesn't pause the element and pause() can fail on a shared
+  // element, so both are paused. Each step is guarded on its own: a throw must
+  // not skip the ones after it.
+  _silenceAndReleaseOutgoing(outgoing) {
+    let outgoingElement = outgoing?.audioElement;
+    try {
+      outgoing?.pause?.();
+    } catch (e) {
+      debug('ember-stereo:sound')(`outgoing pause errored: ${e?.message}`);
+    }
+    try {
+      outgoingElement?.pause?.();
+    } catch (e) {
+      debug('ember-stereo:sound')(
+        `outgoing element pause errored: ${e?.message}`
+      );
+    }
+    try {
+      outgoing?.detach?.();
+    } catch (e) {
+      debug('ember-stereo:sound')(`outgoing detach errored: ${e?.message}`);
+    }
+  }
+
+  /**
+   * Return this Sound to its pristine pending state; identity survives, so
+   * existing references keep working.
+   *
+   * @method reset
+   */
+  reset() {
+    this.loadTask.cancelAll();
+    this.swapTask.cancelAll();
+
+    let connection = this.value;
+    this.value = null;
+
+    if (connection) {
+      try {
+        connection.stop?.();
+      } catch (e) {
+        debug('ember-stereo:sound')(`reset stop errored: ${e?.message}`);
+      }
+      try {
+        connection.detach?.();
+      } catch (e) {
+        debug('ember-stereo:sound')(`reset detach errored: ${e?.message}`);
+      }
+      this.stereo?.soundCache?.remove(connection);
+      this.stereo?.oneAtATime?.unregister(connection);
+    }
+
+    this.strategies = null;
+    this.failures = [];
+    this._handoff = null;
+    this._playIntent = false;
+  }
 
   _captureHandoff() {
     let connection = this.value;

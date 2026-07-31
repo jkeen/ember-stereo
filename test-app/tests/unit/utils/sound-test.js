@@ -324,6 +324,123 @@ module('Unit | Utility | sound', function (hooks) {
     assert.true(outgoing.isDestroyed, 'the outgoing connection was detached');
   });
 
+  test('a failed swap records the error and re-resolves instead of stranding the Sound', async function (assert) {
+    const service = this.owner
+      .lookup('service:stereo')
+      .loadConnections(['NativeAudio']);
+    let url = '/good/1000/silence.mp3';
+
+    await service.load(url);
+    let sound = service.findSound(url);
+
+    let errorEvents = [];
+    sound.on('audio-load-error', (info) => errorEvents.push(info));
+
+    let incoming = new NativeAudio({
+      url: '/bad/404-error/nothing-here.mp3',
+      connectionKey: 'NativeAudio',
+      connectionName: 'Native Audio',
+      timeout: false,
+    });
+
+    let result = await sound.swap(incoming);
+    await settled();
+
+    assert.strictEqual(result, null, 'the failed swap resolves null');
+    assert.ok(
+      sound.value,
+      'the Sound re-resolved a working connection instead of being stranded',
+    );
+    assert.false(sound.value.isErrored, 'the restored connection is healthy');
+    assert.strictEqual(errorEvents.length, 1, 'the failure was surfaced');
+    assert.ok(
+      service.cachedErrors.find((entry) => entry.url?.includes(url)),
+      'the failure shows up in the derived error list',
+    );
+    assert.true(
+      service.sounds.includes(sound),
+      'the Sound stays in the loaded list through the failed swap',
+    );
+  });
+
+  test('removeSound tears down a playing sound but resets the entity in place', async function (assert) {
+    const service = this.owner
+      .lookup('service:stereo')
+      .loadConnections(['NativeAudio']);
+    let url = '/good/2500/remove-me.mp3';
+
+    await service.play(url);
+    let sound = service.findSound(url);
+    let connection = sound.value;
+    assert.true(sound.isPlaying, 'the sound is playing');
+
+    service.removeSound(url);
+    await settled();
+
+    assert.true(connection.isDestroyed, 'the backing connection was torn down');
+    assert.strictEqual(sound.value, null, 'the entity has no connection');
+    assert.true(sound.isPending, 'the entity is back to pending');
+    assert.false(service.sounds.includes(sound), 'gone from the loaded list');
+    assert.strictEqual(
+      service.findSound(url),
+      sound,
+      'identity survives removal — findSound returns the same entity',
+    );
+  });
+
+  test('removing a sound mid-load cancels the load instead of resurrecting it', async function (assert) {
+    const service = this.owner
+      .lookup('service:stereo')
+      .loadConnections(['NativeAudio']);
+    let url = '/good/2500/remove-mid-load.mp3';
+
+    let sound = service.findSound(url);
+    let loadPromise = sound.load().catch(() => {});
+    service.removeSound(url);
+    await loadPromise;
+    await settled();
+
+    assert.strictEqual(sound.value, null, 'no connection resurrected');
+    assert.true(sound.isPending, 'the entity is pending');
+    assert.false(
+      service.sounds.includes(sound),
+      'the canceled load did not re-add the sound to the loaded list',
+    );
+  });
+
+  test('swap accepts a connection key and builds the target from its own strategies', async function (assert) {
+    const service = this.owner
+      .lookup('service:stereo')
+      .loadConnections(['NativeAudio']);
+    let url = '/good/1000/silence.mp3';
+
+    await service.load(url);
+    let sound = service.findSound(url);
+    let outgoing = sound.value;
+
+    let engaged = await sound.swap('NativeAudio', { timeout: 5000 });
+    await settled();
+
+    assert.strictEqual(sound.value, engaged, 'the Sound engaged the swap');
+    assert.strictEqual(
+      engaged.timeout,
+      5000,
+      'connection overrides reach the key-built connection',
+    );
+    assert.notStrictEqual(
+      sound.value,
+      outgoing,
+      'on a freshly-built connection',
+    );
+    assert.strictEqual(sound.value.connectionKey, 'NativeAudio');
+
+    await assert.rejects(
+      sound.swap('Bogus'),
+      /no eligible 'Bogus' connection/,
+      'an unknown key rejects instead of tearing anything down',
+    );
+  });
+
   test('swap carries over the playback position', async function (assert) {
     const service = this.owner
       .lookup('service:stereo')

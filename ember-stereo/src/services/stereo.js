@@ -438,6 +438,8 @@ export default class Stereo extends Service.extend(EmberEvented) {
       debug('ember-stereo:service')(`given urls: ${urlsToTry.join(', ')}`);
       this.trigger('pre-load', urlsToTry);
 
+      // Key off the *raw* identifier (not the resolved urls) so a helper
+      // observing the same promise/function gets the same Sound entity.
       let entity = this.findSound(urlsOrPromise);
       let connection = await entity.load(_options);
 
@@ -1308,13 +1310,13 @@ export default class Stereo extends Service.extend(EmberEvented) {
     return (strategies || []).find(
       (candidate) => candidate.canPlay && !this._isCastConnection(candidate)
     );
-    // Cached strategies can be the cast-only list (or empty, for a sound that
-    // adopted a cached connection); disengage has cleared isCasting, so a
-    // rebuild from the identifier yields the normal local waterfall.
   }
 
   _buildLocalConnection(sound) {
     let strategy = this._findLocalStrategy(sound.strategies);
+    // Cached strategies can be the cast-only list (or empty, for a sound that
+    // adopted a cached connection); disengage has cleared isCasting, so a
+    // rebuild from the identifier yields the normal local waterfall.
     if (!strategy) {
       let strategies = this._buildStrategies(
         makeArray(sound.identifier),
@@ -1565,6 +1567,17 @@ export default class Stereo extends Service.extend(EmberEvented) {
     }
   }
 
+  /**
+   * The Sound entities asked to load, newest last, including loading and
+   * errored ones.
+   *
+   * @property sounds
+   * @return {Array<Sound>}
+   */
+  get sounds() {
+    return [...this.loadedSounds];
+  }
+
   findSound(identifier) {
     if (identifier instanceof BaseSound || identifier instanceof Sound) {
       return identifier;
@@ -1595,22 +1608,17 @@ export default class Stereo extends Service.extend(EmberEvented) {
    * @param {Array} identifier [..{Promise|String}]
    * @private
    * @return {Sound} A sound that's ready to be played, or an error
-  /**
-   * The Sound entities asked to load, newest last, including loading and
-   * errored ones.
-   *
-   * @property sounds
-   * @return {Array<Sound>}
-   */
-  get sounds() {
-    return [...this.loadedSounds];
-  }
-
    */
 
   removeSound(identifier) {
     let url = new StereoUrl(identifier).url;
 
+    for (let sound of this.loadedSounds) {
+      if (hasEqualUrls(sound.url, url)) {
+        this.loadedSounds.delete(sound);
+        sound.reset();
+      }
+    }
     this.soundCache.remove(url);
 
     this.metadataCache.remove(url);
@@ -1873,6 +1881,7 @@ export default class Stereo extends Service.extend(EmberEvented) {
     }
   }
 
+  _positionStateUpdatedAt = 0;
   // Position arrives every ~50ms; the OS extrapolates between updates, and no
   // lock screen renders finer than a second.
 
@@ -1899,7 +1908,6 @@ export default class Stereo extends Service.extend(EmberEvented) {
   _clearNowPlaying() {
     if (typeof navigator === 'undefined' || !('mediaSession' in navigator)) {
       return;
-  _positionStateUpdatedAt = 0;
     }
 
     navigator.mediaSession.playbackState = 'none';
