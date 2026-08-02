@@ -28,6 +28,58 @@ const AUDIO_EVENTS = [
 // Seconds from zero a seekable window may start and still count as reaching the beginning of the media.
 const SEEKABLE_START_TOLERANCE = 1;
 
+// How often the duration is sampled while playing, and how many samples are kept.
+const DURATION_SAMPLE_MS = 250;
+const DURATION_SAMPLE_LIMIT = 20;
+
+// A live source hands over audio as fast as it happens, so its duration climbs
+// about one second per second. The bounds are wide because sampling drifts.
+const SLOWEST_LIVE_GROWTH = 0.5;
+const FASTEST_LIVE_GROWTH = 2;
+
+// Enough of a window that a one-off correction can't average out to realtime.
+const MIN_LIVE_SAMPLES = 8;
+
+// Firefox moves the duration in steps rather than smoothly, so growth is read
+// across the window. A correction arrives as one step; live audio keeps coming.
+const MIN_LIVE_INCREASES = 2;
+
+// A duration this long is a stream the element declined to call endless (Opera
+// reports huge finite durations instead of Infinity).
+const IMPLAUSIBLE_DURATION_MS = 172800000; // 2 days
+
+/**
+ * Whether a series of duration samples grows in step with the clock, which is
+ * what separates a live source from a browser refining its estimate of a
+ * recording. Exported to be tested without waiting on the sampler.
+ *
+ * @param {Array} samples durations in ms, oldest first, one per DURATION_SAMPLE_MS
+ * @return {Boolean}
+ */
+export function durationGrowsWithTheClock(samples = []) {
+  let measured = samples.filter((sample) => Number.isFinite(sample));
+
+  if (measured.length < MIN_LIVE_SAMPLES) {
+    return false;
+  }
+
+  let increases = 0;
+  for (let index = 1; index < measured.length; index++) {
+    if (measured[index] > measured[index - 1]) {
+      increases++;
+    }
+  }
+
+  if (increases < MIN_LIVE_INCREASES) {
+    return false;
+  }
+
+  let span = (measured.length - 1) * DURATION_SAMPLE_MS;
+  let growthRate = (measured[measured.length - 1] - measured[0]) / span;
+
+  return growthRate >= SLOWEST_LIVE_GROWTH && growthRate <= FASTEST_LIVE_GROWTH;
+}
+
 // Ready state values
 // const HAVE_NOTHING = 0;
 // const HAVE_METADATA = 1;
@@ -362,9 +414,13 @@ export default class NativeAudio extends BaseSound {
 
   _audioDuration() {
     let audio = this.audioElement;
-    if (audio.duration > 172800000 || this.probablyAStream) {
-      // A duration over 3 days means a stream (Opera reports huge finite durations instead of Infinity). But a recording still being written grows the same way, and unlike a live stream it seeks back to its own beginning.
-      let recorded = this._recordedDurationMs() ?? this._lastRecordedDurationMs;
+    if (audio.duration * 1000 > IMPLAUSIBLE_DURATION_MS || this.probablyAStream) {
+      // Only an element reporting no duration of its own describes a recorded
+      // timeline in its seekable range. A finite duration that keeps growing is
+      // the element measuring live bytes as they arrive.
+      let recorded = Number.isFinite(audio.duration)
+        ? null
+        : (this._recordedDurationMs() ?? this._lastRecordedDurationMs);
       return recorded ?? Infinity;
     }
     return audio.duration * 1000;
@@ -401,21 +457,19 @@ export default class NativeAudio extends BaseSound {
 
   // `duration == Infinity` doesn't mean unseekable: a still-airing HLS archive has no #EXT-X-ENDLIST, so duration grows without bound yet the media seeks fine within its buffered window.
   get _seekableWindowMs() {
-    let seekable = this.audioElement?.seekable;
+    let audio = this.audioElement;
+    let seekable = audio?.seekable;
     if (!seekable || seekable.length === 0) return 0;
-    return (seekable.end(seekable.length - 1) - seekable.start(0)) * 1000;
+    // Same reading as _audioDuration: a live stream's range only covers the bytes
+    // received so far, so it isn't a window to seek within. An endless range is
+    // the stream itself, and a finite duration means the element isn't recording.
+    if (Number.isFinite(audio.duration)) return 0;
+    let window = (seekable.end(seekable.length - 1) - seekable.start(0)) * 1000;
+    return Number.isFinite(window) ? window : 0;
   }
 
-  get isSeekable() {
-    return this._seekableWindowMs > 0 || super.isSeekable;
-  }
-
-  get isRewindable() {
-    return this._seekableWindowMs > 0 || super.isRewindable;
-  }
-
-  get isFastForwardable() {
-    return this._seekableWindowMs > 0 || super.isFastForwardable;
+  get _measuredSeekable() {
+    return this._seekableWindowMs > 0 || super._measuredSeekable;
   }
 
   _setPlaybackSpeed(speed) {
@@ -440,21 +494,18 @@ export default class NativeAudio extends BaseSound {
 
   // Some files that don't have an obvious mime-type/extension won't return Infinity for their duration
   // despite it being a stream. Instead the duration will continue to increase as the file plays. This method
-  // samples the duration of the element and if it doesn't change durations for a while we know it's not a stream
+  // samples the duration of the element and looks for growth that keeps pace with the clock.
 
   @cached
   get probablyAStream() {
-    let differences = this._durationHistory.reduce(
-      (val, cur, index, original) => [
-        ...val,
-        index === 0 ? 0 : original[index] - original[index - 1],
-      ],
-      []
-    );
-    return differences.filter((d) => d === 0).length !== differences.length;
+    return durationGrowsWithTheClock(this._durationHistory);
   }
 
   @tracked _durationHistory = [];
+
+  _forgetDurationHistory() {
+    this._durationHistory = [];
+  }
 
   durationWorkaroundTask = task({ restartable: true }, async () => {
     let audio = this.audioElement;
@@ -462,12 +513,27 @@ export default class NativeAudio extends BaseSound {
     if (macroCondition(isTesting())) {
       this._durationHistory = [0, 0, 0];
     } else {
+      let wasAStream = this.probablyAStream;
+
       while (this.isPlaying) {
         let duration = audio.duration * 1000;
-        this._durationHistory = this._durationHistory.slice(-20); // only keep last 20 items
-        this._durationHistory.push(duration);
+        // An element between media measures nothing; a gap is not a sample.
+        if (Number.isFinite(duration)) {
+          this._durationHistory = [
+            ...this._durationHistory.slice(-(DURATION_SAMPLE_LIMIT - 1)),
+            duration,
+          ];
+        }
 
-        await timeout(250);
+        // Nothing else recomputes duration once the element stops firing
+        // durationchange, so a sound that has just been reclassified would keep
+        // whatever it was measured as.
+        if (this.probablyAStream !== wasAStream) {
+          wasAStream = this.probablyAStream;
+          this.duration = this._resolveDuration();
+        }
+
+        await timeout(DURATION_SAMPLE_MS);
       }
     }
   });
@@ -510,6 +576,7 @@ export default class NativeAudio extends BaseSound {
   retry() {
     this.debug(`retrying load with crossorigin not set`);
     this.audioElement.removeAttribute('crossorigin');
+    this._forgetDurationHistory();
 
     this.retryCount = this.retryCount + 1;
     this.audioElement.src = this.url;
@@ -591,6 +658,8 @@ export default class NativeAudio extends BaseSound {
     // media. this is the method recommended by MDN: https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/Using_HTML5_audio_and_video#Stopping_the_download_of_media
     audio.removeAttribute('src');
     audio.load();
+    // Samples describe the media that just left the element.
+    this._forgetDurationHistory();
 
     // load() discards the pause event audio.pause() just queued.
     this._onAudioPaused();
@@ -601,6 +670,7 @@ export default class NativeAudio extends BaseSound {
     if (!this.urlsAreEqual(audio.src, this.url)) {
       audio.setAttribute('src', this.url);
       audio.load();
+      this._forgetDurationHistory();
     }
   }
 
