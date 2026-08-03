@@ -272,6 +272,32 @@ export default class Sound extends Evented {
   }
 
   /**
+   * Whether the app declared the sound seekable in the load options, settling
+   * it outright. Connections only measure when nothing was declared.
+   *
+   * @property declaredSeekable
+   * @type {Boolean}
+   * @readOnly
+   * @private
+   */
+  get declaredSeekable() {
+    return this.options?.seekable;
+  }
+
+  /**
+   * What the connection can work out for itself. Override this rather than the
+   * public getters below, so a declaration is still honored.
+   *
+   * @property _measuredSeekable
+   * @type {Boolean}
+   * @readOnly
+   * @private
+   */
+  get _measuredSeekable() {
+    return !this.isStream;
+  }
+
+  /**
    * is the sound fast forwardable?
    * @property isFastForwardable
    * @type {Boolean}
@@ -279,7 +305,7 @@ export default class Sound extends Evented {
    * @public
    */
   get isFastForwardable() {
-    return !this.isStream;
+    return this.declaredSeekable ?? this._measuredSeekable;
   }
 
   /**
@@ -290,7 +316,7 @@ export default class Sound extends Evented {
    * @public
    */
   get isRewindable() {
-    return !this.isStream;
+    return this.declaredSeekable ?? this._measuredSeekable;
   }
 
   /**
@@ -301,7 +327,7 @@ export default class Sound extends Evented {
    * @public
    */
   get isSeekable() {
-    return !this.isStream;
+    return this.declaredSeekable ?? this._measuredSeekable;
   }
 
   /**

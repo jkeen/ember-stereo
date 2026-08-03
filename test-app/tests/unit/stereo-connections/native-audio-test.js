@@ -3,7 +3,9 @@ import { setupTest } from 'ember-qunit';
 import { waitUntil } from '@ember/test-helpers';
 import sinon from 'sinon';
 import SharedAudioAccess from 'ember-stereo/-private/utils/shared-audio-access';
-import NativeAudio from 'ember-stereo/stereo-connections/native-audio';
+import NativeAudio, {
+  durationGrowsWithTheClock,
+} from 'ember-stereo/stereo-connections/native-audio';
 import setupCustomAssertions from 'ember-cli-custom-assertions/test-support';
 import { setupStereoTest } from 'ember-stereo/test-support/stereo-setup';
 const goodUrl = '/good/1000/good.aac';
@@ -480,5 +482,199 @@ module('Unit | Connection | Native Audio', function (hooks) {
     await sound1.play();
 
     assert.ok(events.length > 50, 'position changed events were fired');
+  });
+
+  module(
+    'telling a live stream from a recording still being written',
+    function () {
+      // The element's own duration is the discriminator: an element reporting
+      // Infinity doesn't know how long the media is, so its seekable range is a
+      // recorded timeline. A finite duration is the element measuring live bytes
+      // as they arrive, and its range only covers what has been received.
+      function soundReporting(sharedAudioAccess, { duration, start, end }) {
+        let sound = new NativeAudio({
+          url: goodUrl,
+          timeout: false,
+          sharedAudioAccess,
+        });
+
+        Object.defineProperty(sound, 'audioElement', {
+          get: () => ({
+            duration,
+            seekable: { length: 1, start: () => start, end: () => end },
+          }),
+        });
+
+        return sound;
+      }
+
+      test('a live stream reporting [0, Infinity] is endless and unseekable', function (assert) {
+        let sound = soundReporting(sharedAudioAccess, {
+          duration: Infinity,
+          start: 0,
+          end: Infinity,
+        });
+
+        assert.strictEqual(sound._audioDuration(), Infinity, 'duration is ∞');
+
+        sound.duration = sound._audioDuration();
+        assert.true(sound.isStream, 'so the sound is a stream');
+        assert.notOk(
+          sound.isSeekable,
+          'an endless range is not a seekable window',
+        );
+      });
+
+      test('a live stream reporting a growing finite duration is endless and unseekable', function (assert) {
+        let sound = soundReporting(sharedAudioAccess, {
+          duration: 208.43,
+          start: 0,
+          end: 206.83,
+        });
+        Object.defineProperty(sound, 'probablyAStream', { get: () => true });
+
+        assert.strictEqual(
+          sound._audioDuration(),
+          Infinity,
+          'a growing duration is not a recorded length',
+        );
+
+        sound.duration = sound._audioDuration();
+        assert.true(sound.isStream, 'so the sound is a stream');
+        assert.notOk(
+          sound.isSeekable,
+          'and its buffer is not a seekable window',
+        );
+        assert.notOk(sound.isRewindable, 'not rewindable');
+        assert.notOk(sound.isFastForwardable, 'not fast forwardable');
+      });
+
+      test('a recording still being written keeps its measured length and stays seekable', function (assert) {
+        let sound = soundReporting(sharedAudioAccess, {
+          duration: Infinity,
+          start: 0,
+          end: 120,
+        });
+
+        assert.strictEqual(
+          sound._audioDuration(),
+          120000,
+          'the seekable range is the recorded length',
+        );
+        assert.ok(sound.isSeekable, 'and it can be seeked within');
+      });
+
+      test('an ordinary finite sound is unaffected', function (assert) {
+        let sound = soundReporting(sharedAudioAccess, {
+          duration: 60,
+          start: 0,
+          end: 60,
+        });
+
+        assert.strictEqual(
+          sound._audioDuration(),
+          60000,
+          'duration is measured',
+        );
+
+        sound.duration = sound._audioDuration();
+        assert.notOk(sound.isStream, 'not a stream');
+        assert.ok(sound.isSeekable, 'and seekable as usual');
+      });
+
+      test('a declared seekability settles it outright', function (assert) {
+        let live = soundReporting(sharedAudioAccess, {
+          duration: Infinity,
+          start: 0,
+          end: Infinity,
+        });
+        live.options = { seekable: true };
+        live.duration = Infinity;
+
+        assert.true(live.isStream, 'still endless');
+        assert.true(live.isSeekable, 'but the app says it can be seeked');
+        assert.true(live.isRewindable, 'rewindable too');
+        assert.true(live.isFastForwardable, 'and fast forwardable');
+
+        let recording = soundReporting(sharedAudioAccess, {
+          duration: 60,
+          start: 0,
+          end: 60,
+        });
+        recording.options = { seekable: false };
+        recording.duration = 60000;
+
+        assert.false(
+          recording.isSeekable,
+          'and a finite sound can be declared unseekable',
+        );
+      });
+    },
+  );
+
+  module('reading duration growth', function () {
+    // 250ms per sample. Live audio arrives as fast as it happens, so over any
+    // window its duration gains about as much time as the window itself.
+    test('a source growing smoothly with the clock reads as a stream', function (assert) {
+      assert.true(
+        durationGrowsWithTheClock([
+          1000, 1250, 1500, 1750, 2000, 2250, 2500, 2750, 3000,
+        ]),
+        'Chrome moves the duration every sample',
+      );
+    });
+
+    test('a source growing in steps reads as a stream too', function (assert) {
+      // Firefox holds the duration still and then jumps a whole second. The
+      // average is realtime even though no single sample looks like it.
+      assert.true(
+        durationGrowsWithTheClock([
+          1000, 1000, 1000, 2000, 2000, 2000, 3000, 3000, 3000,
+        ]),
+        'stepwise growth averages out to the clock',
+      );
+    });
+
+    test('a stable duration does not', function (assert) {
+      assert.false(
+        durationGrowsWithTheClock([
+          60000, 60000, 60000, 60000, 60000, 60000, 60000, 60000, 60000,
+        ]),
+        'an ordinary file measured once',
+      );
+    });
+
+    test('a single refinement of a VBR estimate does not', function (assert) {
+      // The bug this replaces: any one non-zero delta used to latch it true,
+      // which turned a podcast into a live stream and tore it down on pause.
+      assert.false(
+        durationGrowsWithTheClock([
+          180000, 180000, 213000, 213000, 213000, 213000, 213000, 213000,
+          213000,
+        ]),
+        'one step is a correction, not audio arriving',
+      );
+    });
+
+    test('growth faster than the clock does not', function (assert) {
+      assert.false(
+        durationGrowsWithTheClock([
+          0, 30000, 60000, 90000, 120000, 150000, 180000, 210000, 240000,
+        ]),
+        'a progressive download outruns realtime',
+      );
+    });
+
+    test('too few measurements do not', function (assert) {
+      assert.false(
+        durationGrowsWithTheClock([1000, 1250, 1500]),
+        'growth must be sustained before it counts',
+      );
+      assert.false(
+        durationGrowsWithTheClock([1000, 1250, NaN, 1750, 2000]),
+        'and a gap leaves too little measured',
+      );
+      assert.false(durationGrowsWithTheClock([]), 'nothing measured yet');
+    });
   });
 });

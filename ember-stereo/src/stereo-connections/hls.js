@@ -431,15 +431,7 @@ export default class HLSSound extends BaseSound {
     return this._endTime;
   }
 
-  get isFastForwardable() {
-    return true;
-  }
-
-  get isRewindable() {
-    return true;
-  }
-
-  get isSeekable() {
+  get _measuredSeekable() {
     return true;
   }
 

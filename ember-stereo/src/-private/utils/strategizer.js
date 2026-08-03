@@ -40,6 +40,10 @@ export default class Strategizer {
     if (this.options.duration != null) {
       passthroughOptions.duration = this.options.duration;
     }
+    // See BaseSound#declaredSeekable.
+    if (this.options.seekable != null) {
+      passthroughOptions.seekable = this.options.seekable;
+    }
     let strategyOptions = {
       metadata: this.options.metadata,
       sharedAudioAccess: this.useSharedAudioAccess
@@ -120,7 +124,9 @@ export default class Strategizer {
     });
 
     if (this.useMobileStrategy) {
-        debug('ember-stereo:strategizer')(`re-rodering to prioritize native audio first`);
+      debug('ember-stereo:strategizer')(
+        `re-rodering to prioritize native audio first`
+      );
 
       /*
        * Take our standard strategy and reorder it to prioritize native audio

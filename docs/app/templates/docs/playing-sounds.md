@@ -34,13 +34,17 @@ this.stereo.play(url, {
   metadata: { title: 'Works Just Like A VCR' },
   startPosition: 90,
 });
+
+// or, for a live stream
+this.stereo.play(streamUrl, { duration: Infinity });
 ```
 
 - **`metadata`** stores whatever you want alongside the sound, and feeds the OS media controls. See [Metadata](/docs/metadata).
 - **`useConnections`** limits which connections may be tried, in order of preference, instead of the full waterfall.
 - **`startPosition`** (seconds) begins playback part way in. The connection is handed the offset as it's built, so the first thing it fetches is the piece you asked for. Seeking after load would throw away the buffer it just filled and fetch it again.
 - **`streamPauseGraceMs`** keeps a paused stream's connection open for this long before stopping it, so a listener who pauses briefly doesn't pay for a reconnect. Holding it costs bandwidth and, on a live stream, a slot on the streaming server, so the default is to stop as soon as it's paused. Pass `Infinity` to hold it until something explicitly stops it.
-- **`duration`** (ms) declares how long the media is, skipping measurement rather than correcting it afterward. Pass `Infinity` for a live stream. Connections normally work this out themselves, but some cases defeat measurement: a relay carrying an endless broadcast reports a duration that grows in real time from a window starting at zero, which is exactly what a recording still being written looks like. Declaring `Infinity` there is what disconnects a paused sound rather than holding it at a position it can't return to, and what cache-busts the URL on resume so a resumed stream doesn't interleave stale audio. It does not affect seekability, which connections measure separately.
+- **`duration`** (ms) declares how long the media is, skipping measurement rather than correcting it afterward. Pass `Infinity` for a live stream. Connections normally work this out themselves, but some cases defeat measurement.
+- **`seekable`** declares if the media is seekable. Connections usually detect this on their own, but declaring it explicity takes the guesswork out.
 - **`xhr`** passes `headers`, `withCredentials` and `method` through to connections that fetch over XHR.
 
 ## Interacting with the service
