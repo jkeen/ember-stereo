@@ -322,6 +322,11 @@ export default class Sound extends Evented {
       let previousPosition = this._position;
       let currentPosition = this._currentPosition();
 
+      // NaN != NaN, so recording an unmeasured position would republish it every tick.
+      if (!Number.isFinite(currentPosition)) {
+        continue;
+      }
+
       if (previousPosition != currentPosition) {
         this._position = currentPosition;
 
