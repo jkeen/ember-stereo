@@ -356,6 +356,13 @@ export default class Sound extends Evented {
       let previousPosition = this._position;
       let currentPosition = this._currentPosition();
 
+      // An element that hasn't established a timeline yet reports nothing
+      // usable. Recording it would publish NaN to everything bound to position,
+      // and since NaN != NaN it would republish it every tick.
+      if (!Number.isFinite(currentPosition)) {
+        continue;
+      }
+
       if (previousPosition != currentPosition) {
         this._position = currentPosition;
 
