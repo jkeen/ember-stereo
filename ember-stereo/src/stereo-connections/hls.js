@@ -435,12 +435,13 @@ export default class HLSSound extends BaseSound {
     return true;
   }
 
+  // No #EXT-X-ENDLIST: the show is still on air. That says nothing about
+  // whether its beginning is still there, so isStream is left to BaseSound,
+  // which reads the duration. A playlist whose segments fall off the back has
+  // no fixed origin to measure from and should be loaded with
+  // `duration: Infinity`.
   get isLive() {
     return this.live;
-  }
-
-  get isStream() {
-    return this.isLive;
   }
 
   _audioDuration() {
