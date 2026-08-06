@@ -254,7 +254,7 @@ importers:
         version: 5.4.1(@babel/core@7.28.5)(@glimmer/component@1.1.2(@babel/core@7.28.5))(rsvp@4.8.5)(webpack@5.103.0)
       ember-stereo:
         specifier: workspace:^
-        version: file:ember-stereo(@babel/core@7.28.5)(@ember/string@4.0.1)(@ember/test-waiters@4.1.1)(ember-source@5.4.1(@babel/core@7.28.5)(@glimmer/component@1.1.2(@babel/core@7.28.5))(rsvp@4.8.5)(webpack@5.103.0))(webpack@5.103.0)
+        version: file:ember-stereo(@babel/core@7.28.5)(@ember/string@4.0.1)(@ember/test-waiters@4.1.1)(ember-source@5.4.1(@babel/core@7.28.5)(@glimmer/component@1.1.2(@babel/core@7.28.5))(rsvp@4.8.5)(webpack@5.103.0))(sinon@9.2.4)(webpack@5.103.0)
       ember-style-modifier:
         specifier: 4.3.0
         version: 4.3.0(@ember/string@4.0.1)(ember-source@5.4.1(@babel/core@7.28.5)(@glimmer/component@1.1.2(@babel/core@7.28.5))(rsvp@4.8.5)(webpack@5.103.0))
@@ -372,15 +372,15 @@ importers:
       ember-modifier:
         specifier: ^4.1.0
         version: 4.2.2(@babel/core@7.28.5)
-      ember-sinon:
-        specifier: ^5.0.0
-        version: 5.0.0
       hls.js:
         specifier: ^1.5.15
         version: 1.6.15
       howler:
         specifier: tunein/howler.js
         version: '@tunein/howler@https://codeload.github.com/tunein/howler.js/tar.gz/5cd1ecff8d6df8f8793bd7126ccab317ea37feb4'
+      sinon:
+        specifier: '>= 9'
+        version: 9.2.4
       tracked-built-ins:
         specifier: ^3.1.0
         version: 3.4.0(@babel/core@7.28.5)
@@ -580,12 +580,6 @@ importers:
       ember-resolver:
         specifier: ^11.0.1
         version: 11.0.1(ember-source@5.4.1(@babel/core@7.28.5)(@glimmer/component@1.1.2(@babel/core@7.28.5))(rsvp@4.8.5)(webpack@5.103.0))
-      ember-sinon:
-        specifier: ^5.0.0
-        version: 5.0.0
-      ember-sinon-qunit:
-        specifier: 7.1.4
-        version: 7.1.4(ember-source@5.4.1(@babel/core@7.28.5)(@glimmer/component@1.1.2(@babel/core@7.28.5))(rsvp@4.8.5)(webpack@5.103.0))(qunit@2.24.2)(sinon@9.2.4)(webpack@5.103.0)
       ember-source:
         specifier: ~5.4.1
         version: 5.4.1(@babel/core@7.28.5)(@glimmer/component@1.1.2(@babel/core@7.28.5))(rsvp@4.8.5)(webpack@5.103.0)
@@ -594,7 +588,7 @@ importers:
         version: 3.0.0
       ember-stereo:
         specifier: workspace:^
-        version: file:ember-stereo(@babel/core@7.28.5)(@ember/string@3.1.1)(@ember/test-waiters@4.1.1)(ember-source@5.4.1(@babel/core@7.28.5)(@glimmer/component@1.1.2(@babel/core@7.28.5))(rsvp@4.8.5)(webpack@5.103.0))(webpack@5.103.0)
+        version: file:ember-stereo(@babel/core@7.28.5)(@ember/string@3.1.1)(@ember/test-waiters@4.1.1)(ember-source@5.4.1(@babel/core@7.28.5)(@glimmer/component@1.1.2(@babel/core@7.28.5))(rsvp@4.8.5)(webpack@5.103.0))(sinon@9.2.4)(webpack@5.103.0)
       ember-template-lint:
         specifier: ^5.13.0
         version: 5.13.0
@@ -631,6 +625,9 @@ importers:
       qunit-dom:
         specifier: ^2.0.0
         version: 2.0.0
+      sinon:
+        specifier: ^9.2.4
+        version: 9.2.4
       stylelint:
         specifier: ^15.11.0
         version: 15.11.0(typescript@5.9.3)
@@ -2358,12 +2355,6 @@ packages:
 
   '@types/serve-static@1.15.10':
     resolution: {integrity: sha512-tRs1dB+g8Itk72rlSI2ZrW6vZg0YrLI81iQSTkMmOqnqCaNr/8Ek4VwWcN5vZgCYWbg/JJSGBlUaYGAOP73qBw==}
-
-  '@types/sinon@10.0.20':
-    resolution: {integrity: sha512-2APKKruFNCAZgx3daAyACGzWuJ028VVCUDk6o2rw/Z4PXT0ogwdV4KUegW0MwVs0Zu59auPXbbuBJHF12Sx1Eg==}
-
-  '@types/sinonjs__fake-timers@15.0.1':
-    resolution: {integrity: sha512-Ko2tjWJq8oozHzHV+reuvS5KYIRAokHnGbDwGh/J64LntgpbuylF74ipEL24HCyRjf9FOlBiBHWBR1RlVKsI1w==}
 
   '@types/symlink-or-copy@1.2.2':
     resolution: {integrity: sha512-MQ1AnmTLOncwEf9IVU+B2e4Hchrku5N67NkgcAHW0p3sdzPe0FNMANxEm6OJUzPniEQGkeT3OROLlCwZJLWFZA==}
@@ -5033,18 +5024,6 @@ packages:
     resolution: {integrity: sha512-6IIimVGOdehZcncH1ilCY4p7hWBtZqWYMc1Xodr1ATOCuIk6ZO1yztKcUQhlmwl7fE82gL4wHD01T6XP5W59Ng==}
     engines: {node: 10.* || >= 12}
 
-  ember-sinon-qunit@7.1.4:
-    resolution: {integrity: sha512-aV9jOaLR5W4sFsx0hVqHVVdPt/TxY537YeuwMNyeOgxWYmLLFek7Jo4KMs/m442OsFlP0uCT52r7YOeBXBuEiA==}
-    engines: {node: 14.* || 16.* || >= 18}
-    peerDependencies:
-      ember-source: ^3.28.0 || ^4.0.0
-      qunit: ^2.0.0
-      sinon: ^15.0.2
-
-  ember-sinon@5.0.0:
-    resolution: {integrity: sha512-dTP2vhao1xWm3OlfpOALooso/OLM71SFg7PIBmZ6JdwKCC+CzcPb4BYRAXuoAFYzmhH8z28p8HdemjZBb0B3Bw==}
-    engines: {node: 10.* || >= 12}
-
   ember-source-channel-url@3.0.0:
     resolution: {integrity: sha512-vF/8BraOc66ZxIDo3VuNP7iiDrnXEINclJgSJmqwAAEpg84Zb1DHPI22XTXSDA+E8fW5btPUxu65c3ZXi8AQFA==}
     engines: {node: 10.* || 12.* || >= 14}
@@ -5063,6 +5042,10 @@ packages:
       '@babel/core': ^7.17.10
       '@ember/string': '>=4'
       '@ember/test-waiters': ^3.0.2 || >= 4.0.0
+      sinon: '>= 9'
+    peerDependenciesMeta:
+      sinon:
+        optional: true
 
   ember-style-modifier@4.3.0:
     resolution: {integrity: sha512-fL82w/sYu5LibLcM2t7K3CjE+SacgHYX7+ovSHBT5L2HJf1Mjnx5/UNe4/1zdwWqyw2mtik3qJdUpJjP+MSeNg==}
@@ -12931,12 +12914,6 @@ snapshots:
       '@types/node': 24.10.1
       '@types/send': 0.17.6
 
-  '@types/sinon@10.0.20':
-    dependencies:
-      '@types/sinonjs__fake-timers': 15.0.1
-
-  '@types/sinonjs__fake-timers@15.0.1': {}
-
   '@types/symlink-or-copy@1.2.2': {}
 
   '@typescript-eslint/eslint-plugin@5.21.0(@typescript-eslint/parser@5.21.0(eslint@7.32.0)(typescript@5.9.3))(eslint@7.32.0)(typescript@5.9.3)':
@@ -17226,30 +17203,6 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  ember-sinon-qunit@7.1.4(ember-source@5.4.1(@babel/core@7.28.5)(@glimmer/component@1.1.2(@babel/core@7.28.5))(rsvp@4.8.5)(webpack@5.103.0))(qunit@2.24.2)(sinon@9.2.4)(webpack@5.103.0):
-    dependencies:
-      '@types/sinon': 10.0.20
-      broccoli-funnel: 3.0.8
-      ember-auto-import: 2.11.2(webpack@5.103.0)
-      ember-cli-babel: 7.26.11
-      ember-cli-typescript: 5.3.0
-      ember-source: 5.4.1(@babel/core@7.28.5)(@glimmer/component@1.1.2(@babel/core@7.28.5))(rsvp@4.8.5)(webpack@5.103.0)
-      qunit: 2.24.2
-      sinon: 9.2.4
-    transitivePeerDependencies:
-      - '@glint/template'
-      - supports-color
-      - webpack
-
-  ember-sinon@5.0.0:
-    dependencies:
-      broccoli-funnel: 2.0.2
-      broccoli-merge-trees: 3.0.2
-      ember-cli-babel: 7.26.11
-      sinon: 9.2.4
-    transitivePeerDependencies:
-      - supports-color
-
   ember-source-channel-url@3.0.0:
     dependencies:
       node-fetch: 2.7.0
@@ -17366,7 +17319,7 @@ snapshots:
       - supports-color
       - webpack
 
-  ember-stereo@file:ember-stereo(@babel/core@7.28.5)(@ember/string@3.1.1)(@ember/test-waiters@4.1.1)(ember-source@5.4.1(@babel/core@7.28.5)(@glimmer/component@1.1.2(@babel/core@7.28.5))(rsvp@4.8.5)(webpack@5.103.0))(webpack@5.103.0):
+  ember-stereo@file:ember-stereo(@babel/core@7.28.5)(@ember/string@3.1.1)(@ember/test-waiters@4.1.1)(ember-source@5.4.1(@babel/core@7.28.5)(@glimmer/component@1.1.2(@babel/core@7.28.5))(rsvp@4.8.5)(webpack@5.103.0))(sinon@9.2.4)(webpack@5.103.0):
     dependencies:
       '@babel/core': 7.28.5
       '@ember/string': 3.1.1
@@ -17382,18 +17335,19 @@ snapshots:
       ember-concurrency: 5.2.0(@babel/core@7.28.5)
       ember-gesture-modifiers: 5.0.1(patch_hash=2c84ef844c47cf7d5bb5618362697f570318b74ccef3195f04f3c9a0a0a41bf8)(@babel/core@7.28.5)(ember-source@5.4.1(@babel/core@7.28.5)(@glimmer/component@1.1.2(@babel/core@7.28.5))(rsvp@4.8.5)(webpack@5.103.0))(webpack@5.103.0)
       ember-modifier: 4.2.2(@babel/core@7.28.5)
-      ember-sinon: 5.0.0
       hls.js: 1.6.15
       howler: '@tunein/howler@https://codeload.github.com/tunein/howler.js/tar.gz/5cd1ecff8d6df8f8793bd7126ccab317ea37feb4'
       tracked-built-ins: 3.4.0(@babel/core@7.28.5)
       tracked-toolbox: 2.0.0(@babel/core@7.28.5)(ember-source@5.4.1(@babel/core@7.28.5)(@glimmer/component@1.1.2(@babel/core@7.28.5))(rsvp@4.8.5)(webpack@5.103.0))
+    optionalDependencies:
+      sinon: 9.2.4
     transitivePeerDependencies:
       - '@glint/template'
       - ember-source
       - supports-color
       - webpack
 
-  ember-stereo@file:ember-stereo(@babel/core@7.28.5)(@ember/string@4.0.1)(@ember/test-waiters@4.1.1)(ember-source@5.4.1(@babel/core@7.28.5)(@glimmer/component@1.1.2(@babel/core@7.28.5))(rsvp@4.8.5)(webpack@5.103.0))(webpack@5.103.0):
+  ember-stereo@file:ember-stereo(@babel/core@7.28.5)(@ember/string@4.0.1)(@ember/test-waiters@4.1.1)(ember-source@5.4.1(@babel/core@7.28.5)(@glimmer/component@1.1.2(@babel/core@7.28.5))(rsvp@4.8.5)(webpack@5.103.0))(sinon@9.2.4)(webpack@5.103.0):
     dependencies:
       '@babel/core': 7.28.5
       '@ember/string': 4.0.1
@@ -17409,11 +17363,12 @@ snapshots:
       ember-concurrency: 5.2.0(@babel/core@7.28.5)
       ember-gesture-modifiers: 5.0.1(patch_hash=2c84ef844c47cf7d5bb5618362697f570318b74ccef3195f04f3c9a0a0a41bf8)(@babel/core@7.28.5)(ember-source@5.4.1(@babel/core@7.28.5)(@glimmer/component@1.1.2(@babel/core@7.28.5))(rsvp@4.8.5)(webpack@5.103.0))(webpack@5.103.0)
       ember-modifier: 4.2.2(@babel/core@7.28.5)
-      ember-sinon: 5.0.0
       hls.js: 1.6.15
       howler: '@tunein/howler@https://codeload.github.com/tunein/howler.js/tar.gz/5cd1ecff8d6df8f8793bd7126ccab317ea37feb4'
       tracked-built-ins: 3.4.0(@babel/core@7.28.5)
       tracked-toolbox: 2.0.0(@babel/core@7.28.5)(ember-source@5.4.1(@babel/core@7.28.5)(@glimmer/component@1.1.2(@babel/core@7.28.5))(rsvp@4.8.5)(webpack@5.103.0))
+    optionalDependencies:
+      sinon: 9.2.4
     transitivePeerDependencies:
       - '@glint/template'
       - ember-source

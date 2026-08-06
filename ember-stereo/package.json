@@ -53,7 +53,6 @@
     "ember-gesture-modifiers": "^5.0.0",
     "ember-concurrency": "^5.2.0",
     "ember-modifier": "^4.1.0",
-    "ember-sinon": "^5.0.0",
     "date-fns": "^3.6.0",
     "hls.js": "^1.5.15",
     "howler": "tunein/howler.js",
@@ -94,7 +93,13 @@
   "peerDependencies": {
     "@babel/core": "^7.17.10",
     "@ember/string": ">=4",
-    "@ember/test-waiters": "^3.0.2 || >= 4.0.0"
+    "@ember/test-waiters": "^3.0.2 || >= 4.0.0",
+    "sinon": ">= 9"
+  },
+  "peerDependenciesMeta": {
+    "sinon": {
+      "optional": true
+    }
   },
   "publishConfig": {
     "registry": "https://registry.npmjs.org"
