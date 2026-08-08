@@ -1,0 +1,652 @@
+import { _ as _applyDecoratedDescriptor, a as _initializerDefineProperty, b as _defineProperty } from '../../_rollupPluginBabelHelpers-hULyhLkN.js';
+import { buildTask } from 'ember-concurrency/async-arrow-runtime';
+import { setOwner, getOwner } from '@ember/application';
+import { tracked } from '@glimmer/tracking';
+import { isEmpty } from '@ember/utils';
+import { race, waitForEvent, rawTimeout } from 'ember-concurrency';
+import debug from 'debug';
+import Evented from './evented.js';
+import { EVENT_MAP } from './event-map.js';
+
+var _class, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6, _descriptor7, _descriptor8;
+
+/**
+ * An identity-stable, lazy proxy for a playable url that delegates playback to
+ * a concrete connection (a `BaseSound` subclass) in `value`.
+ *
+ * @class Sound
+ * @private
+ */
+let Sound = (_class = class Sound extends Evented {
+  constructor(identifier, _options = {}) {
+    super(...arguments);
+    _initializerDefineProperty(this, "identifier", _descriptor, this);
+    _initializerDefineProperty(this, "options", _descriptor2, this);
+    _initializerDefineProperty(this, "strategies", _descriptor3, this);
+    _initializerDefineProperty(this, "failures", _descriptor4, this);
+    _initializerDefineProperty(this, "_value", _descriptor5, this);
+    _initializerDefineProperty(this, "_volume", _descriptor6, this);
+    _initializerDefineProperty(this, "_castUrl", _descriptor7, this);
+    _initializerDefineProperty(this, "_debug", _descriptor8, this);
+    // Survives a backend swap. Only explicit pause/stop/togglePause clear it —
+    // an involuntary pause (e.g. an AirPlay route drop) deliberately does not.
+    _defineProperty(this, "_playIntent", false);
+    _defineProperty(this, "_boundRelayHandlers", new Map());
+    _defineProperty(this, "loadTask", buildTask(() => ({
+      context: this,
+      generator: function* (loadOptions = {}) {
+        // Only a load attempt promotes into the loaded list; findSound alone is
+        // speculative — helpers probe urls constantly.
+        this.stereo?.loadedSounds?.add(this);
+        let options = this.stereo.prepareLoadOptions({
+          ...this.options,
+          ...loadOptions
+        });
+
+        // prewarmCast may have set the cast url before this load ran.
+        if (options.castUrl != null) {
+          this._castUrl = options.castUrl;
+        } else if (this._castUrl != null) {
+          options.castUrl = this._castUrl;
+        }
+        if (this.isResolved && !this.value.isErrored) {
+          // The ONE shared Cast session may have moved to another feed, so a cached
+          // cast connection that "matches" can still be stale; re-issuing loadMedia
+          // is cheap because Chromecast.setup()'s adopt-check skips a redundant one.
+          // _shouldCastUrl requires a LIVE session, so a dead one resolves locally.
+          let castingThisUrl = this.stereo._shouldCastUrl(options.castUrl);
+          if (!castingThisUrl && this._castStateMatches()) {
+            return this.value;
+          }
+          // Seeking a live stream makes the receiver buffer forever.
+          let castStartPosition = this.isStream ? null : this.position;
+          let target = castingThisUrl ? this.stereo._buildCastConnection(options.castUrl, this.metadata, castStartPosition) : this.stereo._buildLocalConnection(this);
+          if (target) {
+            return yield this.swap(target);
+          }
+          return this.value;
+        }
+        let urls = yield this.stereo.urlCache.resolve(this.identifier);
+
+        // Not while casting: that must resolve through the cast strategy.
+        if (!this.stereo.isCasting) {
+          let cachedConnection = this.stereo.findLoadedSound(urls);
+          if (cachedConnection) {
+            this.value = cachedConnection;
+            return cachedConnection;
+          }
+        }
+
+        // Rebuild while casting so the cast strategy is (re)injected at the top.
+        if (!this.strategies || this.stereo.isCasting) {
+          this.strategies = this.stereo._buildStrategies(urls, options);
+          this._debug = this.strategies;
+        }
+        this._clearPreviousAttempts();
+        for (let strategy of this.strategies) {
+          if (!strategy.canPlay || strategy.tried) {
+            continue;
+          }
+          strategy.tried = true;
+          let connection = strategy.createSound();
+          debug('ember-stereo:sound')(`TRYING: [${strategy.connectionName}] -> ${strategy.url}`);
+          let {
+            sound,
+            error,
+            erroredSound
+          } = yield race([this.waitForReadyTask.perform(connection), this.waitForErrorTask.perform(connection)]);
+          if (sound) {
+            strategy.success = true;
+            this.value = sound;
+            this.stereo.soundCache.cache(sound);
+            this.stereo.oneAtATime.register(sound);
+            this.trigger('sound-ready', {
+              sound
+            });
+            return sound;
+          } else {
+            strategy.error = error;
+            strategy.erroredSound = erroredSound;
+            this.failures = [...this.failures, strategy];
+          }
+        }
+        return null;
+      }
+    }), {
+      restartable: true
+    }, "loadTask", null));
+    // The connection may already be ready, and audio-ready won't fire again.
+    _defineProperty(this, "waitForReadyTask", buildTask(() => ({
+      context: this,
+      generator: function* (connection) {
+        if (!connection.isReady) {
+          yield waitForEvent(connection, 'audio-ready');
+        }
+        return {
+          sound: connection
+        };
+      }
+    }), null, "waitForReadyTask", null));
+    _defineProperty(this, "waitForErrorTask", buildTask(() => ({
+      context: this,
+      generator: function* (connection) {
+        // audio-load-error is unreliable: NativeAudio emits it then retries without
+        // crossorigin, and Howler sets isErrored a tick late (it triggers outside
+        // the runloop). So poll the flag, waking on the event or a real-time tick
+        // (rawTimeout isn't fast-forwarded in tests).
+        while (!connection.isErrored) {
+          yield race([waitForEvent(connection, 'audio-load-error'), rawTimeout(50)]);
+        }
+        return {
+          error: connection.error,
+          erroredSound: connection
+        };
+      }
+    }), null, "waitForErrorTask", null));
+    // --- The swap (connection A -> connection B, identity stays put) ---
+    _defineProperty(this, "_swapGen", 0);
+    _defineProperty(this, "_handoff", null);
+    _defineProperty(this, "swapTask", buildTask(() => ({
+      context: this,
+      generator: function* (targetConnection) {
+        let generation = ++this._swapGen;
+
+        // Reused rather than recaptured so rapid swaps keep the original
+        // position/play-state instead of the torn-down connection's.
+        let handoff = this._handoff ?? this._captureHandoff();
+        this._handoff = handoff;
+        let outgoing = this.value;
+        // Drop the relays before detaching, so teardown pause/ended events never
+        // reach the Sound.
+        this.value = null;
+        this._silenceAndReleaseOutgoing(outgoing);
+        if (outgoing) {
+          this.stereo?.soundCache?.remove(outgoing);
+          this.stereo?.oneAtATime?.unregister(outgoing);
+        }
+        let incoming = targetConnection;
+        let engaged = false;
+        try {
+          let {
+            sound,
+            error
+          } = yield race([this.waitForReadyTask.perform(incoming), this.waitForErrorTask.perform(incoming)]);
+
+          // The newer swap owns recovery, and the handoff it will reuse.
+          let supersededByNewerSwap = generation !== this._swapGen;
+          if (supersededByNewerSwap) {
+            return null;
+          }
+
+          // The outgoing is already torn down, so re-resolve through the waterfall
+          // rather than strand the Sound with no connection.
+          if (!sound) {
+            let failure = {
+              url: this.url,
+              error: error || 'failed to engage swapped connection',
+              connectionKey: incoming.connectionKey
+            };
+            this.trigger('audio-load-error', {
+              sound: this,
+              failures: [failure],
+              error: failure.error
+            });
+            yield this.loadTask.perform();
+
+            // Recorded after the reload — _clearPreviousAttempts wipes failures.
+            this.failures = [...this.failures, failure];
+            if (this.value) {
+              if (handoff.position != null && this.value.isSeekable) {
+                this.value.position = handoff.position;
+              }
+              if (handoff.isPlaying) {
+                yield this.value.play();
+              }
+              this._handoff = null;
+            }
+            return null;
+          }
+          if (handoff.position != null) {
+            if (incoming.isSeekable) {
+              incoming.position = handoff.position;
+            } else if (typeof incoming.seedPosition === 'function') {
+              // A live stream can't seek, but seeding its clock keeps elapsed time
+              // continuous instead of restarting from zero.
+              incoming.seedPosition(handoff.position);
+            }
+          }
+          this.value = incoming;
+          engaged = true;
+          this.stereo?.soundCache?.cache(incoming);
+          this.stereo?.oneAtATime?.register(incoming);
+          if (handoff.isPlaying) {
+            yield incoming.play();
+          }
+
+          // A cast backend autoplays on load, so its audio-played fired before the
+          // relays registered — emit a catch-up (idempotent downstream).
+          if (this.isPlaying) {
+            this.trigger('audio-played', {
+              sound: this
+            });
+          }
+          this._handoff = null;
+          return incoming;
+        } finally {
+          // The handoff is deliberately left in place for a superseding swap.
+          if (!engaged && incoming && !incoming.isDestroyed) {
+            try {
+              incoming.detach();
+            } catch (e) {
+              debug('ember-stereo:sound')(`incoming detach errored: ${e?.message}`);
+            }
+          }
+        }
+      }
+    }), {
+      restartable: true
+    }, "swapTask", null));
+    if (_options.owner) {
+      setOwner(this, _options.owner);
+    }
+    this.identifier = identifier;
+    this.options = _options;
+    if (_options.metadata) {
+      this.metadata = _options.metadata;
+    }
+  }
+  get stereo() {
+    return getOwner(this)?.lookup('service:stereo');
+  }
+  get url() {
+    return this.value?.url ?? this.identifier;
+  }
+
+  // A cast receiver fetches this itself, so it can't be an HLS/MSE stream; the
+  // app supplies a natively-playable variant.
+  get castUrl() {
+    return this._castUrl ?? this.url;
+  }
+  set castUrl(value) {
+    this._castUrl = value;
+  }
+  get value() {
+    return this._value;
+  }
+  set value(connection) {
+    debug('ember-stereo:sound')(`set value: ${connection?.connectionName} -> ${connection?.url}`);
+    this._unregisterEventRelays(this._value);
+    if (connection) {
+      this._registerEventRelays(connection);
+      if (this._volume != null) {
+        connection._setVolume(this._volume);
+      }
+    }
+    this._value = connection;
+  }
+
+  // --- Lifecycle state (owned by the Sound during the pre-resolution window) ---
+
+  get isPending() {
+    return isEmpty(this.value);
+  }
+  get isResolved() {
+    return !isEmpty(this.value);
+  }
+  get isLoading() {
+    return this.loadTask.isRunning || this.swapTask.isRunning || this.value?.isLoading || false;
+  }
+  get isErrored() {
+    if (this.value) {
+      return this.value.isErrored;
+    }
+    return Boolean(this.strategies) && !this.loadTask.isRunning && this.isPending;
+  }
+  get errors() {
+    let strategyErrors = (this.failures || []).map(strategy => strategy.error).filter(Boolean);
+    return this.value?.error ? [...strategyErrors, this.value.error] : strategyErrors;
+  }
+  get error() {
+    return this.value?.error;
+  }
+
+  // A cast connection carries no metadata — it's built with the castUrl, while
+  // the app stored metadata under the playback identifier.
+  get metadata() {
+    if (this.value) {
+      let connectionMetadata = this.value.metadata;
+      if (connectionMetadata && Object.keys(connectionMetadata).length > 0) {
+        return connectionMetadata;
+      }
+    }
+    return this.stereo?.metadataCache?.find(this.identifier) ?? {};
+  }
+  get audioElement() {
+    return this.value?.audioElement;
+  }
+  set metadata(value) {
+    if (this.value) {
+      this.value.metadata = value;
+      return;
+    }
+    this.stereo?.metadataCache?.store(this.identifier, value);
+  }
+
+  // --- Loading ---
+
+  load(loadOptions = {}) {
+    return this.loadTask.perform(loadOptions);
+  }
+  _castStateMatches() {
+    let valueIsCast = this.stereo._isCastConnection(this.value);
+    if (this.stereo.isCasting) {
+      return valueIsCast && !this.stereo._isStaleCastValue(this.value);
+    }
+    return !valueIsCast;
+  }
+  // Without this, re-loading an errored Sound would skip every already-tried
+  // strategy and resolve to nothing.
+  _clearPreviousAttempts() {
+    this.failures = [];
+    this.strategies.forEach(strategy => {
+      strategy.tried = false;
+      strategy.error = null;
+      strategy.success = false;
+    });
+  }
+  /**
+   * Move this Sound to another connection, carrying over position and
+   * play-state; a newer swap aborts the one in flight.
+   *
+   * @method swap
+   * @param {String|BaseSound} target a connection key from this Sound's strategies, or a connection instance
+   * @param {Object} [connectionArgs] constructor overrides for a key-built connection (e.g. `{ timeout: 10000 }`)
+   * @return {Promise<BaseSound|null>} the engaged connection, or null if superseded/failed
+   */
+  swap(target, connectionArgs = {}) {
+    if (typeof target === 'string') {
+      let strategy = (this.strategies || []).find(candidate => candidate.key === target && candidate.canPlay);
+      if (!strategy) {
+        return Promise.reject(new Error(`[ember-stereo] no eligible '${target}' connection for ${this.url}`));
+      }
+      target = strategy.createSound(connectionArgs);
+    }
+    return this.swapTask.perform(target);
+  }
+  // detach() alone doesn't pause the element and pause() can fail on a shared
+  // element, so both are paused. Each step is guarded on its own: a throw must
+  // not skip the ones after it.
+  _silenceAndReleaseOutgoing(outgoing) {
+    let outgoingElement = outgoing?.audioElement;
+    try {
+      outgoing?.pause?.();
+    } catch (e) {
+      debug('ember-stereo:sound')(`outgoing pause errored: ${e?.message}`);
+    }
+    try {
+      outgoingElement?.pause?.();
+    } catch (e) {
+      debug('ember-stereo:sound')(`outgoing element pause errored: ${e?.message}`);
+    }
+    try {
+      outgoing?.detach?.();
+    } catch (e) {
+      debug('ember-stereo:sound')(`outgoing detach errored: ${e?.message}`);
+    }
+  }
+
+  /**
+   * Return this Sound to its pristine pending state; identity survives, so
+   * existing references keep working.
+   *
+   * @method reset
+   */
+  reset() {
+    this.loadTask.cancelAll();
+    this.swapTask.cancelAll();
+    let connection = this.value;
+    this.value = null;
+    if (connection) {
+      try {
+        connection.stop?.();
+      } catch (e) {
+        debug('ember-stereo:sound')(`reset stop errored: ${e?.message}`);
+      }
+      try {
+        connection.detach?.();
+      } catch (e) {
+        debug('ember-stereo:sound')(`reset detach errored: ${e?.message}`);
+      }
+      this.stereo?.soundCache?.remove(connection);
+      this.stereo?.oneAtATime?.unregister(connection);
+    }
+    this.strategies = null;
+    this.failures = [];
+    this._handoff = null;
+    this._playIntent = false;
+  }
+  _captureHandoff() {
+    let connection = this.value;
+    return {
+      position: connection?.position,
+      // Intent, not live isPlaying: a route drop pauses the outgoing
+      // connection, but the swapped-in backend should still resume.
+      isPlaying: this._playIntent
+    };
+  }
+
+  // --- Event relay (connection -> Sound) ---
+
+  _registerEventRelays(connection) {
+    if (!connection) {
+      return;
+    }
+    EVENT_MAP.forEach(({
+      event
+    }) => {
+      let handler = info => this._relayEvent(event, info);
+      this._boundRelayHandlers.set(event, handler);
+      connection.on(event, handler);
+    });
+  }
+  _relayEvent(eventName, info = {}) {
+    if (eventName === 'audio-played') {
+      this._playIntent = true;
+    }
+    this.trigger(eventName, {
+      ...info,
+      sound: this
+    });
+  }
+  _unregisterEventRelays(connection) {
+    if (!connection) {
+      return;
+    }
+    EVENT_MAP.forEach(({
+      event
+    }) => {
+      let handler = this._boundRelayHandlers.get(event);
+      if (handler) {
+        try {
+          connection.off(event, handler);
+        } catch (e) {
+          // unregistering errors are not important
+        }
+        this._boundRelayHandlers.delete(event);
+      }
+    });
+  }
+
+  // --- Proxied playback methods/state (delegated to the connection) ---
+
+  // On the wrong backend, play()/togglePause() would no-op a dead connection;
+  // load()'s swap path replaces it and plays it per _playIntent.
+  _needsBackendReresolve() {
+    return this.isResolved && !this._castStateMatches();
+  }
+  play(...args) {
+    this._playIntent = true;
+    if (this._needsBackendReresolve()) {
+      return this.load();
+    }
+    return this.value?.play(...args);
+  }
+  pause(...args) {
+    this._playIntent = false;
+    return this.value?.pause(...args);
+  }
+  stop(...args) {
+    this._playIntent = false;
+    return this.value?.stop(...args);
+  }
+  togglePause(...args) {
+    this._playIntent = !this.isPlaying;
+    if (this._needsBackendReresolve()) {
+      return this.load();
+    }
+    return this.value?.togglePause(...args);
+  }
+  rewind(...args) {
+    return this.value?.rewind(...args);
+  }
+  fastForward(...args) {
+    return this.value?.fastForward(...args);
+  }
+  seek(...args) {
+    return this.value?.seek(...args);
+  }
+  hasUrl(...args) {
+    return this.value?.hasUrl(...args);
+  }
+  urlsAreEqual(...args) {
+    return this.value?.urlsAreEqual?.(...args);
+  }
+  _setVolume(volume) {
+    this._volume = volume;
+    this.value?._setVolume(volume);
+  }
+  get position() {
+    return this.value?.position;
+  }
+  set position(value) {
+    if (this.value) {
+      this.value.position = value;
+    }
+  }
+  get duration() {
+    return this.value?.duration;
+  }
+  get currentTime() {
+    return this.value?.currentTime;
+  }
+  get startTime() {
+    return this.value?.startTime;
+  }
+  get endTime() {
+    return this.value?.endTime;
+  }
+  get percentLoaded() {
+    return this.value?.percentLoaded;
+  }
+  get isBlocked() {
+    return this.value?.isBlocked;
+  }
+  set isBlocked(value) {
+    if (this.value) {
+      this.value.isBlocked = value;
+    }
+  }
+  get isReady() {
+    return this.value?.isReady;
+  }
+  get isPlaying() {
+    return this.value?.isPlaying;
+  }
+  get isPaused() {
+    return this.value?.isPaused;
+  }
+  get isLoaded() {
+    return this.value?.isLoaded;
+  }
+  get hasPlayed() {
+    return this.value?.hasPlayed;
+  }
+  get mimeType() {
+    return this.value?.mimeType;
+  }
+  get isStream() {
+    return this.value?.isStream;
+  }
+  get isRewindable() {
+    return this.value?.isRewindable;
+  }
+  get isFastForwardable() {
+    return this.value?.isFastForwardable;
+  }
+  get isSeekable() {
+    return this.value?.isSeekable;
+  }
+  get id3Tags() {
+    return this.value?.id3Tags;
+  }
+  get id3TagMetadata() {
+    return this.value?.id3TagMetadata;
+  }
+  get connectionName() {
+    return this.value?.connectionName;
+  }
+  get connectionKey() {
+    return this.value?.connectionKey;
+  }
+}, _descriptor = _applyDecoratedDescriptor(_class.prototype, "identifier", [tracked], {
+  configurable: true,
+  enumerable: true,
+  writable: true,
+  initializer: null
+}), _descriptor2 = _applyDecoratedDescriptor(_class.prototype, "options", [tracked], {
+  configurable: true,
+  enumerable: true,
+  writable: true,
+  initializer: null
+}), _descriptor3 = _applyDecoratedDescriptor(_class.prototype, "strategies", [tracked], {
+  configurable: true,
+  enumerable: true,
+  writable: true,
+  initializer: null
+}), _descriptor4 = _applyDecoratedDescriptor(_class.prototype, "failures", [tracked], {
+  configurable: true,
+  enumerable: true,
+  writable: true,
+  initializer: function () {
+    return [];
+  }
+}), _descriptor5 = _applyDecoratedDescriptor(_class.prototype, "_value", [tracked], {
+  configurable: true,
+  enumerable: true,
+  writable: true,
+  initializer: function () {
+    return null;
+  }
+}), _descriptor6 = _applyDecoratedDescriptor(_class.prototype, "_volume", [tracked], {
+  configurable: true,
+  enumerable: true,
+  writable: true,
+  initializer: null
+}), _descriptor7 = _applyDecoratedDescriptor(_class.prototype, "_castUrl", [tracked], {
+  configurable: true,
+  enumerable: true,
+  writable: true,
+  initializer: function () {
+    return null;
+  }
+}), _descriptor8 = _applyDecoratedDescriptor(_class.prototype, "_debug", [tracked], {
+  configurable: true,
+  enumerable: true,
+  writable: true,
+  initializer: function () {
+    return {};
+  }
+}), _class);
+
+export { Sound as default };
+//# sourceMappingURL=sound.js.map
