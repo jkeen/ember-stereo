@@ -51,7 +51,6 @@
     "ember-cli-babel": "^7.26.11",
     "ember-cli-htmlbars": "^6.1.1",
     "ember-gesture-modifiers": "^5.0.0",
-    "ember-concurrency": "^5.2.0",
     "ember-modifier": "^4.1.0",
     "date-fns": "^3.6.0",
     "hls.js": "^1.5.15",
@@ -74,7 +73,6 @@
     "semantic-release": "^24.2.9",
     "babel-eslint": "10.1.0",
     "concurrently": "^9.0.1",
-    "ember-resources": "^4.7.1",
     "eslint": "^7.0.0",
     "@babel/plugin-proposal-decorators": "^7.23.2",
     "eslint-config-prettier": "8.5.0",
@@ -88,13 +86,15 @@
     "eslint-plugin-prettier": "4.0.0",
     "eslint-plugin-simple-import-sort": "7.0.0",
     "rollup": "4.53.3",
-    "rollup-plugin-copy": "^3.5.0"
+    "rollup-plugin-copy": "^3.5.0",
+    "ember-concurrency": "^4.0.6"
   },
   "peerDependencies": {
     "@babel/core": "^7.17.10",
     "@ember/string": ">=4",
     "@ember/test-waiters": "^3.0.2 || >= 4.0.0",
-    "sinon": ">= 9"
+    "sinon": ">= 9",
+    "ember-concurrency": "^4.0.6 || ^5.0.0"
   },
   "peerDependenciesMeta": {
     "sinon": {

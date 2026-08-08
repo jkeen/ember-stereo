@@ -99,6 +99,7 @@ jobs:
           - ember-lts-6.12
           - embroider-safe
           - embroider-optimized
+          - ember-concurrency-5
         allow-failure: [false]
     steps:
       - uses: actions/checkout@v7
