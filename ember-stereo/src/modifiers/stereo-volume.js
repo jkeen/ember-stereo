@@ -35,18 +35,18 @@ export default class StereoVolumeModifier extends Modifier {
         x = e.clientX - rect.left; // x position within the element for mouse click
       }
       let volumeLevel = parseInt((x / rect.width) * 100, 10);
-      this.setVolume(volumeLevel)
-    })
+      this.setVolume(volumeLevel);
+    });
   }
 
   @action
   onRangeChange(event) {
-    this.setVolume(parseInt(event.target.value, 10))
+    this.setVolume(parseInt(event.target.value, 10));
     event.preventDefault();
   }
 
   setVolume(volume) {
-    this.stereo.volume = Math.max(0, Math.min(100, volume))
+    this.stereo.volume = Math.max(0, Math.min(100, volume));
   }
 
   @action

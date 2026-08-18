@@ -1,7 +1,7 @@
 import { module, test } from 'qunit';
 import { setupRenderingTest } from 'ember-qunit';
 import { setupStereoTest } from 'ember-stereo/test-support/stereo-setup';
-import { render } from '@ember/test-helpers';
+import { render, settled } from '@ember/test-helpers';
 import { hbs } from 'ember-cli-htmlbars';
 
 module('Integration | Helper | sound-is-playing', function (hooks) {
@@ -71,5 +71,41 @@ module('Integration | Helper | sound-is-playing', function (hooks) {
     await service.play(this.url2);
     assert.true(service.isPlaying);
     assert.strictEqual(this.element.textContent.trim(), 'is-not-playing');
+  });
+
+  test('a helper rendered before load keeps tracking through a connection swap', async function (assert) {
+    let service = this.owner
+      .lookup('service:stereo')
+      .loadConnections(['NativeAudio']);
+
+    this.set('url', '/good/2500/swap-tracking.mp3');
+    await render(
+      hbs`{{#if (sound-is-playing this.url)}}sound-is-playing{{else}}is-not-playing{{/if}}`,
+    );
+    assert.strictEqual(
+      this.element.textContent.trim(),
+      'is-not-playing',
+      'the helper rendered against a url nothing has loaded yet',
+    );
+
+    await service.play(this.url);
+    assert.strictEqual(
+      this.element.textContent.trim(),
+      'sound-is-playing',
+      'the helper picked up the load+play that happened elsewhere',
+    );
+
+    let sound = service.findSound(this.url);
+    let outgoing = sound.connection;
+    await sound.swap('NativeAudio');
+    await settled();
+
+    assert.notStrictEqual(sound.connection, outgoing, 'the connection changed');
+    assert.true(sound.isPlaying, 'playback carried across the swap');
+    assert.strictEqual(
+      this.element.textContent.trim(),
+      'sound-is-playing',
+      'the pre-load helper still tracks the Sound on its new connection',
+    );
   });
 });

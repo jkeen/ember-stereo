@@ -16,4 +16,28 @@ module('Integration | Helper | numeric-duration', function (hooks) {
 
     assert.dom(this.element).hasText('01:40');
   });
+
+  test('it renders a numeric duration too', async function (assert) {
+    this.set('inputValue', 100000);
+
+    await render(hbs`{{numeric-duration this.inputValue}}`);
+
+    assert.dom(this.element).hasText('01:40');
+  });
+
+  test('an endless sound renders as ∞', async function (assert) {
+    this.set('inputValue', Infinity);
+
+    await render(hbs`{{numeric-duration this.inputValue}}`);
+
+    assert.dom(this.element).hasText('∞');
+  });
+
+  test('a sound with nothing measured yet renders as unknown', async function (assert) {
+    this.set('inputValue', NaN);
+
+    await render(hbs`{{numeric-duration this.inputValue}}`);
+
+    assert.dom(this.element).hasText('--:--');
+  });
 });

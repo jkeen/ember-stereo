@@ -28,7 +28,7 @@ export default class FakeMediaElement extends Evented {
     super(...arguments);
 
     debug('ember-stereo:fake-element')(
-      `initializing fake ${arguments[0] ?? ''} element`
+      `initializing fake ${arguments[0] ?? ''} element`,
     );
     this.setInitialState();
     registerDestructor(this, () => this.willDestroy());
@@ -110,7 +110,7 @@ export default class FakeMediaElement extends Evented {
       // this.trigger('error', { target: this })
 
       console.warn(
-        `unrecognized fake media element url. Format should be /:status/:length_or_error/:name, received ${this.src}`
+        `unrecognized fake media element url. Format should be /:status/:length_or_error/:name, received ${this.src}`,
       );
 
       // maybe this is a real element?
@@ -159,7 +159,7 @@ export default class FakeMediaElement extends Evented {
   }
   set currentTime(value) {
     debug('ember-stereo:fake-element')(
-      `${this.src} setting position to ${value} / ${this.duration}`
+      `${this.src} setting position to ${value} / ${this.duration}`,
     );
     if (value >= this.duration) {
       this._currentTime = this.duration;
@@ -198,8 +198,11 @@ export default class FakeMediaElement extends Evented {
     return this.on(...arguments);
   }
 
-  removeEventListener() {
-    return this.off(...arguments);
+  removeEventListener(name, listener) {
+    // removeEventListener with no listener is a no-op, but Ember's off asserts on a missing method.
+    if (listener) {
+      return this.off(name, listener);
+    }
   }
 
   setAttribute(name, value) {

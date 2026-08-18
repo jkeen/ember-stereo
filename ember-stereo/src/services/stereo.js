@@ -3,30 +3,27 @@ import { tracked } from '@glimmer/tracking';
 import { getOwner, setOwner } from '@ember/application';
 import { A as emberArray, makeArray } from '@ember/array';
 import { assert } from '@ember/debug';
-import {
-  race,
-  task,
-  waitForProperty,
-  waitForEvent,
-  didCancel,
-} from 'ember-concurrency';
-import { cancel, later, next } from '@ember/runloop';
+import { race, task, waitForEvent, didCancel } from 'ember-concurrency';
+import { next } from '@ember/runloop';
 import { isTesting, macroCondition } from '@embroider/macros';
 import debug from 'debug';
+import { TrackedSet } from 'tracked-built-ins';
 
 import EmberEvented from '@ember/object/evented';
-import ErrorCache from '../-private/utils/error-cache';
+
 import OneAtATime from '../-private/utils/one-at-a-time';
-import UrlCache from '../-private/utils/url-cache';
-import MetadataCache from '../-private/utils/metadata-cache';
 import SharedAudioAccess from '../-private/utils/shared-audio-access';
-import SoundCache from '../-private/utils/sound-cache';
-import UntrackedObjectCache from '../-private/utils/untracked-object-cache';
+import CastCoordinator from '../-private/utils/cast-coordinator';
+import SoundIdentityMap from '../-private/utils/sound-identity-map';
 import Strategizer from '../-private/utils/strategizer';
-import StereoUrl from '../-private/utils/stereo-url';
-import SoundProxy from '../-private/utils/sound-proxy';
+import Sound from '../-private/utils/sound';
 import ConnectionLoader from '../-private/utils/connection-loader';
-import BaseSound from '../stereo-connections/base';
+import NativeAudioCasting from '../stereo-connections/native-audio-casting';
+import Chromecast from '../stereo-connections/chromecast';
+import normalizeIdentifier from '../-private/utils/normalize-identifier';
+import { EVENT_MAP, SERVICE_EVENT_MAP } from '../-private/event-map';
+
+export { EVENT_MAP, SERVICE_EVENT_MAP };
 
 const DEFAULT_CONNECTIONS = [
   { name: 'NativeAudio' },
@@ -34,29 +31,15 @@ const DEFAULT_CONNECTIONS = [
   { name: 'HLS' },
 ];
 
-export const EVENT_MAP = [
-  { event: 'audio-played', handler: '_relayPlayedEvent' },
-  { event: 'audio-paused', handler: '_relayPausedEvent' },
-  { event: 'audio-blocked', handler: '_relayBlockedEvent' },
-  { event: 'audio-ended', handler: '_relayEndedEvent' },
-  { event: 'audio-duration-changed', handler: '_relayDurationChangedEvent' },
-  { event: 'audio-position-changed', handler: '_relayPositionChangedEvent' },
-  { event: 'audio-loaded', handler: '_relayLoadedEvent' },
-  { event: 'audio-loading', handler: '_relayLoadingEvent' },
-  {
-    event: 'audio-position-will-change',
-    handler: '_relayPositionWillChangeEvent',
-  },
-  { event: 'audio-will-rewind', handler: '_relayWillRewindEvent' },
-  { event: 'audio-will-fast-forward', handler: '_relayWillFastForwardEvent' },
-  { event: 'audio-metadata-changed', handler: '_relayMetadataChangedEvent' },
-];
-
-export const SERVICE_EVENT_MAP = [
-  { event: 'current-sound-changed' },
-  { event: 'current-sound-interrupted' },
-  { event: 'new-load-request' },
-  { event: 'pre-load' },
+const MEDIA_SESSION_ACTIONS = [
+  'play',
+  'pause',
+  'stop',
+  'seekbackward',
+  'seekforward',
+  'seekto',
+  'previoustrack',
+  'nexttrack',
 ];
 
 /**
@@ -64,15 +47,23 @@ export const SERVICE_EVENT_MAP = [
  *
  * @class stereo
  * @constructor
+ * @public
  */
 export default class Stereo extends Service.extend(EmberEvented) {
+  /**
+   * Has the browser cleared this page to start audio without a user gesture?
+   *
+   * @property autoPlayAllowed
+   * @type {Boolean}
+   * @readOnly
+   * @public
+   */
   @tracked autoPlayAllowed = false;
 
-  @tracked soundCache = new SoundCache();
-  @tracked errorCache = new ErrorCache();
-  @tracked metadataCache = new MetadataCache();
-  @tracked urlCache = new UrlCache();
-  proxyCache = new UntrackedObjectCache();
+  _identityMap = new SoundIdentityMap();
+  // Tracked, unlike the identity map, since loads happen outside render.
+  _sounds = new TrackedSet();
+  _previewSounds = new WeakSet();
 
   constructor() {
     super(...arguments);
@@ -91,13 +82,8 @@ export default class Stereo extends Service.extend(EmberEvented) {
 
     this.sharedAudioAccess = new SharedAudioAccess();
     this.oneAtATime = new OneAtATime();
-
-    setOwner(this.oneAtATime, owner);
-    setOwner(this.soundCache, owner);
-    setOwner(this.errorCache, owner);
-    setOwner(this.metadataCache, owner);
-    setOwner(this.urlCache, owner);
-    setOwner(this.proxyCache, owner);
+    this.cast = new CastCoordinator(this);
+    setOwner(this.cast, owner);
 
     // Only exists when the host app installs ember-cli-fastboot.
     const fastboot = owner.lookup('service:fastboot');
@@ -107,15 +93,14 @@ export default class Stereo extends Service.extend(EmberEvented) {
     } else if (!fastboot?.isFastBoot) {
       // Both probes need a real DOM, and the service still instantiates in FastBoot.
       this._determineAutoplayPermissions();
+      this.cast.detectAvailabilityTask.perform().catch((e) => {
+        if (!didCancel(e)) throw e;
+      });
     }
+
     this.isReady = true;
   }
 
-  /** currently loaded {Sound} object
-   * @property currentSound
-   * @type {Sound}
-   * @public
-   */
   @tracked _currentSound = null;
 
   /**
@@ -155,8 +140,8 @@ export default class Stereo extends Service.extend(EmberEvented) {
   }
 
   /**
-   * Current metadata object of the current sound. Use `{{sound-metadata}}` helper in templates
-   * @property currentMetadata
+   * ID3 tags read from the current sound, when its connection exposes them
+   * @property currentId3Data
    * @type {Object}
    * @readOnly
    * @public
@@ -173,7 +158,7 @@ export default class Stereo extends Service.extend(EmberEvented) {
    * @public
    */
   get currentMetadata() {
-    return this.metadataCache.find(this.currentSound?.url);
+    return this.currentSound?.metadata;
   }
 
   /**
@@ -274,8 +259,8 @@ export default class Stereo extends Service.extend(EmberEvented) {
    *
    * @property volume
    * @type {Integer}
-
-  */
+   * @public
+   */
   @tracked _volume = this.defaultVolume;
   get volume() {
     return this._volume;
@@ -290,6 +275,13 @@ export default class Stereo extends Service.extend(EmberEvented) {
     this.trigger('volume-change', v);
   }
 
+  /**
+   * Get/set the playback rate of the current sound, 1.0 being normal speed
+   *
+   * @property playbackSpeed
+   * @type {Float}
+   * @public
+   */
   @tracked _playbackSpeed = this.defaultPlaybackSpeed;
   get playbackSpeed() {
     return this._playbackSpeed;
@@ -305,22 +297,49 @@ export default class Stereo extends Service.extend(EmberEvented) {
   }
 
   /**
-   * Get/set if hifi should treat this as a mobile device
+   * Get/set whether stereo should treat this as a mobile device
    *
    * @property isMobileDevice
    * @type {Boolean}
-
-  */
+   * @public
+   */
 
   @tracked isMobileDevice = 'ontouchstart' in window;
 
   /**
-   * get if hifi should use a shared audio element
+   * Is audio currently routed to a remote device (AirPlay/Cast)?
+   * @property isCasting
+   * @type {Boolean}
+   * @readOnly
+   * @public
+   */
+  get isCasting() {
+    return this.cast.isCasting;
+  }
+  set isCasting(value) {
+    this.cast.isCasting = value;
+  }
+
+  /**
+   * Name of the current cast device, when the platform exposes it (WebKit
+   * AirPlay does not, so this is usually null while AirPlaying).
+   * @property castDeviceName
+   * @type {String}
+   * @readOnly
+   * @public
+   */
+  get castDeviceName() {
+    return this.cast.deviceName;
+  }
+
+  /**
+   * Get/set whether stereo should route every sound through one shared audio
+   * element. Forced on for mobile devices.
    *
    * @property useSharedAudioAccess
    * @type {Boolean}
-
-  */
+   * @public
+   */
 
   _useSharedAudioElement = false;
   get useSharedAudioAccess() {
@@ -365,15 +384,12 @@ export default class Stereo extends Service.extend(EmberEvented) {
   }
 
   /**
-   * Ember concurrency task: Given an array of URLS, return a sound ready for playing
+   * Build the full option hash a Sound needs to load.
    *
-   * @method loadTask
-   * @async
-   * @param {Array|Promise} urlsOrPromise [..{Promise|String}]
-   * @param {Object} options { metadata: {},
-   * @public
-   * Provide an array of urls to try, or a promise that will resolve to an array of urls
-   * @return {Sound} A sound that's ready to be played, or an error
+   * @method prepareLoadOptions
+   * @param {Object} options
+   * @private
+   * @return {Object}
    */
 
   prepareLoadOptions(options) {
@@ -387,125 +403,74 @@ export default class Stereo extends Service.extend(EmberEvented) {
     };
   }
 
-  loadTask = task({ restartable: true, evented: true }, async (urlsOrPromise, _options) => {
-    let options = this.prepareLoadOptions(_options);
+  /**
+   * Tries each connection with each url and resolves to the first combination
+   * that works.
+   *
+   * @method loadTask
+   * @async
+   * @param {Array|Promise} urlsOrPromise [..{Promise|String}]
+   * @param {Object} options
+   * @param {Object} [options.metadata] attached to the sound once it loads
+   * @param {Boolean} [options.preview=false] play without becoming `currentSound`
+   * @public
+   * @return {Object} { sound, connection, failures }
+   */
+
+  loadTask = task({ restartable: true }, async (urlsOrPromise, _options) => {
+    let options = { metadata: {}, ..._options };
 
     debug('ember-stereo:service')(`loadTask`, urlsOrPromise, options);
-    let urlsToTry = await this.urlCache.resolve(urlsOrPromise);
+
+    // Key off the raw identifier so a helper watching the same promise gets the same Sound.
+    let sound = this.findSound(urlsOrPromise);
+
+    let urlsToTry = await sound.resolveUrls();
+    sound = this._collapseOntoOwner(sound, urlsToTry);
+
+    // Stamp preview intent before loading, so a connection that autoplays mid-load promotes (or not) correctly.
+    if (options.preview) {
+      this._previewSounds.add(sound);
+    } else {
+      this._previewSounds.delete(sound);
+    }
+
     debug('ember-stereo:service')(`given urls: ${urlsToTry.join(', ')}`);
     this.trigger('pre-load', urlsToTry);
-    this.errorCache.remove(urlsToTry);
 
-    var sound = this.findLoadedSound(urlsToTry);
-    if (sound) {
-      debug('ember-stereo:service')('retreived sound from cache');
-      return await { sound };
-    } else {
-      // TODO: refactor so it's more like this
-      // let strategizer = new Strategizer(urlsToTry, options)
-      // let { sound, error } = yield strategizer.tryLoading()
-      // if (sound) {
-      //  this.handleCurrentSoundTransitionTask.perform(sound)
-      //  this.soundCache.cache(sound);
-      //  this.oneAtATime.register(sound)
-      // }
+    let connection = await sound.load(_options);
 
-      try {
-        var strategies = this._buildStrategies(urlsToTry, options);
-        if (strategies.filter((s) => s.canPlay).length == 0) {
-          debug('ember-stereo:service')(
-            `all strategies (${strategies
-              .map((s) => s.connectionName)
-              .join(', ')}) reported canPlay = false`
-          );
-          return this._handlePreloadError({ urlsToTry, options, strategies });
-        }
-      } catch (e) {
-        debug('ember-stereo:service')('error building strategies', e);
-        return this._handlePreloadError({
-          urlsToTry,
-          options,
-          strategies: strategies || [],
-        });
+    if (connection) {
+      if (Object.keys(options.metadata ?? {}).length > 0) {
+        sound.metadata = { ...sound.metadata, ...options.metadata };
       }
 
-      var success = false;
-      let failures = [];
-
-      debug('ember-stereo:service')('strategies', strategies);
-
-      for (let strategy of strategies) {
-        if (strategy.canPlay) {
-          // worth trying
-          let result = await this.tryLoadingSoundTask
-            .perform(strategy)
-            .catch((e) => {
-              strategy.error = e;
-            });
-          if (result.error) {
-            strategy.error = result.error;
-            strategy.erroredSound = result.erroredSound;
-            failures.push(strategy);
-          }
-          if (result.sound) {
-            debug('ember-stereo:service')(
-              `firing sound-ready for ${result.sound.url}`
-            );
-            this.trigger('sound-ready', { sound: result.sound });
-            sound = result.sound;
-            sound._debug = strategies;
-            success = true;
-            break;
-          }
-        }
-      }
-
-      if (success && sound) {
-        // eslint-disable-next-line ember-concurrency/no-perform-without-catch
-        this.handleCurrentSoundTransitionTask.perform(sound);
-
-        if (options.metadata) {
-          sound.metadata = {
-            ...sound.metadata,
-            ...options.metadata,
-          }; // set current sound metadata
-        }
-
-        this.soundCache.cache(sound);
-        this.oneAtATime.register(sound); // On audio-played this pauses all the other sounds. One at a time!
-        return { sound, failures };
-      } else {
-        return this._handleLoadError({
-          urlsToTry,
-          failures,
-          options,
-          strategies: strategies,
-        });
-      }
+      return { sound, connection, failures: sound.failures };
     }
+
+    let strategies = sound.strategies || [];
+    if (strategies.filter((strategy) => strategy.canPlay).length === 0) {
+      return this._handlePreloadError({ urlsToTry, options, strategies });
+    }
+
+    return this._handleLoadError({
+      sound,
+      failures: sound.failures,
+      options,
+    });
   });
 
-  handleCurrentSoundTransitionTask = task(async (sound) => {
-    // eslint-disable-next-line no-constant-condition
-    while (true) {
-      await waitForEvent(sound, 'audio-played');
-      debug('ember-stereo:service')('handling sound transition');
+  _soundLoadStarted(sound) {
+    this._sounds.add(sound);
+  }
 
-      let previousSound = this.currentSound;
-      let currentSound = sound;
-
-      if (previousSound !== currentSound) {
-        if (previousSound?.isPlaying) {
-          this.trigger('current-sound-interrupted', { sound: previousSound });
-        }
-        this.trigger('current-sound-changed', {
-          sound: currentSound,
-          previousSound,
-        });
-        this.currentSound = sound;
-      }
+  // Sounds call this from their audio-played funnel, however playback started.
+  _soundPlayed(sound) {
+    if (this._previewSounds.has(sound)) {
+      return;
     }
-  });
+    this.currentSound = sound;
+  }
 
   /**
    * Given an array of URLS, return a sound ready for playing
@@ -514,10 +479,14 @@ export default class Stereo extends Service.extend(EmberEvented) {
    * @async
    * @public
    * @param {Array|Promise} urlsOrPromise An array of urls or a promise that will resolve to an array of urls
-   * @return {Sound} A sound that's ready to be played, or an error
+   * @return {Object} { sound, connection, failures }
    */
 
   load(urlsOrPromise, options) {
+    if (!urlsOrPromise) {
+      return Promise.reject(new Error('[ember-stereo] load needs a url'));
+    }
+
     options = { metadata: {}, ...options };
 
     try {
@@ -531,10 +500,48 @@ export default class Stereo extends Service.extend(EmberEvented) {
       return promise;
     } catch (e) {
       if (!didCancel(e)) {
-        // re-throw the non-cancelation error
         throw e;
       }
     }
+  }
+
+  /**
+   * Download what a connection needs (hls.js, howler, the Cast SDK) ahead of the
+   * sound that needs it, so the first load is audio-only.
+   *
+   * @method prewarmConnection
+   * @public
+   * @param {String} connectionKey e.g. 'HLS'
+   * @return {Promise}
+   */
+
+  prewarmConnection(connectionKey) {
+    let connection = this._lookupConnectionClass(connectionKey);
+
+    if (!connection) {
+      debug('ember-stereo:service')(
+        `can't warm unknown connection ${connectionKey}`
+      );
+      return Promise.resolve();
+    }
+
+    return connection.preload();
+  }
+
+  _lookupConnectionClass(connectionKey) {
+    let registered =
+      this.connectionLoader.get(connectionKey) ||
+      this.connectionLoader.connections.find(
+        (candidate) => candidate.key === connectionKey
+      );
+
+    if (registered) {
+      return registered;
+    }
+
+    return [Chromecast, NativeAudioCasting].find(
+      (candidate) => candidate.key === connectionKey
+    );
   }
 
   /**
@@ -544,12 +551,15 @@ export default class Stereo extends Service.extend(EmberEvented) {
    * @async
    * @public
    * @param {Array|Promise} urlsOrPromise An array of urls or a promise that will resolve to an array of urls
-   * @return {Sound, failures} A sound that's playing, or an error
+   * @return {Object} { sound, connection, failures }
    */
 
   playTask = task(
-    { restartable: true, evented: true },
+    { restartable: true },
     async (urlsOrPromise, options = {}) => {
+      // Runs before the first await, so it is still inside the click that asked to play.
+      this.sharedAudioAccess.unlock(this.useSharedAudioAccess);
+
       options = { metadata: {}, ...options };
 
       debug('ember-stereo:service')(`playTask`, urlsOrPromise, options);
@@ -557,24 +567,29 @@ export default class Stereo extends Service.extend(EmberEvented) {
       let previouslyPlayingSound = this.isPlaying ? this.currentSound : false;
       if (
         previouslyPlayingSound &&
-        previouslyPlayingSound.urlsAreEqual &&
-        previouslyPlayingSound.urlsAreEqual(urlsOrPromise)
+        previouslyPlayingSound === this.findSound(urlsOrPromise)
       ) {
-        return { sound: previouslyPlayingSound, failures: [] };
+        return {
+          sound: previouslyPlayingSound,
+          connection: previouslyPlayingSound.connection,
+          failures: previouslyPlayingSound.failures,
+        };
       }
 
       let loadPromise = this.loadTask.linked().perform(urlsOrPromise, options);
-      this.trigger('new-load-request', { loadPromise, urlsOrPromise, options }); //urls: Promise.resolve(resolveUrls(urlsOrPromise))
-      let { sound, failures } = await loadPromise;
+      this.trigger('new-load-request', { loadPromise, urlsOrPromise, options });
+      let { sound, connection, failures } = await loadPromise;
 
       if (sound) {
         this._registerEvents(sound);
         this._attemptToPlaySound(sound, options);
 
-        await race([
-          waitForProperty(sound, 'isPlaying'),
-          waitForProperty(sound, 'isErrored'),
-        ]);
+        if (!sound.isPlaying && !sound.isErrored) {
+          await race([
+            waitForEvent(sound, 'audio-played'),
+            waitForEvent(sound, 'audio-load-error'),
+          ]);
+        }
 
         if (previouslyPlayingSound) {
           this.trigger('current-sound-interrupted', {
@@ -582,12 +597,12 @@ export default class Stereo extends Service.extend(EmberEvented) {
           });
         }
 
-        if (sound && 'position' in options) {
+        if ('position' in options) {
           sound.position = options.position;
         }
 
         if (sound.isPlaying) {
-          return { sound, failures };
+          return { sound, connection, failures };
         } else {
           return this._handlePlaybackError({ sound, options });
         }
@@ -625,16 +640,20 @@ export default class Stereo extends Service.extend(EmberEvented) {
    *
    * @method play
    * @async
+   * @public
    * @param {Array|Promise} urlsOrPromise Provide an array of urls to try, or a promise that will resolve to an array of urls
-   * @return {Sound} A sound that's playing, or an error
+   * @return {Object} { sound, connection, failures }
    */
 
   play(urlsOrPromise, options = {}) {
+    if (!urlsOrPromise) {
+      return Promise.reject(new Error('[ember-stereo] play needs a url'));
+    }
+
     try {
       return this.playTask.perform(urlsOrPromise, options);
     } catch (e) {
       if (!didCancel(e)) {
-        // re-throw the non-cancelation error
         throw e;
       }
     }
@@ -676,11 +695,7 @@ export default class Stereo extends Service.extend(EmberEvented) {
 
   togglePause() {
     assert('[ember-stereo] Nothing is playing.', this.currentSound);
-    if (this.isPlaying) {
-      return this.currentSound.pause();
-    } else {
-      return this.currentSound.play();
-    }
+    return this.currentSound.togglePause();
   }
 
   /**
@@ -710,8 +725,101 @@ export default class Stereo extends Service.extend(EmberEvented) {
   }
 
   resolveIdentifierTask = task({ maxConcurrency: 5 }, async (identifier) => {
-    return await this.urlCache.resolve(identifier);
+    return (await this.findSound(identifier)?.resolveUrls()) ?? [];
   });
+
+  /* ----------------------------- CASTING ------------------------------------ */
+
+  /**
+   * The cast kinds currently available.
+   * @property castingTypes
+   * @type {TrackedSet}
+   * @readOnly
+   * @public
+   */
+  get castingTypes() {
+    return this.cast.castingTypes;
+  }
+
+  /**
+   * Is casting available in this browser/network right now?
+   * @property isCastingAvailable
+   * @type {Boolean}
+   * @readOnly
+   * @public
+   */
+  get isCastingAvailable() {
+    return this.cast.isAvailable;
+  }
+
+  /**
+   * Which kind of casting is engaged: 'airplay' | 'chromecast' | null.
+   * @property castKind
+   * @readOnly
+   * @public
+   */
+  get castKind() {
+    return this.cast.kind;
+  }
+
+  /**
+   * Icon name for the cast control.
+   * @property castIconName
+   * @readOnly
+   * @public
+   */
+  get castIconName() {
+    return this.cast.iconName;
+  }
+
+  get castOutletElement() {
+    return this.cast.outlet.element;
+  }
+
+  /**
+   * Lazily load the Google Cast SDK and wire its availability and session events.
+   *
+   * @method ensureChromecastSetup
+   * @public
+   */
+  ensureChromecastSetup() {
+    this.cast.ensureChromecastSetup();
+  }
+
+  /**
+   * Load a sound's cast URL onto the outlet ahead of the picker click. Safari
+   * won't open a picker for an element with no parsed source.
+   *
+   * @method prewarmCast
+   * @param {Array|String|Sound} identifier the sound to prepare (defaults to current)
+   * @public
+   */
+  prewarmCast(identifier) {
+    this.cast.prewarm(identifier);
+  }
+
+  /**
+   * Open the device picker for a sound. Must run synchronously inside the
+   * click gesture, or Safari blocks the picker.
+   *
+   * @method showCastMenu
+   * @param {Array|String|Sound} identifier the sound to cast (defaults to current)
+   * @public
+   */
+  showCastMenu(identifier) {
+    this.cast.showMenu(identifier);
+  }
+
+  /**
+   * Hand playback back to the local device. WebKit has no programmatic
+   * disconnect, so it re-opens the picker for the user to disconnect there.
+   *
+   * @method stopCasting
+   * @public
+   */
+  stopCasting() {
+    this.cast.stopCasting();
+  }
 
   /* ------------------------ PRIVATE(ISH) STUFF ------------------------------ */
   /* -------------------------------------------------------------------------- */
@@ -726,7 +834,22 @@ export default class Stereo extends Service.extend(EmberEvented) {
   _buildStrategies(urlsToTry, options) {
     let strategizer = new Strategizer(urlsToTry, options);
     setOwner(strategizer, getOwner(this));
-    return strategizer.strategies;
+    let localStrategies = [...strategizer.strategies];
+
+    // Locals stay as fallback so a failed cast resolves instead of stranding the sound.
+    if (this.cast.shouldCastUrl(options.castUrl)) {
+      debug('ember-stereo:service')(
+        `casting active: cast strategy (local fallback) for ${options.castUrl}`
+      );
+      return [
+        this.cast.strategyFor(options.castUrl, options.metadata, {
+          startTime: options.castStartTime,
+        }),
+        ...localStrategies,
+      ];
+    }
+
+    return localStrategies;
   }
 
   _handlePlaybackError({ sound, options }) {
@@ -735,13 +858,9 @@ export default class Stereo extends Service.extend(EmberEvented) {
       error: sound.error,
       connectionKey: sound.connectionKey,
     };
-    this.errorCache.cache({
-      url: sound.url,
-      error: sound.error,
-      connectionKey: sound.connectionKey,
-    });
+
     this.trigger('audio-load-error', {
-      sound: sound,
+      sound,
       failures: [strategy],
       error: sound.error,
     });
@@ -753,24 +872,23 @@ export default class Stereo extends Service.extend(EmberEvented) {
       });
     }
 
-    return { sound, failures: [strategy], error: strategy.error };
+    return {
+      sound,
+      connection: sound.connection,
+      failures: [strategy],
+      error: strategy.error,
+    };
   }
 
-  _handleLoadError({ /* urlsToTry */ failures, options, strategies }) {
+  _handleLoadError({ sound, failures, options }) {
     let errorMessage = this._errorMessageFromFailures(failures);
 
-    let url = null;
-    makeArray(failures).forEach((sound) => {
-      this.errorCache.cache({
-        url: sound.url,
-        error: sound.error,
-        connectionKey: sound.connectionKey,
-        debugInfo: strategies,
-      });
-      url = sound.url;
-    });
+    // Only the first failure carries the url the Sound is keyed by. Later ones are fallback urls.
+    let erroredSound =
+      sound ?? this.findSound(makeArray(failures)[0]?.url ?? null);
+
     this.trigger('audio-load-error', {
-      sound: { url },
+      sound: erroredSound,
       failures: failures,
       error: errorMessage,
     });
@@ -795,9 +913,13 @@ export default class Stereo extends Service.extend(EmberEvented) {
       throw new Error(errorMessage, failure);
     }
 
-    this.errorCache.cache(failure);
+    // No strategy ran, so nothing else will record this failure on the sound.
+    let sound = this.findSound(url);
+    if (sound) {
+      sound.failures = [...sound.failures, failure];
+    }
     this.trigger('audio-load-error', {
-      sound: { url },
+      sound,
       failures: [failure],
       error: errorMessage,
     });
@@ -823,12 +945,13 @@ export default class Stereo extends Service.extend(EmberEvented) {
   }
 
   /**
-   * Set the current sound and wire up all the events the sound fires so they
-   * trigger through the service, remove the ones on the previous current sound,
-   * and set the new current sound to the system volume
-   * @method currentSound
-   * @param {Sound} sound
-   * @private
+   * The currently loaded sound. Setting it relays the new sound's events
+   * through the service, drops the previous sound's, and applies system volume.
+   * Can be `null`, which is how casting disengages.
+   *
+   * @property currentSound
+   * @type {Sound}
+   * @public
    */
 
   get currentSound() {
@@ -839,7 +962,15 @@ export default class Stereo extends Service.extend(EmberEvented) {
     if (this.isDestroyed || this.isDestroying) {
       return; // should use ember-concurrency to cancel any pending promises in willDestroy
     }
-    this._unregisterEvents(this._currentSound);
+    let previousSound = this._currentSound;
+    if (previousSound === sound) {
+      return;
+    }
+
+    this._unregisterEvents(previousSound);
+    if (previousSound?.isPlaying) {
+      this.trigger('current-sound-interrupted', { sound: previousSound });
+    }
 
     if (sound) {
       this._registerEvents(sound);
@@ -847,10 +978,14 @@ export default class Stereo extends Service.extend(EmberEvented) {
       sound._setVolume(this.volume);
       debug('ember-stereo:service')(`setting current sound -> ${sound.url}`);
     } else {
+      this._clearNowPlaying();
       debug('ember-stereo:service')(`setting current sound -> null`);
     }
 
     this._currentSound = sound;
+
+    // Everything that changes the current sound notifies from here.
+    this.trigger('current-sound-changed', { sound, previousSound });
   }
 
   /**
@@ -872,175 +1007,139 @@ export default class Stereo extends Service.extend(EmberEvented) {
   }
 
   /**
-   * Returns the list of activated and available connections
+   * The activated connections, in priority order
    *
    * @property connections
    * @type {Array}
-   * @private
+   * @readOnly
+   * @public
    */
 
   get connections() {
     return this.connectionLoader.connections;
   }
 
+  /**
+   * The names of the activated connections, in priority order
+   *
+   * @property connectionNames
+   * @type {Array<String>}
+   * @readOnly
+   * @public
+   */
+
   get connectionNames() {
     return this.connectionLoader.names;
   }
 
-  get loadedUrls() {
-    return this.soundCache.cachedList;
-  }
-
-  get loadedSounds() {
-    return this.soundCache.cachedSounds;
-  }
-
-  get cachedErrors() {
-    return this.errorCache.cachedErrors;
-  }
-
   /**
-   * Given a sound, a url, or an object with a URL property, return a sound ready for playing
+   * The Sounds asked to load, newest last, including loading and errored ones
    *
-   * @method findLoadedSound
-   * @param {Array} identifiers [..{Promise|String}]
-   * @private
-   * @return {Sound} A sound that's ready to be played, or an error
+   * @property sounds
+   * @type {Array<Sound>}
+   * @readOnly
+   * @public
    */
 
-  findLoadedSound(identifiers) {
-    if (identifiers instanceof BaseSound) {
-      return identifiers;
-    } else {
-      return this.soundCache.find(identifiers);
-    }
-  }
-
-  findSound(identifier) {
-    if (identifier instanceof BaseSound) {
-      return identifier;
-    } else {
-      return this.soundProxy(identifier)?.value;
-    }
-
-    //TODO: use a Proxy? it'd be neat to be able to 'find' a sound
-    // that isn't loaded and attach events to it.
-
-    // let soundProxy = this.soundProxy(identifier).value
-
-    // return new Proxy(soundProxy, {
-    //   get: function (target, prop, receiver) {
-    //     if (target.value) {
-    //       return Reflect.get(...[target.value, prop, receiver]);
-    //     } else {
-    //       return Reflect.get(...arguments);
-    //     }
-    //   }
-    // });
-  }
-
-  soundProxy(identifier) {
-    if (this.proxyCache.has(identifier)) {
-      return this.proxyCache.find(identifier);
-    } else if (identifier) {
-      let soundProxy = new SoundProxy(identifier, this);
-      this.proxyCache.store(identifier, soundProxy);
-      return soundProxy;
-    }
+  get sounds() {
+    return [...this._sounds];
   }
 
   /**
-   * Given a sound, a url, or an object with a URL property, return a sound ready for playing
+   * Find or create the identity-stable Sound for an identifier.
+   * This returns synchronously, so the Sound may still be pending.
+   *
+   * @method findSound
+   * @param {Any} identifier a url, an array of urls, a url object, a Sound, or a promise resolving to any of those
+   * @public
+   * @return {Sound}
+   */
+
+  findSound(identifier) {
+    if (identifier instanceof Sound) {
+      return identifier;
+    }
+
+    if (!identifier) {
+      return undefined;
+    }
+
+    // A raw array identifier is a fresh instance each call, so key by its primary url string.
+    let key = makeArray(identifier)[0];
+
+    let existing = this._identityMap.find(key);
+    if (existing) {
+      return existing.canonical;
+    }
+
+    let sound = new Sound(identifier, { owner: getOwner(this) });
+    this._identityMap.store(key, sound);
+
+    if (typeof key?.then === 'function') {
+      sound.resolveUrls().then((urls) => this._collapseOntoOwner(sound, urls));
+    }
+
+    // Reading through `canonical` consumes the tracked collapse.
+    return sound.canonical;
+  }
+
+  /**
+   * A promise is keyed by itself until it resolves. Once the url is known, the
+   * promise has to name whichever Sound already owns that url.
+   *
+   * @method _collapseOntoOwner
+   * @private
+   * @return {Sound} the Sound that owns the url
+   */
+
+  _collapseOntoOwner(sound, urls) {
+    let key = makeArray(urls)[0];
+    if (!key) {
+      return sound;
+    }
+
+    let owner = this._identityMap.find(key)?.canonical;
+    if (!owner) {
+      this._identityMap.store(key, sound);
+      return sound;
+    }
+
+    if (owner !== sound) {
+      sound._collapsedInto = owner;
+    }
+    return owner;
+  }
+
+  /**
+   * Tear down everything loaded for an identifier. The Sound itself is reset
+   * in place, so references to it stay valid.
    *
    * @method removeSound
-   * @async
    * @param {Array} identifier [..{Promise|String}]
    * @private
-   * @return {Sound} A sound that's ready to be played, or an error
    */
 
   removeSound(identifier) {
-    let url = new StereoUrl(identifier).url;
+    for (let sound of this.sounds) {
+      if (!sound.hasUrl(identifier)) {
+        continue;
+      }
 
-    this.soundCache.remove(url);
-    this.errorCache.remove(url);
-    this.proxyCache.remove(url);
-    this.metadataCache.remove(url);
+      this._sounds.delete(sound);
+      sound.reset();
 
-    if (this.currentSound?.url === url) {
-      this.currentSound = null;
+      if (this.currentSound === sound) {
+        this.currentSound = null;
+      }
     }
   }
-
-  /**
-   * Wait for sound to succeed
-   *
-   * @method waitForSuccessTask
-   * @private
-   * @param {Object} strategy a connection strategy object
-   * @param {Sound} sound a sound object to play
-   * @async
-   * @return {Object} { sound }
-   **/
-  waitForSuccessTask = task(async (strategy, sound) => {
-    await waitForProperty(sound, 'isReady');
-    debug('ember-stereo:service')(
-      `SUCCESS: [${strategy.connectionName}] -> (${strategy.url})`
-    );
-    strategy.success = true;
-    return { sound };
-  });
-
-  /**
-   * Wait for sound to succeed
-   *
-   * @method waitForSuccessTask
-   * @private
-   * @param {Object} strategy a connection strategy object
-   * @param {Sound} sound a sound object to play
-   * @async
-   * @return {Object} { error }
-   **/
-  waitForFailureTask = task(async (strategy, sound) => {
-    await waitForProperty(sound, 'isErrored');
-    debug('ember-stereo:service')(
-      `FAILED: [${strategy.connectionName}] -> ${sound.error} (${strategy.url})`
-    );
-    this._unregisterEvents(sound);
-    strategy.error = sound.error;
-    let result = { error: sound.error, erroredSound: sound };
-
-    return result;
-  });
-
-  /**
-   * Try loading sound
-   *
-   * @method tryLoadingSoundTask
-   * @private
-   * @param {Object} strategy a connection strategy object
-   * @return {Object} { sound } or { error }
-   **/
-  tryLoadingSoundTask = task(async (strategy) => {
-    var newSound = strategy.createSound();
-    this._registerEvents(newSound);
-
-    debug('ember-stereo:service')(
-      `TRYING: [${strategy.connectionName}] -> ${strategy.url}`
-    );
-    strategy.tried = true;
-    return await race([
-      this.waitForSuccessTask.perform(strategy, newSound),
-      this.waitForFailureTask.perform(strategy, newSound),
-    ]);
-  });
 
   /**
    * Register events on a current sound. Audio events triggered on that sound
    * will be relayed and triggered on this service
    *
    * @method _registerEvents
-   * @param {Object} sound
+   * @param {Sound} sound
    * @private
    */
 
@@ -1049,21 +1148,13 @@ export default class Stereo extends Service.extend(EmberEvented) {
     EVENT_MAP.forEach((item) => {
       sound.on(item.event, service, service[item.handler]);
     });
-
-    // Internal event for cleanup
-    sound.on('_will_destroy', () => {
-      this._unregisterEvents(sound);
-    });
-
-    //window on close, send stop event to other tabs if playing?
   }
 
   /**
-   * Register events on a current sound. Audio events triggered on that sound
-   * will be relayed and triggered on this service
+   * Stop relaying a sound's audio events onto this service
    *
    * @method _unregisterEvents
-   * @param {Object} sound
+   * @param {Sound} sound
    * @private
    */
 
@@ -1095,27 +1186,41 @@ export default class Stereo extends Service.extend(EmberEvented) {
   _relayEvent(eventName, info = {}) {
     next(() => {
       this.trigger(eventName, info);
-      debug('ember-stereo:service')(eventName, info);
+      debug(
+        eventName === 'audio-position-changed'
+          ? 'ember-stereo:position'
+          : 'ember-stereo:service'
+      )(eventName, info);
     });
   }
 
   // Named functions so Ember Evented can successfully register/unregister them
 
+  // The event names the state, because the next event's write can beat a read off the sound.
+  _relayStateChange(info, playbackState) {
+    if (info?.sound && info.sound !== this.currentSound) {
+      return;
+    }
+    this._updateNowPlaying(this.currentSound, playbackState);
+  }
   _relayPlayedEvent(info) {
-    this._updateNowPlaying(this.currentSound);
+    this._relayStateChange(info, 'playing');
     this._relayEvent('audio-played', info);
   }
   _relayPausedEvent(info) {
-    this._updateNowPlaying(this.currentSound);
+    this._relayStateChange(info, 'paused');
     this._relayEvent('audio-paused', info);
   }
   _relayEndedEvent(info) {
+    this._relayStateChange(info, 'paused');
     this._relayEvent('audio-ended', info);
   }
   _relayDurationChangedEvent(info) {
+    this._updatePositionStateThrottled();
     this._relayEvent('audio-duration-changed', info);
   }
   _relayPositionChangedEvent(info) {
+    this._updatePositionStateThrottled();
     this._relayEvent('audio-position-changed', info);
   }
   _relayLoadedEvent(info) {
@@ -1148,9 +1253,8 @@ export default class Stereo extends Service.extend(EmberEvented) {
    * @private
 
    */
-  _updateNowPlaying(sound) {
+  _updateNowPlaying(sound, playbackState) {
     if (!sound) return;
-    if (sound.isDestroyed) return;
 
     if (
       window &&
@@ -1158,13 +1262,10 @@ export default class Stereo extends Service.extend(EmberEvented) {
       'mediaSession' in navigator &&
       'MediaMetadata' in window
     ) {
-      if (sound.isPlaying) {
-        navigator.mediaSession.playbackState = 'playing';
-      } else {
-        navigator.mediaSession.playbackState = 'paused';
-      }
+      navigator.mediaSession.playbackState =
+        playbackState ?? (sound.isPlaying ? 'playing' : 'paused');
 
-      let { title, artist, album, artwork } = sound.metadata;
+      let { title, artist, album, artwork } = sound.metadata ?? {};
 
       let mediaAttributes = {
         title,
@@ -1172,52 +1273,223 @@ export default class Stereo extends Service.extend(EmberEvented) {
         album,
       };
 
+      let current = navigator.mediaSession.metadata;
+
       if (makeArray(artwork).length > 0 && artwork[0]?.src) {
         mediaAttributes.artwork = makeArray(artwork);
+      } else if (current?.artwork?.length) {
+        // MediaMetadata defaults missing artwork to empty, so omitting it strips the art rather than keeping it.
+        mediaAttributes.artwork = current.artwork;
       }
 
-      navigator.mediaSession.metadata = new MediaMetadata(mediaAttributes);
+      // Metadata is rebuilt from scratch, so an update with nothing to say would blank the lock screen mid-playback.
+      if (title || artist || album || !current) {
+        navigator.mediaSession.metadata = new MediaMetadata(mediaAttributes);
+      }
 
-      navigator.mediaSession.setActionHandler('play', () => {
-        if (!sound.isPlaying) {
-          sound.play();
+      this._updatePositionState(sound);
+
+      let actions = this._mediaSessionActionsFor(sound);
+
+      // A registered handler is what makes the OS draw the button, and null drops the control entirely.
+      let handlerFor = (action, fallback, argument = (info) => info) => {
+        let declined = action in actions && !actions[action];
+        if (declined || (!fallback && !(action in actions))) {
+          return null;
         }
-      });
-      navigator.mediaSession.setActionHandler('pause', () => {
-        if (sound.isPlaying) {
-          sound.pause();
-        }
-      });
-      navigator.mediaSession.setActionHandler('stop', () => {
-        sound.stop();
-      });
-      navigator.mediaSession.setActionHandler('seekbackward', (seekInfo) => {
-        if (sound.isRewindable) {
-          let offset = (seekInfo?.seekOffset || 15) * 1000;
-          sound.rewind(offset);
-        }
-      });
-      navigator.mediaSession.setActionHandler('seekforward', (seekInfo) => {
-        if (sound.isFastForwardable) {
-          let offset = (seekInfo?.seekOffset || 15) * 1000;
-          sound.fastForward(offset);
-        }
-      });
-      navigator.mediaSession.setActionHandler('seekto', (seekInfo) => {
-        if (sound.isSeekable) {
-          sound.position = seekInfo.seekTime * 1000;
-        }
-      });
-      // navigator.mediaSession.setActionHandler('previoustrack', () => {
-      //   /* Code excerpted. */
-      // });
-      // navigator.mediaSession.setActionHandler('nexttrack', () => {
-      //   /* Code excerpted. */
-      // });
-      // navigator.mediaSession.setActionHandler('skipad', () => {
-      //   /* Code excerpted. */
-      // });
+
+        // Looked up when pressed, so overrides can register after install.
+        return (info) => {
+          let override = this._mediaSessionActionsFor(sound)[action];
+          return override ? override(argument(info)) : fallback?.(info);
+        };
+      };
+
+      let seekOffsetMs = (seekInfo) => (seekInfo?.seekOffset || 15) * 1000;
+      let seekToMs = (seekInfo) => seekInfo.seekTime * 1000;
+
+      navigator.mediaSession.setActionHandler(
+        'play',
+        handlerFor('play', () => {
+          if (!sound.isPlaying) {
+            sound.play();
+          }
+        })
+      );
+      navigator.mediaSession.setActionHandler(
+        'pause',
+        handlerFor('pause', () => {
+          if (sound.isPlaying) {
+            sound.pause();
+          }
+        })
+      );
+      navigator.mediaSession.setActionHandler(
+        'stop',
+        handlerFor('stop', () => sound.stop())
+      );
+      navigator.mediaSession.setActionHandler(
+        'seekbackward',
+        handlerFor(
+          'seekbackward',
+          (seekInfo) => {
+            if (sound.isRewindable) {
+              sound.rewind(seekOffsetMs(seekInfo));
+            }
+          },
+          seekOffsetMs
+        )
+      );
+      navigator.mediaSession.setActionHandler(
+        'seekforward',
+        handlerFor(
+          'seekforward',
+          (seekInfo) => {
+            if (sound.isFastForwardable) {
+              sound.fastForward(seekOffsetMs(seekInfo));
+            }
+          },
+          seekOffsetMs
+        )
+      );
+      navigator.mediaSession.setActionHandler(
+        'seekto',
+        handlerFor(
+          'seekto',
+          (seekInfo) => {
+            if (sound.isSeekable) {
+              sound.position = seekToMs(seekInfo);
+            }
+          },
+          seekToMs
+        )
+      );
+      // A sound has no idea what the next track is, so it's offered only when the app registered an override.
+      navigator.mediaSession.setActionHandler(
+        'previoustrack',
+        handlerFor('previoustrack', null)
+      );
+      navigator.mediaSession.setActionHandler(
+        'nexttrack',
+        handlerFor('nexttrack', null)
+      );
     }
+  }
+
+  _positionStateUpdatedAt = 0;
+  // No lock screen renders finer than a second, and the OS extrapolates between updates.
+
+  static POSITION_STATE_INTERVAL_MS = 1000;
+
+  _mediaSessionActions = new Map();
+
+  /**
+   * Register the OS media control handlers a sound should offer, as
+   * `{ nexttrack, previoustrack, ... }`. A registered handler is what makes the
+   * lock screen draw that button.
+   *
+   * @method registerMediaSessionActions
+   * @param {Any} identifier a url, an array of urls, a url object, a Sound, or a promise resolving to any of those
+   * @param {Object} actions
+   * @public
+   */
+
+  registerMediaSessionActions(identifier, actions) {
+    this._mediaSessionActions.set(normalizeIdentifier(identifier), actions);
+  }
+
+  /**
+   * Drop the media control handlers registered for an identifier
+   *
+   * @method unregisterMediaSessionActions
+   * @param {Any} identifier a url, an array of urls, a url object, a Sound, or a promise resolving to any of those
+   * @public
+   */
+
+  unregisterMediaSessionActions(identifier) {
+    this._mediaSessionActions.delete(normalizeIdentifier(identifier));
+  }
+
+  _mediaSessionActionsFor(sound) {
+    let registered = makeArray(sound?.urls ?? sound?.url)
+      .map((url) => this._mediaSessionActions.get(normalizeIdentifier(url)))
+      .find(Boolean);
+
+    return registered ?? {};
+  }
+
+  _clearNowPlaying() {
+    if (typeof navigator === 'undefined' || !('mediaSession' in navigator)) {
+      return;
+    }
+
+    navigator.mediaSession.playbackState = 'none';
+    navigator.mediaSession.metadata = null;
+
+    try {
+      navigator.mediaSession.setPositionState();
+    } catch (e) {}
+
+    MEDIA_SESSION_ACTIONS.forEach((action) => {
+      try {
+        navigator.mediaSession.setActionHandler(action, null);
+      } catch (e) {}
+    });
+  }
+
+  // Without this the lock screen shows transport buttons but no timeline.
+  _updatePositionState(sound) {
+    if (
+      !sound ||
+      typeof navigator === 'undefined' ||
+      !('mediaSession' in navigator) ||
+      typeof navigator.mediaSession.setPositionState !== 'function'
+    ) {
+      return;
+    }
+
+    // An app-supplied timeline, like a live broadcast's airing window, overrides the sound's own duration.
+    let timeline = sound.metadata?.timeline;
+    let duration = timeline ? timeline.duration : sound.duration;
+
+    if (
+      (!timeline && !sound.isSeekable) ||
+      !Number.isFinite(duration) ||
+      duration <= 0
+    ) {
+      try {
+        navigator.mediaSession.setPositionState();
+      } catch (e) {
+        // nothing to clear
+      }
+      return;
+    }
+
+    let reported = timeline ? timeline.position : sound.position;
+    let position = Number.isFinite(reported) ? reported : 0;
+    this._positionStateUpdatedAt = Date.now();
+
+    try {
+      navigator.mediaSession.setPositionState({
+        duration: duration / 1000,
+        position: Math.min(Math.max(position, 0), duration) / 1000,
+        playbackRate: this.playbackSpeed || 1,
+      });
+    } catch (e) {
+      // A mid-seek sound briefly reports a position past the duration, and browsers throw on that.
+      debug('ember-stereo:service')(`could not set position state`, e);
+    }
+  }
+
+  _updatePositionStateThrottled() {
+    if (
+      Date.now() - this._positionStateUpdatedAt <
+      Stereo.POSITION_STATE_INTERVAL_MS
+    ) {
+      return;
+    }
+
+    this._updatePositionState(this.currentSound);
   }
 
   /**
@@ -1246,8 +1518,8 @@ export default class Stereo extends Service.extend(EmberEvented) {
    * @private
    */
 
+  // A blocked autoplay rejects play() with NotAllowedError, which surfaces as audio-blocked.
   _attemptToPlaySound(sound, options) {
-    // if (this.isMobileDevice) {
     let touchPlay = () => {
       debug('ember-stereo:service')(
         `triggering sound play from document touch`
@@ -1257,30 +1529,16 @@ export default class Stereo extends Service.extend(EmberEvented) {
 
     document.addEventListener('touchstart', touchPlay, { passive: true });
 
-    let blockCheck = later(() => {
-      debug('ember-stereo:service')(
-        `Looks like the mobile browser blocked an autoplay trying to play sound with url: ${sound.url}`
-      );
-      sound.isBlocked = true;
-      sound.trigger('audio-blocked');
-    }, 2000);
-
-    sound.one('audio-load-error', () => {});
-
     sound.one('audio-played', () => {
       document.removeEventListener('touchstart', touchPlay);
-      cancel(blockCheck);
     });
-    // }
-    sound.play(options);
 
-    if (sound.isPlaying) {
-      cancel(blockCheck);
-    }
+    sound.play(options);
   }
 
   willDestroy() {
     this.loadTask.cancelAll();
     this.playTask.cancelAll();
+    this.cast.teardown();
   }
 }

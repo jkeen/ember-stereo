@@ -15,7 +15,7 @@ import StereoBaseActionHelper from '../-private/helpers/action-helper';
 export default class SeekSound extends StereoBaseActionHelper {
   /**
     @method compute
-    @param {Any} identifier url, urls, url objects, promise that resolves to a url
+    @param {Any} identifier a url, an array of urls, a url object, a Sound, or a promise resolving to any of those
     @param {Integer} position
     @param {String} unit? 'percentage' or 'seconds', defaults to 'percentage'
     @return {Function}

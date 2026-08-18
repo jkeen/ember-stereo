@@ -1,25 +1,34 @@
 import { A as emberArray } from '@ember/array';
 import debug from 'debug';
-import hasEqualUrls from './has-equal-urls';
-import { service } from '@ember/service';
 export default class OneAtATime {
-  @service stereo;
-
   constructor() {
     this.sounds = emberArray();
+    this._playedHandlers = new WeakMap();
   }
 
   register(sound) {
     let sounds = this.sounds;
-    sound.on('audio-played', () => this.pauseAll(sound));
-    if (!sounds.includes(sound)) {
-      sounds.pushObject(sound);
+    if (sounds.includes(sound)) {
+      return;
     }
+    let handler = () => this.pauseAll(sound);
+    this._playedHandlers.set(sound, handler);
+    sound.on('audio-played', handler);
+    sounds.pushObject(sound);
+  }
+
+  unregister(sound) {
+    let handler = this._playedHandlers.get(sound);
+    if (handler) {
+      sound.off('audio-played', handler);
+      this._playedHandlers.delete(sound);
+    }
+    this.sounds.removeObject(sound);
   }
 
   pauseAll(sound) {
     this.sounds.forEach((s) => {
-      if (!hasEqualUrls(s.url, sound.url)) {
+      if (s !== sound) {
         debug('ember-stereo:one-at-at-time')(`pausing ${s.url}`);
         s.pause();
       }

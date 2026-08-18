@@ -1,8 +1,4 @@
-import Helper from '@ember/component/helper';
-import { dedupeTracked } from 'tracked-toolbox';
-import { service } from '@ember/service';
-import debugMessage from '../-private/utils/debug-message';
-import hasEqualUrls from '../-private/utils/has-equal-urls';
+import StereoBaseIsHelper from '../-private/helpers/is-helper';
 
 /**
   A helper to display error details.
@@ -18,49 +14,28 @@ import hasEqualUrls from '../-private/utils/has-equal-urls';
 
 /**
   @method compute
-  @param {Any} identifier url, urls, url objects, promise that resolves to a url
+  @param {Any} identifier a url, an array of urls, a url object, a Sound, or a promise resolving to any of those
   @param {String} connectionName? name of connection's errors to get
   @return {any}
 */
-
-const UNINITIALIZED = null;
-export default class SoundIsErrored extends Helper {
-  name = 'sound-is-errored';
-  @service stereo;
-
-  identifier = UNINITIALIZED;
-  @dedupeTracked url;
+export default class SoundErrorDetails extends StereoBaseIsHelper {
+  name = 'sound-error-details';
 
   get result() {
-    return this.stereo.cachedErrors.find((e) => hasEqualUrls(e.url, this.url));
-  }
-
-  compute([identifier], { connectionName }) {
-    if (identifier !== this.identifier) {
-      this.identifier = identifier;
-      this.stereo.resolveIdentifierTask
-        .perform(this.identifier)
-        .then((url) => (this.url = url))
-        .catch();
+    if (!this.sound) {
+      return undefined;
     }
 
-    if (!this.result) {
-      return;
-    }
-
-    var errObject = this.result;
+    let { connectionName } = this.options;
     if (connectionName) {
-      debugMessage(this, `render = ${errObject.errors[connectionName]}`);
-      return errObject.errors[connectionName];
-    } else {
-      let errors = [];
-      this.stereo.connectionNames.forEach((name) => {
-        if (errObject.errors[name]) {
-          errors.push(errObject.errors[name]);
-        }
-      });
-
-      return errors[0] || errObject.errors.generic;
+      return this.sound.failures?.find(
+        (failure) =>
+          failure.error &&
+          (failure.connectionKey === connectionName ||
+            failure.connectionName === connectionName),
+      )?.error;
     }
+
+    return this.sound.error || this.sound.errors[0];
   }
 }

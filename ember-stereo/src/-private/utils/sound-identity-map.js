@@ -9,14 +9,15 @@ function isAnObject(identifier) {
 }
 
 /**
- * This class caches things based on a strings or objects. You shouldn't have to interact with this class.
+ * Same identifier, same Sound, always. Object and promise identifiers are held
+ * weakly. Deliberately untracked so findSound can store during render.
  * @private
- * @class UntrackedObjectCache
+ * @hide
+ * @class SoundIdentityMap
  */
-export default class UntrackedObjectCache {
+export default class SoundIdentityMap {
   objectCache = new WeakMap();
   keyCache = {};
-  name = 'ember-stereo:untracked-object-cache';
 
   has(_identifier) {
     let identifier = normalizeIdentifier(_identifier);
@@ -37,25 +38,14 @@ export default class UntrackedObjectCache {
     }
   }
 
-  remove(_identifier) {
-    let identifier = normalizeIdentifier(_identifier);
-
-    if (isAnObject(identifier) && this.objectCache.has(identifier)) {
-      this.objectCache.delete(identifier);
-    }
-    if (this.keyCache[identifier]) {
-      delete this.keyCache[identifier];
-    }
-  }
-
-  store(_identifier, value) {
+  store(_identifier, sound) {
     let identifier = normalizeIdentifier(_identifier);
 
     if (identifier) {
       if (isAnObject(identifier)) {
-        this.objectCache.set(identifier, value);
+        this.objectCache.set(identifier, sound);
       } else {
-        this.keyCache[identifier] = value;
+        this.keyCache[identifier] = sound;
       }
     }
   }

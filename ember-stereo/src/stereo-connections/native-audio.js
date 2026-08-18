@@ -4,6 +4,7 @@ import { run } from '@ember/runloop';
 import { isTesting, macroCondition } from '@embroider/macros';
 import { task, timeout, didCancel } from 'ember-concurrency';
 import BaseSound from './base';
+import isSameAudio from '../-private/utils/is-same-audio';
 // These are the events we're watching for
 const AUDIO_EVENTS = [
   'loadstart',
@@ -15,6 +16,7 @@ const AUDIO_EVENTS = [
   'canplaythrough',
   'error',
   'playing',
+  'waiting',
   'pause',
   'ended',
   'seeking',
@@ -22,6 +24,56 @@ const AUDIO_EVENTS = [
   'emptied',
   'timeupdate',
 ];
+
+const SEEKABLE_START_TOLERANCE = 1;
+
+const DURATION_SAMPLE_MS = 250;
+const DURATION_SAMPLE_LIMIT = 20;
+
+// A live source hands over audio as fast as it happens, so its duration climbs about a second per second.
+const SLOWEST_LIVE_GROWTH = 0.5;
+const FASTEST_LIVE_GROWTH = 2;
+
+// Enough of a window that a one-off correction can't average out to realtime.
+const MIN_LIVE_SAMPLES = 8;
+
+// Firefox moves the duration in steps rather than smoothly, so growth is read across the window.
+const MIN_LIVE_INCREASES = 2;
+
+// Opera reports huge finite durations instead of Infinity.
+const IMPLAUSIBLE_DURATION_MS = 172800000; // 2 days
+
+/**
+ * Whether a series of duration samples grows in step with the clock, which is
+ * what separates a live source from a browser refining its estimate of a
+ * recording. Exported to be tested without waiting on the sampler.
+ *
+ * @param {Array} samples durations in ms, oldest first, one per DURATION_SAMPLE_MS
+ * @return {Boolean}
+ */
+export function durationGrowsWithTheClock(samples = []) {
+  let measured = samples.filter((sample) => Number.isFinite(sample));
+
+  if (measured.length < MIN_LIVE_SAMPLES) {
+    return false;
+  }
+
+  let increases = 0;
+  for (let index = 1; index < measured.length; index++) {
+    if (measured[index] > measured[index - 1]) {
+      increases++;
+    }
+  }
+
+  if (increases < MIN_LIVE_INCREASES) {
+    return false;
+  }
+
+  let span = (measured.length - 1) * DURATION_SAMPLE_MS;
+  let growthRate = (measured[measured.length - 1] - measured[0]) / span;
+
+  return growthRate >= SLOWEST_LIVE_GROWTH && growthRate <= FASTEST_LIVE_GROWTH;
+}
 
 // Ready state values
 // const HAVE_NOTHING = 0;
@@ -62,7 +114,9 @@ export default class NativeAudio extends BaseSound {
     }
 
     if (this.options?.xhr) {
-      this.debug('xhr options are not supported in NativeAudio, ignoring and trying to load anyway')
+      this.debug(
+        'xhr options are not supported in NativeAudio, ignoring and trying to load anyway',
+      );
       audio.load();
     } else {
       audio.load();
@@ -70,19 +124,35 @@ export default class NativeAudio extends BaseSound {
   }
 
   _registerEvents(audio) {
+    // Not a class field, because setup() runs from BaseSound's constructor before subclass field initializers.
+    this._audioEventHandlers = {};
     AUDIO_EVENTS.forEach((eventName) => {
-      audio.addEventListener(eventName, (e) =>
-        run(() => this._handleAudioEvent(eventName, e))
-      );
+      let handler = (e) => run(() => this._handleAudioEvent(eventName, e));
+      this._audioEventHandlers[eventName] = handler;
+      audio.addEventListener(eventName, handler);
     });
   }
 
   _unregisterEvents(audio) {
-    AUDIO_EVENTS.forEach((eventName) => audio.removeEventListener(eventName));
+    // A single-arg removeEventListener throws in real browsers, aborting teardown.
+    let handlers = this._audioEventHandlers;
+    if (!handlers) {
+      return;
+    }
+    AUDIO_EVENTS.forEach((eventName) => {
+      let handler = handlers[eventName];
+      if (handler) {
+        audio.removeEventListener(eventName, handler);
+      }
+    });
+    this._audioEventHandlers = {};
   }
 
   _handleAudioEvent(eventName, e) {
-    if (!this.urlsAreEqual(e.target?.src, this.url) && e.target?.src !== '') {
+    if (
+      !isSameAudio(e.target?.src, this.url, { exact: true }) &&
+      e.target?.src !== ''
+    ) {
       // This event is not for us if our srcs aren't equal
 
       // but if the target src is empty it means we've been stopped and in
@@ -110,21 +180,20 @@ export default class NativeAudio extends BaseSound {
         break;
       case 'onloadedmetadata':
         this._onAudioDurationChanged();
-        this.duration = this._audioDuration();
+        this.duration = this._resolveDuration();
         break;
       case 'playing':
         this._onAudioPlayed();
         break;
-      // the emptied event is triggered by our more reliable stream pause method
-      case 'emptied':
-        this._onAudioEmptied();
+      case 'waiting':
+        this._onAudioWaiting();
         break;
       case 'pause':
         this._onAudioPaused();
         break;
       case 'durationchange':
         this._onAudioDurationChanged();
-        this.duration = this._audioDuration();
+        this.duration = this._resolveDuration();
         break;
       case 'ended':
         this._onAudioEnded();
@@ -166,6 +235,8 @@ export default class NativeAudio extends BaseSound {
     if (!this.sharedAudioAccess) {
       return;
     }
+
+    this.stopStreamAfterGraceTask.cancelAll();
 
     // Send a pause event to ensure playback status is updated correctly.
     // If this doesn't happen, the audio can get stuck in a playing state,
@@ -244,7 +315,7 @@ export default class NativeAudio extends BaseSound {
   _onAudioDurationChanged() {
     this.trigger('audio-duration-changed', {
       sound: this,
-      duration: this._audioDuration(),
+      duration: this._resolveDuration(),
     });
   }
 
@@ -261,6 +332,10 @@ export default class NativeAudio extends BaseSound {
 
   _onAudioEnded() {
     this.trigger('audio-ended', { sound: this });
+  }
+
+  _onAudioWaiting() {
+    this.isLoading = true;
   }
 
   _onAudioError(error) {
@@ -300,10 +375,6 @@ export default class NativeAudio extends BaseSound {
     }
   }
 
-  _onAudioEmptied() {
-    this.trigger('audio-paused', { sound: this });
-  }
-
   _onAudioPaused() {
     this.trigger('audio-paused', { sound: this });
   }
@@ -326,11 +397,12 @@ export default class NativeAudio extends BaseSound {
 
       let total = A(totals).reduce((a, b) => a + b, 0);
 
-      this.debug(`ms loaded: ${total * 1000}`);
-      this.debug(`duration: ${this._audioDuration()}`);
-      this.debug(`percent loaded = ${(total / audio.duration) * 100}`);
+      let percentLoaded = total / audio.duration;
+      this.debug(
+        `buffered ${Math.round(percentLoaded * 100)}% (${Math.round(total * 1000)}ms of ${Math.round(this._audioDuration())}ms)`,
+      );
 
-      return { percentLoaded: total / audio.duration };
+      return { percentLoaded };
     } else {
       return 0;
     }
@@ -338,18 +410,41 @@ export default class NativeAudio extends BaseSound {
 
   /* Public interface */
 
-  _durationHistory = [];
+  get _elementKnowsMediaLength() {
+    return Number.isFinite(this.audioElement?.duration);
+  }
 
   _audioDuration() {
     let audio = this.audioElement;
-    if (audio.duration > 172800000 || this.probablyAStream) {
-      // if audio is longer than 3 days in milliseconds,
-      // assume it's a stream, and set duration to infinity as it should be
-      // this is a bug in Opera and was reported on 5/25/2017
-
-      return Infinity;
+    if (
+      audio.duration * 1000 > IMPLAUSIBLE_DURATION_MS ||
+      this.probablyAStream
+    ) {
+      let recorded = this._elementKnowsMediaLength
+        ? null
+        : (this._recordedDurationMs() ?? this._lastRecordedDurationMs);
+      return recorded ?? Infinity;
     }
     return audio.duration * 1000;
+  }
+
+  _lastRecordedDurationMs = null;
+
+  _recordedDurationMs() {
+    let seekable = this.audioElement?.seekable;
+    if (!seekable?.length) {
+      return null;
+    }
+
+    let start = seekable.start(0);
+    let end = seekable.end(seekable.length - 1);
+
+    if (start > SEEKABLE_START_TOLERANCE || !Number.isFinite(end) || end <= 0) {
+      return null;
+    }
+
+    this._lastRecordedDurationMs = end * 1000;
+    return this._lastRecordedDurationMs;
   }
 
   _currentPosition() {
@@ -359,6 +454,20 @@ export default class NativeAudio extends BaseSound {
   _setPosition(position) {
     this.audioElement.currentTime = position / 1000;
     return this._currentPosition();
+  }
+
+  // A still-airing HLS archive has no #EXT-X-ENDLIST, so duration grows without bound yet the media still seeks.
+  get _seekableWindowMs() {
+    let audio = this.audioElement;
+    let seekable = audio?.seekable;
+    if (!seekable || seekable.length === 0) return 0;
+    if (this._elementKnowsMediaLength) return 0;
+    let window = (seekable.end(seekable.length - 1) - seekable.start(0)) * 1000;
+    return Number.isFinite(window) ? window : 0;
+  }
+
+  get _measuredSeekable() {
+    return this._seekableWindowMs > 0 || super._measuredSeekable;
   }
 
   _setPlaybackSpeed(speed) {
@@ -383,21 +492,18 @@ export default class NativeAudio extends BaseSound {
 
   // Some files that don't have an obvious mime-type/extension won't return Infinity for their duration
   // despite it being a stream. Instead the duration will continue to increase as the file plays. This method
-  // samples the duration of the element and if it doesn't change durations for a while we know it's not a stream
+  // samples the duration of the element and looks for growth that keeps pace with the clock.
 
   @cached
   get probablyAStream() {
-    let differences = this._durationHistory.reduce(
-      (val, cur, index, original) => [
-        ...val,
-        index === 0 ? 0 : original[index] - original[index - 1],
-      ],
-      []
-    );
-    return differences.filter((d) => d === 0).length !== differences.length;
+    return durationGrowsWithTheClock(this._durationHistory);
   }
 
   @tracked _durationHistory = [];
+
+  _forgetDurationHistory() {
+    this._durationHistory = [];
+  }
 
   durationWorkaroundTask = task({ restartable: true }, async () => {
     let audio = this.audioElement;
@@ -405,25 +511,47 @@ export default class NativeAudio extends BaseSound {
     if (macroCondition(isTesting())) {
       this._durationHistory = [0, 0, 0];
     } else {
+      let wasAStream = this.probablyAStream;
+
       while (this.isPlaying) {
         let duration = audio.duration * 1000;
-        this._durationHistory = this._durationHistory.slice(-20); // only keep last 20 items
-        this._durationHistory.push(duration);
+        if (Number.isFinite(duration)) {
+          this._durationHistory = [
+            ...this._durationHistory.slice(-(DURATION_SAMPLE_LIMIT - 1)),
+            duration,
+          ];
+        }
 
-        await timeout(250);
+        wasAStream = this._recomputeDurationIfReclassified(wasAStream);
+
+        await timeout(DURATION_SAMPLE_MS);
       }
     }
   });
 
+  _recomputeDurationIfReclassified(wasAStream) {
+    if (this.probablyAStream === wasAStream) {
+      return wasAStream;
+    }
+
+    this.duration = this._resolveDuration();
+    return this.probablyAStream;
+  }
+
   playTask = task({ restartable: true }, async ({ position }) => {
     this.isLoading = true;
     this.isBlocked = false;
+    this.stopStreamAfterGraceTask.cancelAll();
 
     let audio = this.requestControl();
 
-    // since we clear the `src` attr on pause for streams, restore it here
-    this.loadAudio(audio);
-    this.restoreState();
+    if (this.isStream && this._streamConnectionIsWarm(audio)) {
+      this._seekToLiveEdge(audio);
+    } else {
+      // pause clears the `src` attr for streams, so restore it here
+      this.loadAudio(audio);
+      this.restoreState();
+    }
 
     if (typeof position !== 'undefined') {
       this._setPosition(position);
@@ -448,6 +576,7 @@ export default class NativeAudio extends BaseSound {
   retry() {
     this.debug(`retrying load with crossorigin not set`);
     this.audioElement.removeAttribute('crossorigin');
+    this._forgetDurationHistory();
 
     this.retryCount = this.retryCount + 1;
     this.audioElement.src = this.url;
@@ -461,31 +590,93 @@ export default class NativeAudio extends BaseSound {
   pause() {
     this.debug('#pause');
     let audio = this.audioElement;
+    audio.pause();
 
-    if (this.isStream) {
+    if (!this.isStream) {
+      this.debug('paused a recording, so the element keeps its media');
+      return;
+    }
+
+    let grace = this.streamPauseGraceMs;
+
+    if (!grace) {
+      this.debug('no grace period, stopping the stream now');
       this.stop(); // we don't want the stream to continue loading while paused
+    } else if (grace === Infinity) {
+      this.debug('holding this stream open until something stops it');
     } else {
-      audio.pause();
+      this.debug(`holding this stream open for ${grace}ms`);
+      this.stopStreamAfterGraceTask.perform(grace).catch((e) => {
+        if (!didCancel(e)) {
+          console.error(e);
+        }
+      });
+    }
+  }
+
+  /**
+   * How long a paused stream holds its connection open. Infinity never stops it.
+   *
+   * @property streamPauseGraceMs
+   * @type {Number}
+   * @public
+   */
+  get streamPauseGraceMs() {
+    return this.options?.streamPauseGraceMs ?? 0;
+  }
+
+  get _stillOwnsSharedElement() {
+    return !this.sharedAudioAccess || this.sharedAudioAccess.hasControl(this);
+  }
+
+  stopStreamAfterGraceTask = task({ restartable: true }, async (graceMs) => {
+    await timeout(graceMs);
+
+    if (!this._stillOwnsSharedElement) {
+      this.debug('grace period expired but we no longer own the element');
+      return;
+    }
+
+    this.debug('stream pause grace period expired, stopping');
+    this.stop();
+  });
+
+  _streamConnectionIsWarm(audio) {
+    return !!audio?.src && isSameAudio(audio.src, this.url, { exact: true });
+  }
+
+  _seekToLiveEdge(audio) {
+    try {
+      if (audio.seekable?.length) {
+        audio.currentTime = audio.seekable.end(audio.seekable.length - 1);
+      }
+    } catch (e) {
+      this.debug('could not seek to the live edge, playing from where we are');
     }
   }
 
   stop() {
     this.debug('#stop');
     let audio = this.audioElement;
+    this.stopStreamAfterGraceTask.cancelAll();
     audio.pause();
 
     // calling pause halts playback but does not stop downloading streaming
     // media. this is the method recommended by MDN: https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/Using_HTML5_audio_and_video#Stopping_the_download_of_media
-    // NOTE: this fires an `'emptied'` event, which we treat the same way as `'pause'`
     audio.removeAttribute('src');
     audio.load();
+    this._forgetDurationHistory();
+
+    // load() discards the pause event audio.pause() just queued.
+    this._onAudioPaused();
   }
 
   loadAudio(audio) {
     this.defeatBrowserCaching();
-    if (!this.urlsAreEqual(audio.src, this.url)) {
+    if (!isSameAudio(audio.src, this.url, { exact: true })) {
       audio.setAttribute('src', this.url);
       audio.load();
+      this._forgetDurationHistory();
     }
   }
 
@@ -504,21 +695,10 @@ export default class NativeAudio extends BaseSound {
     }
   }
 
-  urlsAreEqual(url1, url2) {
-    // GOTCHA: audio.src is a fully qualified URL, and this.url may be a relative url
-    // So when comparing, make sure we're dealing in absolutes
-
-    let parser1 = document.createElement('a');
-    let parser2 = document.createElement('a');
-    parser1.href = url1;
-    parser2.href = url2;
-
-    return parser1.href === parser2.href;
-  }
-
   teardown() {
     let audio = this.requestControl();
     this.durationWorkaroundTask.cancelAll();
+    this.stopStreamAfterGraceTask.cancelAll();
     this.trigger('_will_destroy', { sound: this });
     this._unregisterEvents(audio);
     super.teardown();

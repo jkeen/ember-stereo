@@ -21,13 +21,13 @@ export default class SoundMetadata extends Helper {
 
   /**
     @method compute
-    @param {Any} identifier url, urls, url objects, promise that resolves to a url
+    @param {Any} identifier a url, an array of urls, a url object, a Sound, or a promise resolving to any of those
     @param {String} key? name of the key to fetch
     @return {Any}
   */
 
   compute([identifier], { key }) {
-    let metadata = this.stereo.metadataCache.find(identifier);
+    let metadata = this.stereo.findSound(identifier)?.metadata;
 
     if (key && metadata && get(metadata, key)) {
       return get(metadata, key);

@@ -1,4 +1,5 @@
 import debug from 'debug';
+import SILENT_SOURCE from './silent-source';
 const log = debug('ember-stereo:shared-audio-access');
 
 /**
@@ -8,13 +9,8 @@ const log = debug('ember-stereo:shared-audio-access');
  * out the src allows us to play a piece of audio seamlessly without requiring
  * an extra click by the user to get around strict autoplay restrictions
  *
- * Note from late 2023:
- * The above was true in 2016-2017, but not sure if it still stands. Apparently using
- * a single element also solved some WNYC-specific issues with adswizz not allowing multiple
- * connections at once (as documented in the changelog for 1.6.0). But again, not sure if that's
- * worth keeping something that significantly complicates the codebase.
- *
  * @private
+ * @hide
  * @class SharedAudioAccess
  */
 /*
@@ -23,6 +19,7 @@ const log = debug('ember-stereo:shared-audio-access');
 export default class SharedAudioAccess {
   audioElement;
   owner;
+  isUnlocked = false;
 
   debug(message) {
     log(message);
@@ -31,14 +28,22 @@ export default class SharedAudioAccess {
   unlock(andPlay) {
     if (!this.audioElement) {
       this.debug('creating new audio element');
-      let audioElement = SharedAudioAccess.createElement();
-      this.audioElement = audioElement;
-
-      if (andPlay) {
-        this.debug(`telling blank audio element to play`);
-        audioElement.play();
-      }
+      this.audioElement = SharedAudioAccess.createElement();
     }
+
+    // iOS only frees an element that played during a user gesture, and a source-less element cannot play at all.
+    if (andPlay && !this.isUnlocked) {
+      this.isUnlocked = true;
+      if (!this.audioElement.getAttribute('src')) {
+        this.audioElement.setAttribute('src', SILENT_SOURCE);
+      }
+      this.debug('playing silence to unlock the shared audio element');
+      this.audioElement.play().catch((error) => {
+        this.isUnlocked = false;
+        this.debug(`could not unlock the shared element: ${error}`);
+      });
+    }
+
     return this;
   }
 

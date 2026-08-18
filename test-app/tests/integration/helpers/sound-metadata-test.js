@@ -31,7 +31,7 @@ module('Integration | Helper | sound-metadata', function (hooks) {
     let service = this.owner.lookup('service:stereo');
 
     this.url = '/good/1000/metadata.mp3';
-    service.metadataCache.store(this.url, { title: 'my title' });
+    service.findSound(this.url).metadata = { title: 'my title' };
     await render(hbs`{{sound-metadata (current-sound) key='title'}}`);
     await service.play(this.url);
 
@@ -42,7 +42,7 @@ module('Integration | Helper | sound-metadata', function (hooks) {
     let service = this.owner.lookup('service:stereo');
 
     this.url = '/good/1000/metadata.mp3';
-    service.metadataCache.store(this.url, { title: 'my title' });
+    service.findSound(this.url).metadata = { title: 'my title' };
     await render(
       hbs`{{sound-metadata (current-sound) key='title'}} {{sound-metadata (current-sound) key='artist'}}`,
     );
@@ -55,7 +55,7 @@ module('Integration | Helper | sound-metadata', function (hooks) {
     let service = this.owner.lookup('service:stereo');
 
     this.url = '/good/1000/metadata.mp3';
-    service.metadataCache.store(this.url, { title: 'my title' });
+    service.findSound(this.url).metadata = { title: 'my title' };
     await render(hbs`{{sound-metadata this.url key='title'}}`);
 
     assert.strictEqual(this.element.textContent.trim(), 'my title');

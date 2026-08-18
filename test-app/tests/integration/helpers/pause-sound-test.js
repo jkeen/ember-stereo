@@ -19,4 +19,25 @@ module('Integration | Helper | pause-sound', function (hooks) {
     await click('button');
     assert.false(service.isPlaying, 'is not playing');
   });
+
+  test('re-rendering with a different identifier pauses the new sound', async function (assert) {
+    let service = this.owner.lookup('service:stereo');
+    let firstUrl = '/good/1000/first.mp3';
+    let secondUrl = '/good/1000/second.mp3';
+
+    await service.load(firstUrl);
+    this.target = service.findSound(firstUrl).connection;
+
+    await render(
+      hbs`<button type="button" {{on 'click' (pause-sound this.target)}}>pause</button>`,
+    );
+
+    await service.play(secondUrl);
+    assert.true(service.isPlaying, 'the second sound is playing');
+
+    this.set('target', secondUrl);
+    await click('button');
+
+    assert.false(service.isPlaying, 'the second sound was paused, not the first');
+  });
 });

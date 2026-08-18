@@ -32,4 +32,20 @@ module('Integration | Helper | sound-is-errored', function (hooks) {
       'helper reports error',
     );
   });
+
+  test('one errored sound does not report every other url as errored', async function (assert) {
+    let service = this.owner.lookup('service:stereo');
+    await service.load('/bad/10/broken.mp3', { silenceErrors: true });
+
+    this.set('url', '/good/1000/fine.mp3');
+    await render(
+      hbs`{{#if (sound-is-errored this.url)}}sound-is-errored{{else}}is-not-errored{{/if}}`,
+    );
+
+    assert.strictEqual(
+      this.element.textContent.trim(),
+      'is-not-errored',
+      'a healthy url is unaffected by another sound failing',
+    );
+  });
 });

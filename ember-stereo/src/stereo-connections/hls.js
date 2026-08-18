@@ -55,13 +55,13 @@ export default class HLSSound extends BaseSound {
       (['avc1.42E01E,mp4a.40.2', 'av01.0.01M.08', 'vp09.00.50.08'].some(
         (codecsForVideoContainer) =>
           mediaSource.isTypeSupported(
-            mimeTypeForCodec(codecsForVideoContainer, 'video')
-          )
+            mimeTypeForCodec(codecsForVideoContainer, 'video'),
+          ),
       ) ||
         ['mp4a.40.2', 'fLaC'].some((codecForAudioContainer) =>
           mediaSource.isTypeSupported(
-            mimeTypeForCodec(codecForAudioContainer, 'audio')
-          )
+            mimeTypeForCodec(codecForAudioContainer, 'audio'),
+          ),
         ))
     );
   }
@@ -89,6 +89,10 @@ export default class HLSSound extends BaseSound {
         debug: false,
         startFragPrefetch: true,
       };
+
+      // hls.js re-consults config.startPosition after every stopLoad and live playlist reload.
+      let { startPosition, ...connectionOptions } = this.options || {};
+      let startsAtPosition = typeof startPosition === 'number';
 
       if (this.options?.xhr) {
         options.xhrSetup = (xhr, url) => {
@@ -118,8 +122,14 @@ export default class HLSSound extends BaseSound {
           this.video.removeAttribute('src');
         }
 
-        let hls = new HLS({ ...options, ...(this.options || {}) });
+        // hls.js only honours startLoad(position) when not already loading.
+        if (startsAtPosition) {
+          options.autoStartLoad = false;
+        }
+
+        let hls = new HLS({ ...options, ...connectionOptions });
         this.hls = hls;
+        this.startPosition = startsAtPosition ? startPosition : null;
 
         let video = document.createElement('video');
         video.setAttribute('crossorigin', 'anonymous');
@@ -155,11 +165,17 @@ export default class HLSSound extends BaseSound {
     instance.on(HLS.Events.MEDIA_ATTACHED, () => {
       this.debug('media attached, loading source');
       instance.loadSource(this.url);
+
+      if (this.startPosition != null) {
+        this.debug(`starting load at ${this.startPosition}s`);
+        instance.startLoad(this.startPosition);
+        this.startPosition = null;
+      }
     });
 
     instance.on(HLS.Events.MANIFEST_PARSED, (e, data) => {
       this.debug(
-        `manifest parsed and loaded, found ${data.levels.length} quality level(s)`
+        `manifest parsed and loaded, found ${data.levels.length} quality level(s)`,
       );
       this.manifest = data;
     });
@@ -235,28 +251,28 @@ export default class HLSSound extends BaseSound {
     });
 
     video.addEventListener('pause', () =>
-      this.trigger('audio-paused', { sound: this })
+      this.trigger('audio-paused', { sound: this }),
     );
     video.addEventListener('ended', () =>
-      this.trigger('audio-ended', { sound: this })
+      this.trigger('audio-ended', { sound: this }),
     );
     video.addEventListener('durationchange', () =>
-      this.trigger('audio-duration-changed', { sound: this })
+      this.trigger('audio-duration-changed', { sound: this }),
     );
     video.addEventListener('seeked', () =>
       this.trigger('audio-position-changed', {
         sound: this,
         currentTime: this.currentTime,
-      })
+      }),
     );
     video.addEventListener('timeupdate', () =>
       this.trigger('audio-position-changed', {
         sound: this,
         currentTime: this.currentTime,
-      })
+      }),
     );
     video.addEventListener('progress', () =>
-      this.trigger('audio-loading', { sound: this })
+      this.trigger('audio-loading', { sound: this }),
     );
     video.addEventListener('error', (e) => this._onVideoError(e));
   }
@@ -335,7 +351,7 @@ export default class HLSSound extends BaseSound {
         break;
       case 1:
         this.debug(
-          `Second attempt at media error recovery: switching codecs for error: ${error}`
+          `Second attempt at media error recovery: switching codecs for error: ${error}`,
         );
         hls.swapAudioCodec();
         hls.recoverMediaError();
@@ -367,7 +383,7 @@ export default class HLSSound extends BaseSound {
 
     const resumePosition = fragment.end + 0.1;
     this.debug(
-      `skipping unparseable fragment (${fragment.start}s–${fragment.end}s), resuming at ${resumePosition}s`
+      `skipping unparseable fragment (${fragment.start}s–${fragment.end}s), resuming at ${resumePosition}s`,
     );
 
     this.skippedFragments = this.skippedFragments + 1;
@@ -414,28 +430,26 @@ export default class HLSSound extends BaseSound {
     return this._endTime;
   }
 
-  get isFastForwardable() {
+  get _measuredSeekable() {
     return true;
   }
 
-  get isRewindable() {
-    return true;
-  }
-
-  get isSeekable() {
-    return true;
-  }
-
+  // No #EXT-X-ENDLIST means the show is still on air, which says nothing about its beginning.
   get isLive() {
     return this.live;
   }
 
-  get isStream() {
-    return this.isLive;
-  }
-
   _audioDuration() {
-    return this.video.duration * 1000;
+    let duration = this.video.duration * 1000;
+    if (Number.isFinite(duration)) {
+      return duration;
+    }
+
+    // A playlist with no #EXT-X-ENDLIST reports Infinity, so the seekable range is the real recorded timeline.
+    let seekable = this.video.seekable;
+    return seekable?.length
+      ? seekable.end(seekable.length - 1) * 1000
+      : duration;
   }
 
   _currentPosition() {
@@ -443,10 +457,14 @@ export default class HLSSound extends BaseSound {
   }
 
   _setPosition(position) {
-    this._setVideoCurrentTime(position / 1000);
-    if (!this.isPlaying) {
-      this.hls.startLoad();
+    let seconds = position / 1000;
+
+    if (this.loadStopped || !this.isPlaying) {
+      this.hls.startLoad(seconds);
+      this.loadStopped = false;
     }
+
+    this._setVideoCurrentTime(seconds);
 
     return position;
   }
@@ -495,13 +513,19 @@ export default class HLSSound extends BaseSound {
   pause() {
     this.debug('#pause');
     this.video.pause();
-    this.hls.stopLoad();
-    this.loadStopped = true;
+
+    // Only a live playlist pulls fragments forever.
+    if (this.live) {
+      this.hls.stopLoad();
+      this.loadStopped = true;
+    }
   }
 
   stop() {
     this.debug('#stop');
     this.pause();
+    this.hls.stopLoad();
+    this.loadStopped = true;
     this.video.removeAttribute('src');
   }
 
@@ -510,9 +534,14 @@ export default class HLSSound extends BaseSound {
     super.teardown();
   }
 
+  // Lazy chunk. Warm it with stereo.prewarmConnection('HLS').
+  static preload() {
+    return import('hls.js');
+  }
+
   @waitFor
   async loadHLS() {
-    return import('hls.js')
+    return HLSSound.preload()
       .then((module) => module.default)
       .then((HLS) => {
         return Promise.resolve({

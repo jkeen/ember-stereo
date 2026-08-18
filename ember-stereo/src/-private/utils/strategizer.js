@@ -7,6 +7,14 @@ import { assert } from '@ember/debug';
 import { getOwner, setOwner } from '@ember/application';
 import debug from 'debug';
 
+const PASSTHROUGH_LOAD_OPTIONS = [
+  'xhr',
+  'startPosition',
+  'streamPauseGraceMs',
+  'duration',
+  'seekable',
+];
+
 export default class Strategizer {
   @tracked urls;
   @tracked options;
@@ -22,9 +30,12 @@ export default class Strategizer {
 
   buildStrategy(connection, url) {
     let passthroughOptions = {};
-    if (this.options.xhr) {
-      passthroughOptions.xhr = this.options?.xhr;
-    }
+    PASSTHROUGH_LOAD_OPTIONS.forEach((name) => {
+      if (this.options[name] != null) {
+        passthroughOptions[name] = this.options[name];
+      }
+    });
+
     let strategyOptions = {
       metadata: this.options.metadata,
       sharedAudioAccess: this.useSharedAudioAccess
@@ -105,7 +116,9 @@ export default class Strategizer {
     });
 
     if (this.useMobileStrategy) {
-        debug('ember-stereo:strategizer')(`re-rodering to prioritize native audio first`);
+      debug('ember-stereo:strategizer')(
+        `re-rodering to prioritize native audio first`
+      );
 
       /*
        * Take our standard strategy and reorder it to prioritize native audio

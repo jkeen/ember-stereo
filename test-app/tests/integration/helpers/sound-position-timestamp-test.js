@@ -58,13 +58,15 @@ module('Integration | Helper | sound-position-timestamp', function (hooks) {
   test('it returns the correct timestamp when currentTime is provided', async function (assert) {
     let time = new Date('2023-10-02T00:00:00Z');
 
-    this.sound = new HLSAudio({
+    let connection = new HLSAudio({
       url: '/good/5000/position.mp3',
       timeout: false,
     });
-    sinon.stub(this.sound, 'isLoaded').get(() => true);
+    sinon.stub(connection, 'isLoaded').get(() => true);
+    sinon.stub(connection, 'currentTime').get(() => time);
 
-    sinon.stub(this.sound, 'currentTime').get(() => time);
+    this.sound = this.owner.lookup('service:stereo').findSound(connection.url);
+    this.sound.connection = connection;
     await render(hbs`{{sound-position-timestamp this.sound}}`);
 
     assert.strictEqual(this.element.textContent.trim(), time.toString());

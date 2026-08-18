@@ -167,4 +167,72 @@ module('Unit | Utility | strategizer', function (hooks) {
       assert.strictEqual(r.message, 'No connections selected');
     }
   });
+
+  module('the duration load option', function () {
+    function durationPassedToStrategies(service, options) {
+      let strategizer = new Strategizer(['/good/10000/sound.mp3'], {
+        connections: service.connections,
+        ...options,
+      });
+
+      return strategizer.strategies[0].options.duration;
+    }
+
+    test('an endless duration is handed down', function (assert) {
+      assert.strictEqual(
+        durationPassedToStrategies(service, { duration: Infinity }),
+        Infinity,
+        'the sound is declared endless',
+      );
+    });
+
+    test('a measured duration is handed down', function (assert) {
+      assert.strictEqual(
+        durationPassedToStrategies(service, { duration: 5000 }),
+        5000,
+        'the sound is declared finite',
+      );
+    });
+
+    test('declaring nothing leaves the sound to be measured', function (assert) {
+      assert.strictEqual(
+        durationPassedToStrategies(service, {}),
+        undefined,
+        'no duration is declared',
+      );
+    });
+  });
+
+  module('the seekable load option', function () {
+    function seekablePassedToStrategies(service, options) {
+      let strategizer = new Strategizer(['/good/10000/sound.mp3'], {
+        connections: service.connections,
+        ...options,
+      });
+
+      return strategizer.strategies[0].options.seekable;
+    }
+
+    test('seekable: false is handed down', function (assert) {
+      assert.false(
+        seekablePassedToStrategies(service, { seekable: false }),
+        'declared unseekable',
+      );
+    });
+
+    test('seekable: true is handed down', function (assert) {
+      assert.true(
+        seekablePassedToStrategies(service, { seekable: true }),
+        'declared seekable',
+      );
+    });
+
+    test('declaring nothing leaves the connection to measure', function (assert) {
+      assert.strictEqual(
+        seekablePassedToStrategies(service, {}),
+        undefined,
+        'nothing is declared',
+      );
+    });
+  });
 });

@@ -43,7 +43,7 @@ export default class ConnectionLoader {
   load(connectionsToLoad) {
     assert(
       `[ember-stereo] ConnectionLoader needs an array of connection, you provided ${connectionsToLoad}`,
-      !isEmpty(connectionsToLoad)
+      !isEmpty(connectionsToLoad),
     );
     connectionsToLoad.forEach((connectionOption) => {
       let name, connection;
@@ -89,19 +89,19 @@ export default class ConnectionLoader {
   lookup(connectionName) {
     assert(
       '[ember-stereo] Could not find a stereo connection without a name.',
-      connectionName
+      connectionName,
     );
     const dasherizedConnectionName = dasherize(connectionName);
     const availableConnection = getOwner(this.service).lookup(
-      `ember-stereo@stereo-connection:${dasherizedConnectionName}`
+      `ember-stereo@stereo-connection:${dasherizedConnectionName}`,
     );
     const localConnection = getOwner(this.service).lookup(
-      `stereo-connection:${dasherizedConnectionName}`
+      `stereo-connection:${dasherizedConnectionName}`,
     );
 
     assert(
       `[ember-stereo] Could not load stereo connection ${dasherizedConnectionName}`,
-      localConnection || availableConnection
+      localConnection || availableConnection,
     );
 
     return localConnection ? localConnection : availableConnection;

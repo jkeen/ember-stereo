@@ -42,7 +42,7 @@ module('Unit | Utility | strategy', function (hooks) {
 
     assert.strictEqual(canPlaySpy.callCount, 1);
 
-    let sound = strategy.createSound();
+    let sound = strategy.createConnection();
 
     assert.true(sound instanceof NativeAudio);
   });
@@ -53,7 +53,7 @@ module('Unit | Utility | strategy', function (hooks) {
       sharedAudioAccess: sharedAudio,
     });
 
-    let sound = strategy.createSound();
+    let sound = strategy.createConnection();
     assert.strictEqual(sound.audioElement, sharedAudio.audioElement);
   });
 });

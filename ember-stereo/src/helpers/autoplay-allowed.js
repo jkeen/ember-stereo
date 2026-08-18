@@ -15,7 +15,7 @@ import Helper from '@ember/component/helper';
 
 /**
   @method compute
-  @param {Any} identifier url, urls, url objects, promise that resolves to a url
+  @param {Any} identifier a url, an array of urls, a url object, a Sound, or a promise resolving to any of those
   @return {Boolean}
 */
 export default class autoPlayAllowed extends Helper {

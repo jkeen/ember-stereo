@@ -4,8 +4,7 @@ import { module, test, skip } from 'qunit';
 import { setupTest } from 'ember-qunit';
 import { waitUntil, settled } from '@ember/test-helpers';
 import sinon from 'sinon';
-import hasEqualIdentifiers from 'ember-stereo/-private/utils/has-equal-identifiers';
-import SoundCache from 'ember-stereo/-private/utils/sound-cache';
+import Chromecast from 'ember-stereo/stereo-connections/chromecast';
 import setupCustomAssertions from 'ember-cli-custom-assertions/test-support';
 import {
   setupStereoTest,
@@ -172,7 +171,7 @@ module('Unit | Service | stereo', function (hooks) {
     assert.deepEqual(
       service.get('oneAtATime.sounds.firstObject'),
       sound,
-      'sound should be registered with one at a time',
+      'the sound should be registered with one at a time',
     );
   });
 
@@ -203,6 +202,74 @@ module('Unit | Service | stereo', function (hooks) {
     );
     sound2.stop();
     sound1.stop();
+  });
+
+  test('A sound loaded with preview: true never becomes the currentSound', async function (assert) {
+    let service = this.owner
+      .lookup('service:stereo')
+      .loadConnections([{ name: 'NativeAudio' }]);
+    let { sound: preview } = await service.load('/good/200/preview.mp3', {
+      preview: true,
+    });
+    let { sound: playing } = await service.load('/good/500/playing.mp3');
+
+    await preview.play();
+    assert.notOk(
+      service.currentSound,
+      'a previewed sound should not become the current sound',
+    );
+
+    await playing.play();
+    assert.strictEqual(
+      service.currentSound?.url,
+      playing.url,
+      'a normally loaded sound still becomes the current sound',
+    );
+
+    playing.stop();
+    preview.stop();
+  });
+
+  test('a preview sound becomes promotable again once something loads it for real', async function (assert) {
+    let service = this.owner
+      .lookup('service:stereo')
+      .loadConnections([{ name: 'NativeAudio' }]);
+    let url = '/good/200/preview-then-real.mp3';
+
+    let { sound } = await service.load(url, { preview: true });
+    await sound.play();
+    assert.notOk(service.currentSound, 'still a preview');
+    sound.pause();
+
+    await service.load(url);
+    await sound.play();
+    assert.strictEqual(
+      service.currentSound?.url,
+      sound.url,
+      'the real load cleared the preview mode',
+    );
+    sound.stop();
+  });
+
+  test('a real sound re-loaded as a preview stops being promoted', async function (assert) {
+    let service = this.owner
+      .lookup('service:stereo')
+      .loadConnections([{ name: 'NativeAudio' }]);
+    let url = '/good/200/real-then-preview.mp3';
+
+    let { sound } = await service.load(url);
+    await sound.play();
+    assert.strictEqual(service.currentSound?.url, sound.url, 'promoted');
+    sound.pause();
+    service.currentSound = null;
+
+    await service.load(url, { preview: true });
+    await sound.play();
+    assert.notOk(
+      service.currentSound,
+      'the preview load re-marked it, so playing no longer promotes',
+    );
+    sound.stop();
   });
 
   test('Setting currentSound multiple times will not register duplicate events on the sound', async function (assert) {
@@ -247,19 +314,12 @@ module('Unit | Service | stereo', function (hooks) {
       .loadConnections([{ name: 'NativeAudio' }]);
 
     let url = '/good/500/cache.mp3';
-    let soundCache = service.soundCache;
-    let findSpy = sandbox.spy(soundCache, 'find');
-    let cacheSpy = sandbox.spy(soundCache, 'cache');
-    assert.strictEqual(
-      findSpy.callCount,
-      0,
-      'cache should not have been checked',
-    );
+    let identityMap = service._identityMap;
+    let storeSpy = sandbox.spy(identityMap, 'store');
 
     let { sound: sound1 } = await service.load(url);
-    assert.strictEqual(findSpy.callCount, 2, 'cache should have been checked');
     assert.strictEqual(
-      cacheSpy.callCount,
+      storeSpy.callCount,
       1,
       'sound should be registered with sound cache',
     );
@@ -271,7 +331,11 @@ module('Unit | Service | stereo', function (hooks) {
       'yo',
       'should be the same sound in sound cache',
     );
-    assert.strictEqual(findSpy.callCount, 3, 'cache should have been checked');
+    assert.strictEqual(
+      storeSpy.callCount,
+      1,
+      'the cached sound is reused, not registered again',
+    );
   });
 
   test('The second time a url (with a mime type specified) is requested it will be pulled from the cache', async function (assert) {
@@ -281,14 +345,12 @@ module('Unit | Service | stereo', function (hooks) {
 
     let url = { url: '/good/1000/test.mp3', mimeType: 'audio/mp3' };
 
-    let soundCache = service.soundCache;
-    let findSpy = sandbox.spy(soundCache, 'find');
-    let cacheSpy = sandbox.spy(soundCache, 'cache');
+    let identityMap = service._identityMap;
+    let storeSpy = sandbox.spy(identityMap, 'store');
 
     let { sound } = await service.load(url);
-    assert.strictEqual(findSpy.callCount, 2, 'cache should have been checked');
     assert.strictEqual(
-      cacheSpy.callCount,
+      storeSpy.callCount,
       1,
       'sound should be registered with sound cache',
     );
@@ -300,7 +362,11 @@ module('Unit | Service | stereo', function (hooks) {
       'yo',
       'should be the same sound in sound cache',
     );
-    assert.strictEqual(findSpy.callCount, 3, 'cache should have been checked');
+    assert.strictEqual(
+      storeSpy.callCount,
+      1,
+      'the cached sound is reused, not registered again',
+    );
   });
 
   test('volume changes are set on the current sound', function (assert) {
@@ -556,8 +622,8 @@ module('Unit | Service | stereo', function (hooks) {
     let s1url = '/good/250/silence.mp3';
     let s2url = '/good/500/silence2.mp3';
 
-    let { sound: sound1 } = await service.load(s1url);
-    let { sound: sound2 } = await service.load(s2url);
+    let { connection: sound1 } = await service.load(s1url);
+    let { connection: sound2 } = await service.load(s2url);
     sound1.position = 100;
     assert.strictEqual(
       sound2._currentPosition(),
@@ -604,7 +670,7 @@ module('Unit | Service | stereo', function (hooks) {
     service.useSharedAudioAccess = true;
     service.isMobileDevice = true;
 
-    let { sound: silence1 } = await service.play(s1url);
+    let { connection: silence1 } = await service.play(s1url);
     let sharedAccess = silence1.sharedAudioAccess;
     assert.strictEqual(
       sharedAccess.audioElement.id,
@@ -653,13 +719,13 @@ module('Unit | Service | stereo', function (hooks) {
     let sound2PauseEventTriggered;
 
     service.on('audio-played', async ({ sound }) => {
-      sound1PlayEventTriggered = await hasEqualIdentifiers(sound.url, s1url);
-      sound2PlayEventTriggered = await hasEqualIdentifiers(sound.url, s2url);
+      sound1PlayEventTriggered = sound.hasUrl(s1url);
+      sound2PlayEventTriggered = sound.hasUrl(s2url);
     });
 
     service.on('audio-paused', async ({ sound }) => {
-      sound1PauseEventTriggered = await hasEqualIdentifiers(sound.url, s1url);
-      sound2PauseEventTriggered = await hasEqualIdentifiers(sound.url, s2url);
+      sound1PauseEventTriggered = sound.hasUrl(s1url);
+      sound2PauseEventTriggered = sound.hasUrl(s2url);
     });
 
     await service.play(s1url);
@@ -822,12 +888,12 @@ module('Unit | Service | stereo', function (hooks) {
       result = sound;
     });
 
-    let { sound: sound1 } = await service.play(s1url);
+    await service.play(s1url);
     await service.play(s2url);
 
     assert.strictEqual(
       result,
-      sound1,
+      service.findSound(s1url),
       'current sound should be the one that got interrupted',
     );
   });
@@ -1024,15 +1090,9 @@ module('Unit | Service | stereo', function (hooks) {
   test("altering a sound's url during the pre-load event will not prevent the cache", async function (assert) {
     let url = '/good/1000/1.mp3';
 
-    let soundCache = new SoundCache();
     let service = this.owner
       .lookup('service:stereo')
       .loadConnections(['NativeAudio']);
-
-    service.soundCache = soundCache;
-
-    let cacheSpy = sandbox.spy(soundCache, 'cache');
-    let findSpy = sandbox.spy(soundCache, 'find');
 
     service.one('pre-load', (urls) => {
       urls.forEach((url) => {
@@ -1040,20 +1100,436 @@ module('Unit | Service | stereo', function (hooks) {
       });
     });
 
-    await service.play(url);
+    let { sound: sound1 } = await service.play(url);
     service.pause();
-    await service.play(url);
-    assert.equalUrls(
-      cacheSpy.firstCall.args[0].url,
-      `${url}?foo=bar`,
-      'cache lookup with expected value',
-    );
-    assert.equalUrls(
-      findSpy.secondCall.args[0],
-      [cacheSpy.firstCall.args[0].url],
-      'lookup key is the same as the cached key',
+    let { sound: sound2 } = await service.play(url);
+
+    assert.equalUrls(sound1.url, `${url}?foo=bar`, 'the mutated url resolved');
+    assert.strictEqual(
+      sound1,
+      sound2,
+      'the mutated resolved url does not fork the sound',
     );
   });
 
   skip('currenly playing sound does not pause until load has succeeded', function () {});
+
+  test('the currentSound setter is the single emitter of current-sound-changed (any path that moves it notifies the app)', function (assert) {
+    let service = this.owner.lookup('service:stereo');
+    let fakeSound = (url) => ({
+      url,
+      identifier: url,
+      isPlaying: false,
+      isDestroyed: false,
+      metadata: {},
+      on() {},
+      off() {},
+      has() {
+        return false;
+      },
+      _setVolume() {},
+    });
+
+    let changes = [];
+    service.on('current-sound-changed', ({ sound }) =>
+      changes.push(sound?.url ?? null),
+    );
+
+    let a = fakeSound('/a.mp3');
+    let b = fakeSound('/b.mp3');
+    service.currentSound = a;
+    service.currentSound = a; // nothing changed, no event
+    service.currentSound = b; // a plain assignment (the cast feed-switch path) notifies
+    service.currentSound = null; // clearing notifies too
+
+    assert.deepEqual(
+      changes,
+      ['/a.mp3', '/b.mp3', null],
+      'fires exactly once per real change — including a direct assignment and a clear',
+    );
+  });
+
+  module('chromecast lazy setup', function () {
+    test('ensureChromecastSetup loads the Cast SDK at most once', function (assert) {
+      let service = this.owner.lookup('service:stereo');
+      let setupSpy = sandbox.stub(service.cast.access, '_setup').resolves();
+
+      service.ensureChromecastSetup();
+      service.ensureChromecastSetup();
+      service.ensureChromecastSetup();
+
+      assert.true(
+        setupSpy.calledOnce,
+        'the Cast SDK setup runs once no matter how many cast UIs mount',
+      );
+    });
+
+    test('the Cast SDK is not loaded until a casting UI asks for it', function (assert) {
+      let service = this.owner.lookup('service:stereo');
+      let setupSpy = sandbox.stub(service.cast.access, '_setup').resolves();
+
+      assert.false(
+        setupSpy.called,
+        'just looking up the service does not load the Cast SDK',
+      );
+
+      service.ensureChromecastSetup();
+
+      assert.true(
+        setupSpy.calledOnce,
+        'asking for casting (cast-button / casting-available) loads it',
+      );
+    });
+  });
+
+  module('airplay picker', function () {
+    test('prefers the WebKit picker, which is the one that routes x-webkit-airplay', function (assert) {
+      let service = this.owner.lookup('service:stereo');
+      let calls = [];
+      let attributes = {};
+
+      service.cast.outlet._element = {
+        getAttribute: (name) => attributes[name] ?? null,
+        setAttribute: (name, value) => (attributes[name] = value),
+        load: () => {},
+        webkitShowPlaybackTargetPicker: () => calls.push('webkit'),
+        remote: {
+          prompt: () => {
+            calls.push('remote');
+            return Promise.resolve();
+          },
+        },
+      };
+      service.castingTypes.add('airplay');
+
+      service.showCastMenu('/good/1000/airplay.mp3');
+
+      assert.deepEqual(
+        calls,
+        ['webkit'],
+        'Safari exposes both, and remote.prompt does not engage the outlet',
+      );
+    });
+
+    test('falls back to the Remote Playback API where no WebKit picker exists', function (assert) {
+      let service = this.owner.lookup('service:stereo');
+      let calls = [];
+      let attributes = {};
+
+      service.cast.outlet._element = {
+        getAttribute: (name) => attributes[name] ?? null,
+        setAttribute: (name, value) => (attributes[name] = value),
+        load: () => {},
+        remote: {
+          prompt: () => {
+            calls.push('remote');
+            return Promise.resolve();
+          },
+        },
+      };
+      service.castingTypes.add('general');
+
+      service.showCastMenu('/good/1000/remote.mp3');
+
+      assert.deepEqual(calls, ['remote'], 'used the only picker available');
+    });
+
+    test('the outlet carries a source from birth, so cast-target availability can fire before any sound loads', function (assert) {
+      let service = this.owner.lookup('service:stereo');
+
+      assert.ok(
+        service.castOutletElement.getAttribute('src'),
+        'a source-less element never reports available targets, so casting would look unavailable forever',
+      );
+    });
+
+    test('a route that engages without a sound to swap still unmutes the outlet', async function (assert) {
+      let service = this.owner.lookup('service:stereo');
+
+      service.cast.outlet._element = { muted: true };
+      service.cast.kind = 'airplay';
+
+      await service.cast.engageTask.perform();
+
+      assert.false(
+        service.cast.outlet._element.muted,
+        'engaging unmutes even with no sound to swap onto a cast connection',
+      );
+    });
+  });
+
+  module('chromecast cast strategy', function () {
+    test('puts the Chromecast strategy first (with castStartTime) and keeps the local waterfall as a fallback', function (assert) {
+      let service = this.owner.lookup('service:stereo');
+      service.loadConnections([{ name: 'HLS' }, { name: 'NativeAudio' }]);
+      service.isCasting = true;
+      service.cast.kind = 'chromecast';
+      service.cast.access._session = {}; // a live session
+
+      let strategies = service._buildStrategies(['/archive.m3u8'], {
+        ...service.prepareLoadOptions({
+          castUrl: 'https://public.example/archive.m3u8',
+          castStartTime: 5000,
+        }),
+      });
+
+      assert.strictEqual(
+        strategies[0].connectionKey,
+        'Chromecast',
+        'the Chromecast strategy is tried first',
+      );
+      assert.strictEqual(
+        strategies[0].options.startTime,
+        5000,
+        'the start position is threaded onto the strategy',
+      );
+      assert.ok(
+        strategies.length > 1,
+        'the local waterfall is kept as a fallback behind the cast strategy',
+      );
+      assert.notOk(
+        strategies
+          .slice(1)
+          .some((strategy) => strategy.connectionKey === 'Chromecast'),
+        'only one cast strategy; the rest are local',
+      );
+    });
+
+    test('does NOT try to cast when the session is gone (a missed disconnect leaves isCasting stuck) — resolves locally', function (assert) {
+      let service = this.owner.lookup('service:stereo');
+      service.loadConnections([{ name: 'HLS' }, { name: 'NativeAudio' }]);
+      service.isCasting = true; // stuck true after a partial disconnect
+      service.cast.kind = 'chromecast';
+      // The shared access has no live session (detached on SESSION_ENDED).
+
+      let strategies = service._buildStrategies(['/archive.m3u8'], {
+        ...service.prepareLoadOptions({
+          castUrl: 'https://public.example/archive.m3u8',
+        }),
+      });
+
+      assert.ok(
+        strategies.length >= 1,
+        'it builds the normal waterfall instead of looping on a dead cast',
+      );
+      assert.notOk(
+        strategies.some((strategy) => strategy.connectionKey === 'Chromecast'),
+        'no Chromecast strategy is built without a live session',
+      );
+    });
+
+    test('engaging cast on a live stream does NOT seek the device (a stream start position buffers forever)', async function (assert) {
+      let service = this.owner.lookup('service:stereo');
+      let buildSpy = sandbox
+        .stub(service.cast, 'buildCastConnection')
+        .returns(null);
+
+      service.cast.kind = 'chromecast';
+      service.cast.access._session = {};
+      service._currentSound = {
+        castUrl: 'https://public.example/stream.aac',
+        metadata: {},
+        isStream: true,
+        position: 16000,
+      };
+
+      await service.cast.engageTask.perform();
+
+      assert.strictEqual(
+        buildSpy.firstCall.args[2].startTime,
+        null,
+        'no start position is handed to a live stream cast',
+      );
+    });
+
+    test('engaging cast on a paused sound does not start it on the receiver', async function (assert) {
+      let service = this.owner.lookup('service:stereo');
+      let buildSpy = sandbox
+        .stub(service.cast, 'buildCastConnection')
+        .returns(null);
+
+      service.cast.kind = 'chromecast';
+      service.cast.access._session = {};
+      service._currentSound = {
+        castUrl: 'https://public.example/archive.m3u8',
+        metadata: {},
+        isStream: false,
+        position: 16000,
+        _explicitPlayIntent: false,
+      };
+
+      await service.cast.engageTask.perform();
+
+      assert.false(
+        buildSpy.firstCall.args[2].autoplay,
+        'the receiver is told not to autoplay a paused sound',
+      );
+    });
+
+    test('engaging cast on a playing sound starts it on the receiver', async function (assert) {
+      let service = this.owner.lookup('service:stereo');
+      let buildSpy = sandbox
+        .stub(service.cast, 'buildCastConnection')
+        .returns(null);
+
+      service.cast.kind = 'chromecast';
+      service.cast.access._session = {};
+      service._currentSound = {
+        castUrl: 'https://public.example/archive.m3u8',
+        metadata: {},
+        isStream: false,
+        position: 16000,
+        _explicitPlayIntent: true,
+      };
+
+      await service.cast.engageTask.perform();
+
+      assert.true(
+        buildSpy.firstCall.args[2].autoplay,
+        'a playing sound keeps playing on the receiver',
+      );
+    });
+
+    test('disconnect rebuilds a LOCAL connection even when the sound only has cast strategies (resumes locally instead of going silent)', function (assert) {
+      let service = this.owner
+        .lookup('service:stereo')
+        .loadConnections(['NativeAudio']);
+
+      // While casting, the sound's cached strategies are the cast-only list.
+      let castStrategy = { canPlay: true, connectionKey: 'Chromecast' };
+      let localSound = { id: 'local' };
+      let localStrategy = {
+        canPlay: true,
+        connectionKey: 'NativeAudio',
+        createConnection: () => localSound,
+      };
+      let sound = {
+        strategies: [castStrategy],
+        identifier: '/a.mp3',
+        options: {},
+      };
+
+      let buildStub = sandbox
+        .stub(service, '_buildStrategies')
+        .returns([localStrategy]);
+
+      let result = service.cast.buildLocalConnection(sound);
+
+      assert.ok(
+        buildStub.calledOnce,
+        'rebuilt the waterfall because the cached strategies were all cast',
+      );
+      assert.strictEqual(
+        result,
+        localSound,
+        'returned a fresh local connection to swap back to',
+      );
+    });
+
+    test('re-engaging does NOT re-cast a sound already on the device (a spurious SESSION_RESUMED must not re-cast the previous feed)', async function (assert) {
+      let service = this.owner.lookup('service:stereo');
+      let buildSpy = sandbox
+        .stub(service.cast, 'buildCastConnection')
+        .returns(null);
+
+      service.cast.kind = 'chromecast';
+      service.cast.access._session = {};
+      service._currentSound = {
+        castUrl: 'https://public.example/stream.aac',
+        metadata: {},
+        isStream: true,
+        position: 16000,
+        connection: { connectionKey: 'Chromecast' },
+      };
+
+      await service.cast.engageTask.perform();
+
+      assert.ok(
+        buildSpy.notCalled,
+        'engage is idempotent: it does not re-cast an already-cast sound',
+      );
+    });
+
+    test('engaging cast on a seekable archive preserves the local position', async function (assert) {
+      let service = this.owner.lookup('service:stereo');
+      let buildSpy = sandbox
+        .stub(service.cast, 'buildCastConnection')
+        .returns(null);
+
+      service.cast.kind = 'chromecast';
+      service.cast.access._session = {};
+      service._currentSound = {
+        castUrl: 'https://public.example/archive.m3u8',
+        metadata: {},
+        isStream: false,
+        position: 16000,
+      };
+
+      await service.cast.engageTask.perform();
+
+      assert.strictEqual(
+        buildSpy.firstCall.args[2].startTime,
+        16000,
+        'the archive resumes at the local position',
+      );
+    });
+  });
+
+  module('prewarmConnection', function () {
+    test('it preloads a connection the app registered', async function (assert) {
+      let service = this.owner
+        .lookup('service:stereo')
+        .loadConnections(['HLS', 'NativeAudio']);
+
+      let HLS = service.connectionLoader.get('HLS');
+      let preloadSpy = sandbox.stub(HLS, 'preload').resolves();
+
+      await service.prewarmConnection('HLS');
+
+      assert.ok(preloadSpy.calledOnce, 'it preloaded the HLS connection');
+    });
+
+    test('it preloads a service-owned connection that never goes through the loader', async function (assert) {
+      let service = this.owner
+        .lookup('service:stereo')
+        .loadConnections(['NativeAudio']);
+
+      let preloadSpy = sandbox.stub(Chromecast, 'preload').resolves();
+
+      assert.notOk(
+        service.connectionLoader.get('Chromecast'),
+        'Chromecast is not a registered connection',
+      );
+
+      await service.prewarmConnection('Chromecast');
+
+      assert.ok(
+        preloadSpy.calledOnce,
+        'it still preloaded the Cast sender script',
+      );
+    });
+
+    test('it resolves for a connection with nothing to preload', async function (assert) {
+      let service = this.owner
+        .lookup('service:stereo')
+        .loadConnections(['NativeAudio']);
+
+      await service.prewarmConnection('NativeAudio');
+
+      assert.ok(true, 'warming a connection with no preload work resolves');
+    });
+
+    test('it resolves for an unknown connection key', async function (assert) {
+      let service = this.owner
+        .lookup('service:stereo')
+        .loadConnections(['NativeAudio']);
+
+      await service.prewarmConnection('NotAConnection');
+
+      assert.ok(
+        true,
+        'warming an unknown connection resolves without throwing',
+      );
+    });
+  });
 });
