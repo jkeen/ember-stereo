@@ -9,7 +9,7 @@ export default class Position extends Component {
   @tracked dragAdjustment = 0;
 
   get loadedSound() {
-    return this.stereo.soundProxy(this.args.url);
+    return this.stereo.findSound(this.args.url);
   }
 
   @action
@@ -30,7 +30,7 @@ export default class Position extends Component {
       let positionPercentage = (center.x - rect.x) / rect.width;
       let newPosition = parseFloat(
         this.loadedSound.duration * positionPercentage,
-        10
+        10,
       );
       next(() => {
         this.loadedSound.position = parseInt(newPosition, 10);
@@ -50,7 +50,7 @@ export default class Position extends Component {
         changePercentage;
       let newPosition = parseFloat(
         this.loadedSound.duration * newPercentage,
-        10
+        10,
       );
       next(() => {
         this.loadedSound.position = newPosition;
@@ -79,7 +79,7 @@ export default class Position extends Component {
       () => {
         this.dragAdjustment = deltaX;
       },
-      200
+      200,
     );
   }
 

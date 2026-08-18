@@ -1,17 +1,12 @@
 import Component from '@glimmer/component';
-import { service } from '@ember/service';
 import { action } from '@ember/object';
 import { tracked } from '@glimmer/tracking';
 
 export default class StereoPlayerChanger extends Component {
-  @service stereo;
-  @tracked sound;
-  @tracked identifier = this.args.identifiers[0];
+  @tracked identifier = this.args.sounds[0].url;
 
   @action
-  async pickNextIdentifier() {
-    const index = this.args.identifiers.indexOf(this.identifier);
-    const nextIndex = (index + 1) % this.args.identifiers.length;
-    this.identifier = this.args.identifiers[nextIndex];
+  select(url) {
+    this.identifier = url;
   }
 }

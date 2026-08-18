@@ -1,8 +1,8 @@
+@import url('https://fonts.googleapis.com/css?family=Montserrat:400,600');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-@import url('https://fonts.googleapis.com/css?family=Montserrat:400,600');
 
 html {
   --brand-primary: #00bcb8;
@@ -11,9 +11,11 @@ html {
 :root {
   --brand-primary: #00bcb8;
 }
+
 .docs-border-r {
   border-right: 0;
 }
+
 .docs-md__h4 {
   font-weight: bold;
   margin: 0.5rem 0;
@@ -32,31 +34,29 @@ body > .ember-view {
 
 input[type='range'] {
   @apply w-full h-2 rounded-lg outline-none appearance-none border-surface-2;
+
   margin: auto;
 
   /* --range-color: red; */
 }
 
 input[type='range']::-webkit-slider-thumb,
-input[type='range']::-moz-slider-thumb,
-input[type='range']::slider-thumb {
+input[type='range']::-moz-slider-thumb {
   @apply w-6 h-5 appearance-none rounded-xl cursor-move-x;
 }
 
 input[type='range']::-webkit-range-track,
-input[type='range']::-moz-range-track,
-input[type='range']::range-track {
+input[type='range']::-moz-range-track {
   @apply h-2 rounded-lg cursor-pointer border-surface-2;
+
   /* background-color: var(--range-color); */
 }
 
 input[type='range']::-moz-range-progress {
   @apply h-2 rounded-lg cursor-pointer bg-accent-0;
 }
+
 input[type='range']::-webkit-range-progress {
-  @apply h-2 rounded-lg cursor-pointer bg-accent-0;
-}
-input[type='range']::range-progress {
   @apply h-2 rounded-lg cursor-pointer bg-accent-0;
 }
 
@@ -92,6 +92,7 @@ pre.htmlbars,
 
 .stereo-player-position-thumb {
   @apply bg-on-surface-3 absolute h-4 w-4 flex rounded-lg shadow-sm;
+
   top: 15px;
 }
 
@@ -122,6 +123,40 @@ pre.htmlbars,
 .stereo-button:disabled,
 .ui-button:disabled {
   @apply opacity-50 pointer-events-none;
+}
+
+.preset-chip {
+  @apply inline-flex items-center px-2 py-1 text-sm font-medium border rounded-md shadow-none text-surface-0 border-on-surface-3 hover:bg-on-surface-3 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent-0;
+}
+
+.preset-chip[aria-pressed='true'] {
+  @apply border-accent-0 text-on-accent-0 bg-accent-0;
+}
+
+.peek-snippet {
+  @apply relative;
+}
+
+.peek-snippet.is-collapsed {
+  @apply overflow-hidden;
+
+  max-height: 11rem;
+}
+
+.peek-snippet-fade {
+  @apply absolute bottom-0 left-0 right-0 h-20 pointer-events-none;
+
+  background: linear-gradient(to bottom, rgba(40, 44, 52, 0), #282c34);
+}
+
+.peek-snippet-toggle {
+  @apply block w-full px-4 py-3 text-xs font-medium text-left text-white cursor-pointer;
+
+  background: #282c34;
+}
+
+.peek-snippet-toggle:hover {
+  @apply underline;
 }
 
 .autoplay-blocked-overlay {

@@ -55,6 +55,27 @@ index 049a5143f5b295319fce0c9d455133d8ac936217..3e4046c093510725fcda71e59f958c17
 +    this._docsRoutes?.items.removeObject(this);
    }
  }
+diff --git a/lib/broccoli/docs-compiler/navigation-index-generator.js b/lib/broccoli/docs-compiler/navigation-index-generator.js
+index e4ce3741df5a441e7277dd51e2c79ebcc8e944f6..f709d32fb083315a7db5c9ffcf93d6400338400b 100644
+--- a/lib/broccoli/docs-compiler/navigation-index-generator.js
++++ b/lib/broccoli/docs-compiler/navigation-index-generator.js
+@@ -5,6 +5,7 @@ const RESOLVED_TYPES = [
+   'controllers',
+   'mixins',
+   'models',
++  'modifiers',
+   'services',
+   'classes',
+ ];
+@@ -121,6 +122,8 @@ module.exports = class NavigationIndexGenerator {
+       name = `<${angleBracketName}/>`;
+     } else if (type === 'helpers') {
+       name = `{{${path}}}`;
++    } else if (type === 'modifiers') {
++      name = `{{${path}}}`;
+     } else {
+       let fileName = segments.pop();
+       name = _.upperFirst(_.camelCase(fileName));
 diff --git a/lib/utils/find-and-replace-in-directory.js b/lib/utils/find-and-replace-in-directory.js
 index ed067af87f7ea13c2752614b9a9c6ce56a88311d..b87f286d8431b6004a9d0019da085cb5cf4b0a42 100644
 --- a/lib/utils/find-and-replace-in-directory.js

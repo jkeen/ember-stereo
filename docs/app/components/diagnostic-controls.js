@@ -4,7 +4,6 @@ import { tracked } from '@glimmer/tracking';
 import { action } from '@ember/object';
 export default class DiagnosticControls extends Component {
   @service stereo;
-  @tracked selectedSound = undefined;
   @tracked selectedConnections = this.stereo.connectionLoader.names;
   @tracked url;
   @tracked metadata;
@@ -13,7 +12,7 @@ export default class DiagnosticControls extends Component {
   connections = this.stereo.connectionLoader.connections;
 
   get items() {
-    return this.args.testSounds;
+    return this.args.testSounds ?? [];
   }
 
   @action
@@ -24,7 +23,7 @@ export default class DiagnosticControls extends Component {
   get useConnections() {
     if (this.connectionStrategy === 'choose') {
       return this.stereo.connectionLoader.names.filter((name) =>
-        this.selectedConnections.includes(name)
+        this.selectedConnections.includes(name),
       );
     }
 
@@ -35,7 +34,7 @@ export default class DiagnosticControls extends Component {
   updateSelectedStrategies(name, op) {
     if (op) {
       this.selectedConnections = this.selectedConnections.filter(
-        (d) => d !== name
+        (d) => d !== name,
       );
     } else {
       this.selectedConnections = [name].concat(this.selectedConnections);
@@ -43,30 +42,35 @@ export default class DiagnosticControls extends Component {
   }
 
   @action updateMetadata() {
-    this.stereo.metadataCache.store(this.url, this.formattedMetadata);
+    let sound = this.url ? this.stereo.findSound(this.url) : null;
+    if (sound) {
+      sound.metadata = this.formattedMetadata;
+    }
+  }
+
+  get parsedMetadata() {
+    if (!this.metadata?.trim()) {
+      return { value: {} };
+    }
+
+    try {
+      return { value: JSON.parse(this.metadata) };
+    } catch (error) {
+      return { value: {}, error: error.message };
+    }
   }
 
   get formattedMetadata() {
-    try {
-      return JSON.parse(this.metadata);
-    } catch (e) {
-      return {};
-    }
+    return this.parsedMetadata.value;
+  }
+
+  get metadataError() {
+    return this.parsedMetadata.error;
   }
 
   @action
-  onPresetChange(e) {
-    if (e && e.target) {
-      let title = e.target.value;
-      let item = this.items.find((i) => i.title === title);
-      this.url = item.url;
-      this.metadata = JSON.stringify({
-        title: item.title,
-      });
-      this.selectedSound = null;
-      e.target.options.selectedIndex = 0;
-
-      e.target.parentNode.querySelector('#url-property').focus();
-    }
+  selectPreset(item) {
+    this.url = item.url;
+    this.metadata = JSON.stringify({ title: item.title });
   }
 }

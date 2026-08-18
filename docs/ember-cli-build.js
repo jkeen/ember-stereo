@@ -10,6 +10,11 @@ module.exports = function (defaults) {
     'ember-cli-addon-docs': {
       documentingAddonAt: '../ember-stereo/',
     },
+    // addon-docs 11 pre-renders every route through prember, and some demo routes never settle
+    // into the render-complete state it waits for.
+    prember: {
+      urls: [],
+    },
     sourcemaps: {
       enabled: true,
     },

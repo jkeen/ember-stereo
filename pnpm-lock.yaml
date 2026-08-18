@@ -6,7 +6,7 @@ settings:
 
 patchedDependencies:
   ember-cli-addon-docs@11.0.0:
-    hash: 2f06437b67b2f74b809045aebb259e5e05f33f8507f0f4584bdf56d223fbe503
+    hash: d1af51c3a84575fe6f67ec7ea160bd59d0fef00076efd76aebc4deff579d3165
     path: patches/ember-cli-addon-docs@11.0.0.patch
   ember-gesture-modifiers@5.0.1:
     hash: 2c84ef844c47cf7d5bb5618362697f570318b74ccef3195f04f3c9a0a0a41bf8
@@ -161,7 +161,7 @@ importers:
         version: 5.4.2(@types/node@25.0.3)(babel-core@6.26.3)(debug@4.3.2)(handlebars@4.7.8)(underscore@1.13.7)
       ember-cli-addon-docs:
         specifier: ^11.0.0
-        version: 11.0.0(patch_hash=2f06437b67b2f74b809045aebb259e5e05f33f8507f0f4584bdf56d223fbe503)(@babel/core@7.28.5)(@ember/test-helpers@3.3.1(@babel/core@7.28.5)(ember-source@5.4.1(@babel/core@7.28.5)(@glimmer/component@1.1.2(@babel/core@7.28.5))(rsvp@4.8.5)(webpack@5.103.0))(webpack@5.103.0))(@ember/test-waiters@4.1.1)(ember-cli-fastboot@4.1.5(ember-source@5.4.1(@babel/core@7.28.5)(@glimmer/component@1.1.2(@babel/core@7.28.5))(rsvp@4.8.5)(webpack@5.103.0)))(ember-source@5.4.1(@babel/core@7.28.5)(@glimmer/component@1.1.2(@babel/core@7.28.5))(rsvp@4.8.5)(webpack@5.103.0))(liquid-fire@0.37.1(@babel/core@7.28.5)(velocity-animate@1.5.2))(prember@2.1.0)(velocity-animate@1.5.2)(webpack@5.103.0)
+        version: 11.0.0(patch_hash=d1af51c3a84575fe6f67ec7ea160bd59d0fef00076efd76aebc4deff579d3165)(@babel/core@7.28.5)(@ember/test-helpers@3.3.1(@babel/core@7.28.5)(ember-source@5.4.1(@babel/core@7.28.5)(@glimmer/component@1.1.2(@babel/core@7.28.5))(rsvp@4.8.5)(webpack@5.103.0))(webpack@5.103.0))(@ember/test-waiters@4.1.1)(ember-cli-fastboot@4.1.5(ember-source@5.4.1(@babel/core@7.28.5)(@glimmer/component@1.1.2(@babel/core@7.28.5))(rsvp@4.8.5)(webpack@5.103.0)))(ember-source@5.4.1(@babel/core@7.28.5)(@glimmer/component@1.1.2(@babel/core@7.28.5))(rsvp@4.8.5)(webpack@5.103.0))(liquid-fire@0.37.1(@babel/core@7.28.5)(velocity-animate@1.5.2))(prember@2.1.0)(velocity-animate@1.5.2)(webpack@5.103.0)
       ember-cli-addon-docs-yuidoc:
         specifier: ^1.0.0
         version: 1.1.0
@@ -16188,7 +16188,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  ember-cli-addon-docs@11.0.0(patch_hash=2f06437b67b2f74b809045aebb259e5e05f33f8507f0f4584bdf56d223fbe503)(@babel/core@7.28.5)(@ember/test-helpers@3.3.1(@babel/core@7.28.5)(ember-source@5.4.1(@babel/core@7.28.5)(@glimmer/component@1.1.2(@babel/core@7.28.5))(rsvp@4.8.5)(webpack@5.103.0))(webpack@5.103.0))(@ember/test-waiters@4.1.1)(ember-cli-fastboot@4.1.5(ember-source@5.4.1(@babel/core@7.28.5)(@glimmer/component@1.1.2(@babel/core@7.28.5))(rsvp@4.8.5)(webpack@5.103.0)))(ember-source@5.4.1(@babel/core@7.28.5)(@glimmer/component@1.1.2(@babel/core@7.28.5))(rsvp@4.8.5)(webpack@5.103.0))(liquid-fire@0.37.1(@babel/core@7.28.5)(velocity-animate@1.5.2))(prember@2.1.0)(velocity-animate@1.5.2)(webpack@5.103.0):
+  ember-cli-addon-docs@11.0.0(patch_hash=d1af51c3a84575fe6f67ec7ea160bd59d0fef00076efd76aebc4deff579d3165)(@babel/core@7.28.5)(@ember/test-helpers@3.3.1(@babel/core@7.28.5)(ember-source@5.4.1(@babel/core@7.28.5)(@glimmer/component@1.1.2(@babel/core@7.28.5))(rsvp@4.8.5)(webpack@5.103.0))(webpack@5.103.0))(@ember/test-waiters@4.1.1)(ember-cli-fastboot@4.1.5(ember-source@5.4.1(@babel/core@7.28.5)(@glimmer/component@1.1.2(@babel/core@7.28.5))(rsvp@4.8.5)(webpack@5.103.0)))(ember-source@5.4.1(@babel/core@7.28.5)(@glimmer/component@1.1.2(@babel/core@7.28.5))(rsvp@4.8.5)(webpack@5.103.0))(liquid-fire@0.37.1(@babel/core@7.28.5)(velocity-animate@1.5.2))(prember@2.1.0)(velocity-animate@1.5.2)(webpack@5.103.0):
     dependencies:
       '@csstools/postcss-sass': 5.1.1(postcss@8.5.6)
       '@ember/render-modifiers': 3.0.0(ember-source@5.4.1(@babel/core@7.28.5)(@glimmer/component@1.1.2(@babel/core@7.28.5))(rsvp@4.8.5)(webpack@5.103.0))

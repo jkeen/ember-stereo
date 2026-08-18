@@ -2,17 +2,10 @@ import Component from '@glimmer/component';
 import { service } from '@ember/service';
 import { action } from '@ember/object';
 import { tracked } from '@glimmer/tracking';
-import hasEqualUrls from 'ember-stereo/-private/utils/has-equal-urls';
 
 export default class SoundDisplay extends Component {
   @service stereo;
   @tracked selectedConnections = this.stereo.connectionLoader.connections;
-  @tracked soundProxy;
-
-  constructor() {
-    super(...arguments);
-    this.soundProxy = this.stereo.soundProxy(this.args.url);
-  }
 
   get loadedSound() {
     return this.stereo.findSound(this.args.url);
@@ -31,10 +24,10 @@ export default class SoundDisplay extends Component {
   }
 
   get hasControlOfAudioElement() {
+    let connection = this.loadedSound?.connection;
     return (
       this.usingSingleAudioElement &&
-      this.loadedSound &&
-      this.loadedSound.sharedAudioAccess.hasControl(this.loadedSound)
+      !!connection?.sharedAudioAccess?.hasControl(connection)
     );
   }
 
@@ -43,11 +36,27 @@ export default class SoundDisplay extends Component {
   }
 
   get isCurrentSound() {
-    return (
-      this.stereo.currentSound &&
-      this.loadedSound &&
-      hasEqualUrls(this.stereo.currentSound.url, this.loadedSound.url)
-    );
+    return this.stereo.currentSound === this.loadedSound;
+  }
+
+  get connectionChoices() {
+    let strategies = this.loadedSound?.strategies || [];
+    return strategies.filter((strategy) => strategy.canPlay);
+  }
+
+  get canSwitchConnections() {
+    return this.connectionChoices.length > 1;
+  }
+
+  @action
+  async switchConnection(event) {
+    let sound = this.loadedSound;
+    let key = event.target.value;
+    if (!sound || key === sound.connectionKey) {
+      return;
+    }
+
+    await sound.swap(key, { timeout: 10000 });
   }
 
   @action inspectSound(sound) {
@@ -57,9 +66,6 @@ export default class SoundDisplay extends Component {
 
   @action
   async removeSound() {
-    if (this.loadedSound) {
-      this.loadedSound.stop();
-    }
     this.stereo.removeSound(this.url);
 
     if (this.args.onRemoval) {

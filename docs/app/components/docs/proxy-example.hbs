@@ -1,13 +1,49 @@
 <DocsDemo as |demo|>
   <demo.example @name='proxy-example.hbs'>
-    <button type='button' {{on 'click' (toggle-play-sound this.url)}}>
-      Play/Sound
-    </button>
-
-    {{#if this.sound.isLoaded}}
-      <p>the sound is loaded</p>
-    {{/if}}
-
+    <div class='grid gap-4 md:grid-cols-2'>
+      <div class='p-3 border rounded border-surface-3'>
+        <h4 class='font-bold mb-1'>Template helpers</h4>
+        <p class='text-xs opacity-70 mb-2'>
+          These only read. Nothing on this side ever loads the sound.
+        </p>
+        <ul class='text-sm font-mono'>
+          {{#let (find-sound this.url) as |sound|}}
+            <li>isPending: {{if sound.isPending 'true' 'false'}}</li>
+            <li>connection: {{or sound.connectionName '—'}}</li>
+          {{/let}}
+          <li>sound-is-loading:
+            {{if (sound-is-loading this.url) 'true' 'false'}}</li>
+          <li>sound-is-loaded:
+            {{if (sound-is-loaded this.url) 'true' 'false'}}</li>
+          <li>sound-is-playing:
+            {{if (sound-is-playing this.url) 'true' 'false'}}</li>
+        </ul>
+      </div>
+      <div class='p-3 border rounded border-surface-3'>
+        <h4 class='font-bold mb-1'>Service controls</h4>
+        <p class='text-xs opacity-70 mb-2'>
+          These drive the service directly. The helpers update anyway, because
+          both sides share one Sound.
+        </p>
+        <button
+          type='button'
+          class='ui-button'
+          {{on 'click' (load-sound this.url)}}
+        >
+          Load
+        </button>
+        <button
+          type='button'
+          class='ui-button'
+          {{on 'click' (toggle-play-sound this.url)}}
+        >
+          Toggle Play
+        </button>
+        <button type='button' class='ui-button' {{on 'click' this.remove}}>
+          Remove
+        </button>
+      </div>
+    </div>
   </demo.example>
   <demo.snippet @name='proxy-example.hbs' />
   <demo.snippet @name='proxy-example.js' />

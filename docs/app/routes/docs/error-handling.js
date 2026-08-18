@@ -1,10 +1,10 @@
 import Route from '@ember/routing/route';
 import { service } from '@ember/service';
 
-export default class DocsVolumeRoute extends Route {
+export default class DocsErrorHandlingRoute extends Route {
   @service router;
 
   redirect() {
-    this.router.replaceWith('docs.playing-sounds');
+    this.router.replaceWith('docs.browser-audio');
   }
 }

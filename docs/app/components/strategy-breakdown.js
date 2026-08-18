@@ -5,46 +5,41 @@ import StereoUrl from 'ember-stereo/-private/utils/stereo-url';
 import Strategy from 'ember-stereo/-private/utils/strategy';
 export default class StrategyBreakdown extends Component {
   @service stereo;
-  @tracked soundProxy;
+  @tracked sound;
 
   constructor() {
     super(...arguments);
-    this.soundProxy = this.stereo.soundProxy(this.args.url);
+    this.sound = this.stereo.findSound(this.args.url);
   }
 
   get loadWasAttempted() {
-    return (
-      this.soundProxy &&
-      (this.soundProxy.isResolved || this.soundProxy.isErrored)
-    );
+    return this.sound && (this.sound.isResolved || this.sound.isErrored);
   }
 
   get strategyResults() {
-    if (this.soundProxy && this.soundProxy.isResolved) {
-      return this.filledOutResults(this.soundProxy.value._debug);
-    } else if (this.soundProxy && this.soundProxy.isErrored) {
-      return this.filledOutResults(this.soundProxy.errors._debug);
+    // The Sound records the strategies it tried (in order) on `_debug`.
+    if (this.sound && (this.sound.isResolved || this.sound.isErrored)) {
+      return this.filledOutResults(this.sound._debug);
     }
 
     return this.stereo.connectionLoader.connections.map((connection) => {
       return new Strategy(
         connection,
-        this.args.url ? new StereoUrl(this.args.url) : new StereoUrl('./')
+        this.args.url ? new StereoUrl(this.args.url) : new StereoUrl('./'),
       );
     });
   }
 
   filledOutResults(results) {
+    let tried = Array.isArray(results) ? results : [];
     return this.stereo.connectionLoader.connections.map((connection) => {
-      let found = (results ?? []).find(
-        (r) => r.connection.name === connection.name
-      );
+      let found = tried.find((r) => r.connectionClass.name === connection.name);
       if (found) {
         return found;
       } else {
         return new Strategy(
           connection,
-          this.args.url ? new StereoUrl(this.args.url) : new StereoUrl('./')
+          this.args.url ? new StereoUrl(this.args.url) : new StereoUrl('./'),
         );
       }
     });

@@ -1,7 +1,7 @@
 import Route from '@ember/routing/route';
 import { service } from '@ember/service';
 
-export default class DocsVolumeRoute extends Route {
+export default class DocsWaitingForSoundsRoute extends Route {
   @service router;
 
   redirect() {
