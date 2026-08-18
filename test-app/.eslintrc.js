@@ -51,6 +51,10 @@ module.exports = {
       // test files
       files: ['tests/**/*-test.{js,ts}'],
       extends: ['plugin:qunit/recommended'],
+      rules: {
+        // assert.expect(N) is used throughout as an assertion-count guard in async tests.
+        'qunit/require-expect': 'off',
+      },
     },
   ],
 };

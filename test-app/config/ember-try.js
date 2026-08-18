@@ -56,6 +56,16 @@ module.exports = async function () {
           },
         },
       },
+      {
+        // ember-concurrency is a peer dependency, so test-app decides which version the addon builds
+        // against. It runs on 4 by default, and this scenario covers the rest of the declared range.
+        name: 'ember-concurrency-5',
+        npm: {
+          devDependencies: {
+            'ember-concurrency': '^5.2.0',
+          },
+        },
+      },
     ],
   };
 };
