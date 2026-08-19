@@ -21,16 +21,202 @@ html {
   margin: 0.5rem 0;
 }
 
-/* .docs-bg-white,
+/* addon-docs hardcodes its chrome colors, so route them through variables a
+   theme can redefine. The values here are addon-docs' own defaults. */
+:root {
+  --docs-chrome-bg: #fff;
+  --docs-chrome-bg-subtle: #f1f5f8;
+  --docs-chrome-bg-subtlest: #f8fafc;
+  --docs-chrome-text: #3d4852;
+  --docs-chrome-text-muted: #606f7b;
+  --docs-chrome-text-subtle: #8795a1;
+  --docs-chrome-border: #b8c2cc;
+  --docs-chrome-border-light: #dae1e7;
+  --docs-chrome-border-lighter: #f1f5f8;
+}
+
+.docs-bg-white,
 body > .ember-view {
-  background-color: rgba(var(--color-background), 1);
+  background-color: var(--docs-chrome-bg);
 }
+
+.docs-bg-grey-lighter {
+  background-color: var(--docs-chrome-bg-subtle);
+}
+
 .docs-bg-grey-lightest {
-  background-color: rgba(var(--color-surface), 1);
+  background-color: var(--docs-chrome-bg-subtlest);
 }
+
+.docs-text-black,
+.docs-text-grey-darkest {
+  color: var(--docs-chrome-text);
+}
+
 .docs-text-grey-darker {
-  color: rgba(var(--color-on-surface), 1);
-} */
+  color: var(--docs-chrome-text-muted);
+}
+
+.docs-text-grey-dark {
+  color: var(--docs-chrome-text-subtle);
+}
+
+.docs-border-grey {
+  border-color: var(--docs-chrome-border);
+}
+
+.docs-border-grey-light {
+  border-color: var(--docs-chrome-border-light);
+}
+
+.docs-border-grey-lighter {
+  border-color: var(--docs-chrome-border-lighter);
+}
+
+/* The prose styles bake their colors in as literals rather than using the
+   utility classes above, so they have to be named individually. */
+/* Nothing else paints the page, so the canvas would stay the browser default. */
+body {
+  background-color: var(--docs-chrome-bg);
+  color: var(--docs-chrome-text);
+}
+
+.docs-md__h1,
+.docs-h1,
+.docs-md__h1 a,
+.docs-h1 a,
+.docs-md__h2,
+.docs-h2,
+.docs-md__h2 a,
+.docs-h2 a,
+.docs-md__h3,
+.docs-h3,
+.docs-md__h3 a,
+.docs-h3 a {
+  color: var(--docs-chrome-text);
+}
+
+.docs-md__blockquote {
+  color: var(--docs-chrome-text-subtle);
+}
+
+.docs-md aside {
+  background-color: var(--docs-chrome-bg-subtlest);
+}
+
+.docs-md :not(pre) > code {
+  background-color: var(--docs-chrome-bg-subtle);
+  color: var(--docs-chrome-text);
+}
+
+/* The surface colors are already Nord polar night, so dark mode only has to
+   move the page itself and the addon-docs chrome. An explicit choice on the
+   root element wins over the system preference in both directions. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --color-background: 46, 52, 64;
+    --color-on-background: 216, 222, 233;
+    --docs-chrome-bg: #2e3440;
+    --docs-chrome-bg-subtle: #3b4252;
+    --docs-chrome-bg-subtlest: #353c4a;
+    --docs-chrome-text: #d8dee9;
+    --docs-chrome-text-muted: #c0c8d4;
+    --docs-chrome-text-subtle: #9aa5b5;
+    --docs-chrome-border: #4c566a;
+    --docs-chrome-border-light: #434c5e;
+    --docs-chrome-border-lighter: #3b4252;
+  }
+}
+
+:root[data-theme='dark'] {
+  --color-background: 46, 52, 64;
+  --color-on-background: 216, 222, 233;
+  --docs-chrome-bg: #2e3440;
+  --docs-chrome-bg-subtle: #3b4252;
+  --docs-chrome-bg-subtlest: #353c4a;
+  --docs-chrome-text: #d8dee9;
+  --docs-chrome-text-muted: #c0c8d4;
+  --docs-chrome-text-subtle: #9aa5b5;
+  --docs-chrome-border: #4c566a;
+  --docs-chrome-border-light: #434c5e;
+  --docs-chrome-border-lighter: #3b4252;
+}
+
+.theme-toggle {
+  @apply px-2 py-1 text-sm cursor-pointer;
+
+  background: transparent;
+  border: none;
+  color: var(--docs-chrome-text-muted);
+}
+
+/* These controls draw themselves in `surface`, which reads as dark ink on the
+   light page and disappears once the page itself is dark. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) .stereo-button,
+  :root:not([data-theme='light']) .preset-chip {
+    @apply text-on-surface-0;
+  }
+}
+
+:root[data-theme='dark'] .stereo-button,
+:root[data-theme='dark'] .preset-chip {
+  @apply text-on-surface-0;
+}
+
+/* Text fields keep their light backgrounds while inheriting the page's light
+   text, so they need both halves set. Range, checkbox and radio draw
+   themselves and are left alone. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light'])
+    input:not([type='range']):not([type='checkbox']):not([type='radio']),
+  :root:not([data-theme='light']) textarea {
+    background-color: var(--docs-chrome-bg-subtle);
+    border-color: var(--docs-chrome-border);
+    color: var(--docs-chrome-text);
+  }
+
+  /* These borders are `on-surface`, which is nearly white against a dark page. */
+  :root:not([data-theme='light']) .stereo-button,
+  :root:not([data-theme='light']) .preset-chip,
+  :root:not([data-theme='light']) .stereo-player {
+    border-color: var(--docs-chrome-border);
+  }
+
+  :root:not([data-theme='light']) input[type='range'] {
+    background-color: var(--docs-chrome-bg-subtle);
+  }
+
+  :root:not([data-theme='light']) ::placeholder {
+    color: var(--docs-chrome-text-subtle);
+  }
+}
+
+:root[data-theme='dark'] ::placeholder {
+  color: var(--docs-chrome-text-subtle);
+}
+
+:root[data-theme='dark']
+  input:not([type='range']):not([type='checkbox']):not([type='radio']),
+:root[data-theme='dark'] textarea {
+  background-color: var(--docs-chrome-bg-subtle);
+  border-color: var(--docs-chrome-border);
+  color: var(--docs-chrome-text);
+}
+
+:root[data-theme='dark'] .stereo-button,
+:root[data-theme='dark'] .preset-chip,
+:root[data-theme='dark'] .stereo-player {
+  border-color: var(--docs-chrome-border);
+}
+
+:root[data-theme='dark'] input[type='range'] {
+  background-color: var(--docs-chrome-bg-subtle);
+}
+
+.theme-toggle:hover {
+  color: var(--docs-chrome-text);
+}
 
 input[type='range'] {
   @apply w-full h-2 rounded-lg outline-none appearance-none border-surface-2;
