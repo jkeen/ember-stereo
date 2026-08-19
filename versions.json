@@ -8,7 +8,7 @@
   "-latest": {
     "path": "",
     "name": "Latest",
-    "sha": "ae656a3ad24d216b9adf3e98a07c61a88056555b",
+    "sha": "6bc5f4591c643be11a7391a6438b18114c3fc889",
     "tag": null
   },
   "v2.0": {
@@ -44,7 +44,7 @@
   "rc": {
     "path": "versions/rc",
     "name": "rc",
-    "sha": "ae656a3ad24d216b9adf3e98a07c61a88056555b",
+    "sha": "6bc5f4591c643be11a7391a6438b18114c3fc889",
     "tag": null
   }
 }
