@@ -38,6 +38,9 @@ module('Integration | Helper | pause-sound', function (hooks) {
     this.set('target', secondUrl);
     await click('button');
 
-    assert.false(service.isPlaying, 'the second sound was paused, not the first');
+    assert.false(
+      service.isPlaying,
+      'the second sound was paused, not the first',
+    );
   });
 });

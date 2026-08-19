@@ -43,7 +43,10 @@ module('Unit | Service | promise identifiers', function (hooks) {
     await service.play(promise);
     await settled();
 
-    assert.true(watcher.isPlaying, 'the url side sees the promise side playing');
+    assert.true(
+      watcher.isPlaying,
+      'the url side sees the promise side playing',
+    );
     assert.strictEqual(
       service.currentSound,
       watcher,
