@@ -2,7 +2,7 @@
 
 ## Upgrading to 6.0
 
-6.0 inverts the core model. 5.x jumped through hoops to fake a stable **`Sound`** (see [Playing Sounds](/docs/playing-sounds)). Now it's real: it reports `isLoading` and `errors`, holds its `connection`, allowing connection swapping, which is what enables built-in casting to Airplay and Chromecast.
+6.0 inverts the core model. 5.x jumped through hoops to fake a stable **`Sound`** (see [Playing Sounds](/docs/playing-sounds)). Now it's real and reports `isLoading`, `errors`, and the `connection` that resolved it. This makes connection swapping (like, to the new Airplay and Chromecast connections) possible.
 
 **Changes from 5.x -> 6.0**
 
