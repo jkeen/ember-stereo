@@ -186,7 +186,7 @@
         {
           "releaseRules": [
             {
-              "type": "*!",
+              "breaking": true,
               "release": "major"
             },
             {
@@ -223,6 +223,8 @@
             }
           ],
           "parserOpts": {
+            "headerPattern": "^(\\w*)(?:\\((.*)\\))?!?: (.*)$",
+            "breakingHeaderPattern": "^(\\w*)(?:\\((.*)\\))?!: (.*)$",
             "noteKeywords": [
               "BREAKING CHANGE",
               "BREAKING CHANGES",
@@ -234,7 +236,15 @@
           }
         }
       ],
-      "@semantic-release/release-notes-generator",
+      [
+        "@semantic-release/release-notes-generator",
+        {
+          "parserOpts": {
+            "headerPattern": "^(\\w*)(?:\\((.*)\\))?!?: (.*)$",
+            "breakingHeaderPattern": "^(\\w*)(?:\\((.*)\\))?!: (.*)$"
+          }
+        }
+      ],
       [
         "@semantic-release/changelog",
         {
