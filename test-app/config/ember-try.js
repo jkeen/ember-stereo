@@ -37,6 +37,9 @@ module.exports = async function () {
         npm: {
           devDependencies: {
             'ember-source': 'latest',
+            // ember-source 7 dropped legacy vendor paths, handled in ember-cli 6.12+
+            'ember-cli': 'latest',
+            'ember-cli-htmlbars': 'latest',
           },
         },
       },
@@ -45,6 +48,8 @@ module.exports = async function () {
         npm: {
           devDependencies: {
             'ember-source': 'beta',
+            'ember-cli': 'latest',
+            'ember-cli-htmlbars': 'latest',
           },
         },
       },
@@ -53,6 +58,8 @@ module.exports = async function () {
         npm: {
           devDependencies: {
             'ember-source': 'alpha',
+            'ember-cli': 'latest',
+            'ember-cli-htmlbars': 'latest',
           },
         },
       },
