@@ -40,6 +40,8 @@ module.exports = async function () {
             // ember-source 7 dropped legacy vendor paths, handled in ember-cli 6.12+
             'ember-cli': 'latest',
             'ember-cli-htmlbars': 'latest',
+            // ember-concurrency 4 imports the legacy `ember` module, which ember-source 7 removed
+            'ember-concurrency': '^5.2.0',
           },
         },
       },
@@ -50,6 +52,7 @@ module.exports = async function () {
             'ember-source': 'beta',
             'ember-cli': 'latest',
             'ember-cli-htmlbars': 'latest',
+            'ember-concurrency': '^5.2.0',
           },
         },
       },
@@ -60,6 +63,7 @@ module.exports = async function () {
             'ember-source': 'alpha',
             'ember-cli': 'latest',
             'ember-cli-htmlbars': 'latest',
+            'ember-concurrency': '^5.2.0',
           },
         },
       },
