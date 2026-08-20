@@ -11,7 +11,6 @@
     "build": "pnpm --filter ember-stereo run build",
     "lint": "pnpm --filter '*' run lint",
     "lint:fix": "pnpm --filter '*' run lint:fix",
-    "prepare": "pnpm build",
     "start": "turbo run start",
     "start:addon": "turbo run start --filter=ember-stereo",
     "start:test": "turbo run start --filter=test-app",
