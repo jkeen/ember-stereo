@@ -57,12 +57,10 @@
       {{sound-position @identifier format='time'}}
       {{#if (sound-is-seekable @identifier)}}
         {{! template-lint-disable require-input-label }}
-        <Input
-          @type='range'
+        <input
+          type='range'
           class='flex-auto flex-shrink w-16 lg:w-1/6'
-          {{on 'change' (seek-sound @identifier)}}
-          @value={{sound-position @identifier format='percentage'}}
-          disabled={{not (sound-is-seekable @identifier)}}
+          {{sound-position-slider @identifier}}
         />
       {{else}}
         <div

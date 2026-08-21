@@ -30,6 +30,8 @@ export default class SoundPositionSliderModifier extends DidPanModifier {
   @service stereo;
   options = {};
   element = null;
+  subscribedSound = null;
+  isDraggingRange = false;
 
   constructor() {
     super(...arguments);
@@ -41,7 +43,7 @@ export default class SoundPositionSliderModifier extends DidPanModifier {
   }
 
   get isRangeControl() {
-    return this.element.tagName === 'INPUT' && this.element.type === 'range';
+    return this.element?.tagName === 'INPUT' && this.element?.type === 'range';
   }
 
   get duration() {
@@ -62,14 +64,20 @@ export default class SoundPositionSliderModifier extends DidPanModifier {
   @action
   onRangeControlChange(event) {
     let newPosition = this.duration * (parseInt(event.target.value, 10) / 100);
+    this.isDraggingRange = false;
     if (this.isRangeControl) {
       this.updatePosition(newPosition);
     }
   }
 
   @action
+  onRangeControlInput() {
+    this.isDraggingRange = true;
+  }
+
+  @action
   onPositionChange() {
-    if (this.isRangeControl) {
+    if (this.isRangeControl && !this.isDraggingRange) {
       this.element.value = (this.position / this.duration) * 100;
     }
   }
@@ -130,12 +138,11 @@ export default class SoundPositionSliderModifier extends DidPanModifier {
     }
 
     if (this.isRangeControl) {
-      if (this.sound) {
-        this.sound.off('audio-position-changed', this.onPositionChange);
-      }
+      this.unsubscribeFromPosition();
 
       this.afterLoadTask
         .perform((sound) => {
+          this.subscribedSound = sound;
           sound.on('audio-position-changed', this.onPositionChange);
 
           this.element.addEventListener(
@@ -143,6 +150,7 @@ export default class SoundPositionSliderModifier extends DidPanModifier {
             this.onRangeControlChange,
             true,
           );
+          this.element.addEventListener('input', this.onRangeControlInput);
           if (sound.isSeekable) {
             this.element.removeAttribute('disabled');
           }
@@ -191,22 +199,27 @@ export default class SoundPositionSliderModifier extends DidPanModifier {
   @action
   onPanEnd() {}
 
+  unsubscribeFromPosition() {
+    if (this.subscribedSound) {
+      this.subscribedSound.off('audio-position-changed', this.onPositionChange);
+      this.subscribedSound = null;
+    }
+  }
+
   unregisterListeners() {
+    // Ahead of the branch below, which throws once the element is gone and would strand the subscription.
+    this.unsubscribeFromPosition();
+
     try {
       if (this.isRangeControl) {
-        if (this.sound) {
-          this.sound.off('audio-position-changed', this.onPositionChange);
-        }
         this.element.removeEventListener(
           'change',
           this.onRangeControlChange,
           true,
         );
+        this.element.removeEventListener('input', this.onRangeControlInput);
       } else {
         super.willRemove(...arguments);
-        if (this.sound) {
-          this.sound.off('audio-position-changed', this.onPositionChange);
-        }
         this.triggers.forEach((trigger) => {
           this.element.removeEventListener(trigger, this.handleTap);
         });
