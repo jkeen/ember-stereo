@@ -24,6 +24,7 @@ html {
 /* addon-docs hardcodes its chrome colors, so route them through variables a
    theme can redefine. The values here are addon-docs' own defaults. */
 :root {
+  color-scheme: light;
   --docs-chrome-bg: #fff;
   --docs-chrome-bg-subtle: #f1f5f8;
   --docs-chrome-bg-subtlest: #f8fafc;
@@ -115,6 +116,7 @@ body {
    root element wins over the system preference in both directions. */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme='light']) {
+    color-scheme: dark;
     --color-background: 46, 52, 64;
     --color-on-background: 216, 222, 233;
     --docs-chrome-bg: #2e3440;
@@ -130,6 +132,7 @@ body {
 }
 
 :root[data-theme='dark'] {
+  color-scheme: dark;
   --color-background: 46, 52, 64;
   --color-on-background: 216, 222, 233;
   --docs-chrome-bg: #2e3440;
