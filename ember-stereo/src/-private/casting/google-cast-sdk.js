@@ -1,6 +1,7 @@
 import debug from 'debug';
-import { loadCastSdk } from './cast-sdk-loader';
-const log = debug('ember-stereo:shared-cast-access');
+import { loadCastSdk } from './google-cast-sdk-loader';
+const log = debug('ember-stereo:google-cast-sdk');
+const SAVED_SESSION_KEY = 'ember-stereo:cast:session-id';
 
 /**
  * Owns the Cast SDK lifecycle and the session's single `RemotePlayer`/
@@ -9,14 +10,15 @@ const log = debug('ember-stereo:shared-cast-access');
  *
  * @private
  * @hide
- * @class SharedCastAccess
+ * @class GoogleCastSdk
  */
-export default class SharedCastAccess {
+export default class GoogleCastSdk {
   owner = null;
   _player = null;
   _controller = null;
   _session = null;
   _handlers = null;
+  _contextListeners = null;
   _context = null;
   _setupStarted = false;
 
@@ -47,31 +49,89 @@ export default class SharedCastAccess {
 
     let syncAvailability = () => {
       handlers.onAvailabilityChange(
-        context.getCastState() !== CastState.NO_DEVICES_AVAILABLE,
+        context.getCastState() !== CastState.NO_DEVICES_AVAILABLE
       );
     };
 
-    context.addEventListener(
-      CastContextEventType.CAST_STATE_CHANGED,
-      syncAvailability,
-    );
-    context.addEventListener(
-      CastContextEventType.SESSION_STATE_CHANGED,
-      (event) => {
+    // Held so teardown can remove them. The SDK context outlives the service.
+    this._contextListeners = {
+      [CastContextEventType.CAST_STATE_CHANGED]: syncAvailability,
+      [CastContextEventType.SESSION_STATE_CHANGED]: (event) => {
         this.debug(`chromecast session: ${event.sessionState}`);
         if (
           event.sessionState === SessionState.SESSION_STARTED ||
           event.sessionState === SessionState.SESSION_RESUMED
         ) {
+          this._saveSessionId(context.getCurrentSession());
           this.attach(context.getCurrentSession(), framework);
           handlers.onSessionStarted();
         } else if (event.sessionState === SessionState.SESSION_ENDED) {
-          this.detach();
+          this._clearSavedSessionId();
+          this.forgetSession();
           handlers.onSessionEnded();
         }
       },
+    };
+
+    Object.keys(this._contextListeners).forEach((event) =>
+      context.addEventListener(event, this._contextListeners[event])
     );
     syncAvailability();
+    this._rejoinSavedSession(context);
+  }
+
+  // A fresh browser has no auto-join memory, but a receiver session survives it and can be rejoined by id.
+  _rejoinSavedSession(context) {
+    let savedId = this._savedSessionId();
+    if (!savedId || context.getCurrentSession()) {
+      return;
+    }
+    this.debug(`asking to rejoin saved cast session ${savedId}`);
+    try {
+      window.chrome.cast.requestSessionById(savedId);
+    } catch (e) {
+      this.debug(`could not request saved session: ${e}`);
+    }
+  }
+
+  _saveSessionId(session) {
+    let sessionId = session?.getSessionId?.();
+    if (!sessionId) {
+      return;
+    }
+    try {
+      window.localStorage.setItem(SAVED_SESSION_KEY, sessionId);
+    } catch (e) {
+      this.debug(`could not save session id: ${e}`);
+    }
+  }
+
+  _clearSavedSessionId() {
+    try {
+      window.localStorage.removeItem(SAVED_SESSION_KEY);
+    } catch (e) {
+      this.debug(`could not clear session id: ${e}`);
+    }
+  }
+
+  _savedSessionId() {
+    try {
+      return window.localStorage.getItem(SAVED_SESSION_KEY);
+    } catch (e) {
+      return null;
+    }
+  }
+
+  teardown() {
+    if (this._context && this._contextListeners) {
+      Object.keys(this._contextListeners).forEach((event) =>
+        this._context.removeEventListener(event, this._contextListeners[event])
+      );
+    }
+    this._contextListeners = null;
+    this._context = null;
+    this._setupStarted = false;
+    this.forgetSession();
   }
 
   requestSession() {
@@ -81,10 +141,10 @@ export default class SharedCastAccess {
   }
 
   endSession() {
-    this._context?.endCurrentSession(true);
+    let stopCastingOnTheDevice = true;
+    this._context?.endCurrentSession(stopCastingOnTheDevice);
   }
 
-  // AirPlay/WebKit withholds the device name, so only the Chromecast half lives here.
   get deviceName() {
     let device = this._session?.getCastDevice?.();
     return device?.friendlyName || 'Chromecast';
@@ -104,7 +164,7 @@ export default class SharedCastAccess {
       [EVENT.DURATION_CHANGED]: () => this.owner?._onDurationChanged?.(),
     };
     Object.keys(this._handlers).forEach((event) =>
-      this._controller.addEventListener(event, this._handlers[event]),
+      this._controller.addEventListener(event, this._handlers[event])
     );
     return this;
   }
@@ -141,10 +201,10 @@ export default class SharedCastAccess {
     }
   }
 
-  detach() {
+  forgetSession() {
     if (this._controller && this._handlers) {
       Object.keys(this._handlers).forEach((event) =>
-        this._controller.removeEventListener(event, this._handlers[event]),
+        this._controller.removeEventListener(event, this._handlers[event])
       );
     }
     this.owner = null;

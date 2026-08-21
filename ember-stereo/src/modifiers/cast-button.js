@@ -9,10 +9,9 @@ const CAST_EVENTS = [
 ];
 
 /**
- * `{{cast-button}}` turns an element into a cast control. Clicking it
- * opens the device picker for the given sound (or the current sound). The
- * element stays disabled while no cast target is available, and gets a
- * `casting` class once a route is engaged.
+ * `{{cast-button}}` turns an element into a cast control. Clicking it opens
+ * the device picker for the current sound. The element stays disabled while
+ * no cast target is available, and gets a `casting` class while connected.
  *
  * @class {{cast-button}}
  * @extends Modifier
@@ -21,7 +20,6 @@ export default class CastButtonModifier extends Modifier {
   @service stereo;
 
   element = null;
-  identifier = null;
 
   constructor(owner, args) {
     super(owner, args);
@@ -30,11 +28,10 @@ export default class CastButtonModifier extends Modifier {
     registerDestructor(this, () => this._cleanup());
   }
 
-  modify(element, positional) {
+  modify(element) {
     this.element = element;
-    this.identifier = positional[0];
 
-    this.stereo.ensureChromecastSetup();
+    this.stereo.ensureCastSdkSetup();
 
     if (!this._wired) {
       element.addEventListener('click', this._onClick);
@@ -48,7 +45,7 @@ export default class CastButtonModifier extends Modifier {
   _handleClick(event) {
     event.preventDefault();
     if (this.stereo.isCastingAvailable) {
-      this.stereo.showCastMenu(this.identifier);
+      this.stereo.showCastMenu();
     }
   }
 

@@ -5,7 +5,7 @@ import { setupTest } from 'ember-qunit';
 import sinon from 'sinon';
 import { setupStereoTest } from 'ember-stereo/test-support/stereo-setup';
 
-module('Unit | Utility | shared audio element', function (hooks) {
+module('Unit | Utility | shared-audio-access', function (hooks) {
   let sharedAudioAccess, sandbox;
   setupTest(hooks);
 

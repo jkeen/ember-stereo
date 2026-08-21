@@ -13,7 +13,7 @@ import EmberEvented from '@ember/object/evented';
 
 import OneAtATime from '../-private/utils/one-at-a-time';
 import SharedAudioAccess from '../-private/utils/shared-audio-access';
-import CastCoordinator from '../-private/utils/cast-coordinator';
+import CastCoordinator from '../-private/casting/coordinator';
 import SoundIdentityMap from '../-private/utils/sound-identity-map';
 import Strategizer from '../-private/utils/strategizer';
 import Sound from '../-private/utils/sound';
@@ -731,14 +731,16 @@ export default class Stereo extends Service.extend(EmberEvented) {
   /* ----------------------------- CASTING ------------------------------------ */
 
   /**
-   * The cast kinds currently available.
-   * @property castingTypes
-   * @type {TrackedSet}
+   * Which kind of casting this browser can do at all, regardless of
+   * whether any device is reachable: 'airplay' | 'chromecast' | null.
+   *
+   * @property supportedCastType
+   * @type {String}
    * @readOnly
    * @public
    */
-  get castingTypes() {
-    return this.cast.castingTypes;
+  get supportedCastType() {
+    return this.cast.supportedCastType;
   }
 
   /**
@@ -759,11 +761,11 @@ export default class Stereo extends Service.extend(EmberEvented) {
    * @public
    */
   get castKind() {
-    return this.cast.kind;
+    return this.cast.castKind;
   }
 
   /**
-   * Icon name for the cast control.
+   * Icon name for the cast control, or null when nothing is reachable.
    * @property castIconName
    * @readOnly
    * @public
@@ -772,42 +774,29 @@ export default class Stereo extends Service.extend(EmberEvented) {
     return this.cast.iconName;
   }
 
-  get castOutletElement() {
-    return this.cast.outlet.element;
+  get castAudioElement() {
+    return this.cast.audioElement.element;
   }
 
   /**
    * Lazily load the Google Cast SDK and wire its availability and session events.
    *
-   * @method ensureChromecastSetup
+   * @method ensureCastSdkSetup
    * @public
    */
-  ensureChromecastSetup() {
-    this.cast.ensureChromecastSetup();
+  ensureCastSdkSetup() {
+    this.cast.ensureCastSdkSetup();
   }
 
   /**
-   * Load a sound's cast URL onto the outlet ahead of the picker click. Safari
-   * won't open a picker for an element with no parsed source.
-   *
-   * @method prewarmCast
-   * @param {Array|String|Sound} identifier the sound to prepare (defaults to current)
-   * @public
-   */
-  prewarmCast(identifier) {
-    this.cast.prewarm(identifier);
-  }
-
-  /**
-   * Open the device picker for a sound. Must run synchronously inside the
-   * click gesture, or Safari blocks the picker.
+   * Open the device picker. Must run synchronously inside the click gesture,
+   * or Safari blocks the picker.
    *
    * @method showCastMenu
-   * @param {Array|String|Sound} identifier the sound to cast (defaults to current)
    * @public
    */
-  showCastMenu(identifier) {
-    this.cast.showMenu(identifier);
+  showCastMenu() {
+    this.cast.showMenu();
   }
 
   /**
@@ -1437,7 +1426,7 @@ export default class Stereo extends Service.extend(EmberEvented) {
     });
   }
 
-  // Without this the lock screen shows transport buttons but no timeline.
+  // Without this the lock screen shows play/pause buttons but no timeline.
   _updatePositionState(sound) {
     if (
       !sound ||

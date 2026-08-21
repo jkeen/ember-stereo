@@ -14,6 +14,17 @@ import {
 
 let sandbox;
 
+function installChromecastDriver(service) {
+  service.cast.audioElement._element = {
+    getAttribute: () => null,
+    setAttribute: () => {},
+    load: () => {},
+    remote: { watchAvailability: () => {}, cancelWatchAvailability: () => {} },
+  };
+  service.cast._driver = undefined;
+  return service.cast.activeDriver;
+}
+
 module('Unit | Service | stereo', function (hooks) {
   setupTest(hooks);
   setupCustomAssertions(hooks);
@@ -1150,13 +1161,15 @@ module('Unit | Service | stereo', function (hooks) {
   });
 
   module('chromecast lazy setup', function () {
-    test('ensureChromecastSetup loads the Cast SDK at most once', function (assert) {
+    test('ensureCastSdkSetup loads the Cast SDK at most once', function (assert) {
       let service = this.owner.lookup('service:stereo');
-      let setupSpy = sandbox.stub(service.cast.access, '_setup').resolves();
+      let setupSpy = sandbox
+        .stub(installChromecastDriver(service).sdk, '_setup')
+        .resolves();
 
-      service.ensureChromecastSetup();
-      service.ensureChromecastSetup();
-      service.ensureChromecastSetup();
+      service.ensureCastSdkSetup();
+      service.ensureCastSdkSetup();
+      service.ensureCastSdkSetup();
 
       assert.true(
         setupSpy.calledOnce,
@@ -1166,14 +1179,16 @@ module('Unit | Service | stereo', function (hooks) {
 
     test('the Cast SDK is not loaded until a casting UI asks for it', function (assert) {
       let service = this.owner.lookup('service:stereo');
-      let setupSpy = sandbox.stub(service.cast.access, '_setup').resolves();
+      let setupSpy = sandbox
+        .stub(installChromecastDriver(service).sdk, '_setup')
+        .resolves();
 
       assert.false(
         setupSpy.called,
         'just looking up the service does not load the Cast SDK',
       );
 
-      service.ensureChromecastSetup();
+      service.ensureCastSdkSetup();
 
       assert.true(
         setupSpy.calledOnce,
@@ -1188,7 +1203,7 @@ module('Unit | Service | stereo', function (hooks) {
       let calls = [];
       let attributes = {};
 
-      service.cast.outlet._element = {
+      service.cast.audioElement._element = {
         getAttribute: (name) => attributes[name] ?? null,
         setAttribute: (name, value) => (attributes[name] = value),
         load: () => {},
@@ -1200,14 +1215,15 @@ module('Unit | Service | stereo', function (hooks) {
           },
         },
       };
-      service.castingTypes.add('airplay');
+      service.cast._driver = undefined;
+      service.cast.activeDriver.deviceAvailable = true;
 
-      service.showCastMenu('/good/1000/airplay.mp3');
+      service.showCastMenu();
 
       assert.deepEqual(
         calls,
         ['webkit'],
-        'Safari exposes both, and remote.prompt does not engage the outlet',
+        'Safari exposes both, and remote.prompt does not engage the cast element',
       );
     });
 
@@ -1216,55 +1232,83 @@ module('Unit | Service | stereo', function (hooks) {
       let calls = [];
       let attributes = {};
 
-      service.cast.outlet._element = {
+      service.cast.audioElement._element = {
         getAttribute: (name) => attributes[name] ?? null,
         setAttribute: (name, value) => (attributes[name] = value),
         load: () => {},
         remote: {
+          watchAvailability: () => {},
           prompt: () => {
             calls.push('remote');
             return Promise.resolve();
           },
         },
       };
-      service.castingTypes.add('general');
+      service.cast._driver = undefined;
+      service.cast.activeDriver.remotePlaybackSeesDevices = true;
 
-      service.showCastMenu('/good/1000/remote.mp3');
+      service.showCastMenu();
 
       assert.deepEqual(calls, ['remote'], 'used the only picker available');
     });
 
-    test('the outlet carries a source from birth, so cast-target availability can fire before any sound loads', function (assert) {
+    test('the cast element carries a source from birth, so cast-target availability can fire before any sound loads', function (assert) {
       let service = this.owner.lookup('service:stereo');
 
       assert.ok(
-        service.castOutletElement.getAttribute('src'),
+        service.castAudioElement.getAttribute('src'),
         'a source-less element never reports available targets, so casting would look unavailable forever',
       );
     });
 
-    test('a route that engages without a sound to swap still unmutes the outlet', async function (assert) {
+    test('a route that engages without a sound to swap still unmutes the cast element', async function (assert) {
       let service = this.owner.lookup('service:stereo');
 
-      service.cast.outlet._element = { muted: true };
-      service.cast.kind = 'airplay';
+      service.cast.audioElement._element = { muted: true };
 
       await service.cast.engageTask.perform();
 
       assert.false(
-        service.cast.outlet._element.muted,
+        service.cast.audioElement._element.muted,
         'engaging unmutes even with no sound to swap onto a cast connection',
       );
     });
   });
 
   module('chromecast cast strategy', function () {
+    test('a reattached session adopts the media the receiver is already playing', async function (assert) {
+      let service = this.owner
+        .lookup('service:stereo')
+        .loadConnections(['NativeAudio']);
+      let url = 'https://public.example/stream.aac';
+
+      let driver = installChromecastDriver(service);
+      driver.sdkSession = true;
+      driver.sdk._session = {};
+      driver.sdk._player = {
+        mediaInfo: { contentId: url },
+        playerState: 'PLAYING',
+        currentTime: 0,
+      };
+
+      await service.cast.engageTask.perform();
+
+      let sound = service.findSound(url);
+      assert.strictEqual(
+        sound.connection?.connectionKey,
+        'Chromecast',
+        "the receiver's media resolved to a cast connection without a user click",
+      );
+      assert.true(service.isCasting, 'and the page reflects the session');
+    });
+
     test('puts the Chromecast strategy first (with castStartTime) and keeps the local waterfall as a fallback', function (assert) {
       let service = this.owner.lookup('service:stereo');
       service.loadConnections([{ name: 'HLS' }, { name: 'NativeAudio' }]);
       service.isCasting = true;
-      service.cast.kind = 'chromecast';
-      service.cast.access._session = {}; // a live session
+      let driver = installChromecastDriver(service);
+      driver.sdkSession = true;
+      driver.sdk._session = {}; // a live session
 
       let strategies = service._buildStrategies(['/archive.m3u8'], {
         ...service.prepareLoadOptions({
@@ -1299,7 +1343,8 @@ module('Unit | Service | stereo', function (hooks) {
       let service = this.owner.lookup('service:stereo');
       service.loadConnections([{ name: 'HLS' }, { name: 'NativeAudio' }]);
       service.isCasting = true; // stuck true after a partial disconnect
-      service.cast.kind = 'chromecast';
+      let driver = installChromecastDriver(service);
+      driver.sdkSession = true;
       // The shared access has no live session (detached on SESSION_ENDED).
 
       let strategies = service._buildStrategies(['/archive.m3u8'], {
@@ -1324,8 +1369,9 @@ module('Unit | Service | stereo', function (hooks) {
         .stub(service.cast, 'buildCastConnection')
         .returns(null);
 
-      service.cast.kind = 'chromecast';
-      service.cast.access._session = {};
+      let driver = installChromecastDriver(service);
+      driver.sdkSession = true;
+      driver.sdk._session = {};
       service._currentSound = {
         castUrl: 'https://public.example/stream.aac',
         metadata: {},
@@ -1348,8 +1394,9 @@ module('Unit | Service | stereo', function (hooks) {
         .stub(service.cast, 'buildCastConnection')
         .returns(null);
 
-      service.cast.kind = 'chromecast';
-      service.cast.access._session = {};
+      let driver = installChromecastDriver(service);
+      driver.sdkSession = true;
+      driver.sdk._session = {};
       service._currentSound = {
         castUrl: 'https://public.example/archive.m3u8',
         metadata: {},
@@ -1372,8 +1419,9 @@ module('Unit | Service | stereo', function (hooks) {
         .stub(service.cast, 'buildCastConnection')
         .returns(null);
 
-      service.cast.kind = 'chromecast';
-      service.cast.access._session = {};
+      let driver = installChromecastDriver(service);
+      driver.sdkSession = true;
+      driver.sdk._session = {};
       service._currentSound = {
         castUrl: 'https://public.example/archive.m3u8',
         metadata: {},
@@ -1432,8 +1480,9 @@ module('Unit | Service | stereo', function (hooks) {
         .stub(service.cast, 'buildCastConnection')
         .returns(null);
 
-      service.cast.kind = 'chromecast';
-      service.cast.access._session = {};
+      let driver = installChromecastDriver(service);
+      driver.sdkSession = true;
+      driver.sdk._session = {};
       service._currentSound = {
         castUrl: 'https://public.example/stream.aac',
         metadata: {},
@@ -1456,8 +1505,9 @@ module('Unit | Service | stereo', function (hooks) {
         .stub(service.cast, 'buildCastConnection')
         .returns(null);
 
-      service.cast.kind = 'chromecast';
-      service.cast.access._session = {};
+      let driver = installChromecastDriver(service);
+      driver.sdkSession = true;
+      driver.sdk._session = {};
       service._currentSound = {
         castUrl: 'https://public.example/archive.m3u8',
         metadata: {},

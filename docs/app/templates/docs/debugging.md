@@ -35,8 +35,9 @@ localStorage.debug = 'ember-stereo:*,-ember-stereo:position';
 | `ember-stereo:strategizer`         | How a URL is turned into an ordered list of connections to try.         |
 | `ember-stereo:canPlay`             | Per-connection format/platform decisions during strategy building.      |
 | `ember-stereo:one-at-at-time`      | The "only one sound plays" arbitration.                                 |
-| `ember-stereo:shared-audio-access` | The shared AirPlay outlet element and its single-owner handoff.         |
-| `ember-stereo:shared-cast-access`  | The shared Chromecast pipeline and its single-owner handoff.            |
+| `ember-stereo:cast`                | Everything casting: availability, pickers, engage/disengage, swaps.     |
+| `ember-stereo:shared-audio-access` | The shared audio element and its single-owner handoff.                  |
+| `ember-stereo:google-cast-sdk`     | The Cast SDK session and its single-owner handoff.                      |
 | `ember-stereo:fake-element`        | The test-environment fake media element (see [Testing](/docs/testing)). |
 
 ## Inspecting state directly

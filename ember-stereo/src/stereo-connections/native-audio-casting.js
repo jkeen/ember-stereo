@@ -1,11 +1,7 @@
 import { isTesting, macroCondition } from '@embroider/macros';
 import NativeAudio from './native-audio';
 import isSameAudio from '../-private/utils/is-same-audio';
-import DeadReckonClock from '../-private/utils/dead-reckon-clock';
-
-// After a seek, the device keeps reporting the pre-seek position for a beat.
-const SEEK_SETTLE_TOLERANCE_MS = 1500;
-const SEEK_SETTLE_WINDOW_MS = 4000;
+import RemotePosition from '../-private/casting/remote-position';
 
 // Safari fires a spurious 'ended' after a fresh-src seek while AirPlaying.
 const END_TOLERANCE_MS = 1500;
@@ -13,15 +9,13 @@ const END_TOLERANCE_MS = 1500;
 const HAVE_METADATA = 1;
 
 /**
- * NativeAudio that always drives the shared, route-holding outlet element,
- * using the `SharedAudioAccess` handshake to own the AirPlay route alone.
- * Never part of the normal strategy waterfall. The service force-injects it
- * at the top of the strategy list only while casting.
+ * NativeAudio but driving the shared cast audio element. It overrides whatever touches the
+ * element in a way the device does not follow
  *
  * @class NativeAudioCasting
  * @extends NativeAudio
  */
-export default class NativeAudioCasting extends DeadReckonClock(NativeAudio) {
+export default class NativeAudioCasting extends NativeAudio {
   static key = 'NativeAudioCasting';
   static toString() {
     return 'NativeAudioCasting';
@@ -32,22 +26,38 @@ export default class NativeAudioCasting extends DeadReckonClock(NativeAudio) {
     return true;
   }
 
-  _lastReportedMs = null;
-  _seekSettleTarget = null;
-  _seekSettleUntil = 0;
-
-  // Changing the routed element's src makes Safari drop and rebuild the AirPlay route.
-  requestControl() {
-    this.options?.beginOutletChange?.();
-    try {
-      return super.requestControl();
-    } finally {
-      this.options?.endOutletChange?.();
-    }
+  // setup() runs from the BaseSound constructor, before any class field initialiser.
+  get _remotePosition() {
+    return (this.__remotePosition ??= new RemotePosition());
   }
 
-  // Any src reset on the routed element drops the AirPlay route.
+  // Changing this element's src makes Safari drop and rebuild the device connection.
+  requestControl() {
+    this.options?.onSourceChange?.();
+    return super.requestControl();
+  }
+
+  // Any src reset on the cast element drops the AirPlay route.
   defeatBrowserCaching() {}
+
+  // A direct currentTime write leaves the device silent.
+  _seekToLiveEdge(audio) {
+    // A paused element was just loaded, so it already sits at the live edge.
+    if (audio.paused) {
+      return;
+    }
+
+    let seekable = audio.seekable;
+    if (!seekable?.length) {
+      return;
+    }
+    this._setPosition(seekable.end(seekable.length - 1) * 1000);
+  }
+
+  // The cast element has no crossorigin to drop, so retrying only costs the device.
+  get shouldRetry() {
+    return false;
+  }
 
   setup() {
     let element = this.requestControl();
@@ -59,11 +69,12 @@ export default class NativeAudioCasting extends DeadReckonClock(NativeAudio) {
     }
 
     if (!isSameAudio(element.src, this.url, { exact: true })) {
-      this.debug(`casting: pointing outlet at ${this.url}`);
+      this.debug(`casting: pointing cast element at ${this.url}`);
       element.src = this.url;
       element.load();
+      this.options?.onSourceChange?.();
     } else if (element.readyState >= HAVE_METADATA) {
-      this.debug('casting: outlet already loaded this url; not reloading');
+      this.debug('casting: cast element already loaded this url; not reloading');
       this._onAudioReady();
     }
   }
@@ -78,47 +89,20 @@ export default class NativeAudioCasting extends DeadReckonClock(NativeAudio) {
 
   // A live stream's currentTime restarts per connection.
   seedPosition(positionMs) {
-    this._anchor(positionMs);
+    this._remotePosition.seed(positionMs);
     this._position = positionMs;
-    this._lastReportedMs = null;
   }
 
   _currentPosition() {
-    // A live stream's currentTime freezes under AirPlay.
-    if (this.isStream) {
-      return this.isPlaying ? this._estimate() : this._anchorMs;
-    }
-
-    let reported = this._reportedPosition();
-
-    if (this._seekSettleTarget != null) {
-      let settling = Date.now() < this._seekSettleUntil;
-      let caughtUp =
-        reported != null &&
-        Math.abs(reported - this._seekSettleTarget) <= SEEK_SETTLE_TOLERANCE_MS;
-      if (settling && !caughtUp) {
-        return this.isPlaying ? this._estimate() : this._anchorMs;
-      }
-      this._seekSettleTarget = null;
-    }
-
-    if (reported != null && reported !== this._lastReportedMs) {
-      this._lastReportedMs = reported;
-      if (this.isPlaying) {
-        this._anchor(reported);
-      }
-      return reported;
-    } else if (this.isPlaying) {
-      return this._estimate();
-    }
-    return this._anchorMs;
+    return this._remotePosition.positionFor({
+      reportedMs: this._reportedPosition(),
+      isPlaying: this.isPlaying,
+      isStream: this.isStream,
+    });
   }
 
   _setPosition(positionMs) {
-    this._anchor(positionMs);
-    this._seekSettleTarget = positionMs;
-    this._seekSettleUntil = Date.now() + SEEK_SETTLE_WINDOW_MS;
-    this._lastReportedMs = null; // a fresh seek invalidates the freeze detector
+    this._remotePosition.beginSeek(positionMs);
 
     let element = this.audioElement;
     let seconds = positionMs / 1000;
@@ -166,12 +150,12 @@ export default class NativeAudioCasting extends DeadReckonClock(NativeAudio) {
 
   play(options) {
     let result = super.play(options);
-    this._anchor(this._estimate());
+    this._remotePosition.reanchor(this.isPlaying);
     return result;
   }
 
   pause() {
-    this._anchorMs = this._estimate();
+    this._remotePosition.reanchor(this.isPlaying);
     this.audioElement?.pause();
     this.trigger('audio-paused', { sound: this });
   }
@@ -182,7 +166,7 @@ export default class NativeAudioCasting extends DeadReckonClock(NativeAudio) {
 
   _onAudioPaused() {
     // Safari fires a spurious 'pause' right after a seek while AirPlaying.
-    if (this._seekSettleTarget != null) {
+    if (this._remotePosition.isSettling) {
       return;
     }
     super._onAudioPaused();
@@ -213,7 +197,7 @@ export default class NativeAudioCasting extends DeadReckonClock(NativeAudio) {
   }
 
   teardown() {
-    this.durationWorkaroundTask?.cancelAll?.();
+    this._mediaLength.watchTask.cancelAll();
     this._cancelPendingSeek();
     this.trigger('_will_destroy', { sound: this });
     this._unregisterEvents(

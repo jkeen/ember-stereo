@@ -38,7 +38,7 @@ this.stereo.on('audio-loaded', ({ sound }) => {
 
 ### 3. Guard for a `null` currentSound
 
-`stereo.currentSound` can now clear to `null` (for example when casting disengages), so null-check it in your `current-sound-changed` handlers:
+`stereo.currentSound` can now clear to `null` (for example when casting stops), so null-check it in your `current-sound-changed` handlers:
 
 ```js
 this.stereo.on('current-sound-changed', ({ sound }) => {

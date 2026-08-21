@@ -6,7 +6,7 @@ import SharedAudioAccess from 'ember-stereo/-private/utils/shared-audio-access';
 import NativeAudioCasting from 'ember-stereo/stereo-connections/native-audio-casting';
 
 // Unlike the shared FakeMediaElement, this one never auto-advances currentTime.
-class FakeOutlet {
+class FakeCastAudioElement {
   _src = '';
   readyState = 1; // HAVE_METADATA
   duration = 100; // seconds
@@ -68,7 +68,7 @@ class FakeOutlet {
 
 function buildAccess() {
   let access = new SharedAudioAccess();
-  access.audioElement = new FakeOutlet();
+  access.audioElement = new FakeCastAudioElement();
   return access;
 }
 
@@ -109,7 +109,7 @@ module('Unit | Connection | NativeAudioCasting', function (hooks) {
     assert.true(NativeAudioCasting.canPlay('http://example.com/whatever.m3u8'));
   });
 
-  test('drives the shared outlet element and becomes ready on canplay', function (assert) {
+  test('drives the shared cast audio element and becomes ready on canplay', function (assert) {
     let access = buildAccess();
     let connection = buildConnection(access);
 
@@ -180,6 +180,72 @@ module('Unit | Connection | NativeAudioCasting', function (hooks) {
     assert.false(connection.isLoading, 'playing clears loading');
   });
 
+  test('giving up the element clears a loading state it can no longer clear itself', function (assert) {
+    let access = buildAccess();
+    let connection = buildConnection(access);
+
+    access.audioElement.dispatch('canplay');
+    access.audioElement.dispatch('waiting');
+    assert.true(connection.isLoading, 'buffering when the handoff arrives');
+
+    connection.releaseControl();
+
+    assert.false(
+      connection.isLoading,
+      'a spinner that outlives the handoff never stops, since audio-loaded only reaches the owner',
+    );
+  });
+
+  test('seeking to the live edge while casting takes the device with it', function (assert) {
+    let access = buildAccess();
+    let connection = buildConnection(access);
+    let element = access.audioElement;
+
+    element.webkitCurrentPlaybackTargetIsWireless = true;
+    element.paused = false;
+    element.seekable = { length: 1, end: () => 120 };
+
+    let ops = [];
+    let elementPause = element.pause.bind(element);
+    let elementPlay = element.play.bind(element);
+    element.pause = () => {
+      ops.push('pause');
+      elementPause();
+    };
+    element.play = () => {
+      ops.push('play');
+      return elementPlay();
+    };
+
+    connection._seekToLiveEdge(element);
+
+    assert.deepEqual(
+      ops,
+      ['pause', 'play'],
+      'a bare currentTime write moves only the local clock, leaving the device on silence',
+    );
+    assert.strictEqual(element.currentTime, 120, 'and it lands on the live edge');
+  });
+
+  test('seeking a paused routed element still reaches the device', function (assert) {
+    let access = buildAccess();
+    let connection = buildConnection(access);
+    let element = access.audioElement;
+
+    // load() leaves the element paused, which is where the swap hands it over.
+    element.webkitCurrentPlaybackTargetIsWireless = true;
+    element.paused = true;
+    element.seekable = { length: 1, end: () => 120 };
+
+    connection._seekToLiveEdge(element);
+
+    assert.strictEqual(
+      element.currentTime,
+      0,
+      'a seek written while paused never reaches the device, and a freshly loaded stream is already live',
+    );
+  });
+
   test('ignores a spurious ended that is not near the media end', function (assert) {
     let access = buildAccess();
     let connection = buildConnection(access);
@@ -214,15 +280,19 @@ module('Unit | Connection | NativeAudioCasting', function (hooks) {
     );
   });
 
-  test('requestControl suppresses the cast-target flap around the src change', function (assert) {
-    let begins = 0;
-    let ends = 0;
-    buildConnection(buildAccess(), {
-      beginOutletChange: () => (begins += 1),
-      endOutletChange: () => (ends += 1),
-    });
-    assert.ok(begins >= 1, 'began an outlet-change window');
-    assert.strictEqual(begins, ends, 'balanced the window');
+  test('the source-change hold is renewed after the src change lands', function (assert) {
+    let calls = [];
+    let access = buildAccess();
+    access.audioElement.load = () => calls.push('load');
+
+    buildConnection(access, { onSourceChange: () => calls.push('hold') });
+
+    assert.ok(calls.includes('hold'), 'held the source-change window');
+    assert.strictEqual(
+      calls[calls.length - 1],
+      'hold',
+      'a hold taken only before the src change expires while Safari is still rebuilding the route, which reads as a disconnect',
+    );
   });
 
   test('teardown unregisters listeners but keeps the route element', function (assert) {

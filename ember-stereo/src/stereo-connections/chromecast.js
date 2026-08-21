@@ -1,9 +1,9 @@
 import { isTesting, macroCondition } from '@embroider/macros';
 import BaseSound from './base';
 import isSameAudio from '../-private/utils/is-same-audio';
-import DeadReckonClock from '../-private/utils/dead-reckon-clock';
+import RemotePosition from '../-private/casting/remote-position';
 import { getMimeType } from '../-private/utils/mime-types';
-import { loadCastSdk } from '../-private/utils/cast-sdk-loader';
+import { loadCastSdk } from '../-private/casting/google-cast-sdk-loader';
 
 // The receiver reports IDLE on stop as well as on finish, so only an IDLE near the end counts as 'ended'.
 const END_TOLERANCE_MS = 1500;
@@ -14,7 +14,7 @@ const END_TOLERANCE_MS = 1500;
  * @class Chromecast
  * @extends BaseSound
  */
-export default class Chromecast extends DeadReckonClock(BaseSound) {
+export default class Chromecast extends BaseSound {
   static key = 'Chromecast';
   static toString() {
     return 'Chromecast';
@@ -26,6 +26,11 @@ export default class Chromecast extends DeadReckonClock(BaseSound) {
 
   static preload() {
     return loadCastSdk();
+  }
+
+  // setup() runs from the BaseSound constructor, before any class field initialiser.
+  get _remotePosition() {
+    return (this.__remotePosition ??= new RemotePosition());
   }
 
   get _access() {
@@ -68,10 +73,16 @@ export default class Chromecast extends DeadReckonClock(BaseSound) {
       isSameAudio(player.mediaInfo.contentId, this.url, { exact: true })
     ) {
       this._onLoaded();
-      return;
+      // Announcing the play starts the position poll, and the Sound's connection setter re-announces it once assigned.
+      if (
+        player.playerState === window.chrome?.cast?.media?.PlayerState?.PLAYING
+      ) {
+        this.seedPosition((player.currentTime || 0) * 1000);
+        this.trigger('audio-played', { sound: this });
+      }
+    } else {
+      this._loadMedia(access.session);
     }
-
-    this._loadMedia(access.session);
   }
 
   _loadMedia(session) {
@@ -134,6 +145,9 @@ export default class Chromecast extends DeadReckonClock(BaseSound) {
       case states.IDLE:
         if (this._isGenuineEnd()) {
           this.trigger('audio-ended', { sound: this });
+        } else {
+          // A stopped stream reports IDLE, and another window pausing it must read as a pause here.
+          this.trigger('audio-paused', { sound: this });
         }
         break;
     }
@@ -160,15 +174,21 @@ export default class Chromecast extends DeadReckonClock(BaseSound) {
 
   // A live stream's remote currentTime restarts per session.
   seedPosition(positionMs) {
-    this._anchor(positionMs);
+    this._remotePosition.seed(positionMs);
     this._position = positionMs;
   }
 
+  _reportedPosition() {
+    let player = this._player;
+    return player ? (player.currentTime || 0) * 1000 : null;
+  }
+
   _currentPosition() {
-    if (this.isStream) {
-      return this.isPlaying ? this._estimate() : this._anchorMs;
-    }
-    return (this._player?.currentTime || 0) * 1000;
+    return this._remotePosition.positionFor({
+      reportedMs: this._reportedPosition(),
+      isPlaying: this.isPlaying,
+      isStream: this.isStream,
+    });
   }
 
   _setPosition(positionMs) {
@@ -201,27 +221,40 @@ export default class Chromecast extends DeadReckonClock(BaseSound) {
 
   play() {
     let states = window.chrome.cast.media.PlayerState;
-    this.debug(
-      `play (state=${this._player?.playerState}, control=${this._hasControl})`
-    );
+    let state = this._player?.playerState;
+    this.debug(`play (state=${state}, control=${this._hasControl})`);
     if (!this._hasControl) {
       return;
     }
+    // A paused live stream cannot rebuffer, and resuming one can end the whole session, so rejoin at the live edge with a fresh load.
+    if (
+      this.isStream &&
+      state !== states.PLAYING &&
+      state !== states.BUFFERING
+    ) {
+      this._loadMedia(this._access.session);
+      return;
+    }
     // During IDLE or BUFFERING a redundant play() toggles the autoplaying session into a pause.
-    if (this._player?.playerState === states.PAUSED) {
+    if (state === states.PAUSED) {
       this._controller?.playOrPause();
     }
   }
 
   pause() {
     let states = window.chrome.cast.media.PlayerState;
-    this.debug(
-      `pause (state=${this._player?.playerState}, control=${this._hasControl})`
-    );
+    let state = this._player?.playerState;
+    this.debug(`pause (state=${state}, control=${this._hasControl})`);
     if (!this._hasControl) {
       return;
     }
-    if (this._player?.playerState === states.PLAYING) {
+    // Stop a live stream outright: a receiver holding a paused stream is a session waiting to die.
+    if (this.isStream) {
+      this._controller?.stop();
+      this.trigger('audio-paused', { sound: this });
+      return;
+    }
+    if (state === states.PLAYING) {
       this._controller?.playOrPause();
     }
   }

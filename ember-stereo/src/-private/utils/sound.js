@@ -1,4 +1,5 @@
 import { getOwner, setOwner } from '@ember/application';
+import { isDevelopingApp, isTesting, macroCondition } from '@embroider/macros';
 import { tracked } from '@glimmer/tracking';
 import { isEmpty } from '@ember/utils';
 import { makeArray } from '@ember/array';
@@ -164,11 +165,28 @@ export default class Sound extends Evented {
 
     this._connection = connection;
 
+    if (macroCondition(isDevelopingApp())) {
+      this._warnIfCastingLocally(connection);
+    }
+
     // A connection can arrive already playing with its audio-played long gone, so re-announce it.
     if (connection?.isPlaying) {
       this._explicitPlayIntent = true;
       this.trigger('audio-played', { sound: this });
     }
+  }
+
+  _warnIfCastingLocally(connection) {
+    if (macroCondition(isTesting())) {
+      return;
+    }
+    let cast = this.stereo?.cast;
+    if (!connection || !cast?.isCasting || cast.isCastConnection(connection)) {
+      return;
+    }
+    console.warn(
+      `ember-stereo: casting is active, but ${this.url} resolved to ${connection.connectionName} and will play locally. The device could not fetch its castUrl (${this.castUrl}).`
+    );
   }
 
   /**
@@ -336,8 +354,8 @@ export default class Sound extends Evented {
 
     if (options.castUrl != null) {
       this._castUrl = options.castUrl;
-    } else if (this._castUrl != null) {
-      options.castUrl = this._castUrl;
+    } else {
+      options.castUrl = this.castUrl;
     }
 
     if (this.isResolved && !this.connection.isErrored) {
@@ -361,6 +379,9 @@ export default class Sound extends Evented {
     }
 
     let urls = await this.resolveUrls();
+
+    // A promise identifier named no url until now.
+    options.castUrl ??= this.castUrl;
 
     if (!this.strategies || this.stereo.cast.isCasting) {
       this.strategies = this.stereo._buildStrategies(urls, options);
@@ -460,6 +481,7 @@ export default class Sound extends Evented {
     this._silenceAndReleaseOutgoing(outgoing);
 
     let incoming = targetConnection;
+    incoming.adoptKnownStream(handoff.isStream);
     let engaged = false;
 
     try {
@@ -490,6 +512,7 @@ export default class Sound extends Evented {
         this.failures = [...this.failures, failure];
 
         if (this.connection) {
+          this.connection.adoptKnownStream(handoff.isStream);
           if (handoff.position != null && this.connection.isSeekable) {
             this.connection.position = handoff.position;
           }
@@ -521,9 +544,9 @@ export default class Sound extends Evented {
     } finally {
       if (!engaged && incoming && !incoming.isDestroyed) {
         try {
-          incoming.detach();
+          incoming.teardown();
         } catch (e) {
-          debug('ember-stereo:sound')(`incoming detach errored: ${e?.message}`);
+          debug('ember-stereo:sound')(`incoming teardown errored: ${e?.message}`);
         }
       }
     }
@@ -544,9 +567,9 @@ export default class Sound extends Evented {
       );
     }
     try {
-      outgoing?.detach?.();
+      outgoing?.teardown?.();
     } catch (e) {
-      debug('ember-stereo:sound')(`outgoing detach errored: ${e?.message}`);
+      debug('ember-stereo:sound')(`outgoing teardown errored: ${e?.message}`);
     }
   }
 
@@ -564,9 +587,9 @@ export default class Sound extends Evented {
         debug('ember-stereo:sound')(`reset stop errored: ${e?.message}`);
       }
       try {
-        connection.detach?.();
+        connection.teardown?.();
       } catch (e) {
-        debug('ember-stereo:sound')(`reset detach errored: ${e?.message}`);
+        debug('ember-stereo:sound')(`reset teardown errored: ${e?.message}`);
       }
     }
 
@@ -585,6 +608,7 @@ export default class Sound extends Evented {
     return {
       position: connection?.position,
       isPlaying: this._explicitPlayIntent,
+      isStream: connection?.isStream,
     };
   }
 

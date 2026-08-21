@@ -26,4 +26,8 @@ export const SERVICE_EVENT_MAP = [
   { event: 'current-sound-interrupted' },
   { event: 'new-load-request' },
   { event: 'pre-load' },
+  { event: 'audio-cast-availability-changed' },
+  { event: 'audio-cast-connecting' },
+  { event: 'audio-cast-connected' },
+  { event: 'audio-cast-disconnected' },
 ];

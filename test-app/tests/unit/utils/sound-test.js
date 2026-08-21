@@ -6,6 +6,17 @@ import setupCustomAssertions from 'ember-cli-custom-assertions/test-support';
 import { setupStereoTest } from 'ember-stereo/test-support/stereo-setup';
 import NativeAudio from 'ember-stereo/stereo-connections/native-audio';
 
+function installChromecastDriver(service) {
+  service.cast.audioElement._element = {
+    getAttribute: () => null,
+    setAttribute: () => {},
+    load: () => {},
+    remote: { watchAvailability: () => {}, cancelWatchAvailability: () => {} },
+  };
+  service.cast._driver = undefined;
+  return service.cast.activeDriver;
+}
+
 module('Unit | Utility | sound', function (hooks) {
   setupTest(hooks);
   setupCustomAssertions(hooks);
@@ -175,6 +186,7 @@ module('Unit | Utility | sound', function (hooks) {
     let cached = sound.connection;
 
     service.isCasting = true;
+    installChromecastDriver(service);
     let rebuilt = { connectionKey: 'Chromecast' };
     let buildStub = sandbox
       .stub(service.cast, 'buildCastConnection')
@@ -268,7 +280,8 @@ module('Unit | Utility | sound', function (hooks) {
     let sound = service.findSound(url);
 
     service.isCasting = true;
-    service.cast.kind = 'chromecast';
+    let driver = installChromecastDriver(service);
+    driver.sdkSession = true;
 
     sandbox.stub(sound, '_castStateMatches').returns(false); // connection is wrong for the cast state
     let buildCast = sandbox.stub(service.cast, 'buildCastConnection');
@@ -301,8 +314,9 @@ module('Unit | Utility | sound', function (hooks) {
     let sound = service.findSound(url);
 
     service.isCasting = true;
-    service.cast.kind = 'chromecast';
-    service.cast.access._session = {}; // a live session
+    let driver = installChromecastDriver(service);
+    driver.sdkSession = true;
+    driver.sdk._session = {}; // a live session
 
     sandbox.stub(sound, '_castStateMatches').returns(false);
     let castSound = { id: 'cast' };

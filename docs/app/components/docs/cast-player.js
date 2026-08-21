@@ -2,23 +2,17 @@ import Component from '@glimmer/component';
 import { service } from '@ember/service';
 import { action } from '@ember/object';
 import { tracked } from '@glimmer/tracking';
+import { SERVICE_EVENT_MAP } from 'ember-stereo/services/stereo';
 
 export default class CastPlayer extends Component {
   // BEGIN-SNIPPET cast-player.js
   @service stereo;
 
-  castEvents = [
-    'audio-cast-availability-changed',
-    'audio-cast-connecting',
-    'audio-cast-connected',
-    'audio-cast-disconnected',
-  ];
+  castEvents = SERVICE_EVENT_MAP.map(({ event }) => event).filter((event) =>
+    event.startsWith('audio-cast-'),
+  );
 
   @tracked log = [];
-
-  get castingTypes() {
-    return [...this.stereo.castingTypes].join(', ') || '—';
-  }
 
   // Chromecast hands us the device's friendly name. AirPlay withholds it, so fall back to the kind.
   get deviceLabel() {
@@ -27,8 +21,6 @@ export default class CastPlayer extends Component {
 
   @action
   prepare() {
-    this.stereo.findSound(this.args.identifier).castUrl = this.args.identifier;
-
     this._handlers = this.castEvents.map((name) => {
       let handler = () => this._record(name);
       this.stereo.on(name, handler);
@@ -44,7 +36,7 @@ export default class CastPlayer extends Component {
   }
 
   get sound() {
-    return this.stereo.findSound(this.args.identifier);
+    return this.stereo.currentSound;
   }
 
   get nowPlaying() {
@@ -53,6 +45,10 @@ export default class CastPlayer extends Component {
 
   @action
   setNowPlaying() {
+    if (!this.sound) {
+      return;
+    }
+
     let stamp = new Date().toLocaleTimeString();
     this.sound.metadata = {
       ...this.sound.metadata,

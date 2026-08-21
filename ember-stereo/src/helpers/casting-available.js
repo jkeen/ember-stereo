@@ -10,7 +10,7 @@ export default class CastingAvailable extends Helper {
   @service stereo;
 
   compute() {
-    this.stereo.ensureChromecastSetup();
+    this.stereo.ensureCastSdkSetup();
     return this.stereo.isCastingAvailable;
   }
 }

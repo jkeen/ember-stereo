@@ -31,8 +31,6 @@
             title='Loading'
             class='animate-spin'
           }}
-        {{else if (sound-is-loaded @identifier)}}
-          {{svg-jar 'resume-outline' height=20 width=30 title='Pause'}}
         {{else}}
           {{svg-jar 'play-outline' height=20 width=30 title='Play'}}
         {{/if}}

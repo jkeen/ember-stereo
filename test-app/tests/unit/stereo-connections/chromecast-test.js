@@ -3,7 +3,7 @@ import { setupTest } from 'ember-qunit';
 import { settled } from '@ember/test-helpers';
 import setupCustomAssertions from 'ember-cli-custom-assertions/test-support';
 import Chromecast from 'ember-stereo/stereo-connections/chromecast';
-import SharedCastAccess from 'ember-stereo/-private/utils/shared-cast-access';
+import GoogleCastSdk from 'ember-stereo/-private/casting/google-cast-sdk';
 
 class FakeRemotePlayer {
   isPaused = true;
@@ -98,7 +98,7 @@ function installFakeCastSdk() {
 
 function buildAccess() {
   let session = new FakeSession();
-  let access = new SharedCastAccess();
+  let access = new GoogleCastSdk();
   access.attach(session, window.cast.framework);
   return { session, access };
 }
@@ -299,7 +299,7 @@ module('Unit | Connection | Chromecast', function (hooks) {
     assert.ok(access.controller, 'shared controller survives (session-owned)');
   });
 
-  test('detach tears down the shared player/controller and removes its listeners', function (assert) {
+  test('forgetting a session tears down the shared player/controller and removes its listeners', function (assert) {
     let { access } = buildAccess();
     build(access);
     let controller = access.controller;
@@ -308,11 +308,11 @@ module('Unit | Connection | Chromecast', function (hooks) {
       'registered while attached',
     );
 
-    access.detach();
+    access.forgetSession();
     assert.strictEqual(
       controller.listenerCount('PLAYER_STATE_CHANGED'),
       0,
-      'unregistered on detach',
+      'unregistered when the session is forgotten',
     );
     assert.strictEqual(access.player, null, 'player cleared');
     assert.strictEqual(access.owner, null, 'owner cleared');

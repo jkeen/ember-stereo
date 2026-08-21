@@ -3,9 +3,8 @@ import { setupTest } from 'ember-qunit';
 import { waitUntil } from '@ember/test-helpers';
 import sinon from 'sinon';
 import SharedAudioAccess from 'ember-stereo/-private/utils/shared-audio-access';
-import NativeAudio, {
-  durationGrowsWithTheClock,
-} from 'ember-stereo/stereo-connections/native-audio';
+import NativeAudio from 'ember-stereo/stereo-connections/native-audio';
+import MediaLength, { durationGrowsWithTheClock } from 'ember-stereo/-private/utils/media-length';
 import setupCustomAssertions from 'ember-cli-custom-assertions/test-support';
 import { setupStereoTest } from 'ember-stereo/test-support/stereo-setup';
 const goodUrl = '/good/1000/good.aac';
@@ -90,12 +89,6 @@ module('Unit | Connection | Native Audio', function (hooks) {
     let loadSpy = sinon.spy(
       sound.sharedAudioAccess.requestControl(sound),
       'load',
-    );
-
-    assert.strictEqual(
-      sound.streamPauseGraceMs,
-      0,
-      'holding a paused stream open is opt-in',
     );
 
     await sound.play();
@@ -527,7 +520,9 @@ module('Unit | Connection | Native Audio', function (hooks) {
           start: 0,
           end: 206.83,
         });
-        Object.defineProperty(sound, 'probablyAStream', { get: () => true });
+        Object.defineProperty(sound._mediaLength, 'isLive', {
+          get: () => true,
+        });
 
         assert.strictEqual(
           sound._audioDuration(),
@@ -608,13 +603,79 @@ module('Unit | Connection | Native Audio', function (hooks) {
     },
   );
 
+  module('remembering what the source is', function () {
+    test('a connection swapped in for the same source inherits the verdict', function (assert) {
+      let incoming = new NativeAudio({ url: goodUrl, timeout: false });
+      incoming.adoptKnownStream(true);
+
+      assert.strictEqual(
+        incoming._audioDuration(),
+        Infinity,
+        'casting swaps in a fresh connection mid-playback, and measuring the source again from an empty history reports a finite length and offers scrub controls on a live stream',
+      );
+
+      let local = new NativeAudio({ url: goodUrl, timeout: false });
+      local.adoptKnownStream(false);
+
+      assert.false(
+        local._mediaLength.isLive,
+        'and a source never proved live is not assumed to be',
+      );
+    });
+
+    test('the handoff carries what the source is', async function (assert) {
+      let { sound } = await stereo.load('/good/stream/stream.aac');
+
+      assert.true(
+        sound._captureHandoff().isStream,
+        'the swap hands the incoming connection everything it must not re-derive',
+      );
+    });
+
+    test('a source proved live stays live when the element reloads', function (assert) {
+      let length = new MediaLength();
+      [1000, 1250, 1500, 1750, 2000].forEach((ms, index) =>
+        length.record(ms, index * 250),
+      );
+
+      assert.true(length.isLive, 'the readings proved it');
+
+      length.sourceReloaded();
+
+      assert.true(
+        length.isLive,
+        'replaying a stream reloads the element, and re-deciding from an empty history reports a finite duration for a second and skips the cache-defeating workaround that isStream gates',
+      );
+      assert.strictEqual(
+        length.estimate({ elementDurationMs: 4000, seekable: null }),
+        Infinity,
+        'so the duration is right from the first frame of the replay',
+      );
+    });
+
+    test('a source never proved live is not assumed to be', function (assert) {
+      let length = new MediaLength();
+      [60000, 60000, 60000, 60000].forEach((ms, index) =>
+        length.record(ms, index * 250),
+      );
+      length.sourceReloaded();
+
+      assert.false(length.isLive, 'nothing ever proved it');
+    });
+  });
+
   module('reading duration growth', function () {
+    // Readings arrive with the wall clock, so a helper spaces them evenly.
+    let every = (ms, durations) =>
+      durations.map((duration, index) => ({
+        durationMs: duration,
+        timeMs: index * ms,
+      }));
+
     // Live audio arrives as fast as it happens, so its duration gains about as much time as the window.
     test('a source growing smoothly with the clock reads as a stream', function (assert) {
       assert.true(
-        durationGrowsWithTheClock([
-          1000, 1250, 1500, 1750, 2000, 2250, 2500, 2750, 3000,
-        ]),
+        durationGrowsWithTheClock(every(250, [1000, 1250, 1500, 1750, 2000, 2250, 2500, 2750, 3000])),
         'Chrome moves the duration every sample',
       );
     });
@@ -623,51 +684,42 @@ module('Unit | Connection | Native Audio', function (hooks) {
       // Firefox holds the duration still and then jumps a whole second. The
       // average is realtime even though no single sample looks like it.
       assert.true(
-        durationGrowsWithTheClock([
-          1000, 1000, 1000, 2000, 2000, 2000, 3000, 3000, 3000,
-        ]),
+        durationGrowsWithTheClock(every(250, [1000, 1000, 1000, 2000, 2000, 2000, 3000, 3000, 3000])),
         'stepwise growth averages out to the clock',
       );
     });
 
     test('a stable duration does not', function (assert) {
       assert.false(
-        durationGrowsWithTheClock([
-          60000, 60000, 60000, 60000, 60000, 60000, 60000, 60000, 60000,
-        ]),
+        durationGrowsWithTheClock(every(250, [60000, 60000, 60000, 60000, 60000, 60000, 60000, 60000, 60000])),
         'an ordinary file measured once',
       );
     });
 
     test('a single refinement of a VBR estimate does not', function (assert) {
       assert.false(
-        durationGrowsWithTheClock([
-          180000, 180000, 213000, 213000, 213000, 213000, 213000, 213000,
-          213000,
-        ]),
+        durationGrowsWithTheClock(every(250, [180000, 180000, 213000, 213000, 213000, 213000, 213000, 213000, 213000])),
         'one step is a correction, not audio arriving',
       );
     });
 
     test('growth faster than the clock does not', function (assert) {
       assert.false(
-        durationGrowsWithTheClock([
-          0, 30000, 60000, 90000, 120000, 150000, 180000, 210000, 240000,
-        ]),
+        durationGrowsWithTheClock(every(250, [0, 30000, 60000, 90000, 120000, 150000, 180000, 210000, 240000])),
         'a progressive download outruns realtime',
       );
     });
 
-    test('too few measurements do not', function (assert) {
+    test('too short a window does not', function (assert) {
       assert.false(
-        durationGrowsWithTheClock([1000, 1250, 1500]),
-        'growth must be sustained before it counts',
-      );
-      assert.false(
-        durationGrowsWithTheClock([1000, 1250, NaN, 1750, 2000]),
-        'and a gap leaves too little measured',
+        durationGrowsWithTheClock(every(250, [1000, 1250, 1500])),
+        'half a second of growth is not sustained',
       );
       assert.false(durationGrowsWithTheClock([]), 'nothing measured yet');
+      assert.true(
+        durationGrowsWithTheClock(every(250, [1000, 1250, NaN, 1750, 2000])),
+        'but a dropped reading is fine, since the timestamps still span a second',
+      );
     });
   });
 });

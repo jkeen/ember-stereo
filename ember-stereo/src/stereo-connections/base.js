@@ -251,6 +251,16 @@ export default class Sound extends Evented {
   }
 
   /**
+   * Take on what a connection to the same source already worked out. Casting
+   * swaps in a new connection mid-playback, and measuring it again from an
+   * empty history reports the wrong length until it catches up.
+   *
+   * @method adoptKnownStream
+   * @private
+   */
+  adoptKnownStream() {}
+
+  /**
    * Whether the app declared the sound seekable in the load options, settling
    * it outright. Connections only measure when nothing was declared.
    *
@@ -465,6 +475,7 @@ export default class Sound extends Evented {
 
     this.on('audio-paused', () => {
       this.isPlaying = false;
+      this.isLoading = false;
       if (audioPaused) {
         audioPaused(this);
       }
@@ -673,20 +684,6 @@ export default class Sound extends Evented {
   teardown() {
     // optionally implemented in subclasses
     this.isDestroyed = true;
-  }
-
-  /**
-   * Release this connection during a Sound swap. For local connections this is
-   * a full teardown (free the connection: HLS `hls.destroy()`, Howler `unload()`,
-   * NativeAudio releases shared-element control). NativeAudioCasting's teardown
-   * keeps the service-owned route element (the element *is* the route) and only
-   * unregisters its listeners.
-   *
-   * @method detach
-   * @public
-   */
-  detach() {
-    this.teardown();
   }
 
   hasUrl(url) {

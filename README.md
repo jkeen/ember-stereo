@@ -443,10 +443,10 @@ Playback (proxied from the active connection):
 - `currentTime` / `startTime` / `endTime` wall-clock times for live/HLS streams
 - `percentLoaded` (integer, not always available)
 - `isReady` (boolean)
-- `url` the url of whatever won: the active connection's url, falling back to the first url you passed. It changes on failover and when casting engages, and is `undefined` while a promise identifier is still resolving.
+- `url` the url of whatever won: the active connection's url, falling back to the first url you passed. It changes on failover and when casting starts, and is `undefined` while a promise identifier is still resolving.
 - `urls` every url this sound answers to, including the cast url. Always strings, and empty until a promise identifier resolves.
 - `id3Tags` ID3 tags read off the stream, when the connection supplies them
-- `connection` what is actually playing this sound right now. Swapped out on failover and when casting engages, so read it, don't hold it.
+- `connection` what is actually playing this sound right now. Swapped out on failover and when casting starts, so read it, don't hold it.
 - `connectionKey` the active connection's key, for example `HLS`
 - `audioElement` the underlying `<audio>` element, when the active connection uses one
 
@@ -455,16 +455,16 @@ Playback (proxied from the active connection):
 `ember-stereo` treats a remote device as just another connection: the same `Sound`, the same `currentSound`, the same helpers. The audio just comes out somewhere else. AirPlay and Chromecast are wired up automatically and included on demand. Your app supplies one thing: a url (`sound.castUrl`) that the device can fetch on its own.
 
 ```hbs
-<button type='button' {{cast-button @identifier}}>
+<button type='button' {{cast-button}}>
   {{#if (is-casting)}}Casting…{{else if (casting-available)}}Cast{{else}}No cast targets{{/if}}
 </button>
 ```
 
-Helpers: `{{cast-button}}` (modifier, optional identifier), `{{is-casting}}`, `{{casting-available}}`.
+Helpers: `{{cast-button}}` (modifier), `{{is-casting}}`, `{{casting-available}}`.
 
-Service surface: `isCasting`, `isCastingAvailable`, `castDeviceName`, `castKind` (`'airplay'`/`'chromecast'`/`null`), `castIconName`, `showCastMenu(identifier)`, `stopCasting()`, `prewarmCast(identifier)`.
+Service interface: `isCasting`, `isCastingAvailable`, `castDeviceName`, `castKind` (`'airplay'`/`'chromecast'`/`null`), `castIconName`, `showCastMenu()`, `stopCasting()`.
 
-See the [casting docs](https://ember-stereo.com/docs/casting) for the full guide and how it stays consistent when you switch feeds mid-stream.
+[Casting docs](https://ember-stereo.com/docs/casting)
 
 ### Events
 
