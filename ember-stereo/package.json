@@ -6,6 +6,7 @@
     "type": "git",
     "url": "https://github.com/jkeen/ember-stereo.git"
   },
+  "homepage": "https://ember-stereo.com",
   "license": "MIT",
   "author": "Jeff Keen <jeff@keen.me>",
   "exports": {
