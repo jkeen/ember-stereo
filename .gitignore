@@ -43,3 +43,4 @@ packages/
 .turbo
 
 /debug
+.vscode/
