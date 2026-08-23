@@ -121,18 +121,14 @@ module('Unit | Utility | cast-coordinator', function (hooks) {
     assert.strictEqual(cast.supportedCastType, null, 'and no cast type');
   });
 
-  test('an AirPlay browser gets the AirPlay glyph once a device appears', function (assert) {
+  test('an AirPlay browser gets the AirPlay glyph without waiting for a device', function (assert) {
     let { cast } = buildCoordinator(this.owner, { webkit: true });
 
     assert.strictEqual(
       cast.iconName,
-      null,
-      'no icon while nothing is reachable',
+      'airplay',
+      'WebKit calls receivers unavailable even when the picker can find them, so hiding the icon until it says otherwise hides it from people who can cast',
     );
-
-    cast.activeDriver.deviceAvailable = true;
-
-    assert.strictEqual(cast.iconName, 'airplay', 'and names the one it has');
   });
 
   test('a browser on the Remote Playback API is not given an AirPlay glyph', function (assert) {
@@ -160,17 +156,23 @@ module('Unit | Utility | cast-coordinator', function (hooks) {
       null,
       'the stand-in element has neither picker API',
     );
+    assert.false(bare.cast.isAvailable, 'and nothing to cast to');
 
-    let { cast } = buildCoordinator(this.owner, { webkit: true });
+    let remote = buildCoordinator(this.owner, {
+      remote: {
+        watchAvailability: () => {},
+        cancelWatchAvailability: () => {},
+      },
+    });
 
     assert.strictEqual(
-      cast.supportedCastType,
-      'airplay',
-      'an element carrying the WebKit picker supports AirPlay before any device is found',
+      remote.cast.supportedCastType,
+      'chromecast',
+      'an element carrying Remote Playback supports Chromecast',
     );
     assert.false(
-      cast.isAvailable,
-      'and supporting an API says nothing about a device being on the network',
+      remote.cast.isAvailable,
+      'and Chrome answers honestly about what is on the network, so nothing is reachable until it says so',
     );
   });
 

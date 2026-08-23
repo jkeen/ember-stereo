@@ -2,7 +2,7 @@ import { service } from '@ember/service';
 import Helper from '@ember/component/helper';
 
 /**
- * `{{casting-available}}` is true when a cast target (AirPlay/Cast) is reachable.
+ * `{{casting-available}}` is true when casting (AirPlay/Cast) can be started.
  *
  * @class CastingAvailableHelper
  */

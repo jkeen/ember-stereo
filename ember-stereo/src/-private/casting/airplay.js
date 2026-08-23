@@ -1,4 +1,3 @@
-import { tracked } from '@glimmer/tracking';
 import debug from 'debug';
 
 const log = debug('ember-stereo:cast');
@@ -15,7 +14,8 @@ export default class AirplayDriver {
   type = 'airplay';
   iconName = 'airplay';
 
-  @tracked deviceAvailable = false;
+  // WebKit reports `not-available` even when the picker can find receivers, so only the picker can answer this.
+  deviceAvailable = true;
 
   constructor({ audioElement, onAvailabilityChange, onTargetChange }) {
     this.audioElement = audioElement;
@@ -30,14 +30,7 @@ export default class AirplayDriver {
   watch() {
     let element = this.audioElement.element;
 
-    this._availabilityListener = (event) => {
-      this.deviceAvailable = event.availability === 'available';
-      this.onAvailabilityChange();
-    };
-    element.addEventListener(
-      'webkitplaybacktargetavailabilitychanged',
-      this._availabilityListener
-    );
+    this.onAvailabilityChange();
 
     this._targetChangeListener = () =>
       this.onTargetChange(!!element.webkitCurrentPlaybackTargetIsWireless);
@@ -51,13 +44,6 @@ export default class AirplayDriver {
     let element = this.audioElement._element;
     if (!element) {
       return;
-    }
-    if (this._availabilityListener) {
-      element.removeEventListener(
-        'webkitplaybacktargetavailabilitychanged',
-        this._availabilityListener
-      );
-      this._availabilityListener = null;
     }
     if (this._targetChangeListener) {
       element.removeEventListener(

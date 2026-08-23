@@ -765,7 +765,7 @@ export default class Stereo extends Service.extend(EmberEvented) {
   }
 
   /**
-   * Icon name for the cast control, or null when nothing is reachable.
+   * Icon name for the cast control, or null when there is no control to show.
    * @property castIconName
    * @readOnly
    * @public

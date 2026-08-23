@@ -7,7 +7,8 @@ Casting sends the audio to an AirPlay receiver or a Chromecast device instead of
 - **AirPlay** uses Safari's own APIs and loads nothing extra.
 - **Chromecast** lazily loads the Google Cast SDK from `gstatic.com` the first time a `{{cast-button}}` or `{{casting-available}}` renders.
 
-A device only shows up if the page is served over HTTPS and the AirPlay receiver is reachable (Safari), or a Chromecast is on the same network (Chrome). Otherwise `{{casting-available}}` stays `false` and the cast button disables itself.
+
+On Chrome, `{{casting-available}}` tracks whether a Chromecast is on the network, and the button disables itself when there is none. On Safari it only means AirPlay exists. WebKit reports receivers as unavailable even when the picker can find them, so `ember-stereo` ignores that signal and lets the picker show its own empty state.
 
 ## `sound.castUrl`
 
@@ -21,7 +22,7 @@ When you cast the device fetches the audio directly, meaning if it can't reach i
 
 ## The cast button
 
-`{{cast-button}}` turns a `<button>` into a cast control. Clicking it opens the device picker. The button disables itself when no device is reachable, and gets a `casting` class while connected, so you can style the connected state.
+`{{cast-button}}` turns a `<button>` into a cast control. Clicking it opens the device picker. The button disables itself when `{{casting-available}}` is false, and gets a `casting` class while connected, so you can style the connected state.
 
 ```hbs
 <button type='button' {{cast-button}}>
@@ -33,7 +34,7 @@ Casting always follows the current sound. Whatever is playing when you pick a de
 
 ## Reading cast state in templates
 
-- `{{casting-available}}` - true when a cast device is reachable right now.
+- `{{casting-available}}` - true when casting can be started right now. On Chrome that means a Chromecast is on the network. On Safari it is true whenever AirPlay exists.
 - `{{is-casting}}` - true while the audio plays on a remote device.
 
 ```hbs
@@ -61,11 +62,11 @@ Fixed audio:
 
 The `stereo` service exposes:
 
-- `isCastingAvailable` - `true` when a cast device is reachable
+- `isCastingAvailable` - `true` when casting can be started
 - `isCasting` - `true` when audio is playing on a remote device
 - `castDeviceName` - the device's name. Chromecast provides one, AirPlay doesn't, so this can be `null`
 - `castKind` - `'airplay'`, `'chromecast'`, or `null`
-- `castIconName` - `'cast'`, `'airplay'`, or `null` when nothing is reachable, for picking the right icon
+- `castIconName` - `'cast'`, `'airplay'`, or `null`, for picking the right icon
 - `supportedCastType` - which kind of casting this browser can do at all (`'airplay'`, `'chromecast'`, or `null`), even before any device is found
 - `showCastMenu()` - open the device picker (what `{{cast-button}}` calls)
 - `stopCasting()` - disconnect and return playback to the local device
