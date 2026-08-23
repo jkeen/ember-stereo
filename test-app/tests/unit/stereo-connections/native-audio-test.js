@@ -4,7 +4,9 @@ import { waitUntil } from '@ember/test-helpers';
 import sinon from 'sinon';
 import SharedAudioAccess from 'ember-stereo/-private/utils/shared-audio-access';
 import NativeAudio from 'ember-stereo/stereo-connections/native-audio';
-import MediaLength, { durationGrowsWithTheClock } from 'ember-stereo/-private/utils/media-length';
+import MediaLength, {
+  durationGrowsWithTheClock,
+} from 'ember-stereo/-private/utils/media-length';
 import setupCustomAssertions from 'ember-cli-custom-assertions/test-support';
 import { setupStereoTest } from 'ember-stereo/test-support/stereo-setup';
 const goodUrl = '/good/1000/good.aac';
@@ -675,7 +677,9 @@ module('Unit | Connection | Native Audio', function (hooks) {
     // Live audio arrives as fast as it happens, so its duration gains about as much time as the window.
     test('a source growing smoothly with the clock reads as a stream', function (assert) {
       assert.true(
-        durationGrowsWithTheClock(every(250, [1000, 1250, 1500, 1750, 2000, 2250, 2500, 2750, 3000])),
+        durationGrowsWithTheClock(
+          every(250, [1000, 1250, 1500, 1750, 2000, 2250, 2500, 2750, 3000]),
+        ),
         'Chrome moves the duration every sample',
       );
     });
@@ -684,28 +688,48 @@ module('Unit | Connection | Native Audio', function (hooks) {
       // Firefox holds the duration still and then jumps a whole second. The
       // average is realtime even though no single sample looks like it.
       assert.true(
-        durationGrowsWithTheClock(every(250, [1000, 1000, 1000, 2000, 2000, 2000, 3000, 3000, 3000])),
+        durationGrowsWithTheClock(
+          every(250, [1000, 1000, 1000, 2000, 2000, 2000, 3000, 3000, 3000]),
+        ),
         'stepwise growth averages out to the clock',
       );
     });
 
     test('a stable duration does not', function (assert) {
       assert.false(
-        durationGrowsWithTheClock(every(250, [60000, 60000, 60000, 60000, 60000, 60000, 60000, 60000, 60000])),
+        durationGrowsWithTheClock(
+          every(
+            250,
+            [60000, 60000, 60000, 60000, 60000, 60000, 60000, 60000, 60000],
+          ),
+        ),
         'an ordinary file measured once',
       );
     });
 
     test('a single refinement of a VBR estimate does not', function (assert) {
       assert.false(
-        durationGrowsWithTheClock(every(250, [180000, 180000, 213000, 213000, 213000, 213000, 213000, 213000, 213000])),
+        durationGrowsWithTheClock(
+          every(
+            250,
+            [
+              180000, 180000, 213000, 213000, 213000, 213000, 213000, 213000,
+              213000,
+            ],
+          ),
+        ),
         'one step is a correction, not audio arriving',
       );
     });
 
     test('growth faster than the clock does not', function (assert) {
       assert.false(
-        durationGrowsWithTheClock(every(250, [0, 30000, 60000, 90000, 120000, 150000, 180000, 210000, 240000])),
+        durationGrowsWithTheClock(
+          every(
+            250,
+            [0, 30000, 60000, 90000, 120000, 150000, 180000, 210000, 240000],
+          ),
+        ),
         'a progressive download outruns realtime',
       );
     });

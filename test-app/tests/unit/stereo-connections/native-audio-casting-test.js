@@ -224,7 +224,11 @@ module('Unit | Connection | NativeAudioCasting', function (hooks) {
       ['pause', 'play'],
       'a bare currentTime write moves only the local clock, leaving the device on silence',
     );
-    assert.strictEqual(element.currentTime, 120, 'and it lands on the live edge');
+    assert.strictEqual(
+      element.currentTime,
+      120,
+      'and it lands on the live edge',
+    );
   });
 
   test('seeking a paused routed element still reaches the device', function (assert) {
