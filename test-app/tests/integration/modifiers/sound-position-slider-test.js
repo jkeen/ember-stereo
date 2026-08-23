@@ -1,7 +1,7 @@
 /* stylelint-disable */
 import { module, test } from 'qunit';
 import { setupRenderingTest } from 'ember-qunit';
-import { render, click } from '@ember/test-helpers';
+import { render, click, settled } from '@ember/test-helpers';
 import { hbs } from 'ember-cli-htmlbars';
 import { setupStereoTest } from 'ember-stereo/test-support/stereo-setup';
 
@@ -53,6 +53,47 @@ module('Integration | Modifier | sound-position-slider', function (hooks) {
     assert.strictEqual(sound3.position, 9500);
 
     assert.ok(true);
+  });
+
+  test('a range control ends up usable for a seekable sound', async function (assert) {
+    this.url = '/good/10000/one.mp3';
+
+    let service = this.owner.lookup('service:stereo');
+    await service.load(this.url);
+
+    await render(
+      hbs`{{! template-lint-disable require-input-label }}<input type="range" {{sound-position-slider this.url}} />`,
+    );
+
+    assert
+      .dom('input[type="range"]')
+      .isNotDisabled(
+        'the modifier disables the control up front, so anything that stops it re-enabling leaves a dead slider',
+      );
+  });
+
+  test('a range control stops tracking playback while you drag it', async function (assert) {
+    this.url = '/good/10000/one.mp3';
+
+    let service = this.owner.lookup('service:stereo');
+    let { sound } = await service.load(this.url);
+
+    await render(
+      hbs`{{! template-lint-disable require-input-label }}<input type="range" {{sound-position-slider this.url}} />`,
+    );
+
+    let slider = this.element.querySelector('input[type="range"]');
+    slider.value = 50;
+    slider.dispatchEvent(new Event('input', { bubbles: true }));
+
+    sound.trigger('audio-position-changed', { sound });
+    await settled();
+
+    assert.strictEqual(
+      slider.value,
+      '50',
+      'playback updates rewrite the thumb every tick, so the drag has to hold them off',
+    );
   });
 
   test('change callbacks work', async function (assert) {

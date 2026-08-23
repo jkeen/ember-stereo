@@ -7,13 +7,42 @@
     <span class='text-xs'>
       {{#let this.loadedSound as |sound|}}
         {{#if sound}}
-          {{#if sound.connectionName}}
+          {{#if sound.isLoading}}
+            <span class='opacity-50'>Loading…</span>
+          {{else if this.canSwitchConnections}}
+            <span class='relative inline-flex items-center group'>
+              <span
+                class='border-b border-dotted border-on-surface-2 border-opacity-40 group-hover:border-opacity-100'
+              >{{or sound.connectionName '—'}} Sound</span>
+              {{svg-jar
+                'angle-down'
+                class='w-2 h-2 ml-1 opacity-40 text-on-surface-2 group-hover:opacity-100'
+              }}
+              <select
+                class='absolute inset-0 w-full h-full p-0 m-0 bg-transparent border-0 opacity-0 appearance-none cursor-pointer focus:outline-none'
+                aria-label='Switch connection'
+                {{on 'change' this.switchConnection}}
+              >
+                {{#unless sound.connectionKey}}
+                  <option value='' selected disabled>—</option>
+                {{/unless}}
+                {{#each this.connectionChoices as |strategy|}}
+                  <option
+                    value={{strategy.key}}
+                    selected={{eq strategy.key sound.connectionKey}}
+                  >{{strategy.connectionName}}</option>
+                {{/each}}
+              </select>
+            </span>
+          {{else if sound.connectionName}}
             {{sound.connectionName}}
             Sound
           {{/if}}
-          {{#if sound.mimeType}}
-            ({{sound.mimeType}})
-          {{/if}}
+          {{#unless sound.isLoading}}
+            {{#if sound.mimeType}}
+              ({{sound.mimeType}})
+            {{/if}}
+          {{/unless}}
         {{else}}
           Not Loaded
         {{/if}}

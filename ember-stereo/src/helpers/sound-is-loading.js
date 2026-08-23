@@ -17,7 +17,7 @@ import debugMessage from '../-private/utils/debug-message';
 
 /**
   @method compute
-  @param {Any} identifier url, urls, url objects, promise that resolves to a url
+  @param {Any} identifier a url, an array of urls, a url object, a Sound, or a promise resolving to any of those
   @return {Boolean}
 */
 export default class SoundIsLoading extends StereoBaseIsHelper {
@@ -25,6 +25,9 @@ export default class SoundIsLoading extends StereoBaseIsHelper {
 
   get result() {
     debugMessage(this, `render = ${this.sound?.isLoaded}`);
-    return (this.sound && this.sound.isLoading && !this.sound.isBlocked) || this.isLoading;
+    return (
+      (this.sound && this.sound.isLoading && !this.sound.isBlocked) ||
+      this.isLoading
+    );
   }
 }

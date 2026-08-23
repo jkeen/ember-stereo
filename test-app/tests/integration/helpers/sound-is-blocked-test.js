@@ -20,7 +20,7 @@ module('Integration | Helper | sound-is-blocked', function (hooks) {
     );
     await service.play(this.url);
 
-    let sound = await service.findLoadedSound(this.url);
+    let sound = service.findSound(this.url);
     sound.isBlocked = true;
     await render(hbs`{{#if (sound-is-blocked this.url)}}needs input{{/if}}`);
     assert.strictEqual(

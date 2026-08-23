@@ -1,0 +1,13 @@
+<button
+  type='button'
+  class='theme-toggle'
+  title='{{if this.theme.isDark "Switch to light mode" "Switch to dark mode"}}'
+  aria-label='{{if this.theme.isDark "Switch to light mode" "Switch to dark mode"}}'
+  {{on 'click' this.toggle}}
+>
+  {{#if this.theme.isDark}}
+    {{svg-jar 'sun-outline' height=18 width=18}}
+  {{else}}
+    {{svg-jar 'moon-outline' height=18 width=18}}
+  {{/if}}
+</button>

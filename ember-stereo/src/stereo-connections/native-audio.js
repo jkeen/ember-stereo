@@ -1,9 +1,10 @@
-import { tracked, cached } from '@glimmer/tracking';
-import { A } from '@ember/array';
+import { tracked } from '@glimmer/tracking';
 import { run } from '@ember/runloop';
 import { isTesting, macroCondition } from '@embroider/macros';
 import { task, timeout, didCancel } from 'ember-concurrency';
 import BaseSound from './base';
+import isSameAudio from '../-private/utils/is-same-audio';
+import MediaLength from '../-private/utils/media-length';
 // These are the events we're watching for
 const AUDIO_EVENTS = [
   'loadstart',
@@ -15,6 +16,7 @@ const AUDIO_EVENTS = [
   'canplaythrough',
   'error',
   'playing',
+  'waiting',
   'pause',
   'ended',
   'seeking',
@@ -22,6 +24,8 @@ const AUDIO_EVENTS = [
   'emptied',
   'timeupdate',
 ];
+
+const DURATION_SAMPLE_MS = 250;
 
 // Ready state values
 // const HAVE_NOTHING = 0;
@@ -38,7 +42,11 @@ const HAVE_CURRENT_DATA = 2;
  * @constructor
  */
 export default class NativeAudio extends BaseSound {
-  @tracked _internalElement;
+  static key = 'NativeAudio';
+
+  static toString() {
+    return 'Native Audio';
+  }
 
   static canPlayMimeType(mimeType) {
     let audio = new Audio();
@@ -46,10 +54,9 @@ export default class NativeAudio extends BaseSound {
     return audio.canPlayType(mimeType) !== '';
   }
 
-  static key = 'NativeAudio';
-  static toString() {
-    return 'Native Audio';
-  }
+  @tracked _internalElement;
+
+  _mediaLength = new MediaLength({ sampleMs: DURATION_SAMPLE_MS });
 
   setup() {
     let audio = this.requestControl();
@@ -62,7 +69,9 @@ export default class NativeAudio extends BaseSound {
     }
 
     if (this.options?.xhr) {
-      this.debug('xhr options are not supported in NativeAudio, ignoring and trying to load anyway')
+      this.debug(
+        'xhr options are not supported in NativeAudio, ignoring and trying to load anyway'
+      );
       audio.load();
     } else {
       audio.load();
@@ -70,19 +79,35 @@ export default class NativeAudio extends BaseSound {
   }
 
   _registerEvents(audio) {
+    // Not a class field, because setup() runs from BaseSound's constructor before subclass field initializers.
+    this._audioEventHandlers = {};
     AUDIO_EVENTS.forEach((eventName) => {
-      audio.addEventListener(eventName, (e) =>
-        run(() => this._handleAudioEvent(eventName, e))
-      );
+      let handler = (e) => run(() => this._handleAudioEvent(eventName, e));
+      this._audioEventHandlers[eventName] = handler;
+      audio.addEventListener(eventName, handler);
     });
   }
 
   _unregisterEvents(audio) {
-    AUDIO_EVENTS.forEach((eventName) => audio.removeEventListener(eventName));
+    // A single-arg removeEventListener throws in real browsers, aborting teardown.
+    let handlers = this._audioEventHandlers;
+    if (!handlers) {
+      return;
+    }
+    AUDIO_EVENTS.forEach((eventName) => {
+      let handler = handlers[eventName];
+      if (handler) {
+        audio.removeEventListener(eventName, handler);
+      }
+    });
+    this._audioEventHandlers = {};
   }
 
   _handleAudioEvent(eventName, e) {
-    if (!this.urlsAreEqual(e.target?.src, this.url) && e.target?.src !== '') {
+    if (
+      !isSameAudio(e.target?.src, this.url, { exact: true }) &&
+      e.target?.src !== ''
+    ) {
       // This event is not for us if our srcs aren't equal
 
       // but if the target src is empty it means we've been stopped and in
@@ -110,21 +135,20 @@ export default class NativeAudio extends BaseSound {
         break;
       case 'onloadedmetadata':
         this._onAudioDurationChanged();
-        this.duration = this._audioDuration();
+        this.duration = this._resolveDuration();
         break;
       case 'playing':
         this._onAudioPlayed();
         break;
-      // the emptied event is triggered by our more reliable stream pause method
-      case 'emptied':
-        this._onAudioEmptied();
+      case 'waiting':
+        this._onAudioWaiting();
         break;
       case 'pause':
         this._onAudioPaused();
         break;
       case 'durationchange':
         this._onAudioDurationChanged();
-        this.duration = this._audioDuration();
+        this.duration = this._resolveDuration();
         break;
       case 'ended':
         this._onAudioEnded();
@@ -140,127 +164,39 @@ export default class NativeAudio extends BaseSound {
     }
   }
 
-  get audioElement() {
-    // If we have control, return the shared element
-    // if we don't have control, return the internal cloned element
-
-    let sharedAudioAccess = this.sharedAudioAccess;
-    if (sharedAudioAccess && sharedAudioAccess.hasControl(this)) {
-      return sharedAudioAccess.audioElement;
-    }
-
-    return this.internalElement;
-  }
-
-  get internalElement() {
-    if (!this._internalElement) {
-      this._internalElement = document.createElement('audio');
-      this._internalElement.setAttribute('preload', 'metadata');
-      this._internalElement.setAttribute('crossorigin', 'anonymous');
-    }
-
-    return this._internalElement;
-  }
-
-  releaseControl() {
-    if (!this.sharedAudioAccess) {
-      return;
-    }
-
-    // Send a pause event to ensure playback status is updated correctly.
-    // If this doesn't happen, the audio can get stuck in a playing state,
-    // even though it's not playing. https://github.com/jkeen/ember-stereo/issues/22
-    this._onAudioPaused(this);
-
-    this.sharedAudioAccess.releaseControl(this);
-    // save current state of audio element to the internal element that won't be played
-    this._saveState(this.sharedAudioAccess.audioElement);
-  }
-
-  _saveState(audio) {
-    this.debug('Saving audio state');
-
-    this.internalElement.src = audio.src;
-
-    try {
-      this.internalElement.currentTime = audio.currentTime;
-    } catch (e) {
-      this.debug('Errored while trying to save audio current time');
-      this.debug(e);
-    }
-
-    this.internalElement.volume = audio.volume;
-    this.debug('Saved audio state');
-  }
-
-  requestControl() {
-    if (this.sharedAudioAccess) {
-      return this.sharedAudioAccess.requestControl(this);
-    } else {
-      return this.audioElement;
-    }
-  }
-
-  restoreState() {
-    let sharedElement = this.audioElement;
-    let internalElement = this.internalElement;
-
-    if (this.sharedAudioAccess && internalElement) {
-      this.debug('Restoring audio state…');
-      try {
-        // restore the state of the shared element from the dummy element
-        if (internalElement.currentTime) {
-          sharedElement.currentTime = internalElement.currentTime;
-        }
-        if (internalElement.volume) {
-          sharedElement.volume = internalElement.volume;
-        }
-        this.debug('Restored audio state');
-      } catch (e) {
-        this.debug('Errored while trying to restore audio state');
-        this.debug(e);
-      }
-    }
-  }
-
-  _onAudioProgress() {
-    if (!this.isStream) {
-      this.trigger('audio-loading', {
-        sound: this,
-        ...this._calculatePercentLoaded(),
-      });
-    }
-  }
-
-  _onPositionChange() {
-    if (!this.isStream) {
-      this.trigger('audio-position-changed', {
-        sound: this,
-        position: this.position,
-      });
-    }
-  }
-
-  _onAudioDurationChanged() {
-    this.trigger('audio-duration-changed', {
-      sound: this,
-      duration: this._audioDuration(),
-    });
+  _onAudioReady() {
+    this.debug('triggering audio ready');
+    this.trigger('audio-ready', { sound: this });
+    this.trigger('audio-loaded', { sound: this });
   }
 
   _onAudioPlayed() {
     if (!this.isPlaying) {
       this.trigger('audio-played', { sound: this });
-      this.durationWorkaroundTask.perform().catch((e) => {
-        if (!didCancel(e)) {
-          console.error(e);
-        }
-      });
+      this._mediaLength.watchTask
+        .perform({
+          durationMs: () => this.audioElement?.duration * 1000,
+          isPlaying: () => this.isPlaying,
+          onReclassified: () => (this.duration = this._resolveDuration()),
+        })
+        .catch((e) => {
+          if (!didCancel(e)) {
+            console.error(e);
+          }
+        });
     }
+  }
+
+  _onAudioPaused() {
+    this.trigger('audio-paused', { sound: this });
   }
 
   _onAudioEnded() {
     this.trigger('audio-ended', { sound: this });
+  }
+
+  _onAudioWaiting() {
+    this.isLoading = true;
   }
 
   _onAudioError(error) {
@@ -300,56 +236,251 @@ export default class NativeAudio extends BaseSound {
     }
   }
 
-  _onAudioEmptied() {
-    this.trigger('audio-paused', { sound: this });
+  _onAudioProgress() {
+    if (!this.isStream) {
+      this.trigger('audio-loading', {
+        sound: this,
+        ...this._calculatePercentLoaded(),
+      });
+    }
   }
 
-  _onAudioPaused() {
-    this.trigger('audio-paused', { sound: this });
+  _onPositionChange() {
+    if (!this.isStream) {
+      this.trigger('audio-position-changed', {
+        sound: this,
+        position: this.position,
+      });
+    }
   }
 
-  _onAudioReady() {
-    this.debug('triggering audio ready');
-    this.trigger('audio-ready', { sound: this });
-    this.trigger('audio-loaded', { sound: this });
+  _onAudioDurationChanged() {
+    this.trigger('audio-duration-changed', {
+      sound: this,
+      duration: this._resolveDuration(),
+    });
+  }
+
+  _playTask = task({ restartable: true }, async ({ position }) => {
+    this.isLoading = true;
+    this.isBlocked = false;
+    this._stopStreamAfterGraceTask.cancelAll();
+
+    let audio = this.requestControl();
+
+    if (this.isStream && this._streamConnectionIsWarm(audio)) {
+      this._seekToLiveEdge(audio);
+    } else {
+      // pause clears the `src` attr for streams, so restore it here
+      this._loadAudio(audio);
+      this._restoreState();
+    }
+
+    if (typeof position !== 'undefined') {
+      this._setPosition(position);
+    }
+
+    this.debug('telling audio to play');
+    try {
+      await audio.play().catch((e) => {
+        throw e;
+      });
+    } catch (e) {
+      this._onAudioError(e);
+    } finally {
+      this.isLoading = false;
+    }
+  });
+
+  _loadAudio(audio) {
+    this.defeatBrowserCaching();
+    if (!isSameAudio(audio.src, this.url, { exact: true })) {
+      audio.setAttribute('src', this.url);
+      audio.load();
+      this._mediaLength.sourceReloaded();
+    }
+  }
+
+  defeatBrowserCaching() {
+    // https://stackoverflow.com/questions/65740471/html-audio-internet-stream-caching-issue
+    // Sometimes the browser can cache streams and when trying to play the stream live
+    // after having it paused it will interleave the old cached version and the current live version
+    // in an schizophrenically bonkers way. This appends a #timestamp to the end of the url in a way
+    // that should overcome that
+
+    if (this.isStream) {
+      let a = document.createElement('a');
+      a.href = this.url;
+      a.hash = new Date().getTime();
+      this.url = a.href;
+    }
+  }
+
+  _streamConnectionIsWarm(audio) {
+    return !!audio?.src && isSameAudio(audio.src, this.url, { exact: true });
+  }
+
+  _seekToLiveEdge(audio) {
+    try {
+      if (audio.seekable?.length) {
+        audio.currentTime = audio.seekable.end(audio.seekable.length - 1);
+      }
+    } catch (e) {
+      this.debug('could not seek to the live edge, playing from where we are');
+    }
   }
 
   _calculatePercentLoaded() {
-    let audio = this.audioElement;
+    let ranges = this.audioElement?.buffered;
+    if (!ranges?.length) {
+      return {};
+    }
 
-    if (audio && audio.buffered && audio.buffered.length) {
-      let ranges = audio.buffered;
-      let totals = [];
-      for (var index = 0; index < ranges.length; index++) {
-        totals.push(ranges.end(index) - ranges.start(index));
-      }
+    let bufferedMs = 0;
+    for (let index = 0; index < ranges.length; index++) {
+      bufferedMs += (ranges.end(index) - ranges.start(index)) * 1000;
+    }
 
-      let total = A(totals).reduce((a, b) => a + b, 0);
+    let durationMs = this._audioDuration();
+    this.debug(`buffered ${Math.round(bufferedMs)}ms of ${durationMs}ms`);
 
-      this.debug(`ms loaded: ${total * 1000}`);
-      this.debug(`duration: ${this._audioDuration()}`);
-      this.debug(`percent loaded = ${(total / audio.duration) * 100}`);
+    // A live source has no length to be a fraction of.
+    if (!Number.isFinite(durationMs) || durationMs <= 0) {
+      return {};
+    }
 
-      return { percentLoaded: total / audio.duration };
+    return { percentLoaded: bufferedMs / durationMs };
+  }
+
+  _stopStreamAfterGraceTask = task({ restartable: true }, async (graceMs) => {
+    await timeout(graceMs);
+
+    if (!this._stillOwnsSharedElement) {
+      this.debug('grace period expired but we no longer own the element');
+      return;
+    }
+
+    this.debug('stream pause grace period expired, stopping');
+    this.stop();
+  });
+
+  get audioElement() {
+    // If we have control, return the shared element
+    // if we don't have control, return the internal cloned element
+
+    let sharedAudioAccess = this.sharedAudioAccess;
+    if (sharedAudioAccess && sharedAudioAccess.hasControl(this)) {
+      return sharedAudioAccess.audioElement;
+    }
+
+    return this.internalElement;
+  }
+
+  get internalElement() {
+    if (!this._internalElement) {
+      this._internalElement = document.createElement('audio');
+      this._internalElement.setAttribute('preload', 'metadata');
+      this._internalElement.setAttribute('crossorigin', 'anonymous');
+    }
+
+    return this._internalElement;
+  }
+
+  requestControl() {
+    if (this.sharedAudioAccess) {
+      return this.sharedAudioAccess.requestControl(this);
     } else {
-      return 0;
+      return this.audioElement;
     }
   }
 
-  /* Public interface */
+  releaseControl() {
+    if (!this.sharedAudioAccess) {
+      return;
+    }
 
-  _durationHistory = [];
+    this._stopStreamAfterGraceTask.cancelAll();
+
+    // Send a pause event to ensure playback status is updated correctly.
+    // If this doesn't happen, the audio can get stuck in a playing state,
+    // even though it's not playing. https://github.com/jkeen/ember-stereo/issues/22
+    this._onAudioPaused(this);
+
+    this.sharedAudioAccess.releaseControl(this);
+    // save current state of audio element to the internal element that won't be played
+    this._saveState(this.sharedAudioAccess.audioElement);
+  }
+
+  _saveState(audio) {
+    this.debug('Saving audio state');
+
+    this.internalElement.src = audio.src;
+
+    try {
+      this.internalElement.currentTime = audio.currentTime;
+    } catch (e) {
+      this.debug('Errored while trying to save audio current time');
+      this.debug(e);
+    }
+
+    this.internalElement.volume = audio.volume;
+    this.debug('Saved audio state');
+  }
+
+  _restoreState() {
+    let sharedElement = this.audioElement;
+    let internalElement = this.internalElement;
+
+    if (this.sharedAudioAccess && internalElement) {
+      this.debug('Restoring audio state…');
+      try {
+        // restore the state of the shared element from the dummy element
+        if (internalElement.currentTime) {
+          sharedElement.currentTime = internalElement.currentTime;
+        }
+        if (internalElement.volume) {
+          sharedElement.volume = internalElement.volume;
+        }
+        this.debug('Restored audio state');
+      } catch (e) {
+        this.debug('Errored while trying to restore audio state');
+        this.debug(e);
+      }
+    }
+  }
+
+  get _stillOwnsSharedElement() {
+    return !this.sharedAudioAccess || this.sharedAudioAccess.hasControl(this);
+  }
+
+  get _measuredSeekable() {
+    return this._seekableWindowMs > 0 || super._measuredSeekable;
+  }
+
+  get _seekableWindowMs() {
+    let audio = this.audioElement;
+    return this._mediaLength.seekableWindowMs({
+      elementDurationMs: audio?.duration * 1000,
+      seekable: audio?.seekable,
+    });
+  }
+
+  get _probablyAStream() {
+    return this._mediaLength.isLive;
+  }
+
+  adoptKnownStream(isStream) {
+    if (isStream) {
+      this._mediaLength.assumeLive();
+    }
+  }
 
   _audioDuration() {
     let audio = this.audioElement;
-    if (audio.duration > 172800000 || this.probablyAStream) {
-      // if audio is longer than 3 days in milliseconds,
-      // assume it's a stream, and set duration to infinity as it should be
-      // this is a bug in Opera and was reported on 5/25/2017
-
-      return Infinity;
-    }
-    return audio.duration * 1000;
+    return this._mediaLength.estimate({
+      elementDurationMs: audio?.duration * 1000,
+      seekable: audio?.seekable,
+    });
   }
 
   _currentPosition() {
@@ -381,65 +512,52 @@ export default class NativeAudio extends BaseSound {
     }
   }
 
-  // Some files that don't have an obvious mime-type/extension won't return Infinity for their duration
-  // despite it being a stream. Instead the duration will continue to increase as the file plays. This method
-  // samples the duration of the element and if it doesn't change durations for a while we know it's not a stream
-
-  @cached
-  get probablyAStream() {
-    let differences = this._durationHistory.reduce(
-      (val, cur, index, original) => [
-        ...val,
-        index === 0 ? 0 : original[index] - original[index - 1],
-      ],
-      []
-    );
-    return differences.filter((d) => d === 0).length !== differences.length;
+  play({ position } = {}) {
+    return this._playTask.perform({ position });
   }
 
-  @tracked _durationHistory = [];
-
-  durationWorkaroundTask = task({ restartable: true }, async () => {
+  pause() {
+    this.debug('#pause');
     let audio = this.audioElement;
+    audio.pause();
 
-    if (macroCondition(isTesting())) {
-      this._durationHistory = [0, 0, 0];
+    if (!this.isStream) {
+      this.debug('paused a recording, so the element keeps its media');
+      return;
+    }
+
+    let grace = this.options?.streamPauseGraceMs ?? 0;
+
+    if (!grace) {
+      this.debug('no grace period, stopping the stream now');
+      this.stop(); // we don't want the stream to continue loading while paused
+    } else if (grace === Infinity) {
+      this.debug('holding this stream open until something stops it');
     } else {
-      while (this.isPlaying) {
-        let duration = audio.duration * 1000;
-        this._durationHistory = this._durationHistory.slice(-20); // only keep last 20 items
-        this._durationHistory.push(duration);
-
-        await timeout(250);
-      }
-    }
-  });
-
-  playTask = task({ restartable: true }, async ({ position }) => {
-    this.isLoading = true;
-    this.isBlocked = false;
-
-    let audio = this.requestControl();
-
-    // since we clear the `src` attr on pause for streams, restore it here
-    this.loadAudio(audio);
-    this.restoreState();
-
-    if (typeof position !== 'undefined') {
-      this._setPosition(position);
-    }
-
-    this.debug('telling audio to play');
-    try {
-      await audio.play().catch((e) => {
-        throw e;
+      this.debug(`holding this stream open for ${grace}ms`);
+      this._stopStreamAfterGraceTask.perform(grace).catch((e) => {
+        if (!didCancel(e)) {
+          console.error(e);
+        }
       });
-    } catch (e) {
-      this._onAudioError(e);
-    } finally {
-      this.isLoading = false;
     }
-  });
+  }
+
+  stop() {
+    this.debug('#stop');
+    let audio = this.audioElement;
+    this._stopStreamAfterGraceTask.cancelAll();
+    audio.pause();
+
+    // calling pause halts playback but does not stop downloading streaming
+    // media. this is the method recommended by MDN: https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/Using_HTML5_audio_and_video#Stopping_the_download_of_media
+    audio.removeAttribute('src');
+    audio.load();
+    this._mediaLength.sourceReloaded();
+
+    // load() discards the pause event audio.pause() just queued.
+    this._onAudioPaused();
+  }
 
   get shouldRetry() {
     return this.retryCount < 1;
@@ -448,77 +566,17 @@ export default class NativeAudio extends BaseSound {
   retry() {
     this.debug(`retrying load with crossorigin not set`);
     this.audioElement.removeAttribute('crossorigin');
+    this._mediaLength.sourceReloaded();
 
     this.retryCount = this.retryCount + 1;
     this.audioElement.src = this.url;
     this.audioElement.load();
   }
 
-  play({ position } = {}) {
-    return this.playTask.perform({ position });
-  }
-
-  pause() {
-    this.debug('#pause');
-    let audio = this.audioElement;
-
-    if (this.isStream) {
-      this.stop(); // we don't want the stream to continue loading while paused
-    } else {
-      audio.pause();
-    }
-  }
-
-  stop() {
-    this.debug('#stop');
-    let audio = this.audioElement;
-    audio.pause();
-
-    // calling pause halts playback but does not stop downloading streaming
-    // media. this is the method recommended by MDN: https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/Using_HTML5_audio_and_video#Stopping_the_download_of_media
-    // NOTE: this fires an `'emptied'` event, which we treat the same way as `'pause'`
-    audio.removeAttribute('src');
-    audio.load();
-  }
-
-  loadAudio(audio) {
-    this.defeatBrowserCaching();
-    if (!this.urlsAreEqual(audio.src, this.url)) {
-      audio.setAttribute('src', this.url);
-      audio.load();
-    }
-  }
-
-  defeatBrowserCaching() {
-    // https://stackoverflow.com/questions/65740471/html-audio-internet-stream-caching-issue
-    // Sometimes the browser can cache streams and when trying to play the stream live
-    // after having it paused it will interleave the old cached version and the current live version
-    // in an schizophrenically bonkers way. This appends a #timestamp to the end of the url in a way
-    // that should overcome that
-
-    if (this.isStream) {
-      let a = document.createElement('a');
-      a.href = this.url;
-      a.hash = new Date().getTime();
-      this.url = a.href;
-    }
-  }
-
-  urlsAreEqual(url1, url2) {
-    // GOTCHA: audio.src is a fully qualified URL, and this.url may be a relative url
-    // So when comparing, make sure we're dealing in absolutes
-
-    let parser1 = document.createElement('a');
-    let parser2 = document.createElement('a');
-    parser1.href = url1;
-    parser2.href = url2;
-
-    return parser1.href === parser2.href;
-  }
-
   teardown() {
     let audio = this.requestControl();
-    this.durationWorkaroundTask.cancelAll();
+    this._mediaLength.watchTask.cancelAll();
+    this._stopStreamAfterGraceTask.cancelAll();
     this.trigger('_will_destroy', { sound: this });
     this._unregisterEvents(audio);
     super.teardown();

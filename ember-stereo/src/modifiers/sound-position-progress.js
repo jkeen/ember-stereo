@@ -7,7 +7,7 @@
  *
   @class {{sound-position-progress}}
   @type Modifier
-  @param {Any} identifier url, urls, url objects, promise that resolves to a url
+  @param {Any} identifier a url, an array of urls, a url object, a Sound, or a promise resolving to any of those
   @param {Integer} position
   @param {Integer} duration
 */
@@ -16,26 +16,20 @@ import { service } from '@ember/service';
 import Modifier from 'ember-modifier';
 import debug from 'debug';
 
-import {
-  task,
-  waitForProperty,
-  waitForEvent,
-  timeout,
-  race,
-} from 'ember-concurrency';
+import { task, waitForEvent, race } from 'ember-concurrency';
 
 export default class SoundPositionProgressModifier extends Modifier {
   @service stereo;
   element = null;
   identifier = null;
 
-  get loadedSound() {
-    return this.stereo.findLoadedSound(this.identifier);
+  get sound() {
+    return this.stereo.findSound(this.identifier);
   }
 
   modifyPosition({ sound, position, duration }) {
     let dur = duration || sound?.duration || 1;
-    let pos = position || sound?.position || 0;
+    let pos = position ?? sound?.position ?? 0;
 
     let percent = Math.max(0, Math.min((pos / dur) * 100, 100));
 
@@ -44,8 +38,6 @@ export default class SoundPositionProgressModifier extends Modifier {
   }
 
   modify(element, [identifier], options) {
-    this.options = options;
-
     if (this.identifier != identifier) {
       this.identifier = identifier;
     }
@@ -53,7 +45,7 @@ export default class SoundPositionProgressModifier extends Modifier {
       this.element = element;
       this.element.setAttribute('data-sound-position-progress', true);
       this.modifyPosition({
-        sound: this.loadedSound,
+        sound: this.sound,
         position: options?.position,
         duration: options?.duration,
       });
@@ -71,45 +63,23 @@ export default class SoundPositionProgressModifier extends Modifier {
     }
   }
 
-  watchPositionTask = task(async () => {
+  watchPositionTask = task({ restartable: true }, async () => {
+    let sound = this.sound;
+
+    // ember-concurrency fast-forwards timeout() in tests, so a timeout-driven loop would never go idle.
+    this.modifyPosition({ sound });
+
     // eslint-disable-next-line no-constant-condition
     while (true) {
-      await waitForProperty(this, 'loadedSound', (v) => v);
-      let position = this.loadedSound?.position;
-      await timeout(100);
+      let event = await race([
+        waitForEvent(sound, 'audio-position-will-change'),
+        waitForEvent(sound, 'audio-position-changed'),
+      ]);
 
-      if (this.loadedSound) {
-        let result = await race([
-          waitForEvent(this.loadedSound, 'audio-position-will-change').then(
-            (event) => {
-              this.modifyPosition({
-                sound: this.loadedSound,
-                position: event.newPosition, // Set the position from the will-change event
-              });
-              return { ...event, willChange: true }; // Indicate that will-change event fired
-            }
-          ),
-          waitForEvent(this.loadedSound, 'audio-position-changed'),
-          waitForProperty(
-            this,
-            'loadedSound',
-            (sound) => sound?.position != position
-          ),
-        ]);
-
-        if (result?.willChange) {
-          // If audio-position-will-change was the event, wait for a delay before letting the sound update again
-        } else if (result?.sound) {
-          // Handle audio-position-changed or other position updates
-          this.modifyPosition({
-            sound: result.sound,
-            position: result?.newPosition,
-          });
-        } else if (this.loadedSound) {
-          // Fallback to update the position based on the current sound
-          this.modifyPosition({ sound: this.loadedSound });
-        }
-      }
+      this.modifyPosition({
+        sound,
+        position: event?.newPosition ?? event?.position,
+      });
     }
   });
 }

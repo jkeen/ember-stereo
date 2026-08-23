@@ -8,15 +8,12 @@ this.stereo.on('audio-played', ({ sound }) => {
   console.log(`${sound.url} started playing`);
 });
 
-let sound = await this.stereo.findSound(this.url);
-if (sound) {
-  // sound is loaded
-  sound.on('audio-ended', ({ sound }) => {
-    this.sendEvent('finished-listening', {
-      episodeId: sound.metadata.episodeId,
-    });
+let sound = this.stereo.findSound(this.url);
+sound.on('audio-ended', ({ sound }) => {
+  this.sendEvent('finished-listening', {
+    episodeId: sound.metadata.episodeId,
   });
-}
+});
 
 this.stereo.on('current-sound-interrupted', ({ sound }) => {
   this.sendEvent('quit-listening', {
@@ -26,9 +23,11 @@ this.stereo.on('current-sound-interrupted', ({ sound }) => {
 });
 ```
 
+`findSound` returns immediately, so you can attach listeners before the sound has loaded.
+
 ### Example
 
-Here's a long audio file, play around with it and see the events that are triggered below. Clicking on the event will put it in your javascript console.
+Play around with this one and watch the events fire below. Clicking an event puts it in your javascript console.
 
 <Docs::StereoPlayer @identifier="/sounds/internet-on-computers.mp3" />
 <Docs::EventDisplay @url="/sounds/internet-on-computers.mp3" />
@@ -43,6 +42,10 @@ Here's a long audio file, play around with it and see the events that are trigge
 - `audio-will-rewind` ({sound, currentPosition, newPosition}) - fired before rewinding a sound
 - `audio-will-fast-forward` ({sound, currentPosition, newPosition}) - fired before fast-forwarding a sound
 - `audio-position-will-change` ({sound, currentPosition, newPosition}) - fired before audio position change
+- `audio-loading` ({ sound }) - the sound started loading
+- `audio-blocked` ({ sound }) - the browser blocked autoplay, so user input is needed
+- `audio-duration-changed` ({ sound }) - the sound's duration changed
+- `audio-metadata-changed` ({ old, new, sound }) - the sound's metadata was replaced
 - `audio-position-changed` ({sound}) - the playing sound's position moved. Polled about every 50ms while the page is visible, and every 250ms while it's hidden, since nothing is painting then. It fires only when the position actually changes, so a paused or stalled sound is quiet.
 
 ### Stereo service-only events
@@ -51,3 +54,14 @@ Here's a long audio file, play around with it and see the events that are trigge
 - `current-sound-interrupted` ({sound, previousSound}) - triggered when a sound has been playing and a new one takes its place by being played, pausing the first one
 - `new-load-request` ({loadPromise, urlsOrPromise, options}) - triggered whenever `.load` or `.play` is called.
 - `pre-load` (urlsToTry) - triggered whenever `.load` or `.play` is called.
+- `volume-change` (volume) - the service volume was set
+- `playback-speed-change` (speed) - the service playback speed was set
+
+### Casting events
+
+These fire as casting connects and disconnects. See [Casting](/docs/casting).
+
+- `audio-cast-availability-changed` - a cast device appeared or disappeared
+- `audio-cast-connecting` - connecting to a device
+- `audio-cast-connected` - audio is now playing on the device
+- `audio-cast-disconnected` - playback returned to the local device

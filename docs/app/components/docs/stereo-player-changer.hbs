@@ -1,3 +1,12 @@
-<Docs::StereoPlayerModifiers @identifier={{this.identifier}} />
+<div class='flex flex-wrap gap-2 mb-2'>
+  {{#each @sounds as |sound|}}
+    <button
+      type='button'
+      class='preset-chip'
+      aria-pressed='{{if (eq sound.url this.identifier) "true" "false"}}'
+      {{on 'click' (fn this.select sound.url)}}
+    >{{sound.title}}</button>
+  {{/each}}
+</div>
 
-<button type='button' {{on 'click' this.pickNextIdentifier}}>Next</button>
+<Docs::StereoPlayerModifiers @identifier={{this.identifier}} />

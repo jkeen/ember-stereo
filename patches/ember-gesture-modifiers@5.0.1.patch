@@ -1,0 +1,9 @@
+diff --git a/package.json b/package.json
+index 0000000..1111111 100644
+--- a/package.json
++++ b/package.json
+@@ -71,3 +71,4 @@
+   "peerDependencies": {
++    "@ember/test-helpers": "*",
+     "ember-source": ">=3.28.0"
+   },

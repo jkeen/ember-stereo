@@ -1,0 +1,12 @@
+{{#if (eq this.supportedKind 'airplay')}}
+  <Docs::CurrentBrowser /> supports <strong>AirPlay</strong>. The button below
+  lights up once an AirPlay receiver is on your network.
+{{else if (eq this.supportedKind 'chromecast')}}
+  <Docs::CurrentBrowser /> supports <strong>Chromecast</strong>. The button
+  below lights up once a Chromecast is on your network.
+{{else}}
+  <Docs::CurrentBrowser /> has <strong>no casting support</strong>. Neither
+  AirPlay nor Chromecast is available here, so the button below stays disabled
+  no matter what is on your network. Try Safari for AirPlay, or Chrome for
+  Chromecast.
+{{/if}}

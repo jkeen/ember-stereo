@@ -1,8 +1,12 @@
 import { module, test, skip } from 'qunit';
 import { setupTest } from 'ember-qunit';
+import { waitUntil } from '@ember/test-helpers';
 import sinon from 'sinon';
 import SharedAudioAccess from 'ember-stereo/-private/utils/shared-audio-access';
 import NativeAudio from 'ember-stereo/stereo-connections/native-audio';
+import MediaLength, {
+  durationGrowsWithTheClock,
+} from 'ember-stereo/-private/utils/media-length';
 import setupCustomAssertions from 'ember-cli-custom-assertions/test-support';
 import { setupStereoTest } from 'ember-stereo/test-support/stereo-setup';
 const goodUrl = '/good/1000/good.aac';
@@ -74,15 +78,42 @@ module('Unit | Connection | Native Audio', function (hooks) {
     );
   });
 
-  test("If it's a stream, we stop on pause", async function (assert) {
+  test("If it's a stream and the app asked for no grace period, we stop on pause", async function (assert) {
     stereo.useSharedAudioAccess = true;
 
     let sharedAudioAccess = new SharedAudioAccess().unlock();
 
-    let { sound } = await stereo.load(
-      '/good/stream/stream.aac',
+    let { connection: sound } = await stereo.load('/good/stream/stream.aac', {
       sharedAudioAccess,
+    });
+
+    let stopSpy = sinon.spy(sound, 'stop');
+    let loadSpy = sinon.spy(
+      sound.sharedAudioAccess.requestControl(sound),
+      'load',
     );
+
+    await sound.play();
+    sound.pause();
+
+    assert.strictEqual(
+      sound.audioElement.src,
+      null,
+      'audio src attribute is not set',
+    );
+    assert.ok(loadSpy.callCount > 0, 'load was called');
+    assert.strictEqual(stopSpy.callCount, 1, 'stop was called');
+  });
+
+  test('A stream given a grace period holds its connection open on pause, then stops', async function (assert) {
+    stereo.useSharedAudioAccess = true;
+
+    let sharedAudioAccess = new SharedAudioAccess().unlock();
+
+    let { connection: sound } = await stereo.load('/good/stream/stream.aac', {
+      sharedAudioAccess,
+      streamPauseGraceMs: 10,
+    });
 
     let stopSpy = sinon.spy(sound, 'stop');
     let loadSpy = sinon.spy(
@@ -102,17 +133,58 @@ module('Unit | Connection | Native Audio', function (hooks) {
 
     sound.pause();
 
+    assert.strictEqual(stopSpy.callCount, 0, 'stop was not called immediately');
+    assert.equalUrls(
+      sound.audioElement.src,
+      '/good/stream/stream.aac',
+      'audio src attribute is still set',
+    );
+
+    await waitUntil(() => stopSpy.callCount === 1);
+
     assert.strictEqual(
       sound.audioElement.src,
       null,
-      'audio src attribute is not set',
+      'audio src attribute is not set once the grace period expires',
     );
     assert.ok(loadSpy.callCount > 0, 'load was called');
-    assert.strictEqual(stopSpy.callCount, 1, 'stop was called');
+  });
+
+  test('Replaying a stream inside the grace period rejoins it instead of reconnecting', async function (assert) {
+    stereo.useSharedAudioAccess = true;
+
+    let sharedAudioAccess = new SharedAudioAccess().unlock();
+
+    let { connection: sound } = await stereo.load('/good/stream/stream.aac', {
+      sharedAudioAccess,
+      streamPauseGraceMs: 10000,
+    });
+
+    await sound.play();
+    let loadSpy = sinon.spy(
+      sound.sharedAudioAccess.requestControl(sound),
+      'load',
+    );
+
+    sound.pause();
+    await sound.play();
+
+    assert.strictEqual(
+      loadSpy.callCount,
+      0,
+      'the element was not reloaded — the open connection was reused',
+    );
+    assert.equalUrls(
+      sound.audioElement.src,
+      '/good/stream/stream.aac',
+      'audio src attribute is still set',
+    );
   });
 
   test("Don't fire audio-played events on position changes", async function (assert) {
-    let { sound } = await stereo.load('/good/1000/position-changes.mp3');
+    let { connection: sound } = await stereo.load(
+      '/good/1000/position-changes.mp3',
+    );
 
     let count = 0;
     sound.one('audio-played', function () {
@@ -135,7 +207,7 @@ module('Unit | Connection | Native Audio', function (hooks) {
 
   test('stopping an audio stream still sends the pause event', async function (assert) {
     stereo.useSharedAudioAccess = true;
-    let { sound } = await stereo.load('/good/stream/stream.mp3');
+    let { connection: sound } = await stereo.load('/good/stream/stream.mp3');
 
     sound.one('audio-paused', function () {
       assert.ok('pause event was fired');
@@ -155,7 +227,7 @@ module('Unit | Connection | Native Audio', function (hooks) {
     stereo.useSharedAudioAccess = true;
     let goodUrl = '/good/1000/shared-good.aac';
 
-    let { sound } = await stereo.load(goodUrl);
+    let { connection: sound } = await stereo.load(goodUrl);
 
     sound.one('audio-ended', () => assert.ok('ended was called'));
     await sound.play();
@@ -191,7 +263,7 @@ module('Unit | Connection | Native Audio', function (hooks) {
 
   test('can play an mp3 twice in a row using internal element', async function (assert) {
     stereo.useSharedAudioAccess = false;
-    let { sound } = await stereo.load('/good/1000/good.aac');
+    let { connection: sound } = await stereo.load('/good/1000/good.aac');
 
     sound.one('audio-ended', () => assert.ok('ended was called'));
     await sound.play();
@@ -217,8 +289,8 @@ module('Unit | Connection | Native Audio', function (hooks) {
 
     let url1 = '/good/1000/silence.mp3';
     let url2 = '/good/2000/silence2.mp3';
-    let { sound: sound1 } = await stereo.load(url1);
-    let { sound: sound2 } = await stereo.load(url2);
+    let { connection: sound1 } = await stereo.load(url1);
+    let { connection: sound2 } = await stereo.load(url2);
 
     sound1.position = 200;
     sound1.play(); // sound 1 has control
@@ -311,8 +383,8 @@ module('Unit | Connection | Native Audio', function (hooks) {
 
     let url1 = '/good/1000/control-3.mp3';
     let url2 = '/good/2000/control-4.mp3';
-    let { sound: sound1 } = await stereo.load(url1);
-    let { sound: sound2 } = await stereo.load(url2);
+    let { connection: sound1 } = await stereo.load(url1);
+    let { connection: sound2 } = await stereo.load(url2);
 
     sinon.stub(sound1, 'debug');
     sinon.stub(sound2, 'debug');
@@ -332,11 +404,11 @@ module('Unit | Connection | Native Audio', function (hooks) {
     let url1 = '/good/5000/silence.mp3';
     let url2 = '/good/5000/silence2.mp3';
 
-    let { sound: sound1 } = await stereo.load(url1, {
+    let { connection: sound1 } = await stereo.load(url1, {
       sharedAudioAccess,
       useConnections: ['NativeAudio'],
     });
-    let { sound: sound2 } = await stereo.load(url2, {
+    let { connection: sound2 } = await stereo.load(url2, {
       sharedAudioAccess,
       useConnections: ['NativeAudio'],
     });
@@ -353,7 +425,7 @@ module('Unit | Connection | Native Audio', function (hooks) {
     let stereo = this.owner.lookup('service:stereo');
     let url1 = '/good/5000/silence.mp3';
 
-    let { sound: sound1 } = await stereo.load(url1, {
+    let { connection: sound1 } = await stereo.load(url1, {
       silenceErrors: true,
       useConnections: ['NativeAudio'],
     });
@@ -370,10 +442,10 @@ module('Unit | Connection | Native Audio', function (hooks) {
       silenceErrors: true,
     });
 
-    let erroredSound = failures[0].erroredSound;
-    assert.strictEqual(erroredSound.retryCount, 1);
+    let erroredConnection = failures[0].erroredConnection;
+    assert.strictEqual(erroredConnection.retryCount, 1);
     assert.strictEqual(
-      erroredSound.audioElement.getAttribute('crossorigin'),
+      erroredConnection.audioElement.getAttribute('crossorigin'),
       null,
       'second try should be null',
     );
@@ -398,12 +470,280 @@ module('Unit | Connection | Native Audio', function (hooks) {
 
     let events = [];
 
-    let { sound: sound1 } = await stereo.load(url1, {
+    let { connection: sound1 } = await stereo.load(url1, {
       useConnections: ['NativeAudio'],
     });
     sound1.on('audio-position-changed', ({ sound }) => events.push(sound));
     await sound1.play();
 
     assert.ok(events.length > 50, 'position changed events were fired');
+  });
+
+  module(
+    'telling a live stream from a recording still being written',
+    function () {
+      function soundReporting(sharedAudioAccess, { duration, start, end }) {
+        let sound = new NativeAudio({
+          url: goodUrl,
+          timeout: false,
+          sharedAudioAccess,
+        });
+
+        Object.defineProperty(sound, 'audioElement', {
+          get: () => ({
+            duration,
+            seekable: { length: 1, start: () => start, end: () => end },
+          }),
+        });
+
+        return sound;
+      }
+
+      test('a live stream reporting [0, Infinity] is endless and unseekable', function (assert) {
+        let sound = soundReporting(sharedAudioAccess, {
+          duration: Infinity,
+          start: 0,
+          end: Infinity,
+        });
+
+        assert.strictEqual(sound._audioDuration(), Infinity, 'duration is ∞');
+
+        sound.duration = sound._audioDuration();
+        assert.true(sound.isStream, 'so the sound is a stream');
+        assert.notOk(
+          sound.isSeekable,
+          'an endless range is not a seekable window',
+        );
+      });
+
+      test('a live stream reporting a growing finite duration is endless and unseekable', function (assert) {
+        let sound = soundReporting(sharedAudioAccess, {
+          duration: 208.43,
+          start: 0,
+          end: 206.83,
+        });
+        Object.defineProperty(sound._mediaLength, 'isLive', {
+          get: () => true,
+        });
+
+        assert.strictEqual(
+          sound._audioDuration(),
+          Infinity,
+          'a growing duration is not a recorded length',
+        );
+
+        sound.duration = sound._audioDuration();
+        assert.true(sound.isStream, 'so the sound is a stream');
+        assert.notOk(
+          sound.isSeekable,
+          'and its buffer is not a seekable window',
+        );
+        assert.notOk(sound.isRewindable, 'not rewindable');
+        assert.notOk(sound.isFastForwardable, 'not fast forwardable');
+      });
+
+      test('a recording still being written keeps its measured length and stays seekable', function (assert) {
+        let sound = soundReporting(sharedAudioAccess, {
+          duration: Infinity,
+          start: 0,
+          end: 120,
+        });
+
+        assert.strictEqual(
+          sound._audioDuration(),
+          120000,
+          'the seekable range is the recorded length',
+        );
+        assert.ok(sound.isSeekable, 'and it can be seeked within');
+      });
+
+      test('an ordinary finite sound is unaffected', function (assert) {
+        let sound = soundReporting(sharedAudioAccess, {
+          duration: 60,
+          start: 0,
+          end: 60,
+        });
+
+        assert.strictEqual(
+          sound._audioDuration(),
+          60000,
+          'duration is measured',
+        );
+
+        sound.duration = sound._audioDuration();
+        assert.notOk(sound.isStream, 'not a stream');
+        assert.ok(sound.isSeekable, 'and seekable as usual');
+      });
+
+      test('a declared seekability settles it outright', function (assert) {
+        let live = soundReporting(sharedAudioAccess, {
+          duration: Infinity,
+          start: 0,
+          end: Infinity,
+        });
+        live.options = { seekable: true };
+        live.duration = Infinity;
+
+        assert.true(live.isStream, 'still endless');
+        assert.true(live.isSeekable, 'but the app says it can be seeked');
+        assert.true(live.isRewindable, 'rewindable too');
+        assert.true(live.isFastForwardable, 'and fast forwardable');
+
+        let recording = soundReporting(sharedAudioAccess, {
+          duration: 60,
+          start: 0,
+          end: 60,
+        });
+        recording.options = { seekable: false };
+        recording.duration = 60000;
+
+        assert.false(
+          recording.isSeekable,
+          'and a finite sound can be declared unseekable',
+        );
+      });
+    },
+  );
+
+  module('remembering what the source is', function () {
+    test('a connection swapped in for the same source inherits the verdict', function (assert) {
+      let incoming = new NativeAudio({ url: goodUrl, timeout: false });
+      incoming.adoptKnownStream(true);
+
+      assert.strictEqual(
+        incoming._audioDuration(),
+        Infinity,
+        'casting swaps in a fresh connection mid-playback, and measuring the source again from an empty history reports a finite length and offers scrub controls on a live stream',
+      );
+
+      let local = new NativeAudio({ url: goodUrl, timeout: false });
+      local.adoptKnownStream(false);
+
+      assert.false(
+        local._mediaLength.isLive,
+        'and a source never proved live is not assumed to be',
+      );
+    });
+
+    test('the handoff carries what the source is', async function (assert) {
+      let { sound } = await stereo.load('/good/stream/stream.aac');
+
+      assert.true(
+        sound._captureHandoff().isStream,
+        'the swap hands the incoming connection everything it must not re-derive',
+      );
+    });
+
+    test('a source proved live stays live when the element reloads', function (assert) {
+      let length = new MediaLength();
+      [1000, 1250, 1500, 1750, 2000].forEach((ms, index) =>
+        length.record(ms, index * 250),
+      );
+
+      assert.true(length.isLive, 'the readings proved it');
+
+      length.sourceReloaded();
+
+      assert.true(
+        length.isLive,
+        'replaying a stream reloads the element, and re-deciding from an empty history reports a finite duration for a second and skips the cache-defeating workaround that isStream gates',
+      );
+      assert.strictEqual(
+        length.estimate({ elementDurationMs: 4000, seekable: null }),
+        Infinity,
+        'so the duration is right from the first frame of the replay',
+      );
+    });
+
+    test('a source never proved live is not assumed to be', function (assert) {
+      let length = new MediaLength();
+      [60000, 60000, 60000, 60000].forEach((ms, index) =>
+        length.record(ms, index * 250),
+      );
+      length.sourceReloaded();
+
+      assert.false(length.isLive, 'nothing ever proved it');
+    });
+  });
+
+  module('reading duration growth', function () {
+    // Readings arrive with the wall clock, so a helper spaces them evenly.
+    let every = (ms, durations) =>
+      durations.map((duration, index) => ({
+        durationMs: duration,
+        timeMs: index * ms,
+      }));
+
+    // Live audio arrives as fast as it happens, so its duration gains about as much time as the window.
+    test('a source growing smoothly with the clock reads as a stream', function (assert) {
+      assert.true(
+        durationGrowsWithTheClock(
+          every(250, [1000, 1250, 1500, 1750, 2000, 2250, 2500, 2750, 3000]),
+        ),
+        'Chrome moves the duration every sample',
+      );
+    });
+
+    test('a source growing in steps reads as a stream too', function (assert) {
+      // Firefox holds the duration still and then jumps a whole second. The
+      // average is realtime even though no single sample looks like it.
+      assert.true(
+        durationGrowsWithTheClock(
+          every(250, [1000, 1000, 1000, 2000, 2000, 2000, 3000, 3000, 3000]),
+        ),
+        'stepwise growth averages out to the clock',
+      );
+    });
+
+    test('a stable duration does not', function (assert) {
+      assert.false(
+        durationGrowsWithTheClock(
+          every(
+            250,
+            [60000, 60000, 60000, 60000, 60000, 60000, 60000, 60000, 60000],
+          ),
+        ),
+        'an ordinary file measured once',
+      );
+    });
+
+    test('a single refinement of a VBR estimate does not', function (assert) {
+      assert.false(
+        durationGrowsWithTheClock(
+          every(
+            250,
+            [
+              180000, 180000, 213000, 213000, 213000, 213000, 213000, 213000,
+              213000,
+            ],
+          ),
+        ),
+        'one step is a correction, not audio arriving',
+      );
+    });
+
+    test('growth faster than the clock does not', function (assert) {
+      assert.false(
+        durationGrowsWithTheClock(
+          every(
+            250,
+            [0, 30000, 60000, 90000, 120000, 150000, 180000, 210000, 240000],
+          ),
+        ),
+        'a progressive download outruns realtime',
+      );
+    });
+
+    test('too short a window does not', function (assert) {
+      assert.false(
+        durationGrowsWithTheClock(every(250, [1000, 1250, 1500])),
+        'half a second of growth is not sustained',
+      );
+      assert.false(durationGrowsWithTheClock([]), 'nothing measured yet');
+      assert.true(
+        durationGrowsWithTheClock(every(250, [1000, 1250, NaN, 1750, 2000])),
+        'but a dropped reading is fine, since the timestamps still span a second',
+      );
+    });
   });
 });

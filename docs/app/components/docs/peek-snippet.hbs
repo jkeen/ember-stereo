@@ -1,0 +1,22 @@
+<div class='peek-snippet {{unless this.isExpanded "is-collapsed"}}'>
+  <DocsSnippet
+    @name={{@name}}
+    @unindent={{true}}
+    @language={{@language}}
+  />
+
+  {{#unless this.isExpanded}}
+    <div class='peek-snippet-fade'></div>
+  {{/unless}}
+</div>
+
+<button
+  type='button'
+  class='peek-snippet-toggle'
+  aria-expanded='{{if this.isExpanded "true" "false"}}'
+  {{on 'click' this.toggle}}
+>
+  {{if this.isExpanded 'Hide' 'Show'}}
+  the full
+  {{this.label}}
+</button>

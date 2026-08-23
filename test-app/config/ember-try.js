@@ -37,6 +37,11 @@ module.exports = async function () {
         npm: {
           devDependencies: {
             'ember-source': 'latest',
+            // ember-source 7 dropped legacy vendor paths, handled in ember-cli 6.12+
+            'ember-cli': 'latest',
+            'ember-cli-htmlbars': 'latest',
+            // ember-concurrency 4 imports the legacy `ember` module, which ember-source 7 removed
+            'ember-concurrency': '^5.2.0',
           },
         },
       },
@@ -45,6 +50,9 @@ module.exports = async function () {
         npm: {
           devDependencies: {
             'ember-source': 'beta',
+            'ember-cli': 'latest',
+            'ember-cli-htmlbars': 'latest',
+            'ember-concurrency': '^5.2.0',
           },
         },
       },
@@ -53,6 +61,19 @@ module.exports = async function () {
         npm: {
           devDependencies: {
             'ember-source': 'alpha',
+            'ember-cli': 'latest',
+            'ember-cli-htmlbars': 'latest',
+            'ember-concurrency': '^5.2.0',
+          },
+        },
+      },
+      {
+        // ember-concurrency is a peer dependency, so test-app decides which version the addon builds
+        // against. It runs on 4 by default, and this scenario covers the rest of the declared range.
+        name: 'ember-concurrency-5',
+        npm: {
+          devDependencies: {
+            'ember-concurrency': '^5.2.0',
           },
         },
       },

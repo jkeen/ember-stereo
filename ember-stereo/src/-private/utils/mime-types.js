@@ -238,5 +238,4 @@ export function getMimeType(url) {
   return TYPES[extension] || false;
 }
 
-
-export default { getMimeType, TYPES, EXTENSIONS, MIME_TYPES }
+export default { getMimeType, TYPES, EXTENSIONS, MIME_TYPES };

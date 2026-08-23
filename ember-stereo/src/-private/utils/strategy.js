@@ -7,12 +7,12 @@ export default class Strategy {
 
   sharedAudioAccess = null;
   error = null;
-  erroredSound = null;
+  erroredConnection = null;
   success = false;
   tried = false;
 
-  constructor(connection, stereoUrl, config = {}) {
-    this.connection = connection;
+  constructor(connectionClass, stereoUrl, config = {}) {
+    this.connectionClass = connectionClass;
     // assert('[ember-stereo] strategy constructor requires a StereoUrl', (stereoUrl.url && stereoUrl.mimeType))
 
     this.stereoUrl = stereoUrl;
@@ -39,11 +39,11 @@ export default class Strategy {
   }
 
   get connectionName() {
-    return this.connection.toString();
+    return this.connectionClass.toString();
   }
 
   get key() {
-    return this.connection.key;
+    return this.connectionClass.key;
   }
 
   get connectionKey() {
@@ -59,7 +59,7 @@ export default class Strategy {
     if (!this.url) {
       return false;
     }
-    return this.connection.canUseConnection(this.url);
+    return this.connectionClass.canUseConnection(this.url);
   }
 
   @cached
@@ -67,7 +67,7 @@ export default class Strategy {
     if (!this.url) {
       return false;
     }
-    return this.connection.canPlayMimeType(this.mimeType);
+    return this.connectionClass.canPlayMimeType(this.mimeType);
   }
 
   @cached
@@ -75,19 +75,21 @@ export default class Strategy {
     if (!this.url) {
       return false;
     }
-    return this.connection.canPlay(this.url, this.mimeType);
+    return this.connectionClass.canPlay(this.url, this.mimeType);
   }
 
-  createSound() {
-    let sound = new this.connection({
+  createConnection(overrides = {}) {
+    let connection = new this.connectionClass({
       url: this.url,
       connectionName: this.connectionName,
       connectionKey: this.connectionKey,
       sharedAudioAccess: this.sharedAudioAccess,
+      metadata: this.config.metadata,
       options: this.options,
+      ...overrides,
     });
 
-    setOwner(sound, getOwner(this));
-    return sound;
+    setOwner(connection, getOwner(this));
+    return connection;
   }
 }

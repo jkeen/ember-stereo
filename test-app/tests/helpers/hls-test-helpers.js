@@ -49,7 +49,13 @@ function throwFragParsingError(sound, { start = 100, end = 110 } = {}) {
 function firePlayedFragment(sound) {
   let HLS = hlsClassFor(sound);
   sound.hls.trigger(HLS.Events.FRAG_CHANGED, {
-    frag: { title: '', programDateTime: null, rawProgramDateTime: null },
+    // hls.js 1.7's own FRAG_CHANGED listener reads elementaryStreams, and it swallows the whole event if that throws
+    frag: {
+      title: '',
+      programDateTime: null,
+      rawProgramDateTime: null,
+      elementaryStreams: {},
+    },
   });
 }
 

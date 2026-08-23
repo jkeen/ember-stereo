@@ -1,7 +1,4 @@
-import Helper from '@ember/component/helper';
-import { dedupeTracked } from 'tracked-toolbox';
-import hasEqualUrls from '../-private/utils/has-equal-urls';
-import { service } from '@ember/service';
+import StereoBaseIsHelper from '../-private/helpers/is-helper';
 
 /**
   A helper to detect if a sound is errored.
@@ -18,31 +15,30 @@ import { service } from '@ember/service';
   @param {String} url
 */
 
-const UNINITIALIZED = Object.freeze({});
-
 /**
   @method compute
-  @param {Any} identifier url, urls, url objects, promise that resolves to a url
-  @param {String} format time, ms, s,
-  @param {Boolean} load load the sound if it's not loaded?
+  @param {Any} identifier a url, an array of urls, a url object, a Sound, or a promise resolving to any of those
+  @param {String} connectionName? only report errors from this connection
+  @return {Boolean}
 */
-export default class SoundIsErrored extends Helper {
+export default class SoundIsErrored extends StereoBaseIsHelper {
   name = 'sound-is-errored';
-  @service stereo;
-  @dedupeTracked result = false;
-  identifier = UNINITIALIZED;
 
-  compute([identifier = 'system'], { connectionName }) {
-    let errors = this.stereo.cachedErrors.filter(async (e) =>
-      hasEqualUrls(e.url, identifier)
-    );
-
-    if (connectionName) {
-      return (
-        errors.filter((e) => e.connectionName === connectionName).length > 0
-      );
-    } else {
-      return errors.length > 0;
+  get result() {
+    if (!this.sound) {
+      return false;
     }
+
+    let { connectionName } = this.options;
+    if (connectionName) {
+      return !!this.sound.failures?.some(
+        (failure) =>
+          failure.error &&
+          (failure.connectionKey === connectionName ||
+            failure.connectionName === connectionName),
+      );
+    }
+
+    return this.sound.isErrored;
   }
 }

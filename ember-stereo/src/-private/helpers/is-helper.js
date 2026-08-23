@@ -7,8 +7,6 @@ export default class StereoBaseIsHelper extends Helper {
   @service stereo;
 
   identifier = UNINITIALIZED;
-  @dedupeTracked task = UNINITIALIZED;
-  @dedupeTracked soundProxy = UNINITIALIZED;
   @dedupeTracked _sound = UNINITIALIZED;
   @dedupeTracked options = UNINITIALIZED;
 
@@ -20,20 +18,11 @@ export default class StereoBaseIsHelper extends Helper {
   */
 
   get isLoading() {
-    return (
-      (this.sound && this.sound.isLoading) ||
-      (this.soundProxy && this.soundProxy.isLoading)
-    );
+    return this.sound?.isLoading;
   }
 
   get sound() {
-    if (this._sound) {
-      return this._sound;
-    } else if (this.soundProxy && this.soundProxy.value) {
-      return this.soundProxy.value;
-    }
-
-    return null;
+    return this._sound;
   }
 
   get result() {
@@ -43,20 +32,14 @@ export default class StereoBaseIsHelper extends Helper {
   compute([identifier], options = {}) {
     this.options = options;
 
+    // Looked up every time, since a promise identifier can collapse onto another Sound after it resolves.
+    this._sound = this.stereo.findSound(identifier);
+
     if (identifier !== this.identifier) {
       this.identifier = identifier;
 
-      if (identifier && identifier.url && identifier.play) {
-        this._sound = identifier;
-      }
-      if (identifier) {
-        this.soundProxy = this.stereo.soundProxy(identifier);
-      }
-
-      if (!this.sound) {
-        if (options.load) {
-          this.stereo.load(identifier, this.options);
-        }
+      if (!this.sound?.isResolved && options.load) {
+        this.stereo.load(identifier, this.options);
       }
     }
 

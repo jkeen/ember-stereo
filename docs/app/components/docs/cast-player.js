@@ -1,0 +1,69 @@
+import Component from '@glimmer/component';
+import { service } from '@ember/service';
+import { action } from '@ember/object';
+import { tracked } from '@glimmer/tracking';
+import { SERVICE_EVENT_MAP } from 'ember-stereo/services/stereo';
+
+export default class CastPlayer extends Component {
+  // BEGIN-SNIPPET cast-player.js
+  @service stereo;
+
+  castEvents = SERVICE_EVENT_MAP.map(({ event }) => event).filter((event) =>
+    event.startsWith('audio-cast-'),
+  );
+
+  @tracked log = [];
+
+  // Chromecast hands us the device's friendly name. AirPlay withholds it, so fall back to the kind.
+  get deviceLabel() {
+    return this.stereo.castDeviceName ?? this.stereo.castKind ?? 'a device';
+  }
+
+  @action
+  prepare() {
+    this._handlers = this.castEvents.map((name) => {
+      let handler = () => this._record(name);
+      this.stereo.on(name, handler);
+      return { name, handler };
+    });
+  }
+
+  @action
+  teardown() {
+    (this._handlers ?? []).forEach(({ name, handler }) =>
+      this.stereo.off(name, handler),
+    );
+  }
+
+  get sound() {
+    return this.stereo.currentSound;
+  }
+
+  get nowPlaying() {
+    return this.sound?.metadata?.title ?? '—';
+  }
+
+  @action
+  setNowPlaying() {
+    if (!this.sound) {
+      return;
+    }
+
+    let stamp = new Date().toLocaleTimeString();
+    this.sound.metadata = {
+      ...this.sound.metadata,
+      title: `Track at ${stamp}`,
+      artist: 'ember-stereo demo',
+    };
+  }
+
+  @action
+  stopCasting() {
+    this.stereo.stopCasting();
+  }
+
+  _record(name) {
+    this.log = [{ name, device: this.deviceLabel }, ...this.log].slice(0, 8);
+  }
+  // END-SNIPPET
+}

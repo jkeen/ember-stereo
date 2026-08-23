@@ -5,8 +5,7 @@ import { getMimeType } from '../-private/utils/mime-types';
 import debug from 'debug';
 import { tracked } from '@glimmer/tracking';
 import Evented from '../-private/utils/evented';
-import hasEqualUrls from '../-private/utils/has-equal-urls';
-import { getOwner } from '@ember/application';
+import isSameAudio from '../-private/utils/is-same-audio';
 import { registerDestructor } from '@ember/destroyable';
 import { task, timeout, didCancel } from 'ember-concurrency';
 import { macroCondition, isTesting } from '@embroider/macros';
@@ -22,9 +21,20 @@ export default class Sound extends Evented {
     this.config = config;
   }
 
+  /**
+   * Download what this connection needs before it can play.
+   *
+   * @method preload
+   * @static
+   * @return {Promise}
+   */
+
+  static preload() {
+    return Promise.resolve();
+  }
+
   static canPlay(url, mimeType) {
-    // No backend can play audio without a DOM (FastBoot), and the probes
-    // below touch Audio/MediaSource, so answer for all connections here.
+    // The probes below touch Audio and MediaSource, which FastBoot has no DOM for.
     if (typeof document === 'undefined') {
       return false;
     }
@@ -183,25 +193,7 @@ export default class Sound extends Evented {
    * @public
    */
 
-  get metadata() {
-    let owner = getOwner(this);
-
-    if (owner) {
-      let stereo = owner.lookup('service:stereo');
-      return stereo?.metadataCache?.find(this.url);
-    }
-
-    return {};
-  }
-
-  set metadata(value) {
-    let owner = getOwner(this);
-
-    if (owner) {
-      let stereo = owner.lookup('service:stereo');
-      stereo?.metadataCache?.store(this.url, value);
-    }
-  }
+  @tracked metadata = {};
 
   @tracked id3Tags = {};
   @tracked id3TagMetadata = {};
@@ -231,6 +223,23 @@ export default class Sound extends Evented {
   }
 
   /**
+   * The duration the app passed in the load options, in ms. `Infinity` says
+   * live. Overrides measurement, which can't always get there.
+   *
+   * @property declaredDuration
+   * @type {Number}
+   * @readOnly
+   * @private
+   */
+  get declaredDuration() {
+    return this.options?.duration;
+  }
+
+  _resolveDuration() {
+    return this.declaredDuration ?? this._audioDuration();
+  }
+
+  /**
    * is the sound a stream?
    * @property isStream
    * @type {Boolean}
@@ -242,6 +251,42 @@ export default class Sound extends Evented {
   }
 
   /**
+   * Take on what a connection to the same source already worked out. Casting
+   * swaps in a new connection mid-playback, and measuring it again from an
+   * empty history reports the wrong length until it catches up.
+   *
+   * @method adoptKnownStream
+   * @private
+   */
+  adoptKnownStream() {}
+
+  /**
+   * Whether the app declared the sound seekable in the load options, settling
+   * it outright. Connections only measure when nothing was declared.
+   *
+   * @property declaredSeekable
+   * @type {Boolean}
+   * @readOnly
+   * @private
+   */
+  get declaredSeekable() {
+    return this.options?.seekable;
+  }
+
+  /**
+   * What the connection can work out for itself. Override this rather than the
+   * public getters below, so a declaration is still honored.
+   *
+   * @property _measuredSeekable
+   * @type {Boolean}
+   * @readOnly
+   * @private
+   */
+  get _measuredSeekable() {
+    return !this.isStream;
+  }
+
+  /**
    * is the sound fast forwardable?
    * @property isFastForwardable
    * @type {Boolean}
@@ -249,7 +294,7 @@ export default class Sound extends Evented {
    * @public
    */
   get isFastForwardable() {
-    return !this.isStream;
+    return this.declaredSeekable ?? this._measuredSeekable;
   }
 
   /**
@@ -260,7 +305,7 @@ export default class Sound extends Evented {
    * @public
    */
   get isRewindable() {
-    return !this.isStream;
+    return this.declaredSeekable ?? this._measuredSeekable;
   }
 
   /**
@@ -271,7 +316,7 @@ export default class Sound extends Evented {
    * @public
    */
   get isSeekable() {
-    return !this.isStream;
+    return this.declaredSeekable ?? this._measuredSeekable;
   }
 
   /**
@@ -292,23 +337,26 @@ export default class Sound extends Evented {
     });
   }
 
-  setPositionTask = task({ maxConcurrency: 1, restartable: true }, async v => {
-    this.trigger('audio-position-will-change', {
-      sound: this,
-      currentPosition: this._currentPosition(),
-      newPosition: v,
-    });
+  setPositionTask = task(
+    { maxConcurrency: 1, restartable: true },
+    async (v) => {
+      this.trigger('audio-position-will-change', {
+        sound: this,
+        currentPosition: this._currentPosition(),
+        newPosition: v,
+      });
 
-    if (macroCondition(isTesting())) {
-      // in testing, we don't want to wait for the next animation frame
-    } else {
-      await timeout(50);
+      if (macroCondition(isTesting())) {
+        // in testing, we don't want to wait for the next animation frame
+      } else {
+        await timeout(50);
+      }
+
+      // next(() => {
+      this._position = this._setPosition(v);
+      // });
     }
-
-    // next(() => {
-    this._position = this._setPosition(v);
-    // });
-  });
+  );
 
   /* we both want to query for the playing sounds position, and fire change events
    more often than an audio element would, as documented in this issue: https://github.com/jkeen/ember-stereo/issues/24  */
@@ -359,11 +407,11 @@ export default class Sound extends Evented {
   }
 
   /**
- * get the sound's end time (probably only available on certain HLS sounds)
- * @property endTime
- * @type {Integer}
- * @public
- */
+   * get the sound's end time (probably only available on certain HLS sounds)
+   * @property endTime
+   * @type {Integer}
+   * @public
+   */
   get endTime() {
     return null;
   }
@@ -390,6 +438,7 @@ export default class Sound extends Evented {
     this.connectionName = args.connectionName;
     this.connectionKey = args.connectionKey;
     this.options = args.options;
+    this.metadata = args.metadata ?? {};
     this.sharedAudioAccess = args.sharedAudioAccess;
     this.timeout = 'timeout' in args ? args.timeout : 30000;
 
@@ -426,6 +475,7 @@ export default class Sound extends Evented {
 
     this.on('audio-paused', () => {
       this.isPlaying = false;
+      this.isLoading = false;
       if (audioPaused) {
         audioPaused(this);
       }
@@ -443,7 +493,7 @@ export default class Sound extends Evented {
 
     this.on('audio-ready', () => {
       this.isReady = true;
-      this.duration = this._audioDuration();
+      this.duration = this._resolveDuration();
       if (audioReady) {
         audioReady(this);
       }
@@ -490,7 +540,7 @@ export default class Sound extends Evented {
     });
 
     this.on('audio-duration-changed', () => {
-      this.duration = this._audioDuration();
+      this.duration = this._resolveDuration();
     });
 
     this.on('audio-blocked', () => {
@@ -582,7 +632,10 @@ export default class Sound extends Evented {
   }
 
   _setPlaybackSpeed() {
-    assert('[ember-stereo] #_setPlaybackSpeed interface not implemented', false);
+    assert(
+      '[ember-stereo] #_setPlaybackSpeed interface not implemented',
+      false
+    );
   }
 
   _setVolume() {
@@ -634,6 +687,6 @@ export default class Sound extends Evented {
   }
 
   hasUrl(url) {
-    return hasEqualUrls(this.url, url);
+    return isSameAudio(this.url, url);
   }
 }

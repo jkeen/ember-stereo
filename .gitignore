@@ -41,3 +41,5 @@ docs/dist
 /DEBUG/
 packages/
 .turbo
+
+/debug

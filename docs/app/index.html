@@ -12,6 +12,13 @@
     <link integrity="" rel="stylesheet" href="{{rootURL}}assets/vendor.css">
     <link integrity="" rel="stylesheet" href="{{rootURL}}assets/docs.css">
 
+    <script>
+      try {
+        var theme = localStorage.getItem('ember-stereo-docs:theme');
+        if (theme) document.documentElement.dataset.theme = theme;
+      } catch (e) {}
+    </script>
+
     {{content-for "head-footer"}}
   </head>
   <body>

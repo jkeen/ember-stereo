@@ -1,12 +1,29 @@
-<Docs::StereoPlayerChanger
-  @identifiers={{array
-    '/sounds/works-just-like-a-vcr.mp3'
-    'https://archive.org/download/KmartOctober1989/Kmart%20October%201989.ogg'
-  }}
-/>
+<h1 class='text-xl'>Player Test</h1>
 
-<Docs::StereoPlayerModifiers @identifier='/sounds/works-just-like-a-vcr.mp3' />
+<div class='mb-6'>
+  <h2 class='text-lg'>One sound, two players</h2>
+  <p class='my-2 text-base'>Same URL, so the same
+    <code>Sound</code>. Play or seek either and the other should match exactly.
+    The top player positions with modifiers, the bottom one with helpers.</p>
 
-<Docs::StereoPlayer @identifier='/sounds/works-just-like-a-vcr.mp3' />
+  <Docs::StereoPlayerModifiers @identifier={{@model.url}} />
+  <Docs::StereoPlayer @identifier={{@model.url}} />
+</div>
 
-<Docs::StereoPlayerAudioDebug @identifier='/sounds/works-just-like-a-vcr.mp3' />
+<div class='mb-6'>
+  <h2 class='text-lg'>Swapping the identifier</h2>
+  <p class='my-2 text-base'>One player, a different sound behind it. Every
+    helper and modifier bound to the identifier should follow the selection,
+    while the service-wide volume stays put. A seekable file and a live stream
+    need different controls, so the transport should change with them. The
+    sound you leave keeps playing until you start another.</p>
+
+  <Docs::StereoPlayerChanger @sounds={{@model.swappable}} />
+</div>
+
+<div class='mb-6'>
+  <h2 class='text-lg'>A sound that cannot play</h2>
+  <p class='my-2 text-base'>Play should surface the error, not spin forever.</p>
+
+  <Docs::StereoPlayer @identifier={{@model.unplayable}} />
+</div>

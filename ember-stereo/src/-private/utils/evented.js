@@ -5,6 +5,7 @@ import EmberEvented from '@ember/object/evented';
  * Partial wrapper for Ember's Evented Mixin, enabling
  * a pure class-based derivation
  * @private
+ * @hide
  * @class Evented
  */
 export default class Evented {

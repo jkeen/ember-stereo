@@ -23,26 +23,23 @@
         <div class='relative flex items-stretch flex-grow focus-within:z-10'>
           <Input
             id='url-property'
-            class='block w-full rounded-none rounded-l-md sm:text-sm | border-on-surface-0 focus:ring-accent-0 focus:border-accent-0'
+            class='block w-full rounded-md sm:text-sm | border-on-surface-0 focus:ring-accent-0 focus:border-accent-0'
             @type='text'
             @value={{this.url}}
             placeholder='Enter a URL'
           />
         </div>
-        <select
-          id='preset'
-          name='preset'
-          class='relative inline-flex items-center w-24 px-4 py-2 -ml-px text-sm font-medium border border-on-surface-0 rounded-r-md text-surface-2 bg-on-surface-3 hover:bg-on-surface-3 focus:outline-none focus:ring-1 focus:ring-accent-0 focus:border-accent-0'
-          {{on 'input' this.onPresetChange}}
-        >
-          <option>Preset</option>
-          {{#each this.items as |item|}}
-            {{! template-lint-disable no-invalid-interactive }}
-            <option {{on 'click' (fn this.onPresetChange item)}}>
-              {{item.title}}
-            </option>
-          {{/each}}
-        </select>
+      </div>
+
+      <div class='flex flex-wrap gap-1 mt-2'>
+        {{#each this.items as |item|}}
+          <button
+            type='button'
+            class='preset-chip'
+            aria-pressed='{{if (eq item.url this.url) "true" "false"}}'
+            {{on 'click' (fn this.selectPreset item)}}
+          >{{item.title}}</button>
+        {{/each}}
       </div>
 
     </div>
@@ -54,11 +51,14 @@
       >Metadata</label>
       <Textarea
         id='metadata'
-        class='block w-full h-10 pr-12 rounded-md border-on-surface-0 focus:ring-accent-0 focus:border-accent-0 sm:text-sm'
-        placeholder=''
+        class='block w-full h-20 font-mono rounded-md border-on-surface-0 focus:ring-accent-0 focus:border-accent-0 sm:text-sm'
+        placeholder='{"title": "Something"}'
         @value={{this.metadata}}
         {{on 'change' this.updateMetadata}}
       />
+      {{#if this.metadataError}}
+        <p class='mt-1 text-sm text-danger'>{{this.metadataError}}</p>
+      {{/if}}
     </div>
 
     <div class='my-2'>
