@@ -74,6 +74,10 @@ Volume is global, so every sound plays at the same level. It defaults to 100, wh
 
 From the service, `stereo.volume` is a getter and setter. Mobile devices don't allow it, so [stereo-volume-is-adjustable](/docs/api/helpers/stereo-volume-is-adjustable) tells you whether to render the control at all.
 
+## Playback speed
+
+`stereo.playbackSpeed` reads and sets the rate of the current sound, where 1 is normal. Speed belongs to the sound rather than the service, so each sound remembers its own and a new one starts at 1. Switching to a sound at a different speed fires `playback-speed-change`. A live stream always plays at 1 whatever the setting.
+
 ## Load options
 
 `play` and `load` take an options hash alongside the identifier:

@@ -758,6 +758,18 @@ export default class Sound extends Evented {
     this.connection?._setVolume(volume);
   }
 
+  /**
+   * The rate this sound plays at, 1 being normal. Kept on the sound so it survives not being current.
+   *
+   * @property playbackSpeed
+   * @type {Number}
+   * @readOnly
+   * @public
+   */
+  get playbackSpeed() {
+    return this._playbackSpeed ?? 1;
+  }
+
   _setPlaybackSpeed(speed) {
     this._playbackSpeed = speed;
     this._applyPlaybackSpeed();

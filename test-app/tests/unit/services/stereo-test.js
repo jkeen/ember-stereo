@@ -441,17 +441,13 @@ module('Unit | Service | stereo', function (hooks) {
     );
   });
 
-  test('playback speed changes are set on the current sound', function (assert) {
+  test('playback speed changes are set on the current sound', async function (assert) {
     const service = this.owner
       .lookup('service:stereo')
       .loadConnections(['NativeAudio']);
 
-    let sound1 = new (service.connectionLoader.get('NativeAudio'))({
-      url: '/good/1000/test.mp3',
-    });
-    let sound2 = new (service.connectionLoader.get('NativeAudio'))({
-      url: '/good/1000/test2.mp3',
-    });
+    let { sound: sound1 } = await service.load('/good/1000/test.mp3');
+    let { sound: sound2 } = await service.load('/good/1000/test2.mp3');
 
     let spy1 = sandbox.spy(sound1, '_setPlaybackSpeed');
     let spy2 = sandbox.spy(sound2, '_setPlaybackSpeed');
@@ -462,11 +458,20 @@ module('Unit | Service | stereo', function (hooks) {
     service.playbackSpeed = 1.5;
     assert.ok(spy1.withArgs(1.5).calledOnce, 'sound 1 gets the new speed');
 
+    let speedChanges = [];
+    service.on('playback-speed-change', (speed) => speedChanges.push(speed));
+
     service.currentSound = sound2;
-    assert.ok(
-      spy2.withArgs(1.5).calledOnce,
-      'sound 2 gets the current speed when it becomes current',
+    assert.ok(spy2.withArgs(1).calledOnce, 'a new sound starts at 1x');
+    assert.strictEqual(service.playbackSpeed, 1);
+
+    service.currentSound = sound1;
+    assert.strictEqual(
+      service.playbackSpeed,
+      1.5,
+      'a sound keeps its own speed while it is not current',
     );
+    assert.deepEqual(speedChanges, [1, 1.5], 'each switch is announced');
   });
 
   test('a live stream ignores the playback speed', async function (assert) {

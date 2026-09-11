@@ -76,8 +76,6 @@ export default class Stereo extends Service.extend(EmberEvented) {
     this.loadConnections();
 
     this.defaultVolume = this.systemStereoOptions?.initialVolume || 100;
-    this.defaultPlaybackSpeed =
-      this.systemStereoOptions?.defaultPlaybackSpeed || 1.0;
     this.volume = this.defaultVolume;
 
     this.sharedAudioAccess = new SharedAudioAccess();
@@ -282,7 +280,7 @@ export default class Stereo extends Service.extend(EmberEvented) {
    * @type {Float}
    * @public
    */
-  @tracked _playbackSpeed = this.defaultPlaybackSpeed;
+  @tracked _playbackSpeed = 1;
   get playbackSpeed() {
     return this._playbackSpeed;
   }
@@ -294,6 +292,17 @@ export default class Stereo extends Service.extend(EmberEvented) {
     this._playbackSpeed = v;
     debug('ember-stereo:service')(`setting playback speed = ${v}`);
     this.trigger('playback-speed-change', v);
+  }
+
+  // Speed belongs to the sound, so the service follows whichever one is current rather than pushing the last value onto it.
+  _adoptPlaybackSpeed(sound) {
+    let speed = sound.playbackSpeed;
+    let changed = this._playbackSpeed !== speed;
+    this._playbackSpeed = speed;
+    sound._setPlaybackSpeed(speed);
+    if (changed) {
+      this.trigger('playback-speed-change', speed);
+    }
   }
 
   /**
@@ -965,7 +974,7 @@ export default class Stereo extends Service.extend(EmberEvented) {
       this._registerEvents(sound);
       this._updateNowPlaying(sound);
       sound._setVolume(this.volume);
-      sound._setPlaybackSpeed(this.playbackSpeed);
+      this._adoptPlaybackSpeed(sound);
       debug('ember-stereo:service')(`setting current sound -> ${sound.url}`);
     } else {
       this._clearNowPlaying();
