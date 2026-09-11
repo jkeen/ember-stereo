@@ -162,12 +162,10 @@ export default class Sound extends Evented {
       if (this._volume != null) {
         connection._setVolume(this._volume);
       }
-      if (this._playbackSpeed != null) {
-        connection._setPlaybackSpeed(this._playbackSpeed);
-      }
     }
 
     this._connection = connection;
+    this._applyPlaybackSpeed();
 
     if (macroCondition(isDevelopingApp())) {
       this._warnIfCastingLocally(connection);
@@ -632,6 +630,9 @@ export default class Sound extends Evented {
     if (eventName === 'audio-played') {
       this._explicitPlayIntent = true;
     }
+    if (eventName === 'audio-duration-changed') {
+      this._applyPlaybackSpeed();
+    }
     this.trigger(eventName, { ...info, sound: this });
   }
 
@@ -759,7 +760,16 @@ export default class Sound extends Evented {
 
   _setPlaybackSpeed(speed) {
     this._playbackSpeed = speed;
-    this.connection?._setPlaybackSpeed(speed);
+    this._applyPlaybackSpeed();
+  }
+
+  // A live stream always runs at 1x. Its duration is only known once metadata loads, so this re-runs on duration changes.
+  _applyPlaybackSpeed() {
+    let connection = this.connection;
+    if (!connection || this._playbackSpeed == null) {
+      return;
+    }
+    connection._setPlaybackSpeed(connection.isStream ? 1 : this._playbackSpeed);
   }
 
   /**

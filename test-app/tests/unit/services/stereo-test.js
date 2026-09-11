@@ -469,6 +469,24 @@ module('Unit | Service | stereo', function (hooks) {
     );
   });
 
+  test('a live stream ignores the playback speed', async function (assert) {
+    const service = this.owner
+      .lookup('service:stereo')
+      .loadConnections(['NativeAudio']);
+
+    let { sound } = await service.load('/good/1000/test.mp3');
+    service.currentSound = sound;
+    let spy = sandbox.spy(sound.connection, '_setPlaybackSpeed');
+
+    sandbox.stub(sound.connection, 'isStream').get(() => true);
+    service.playbackSpeed = 1.5;
+    assert.ok(spy.withArgs(1).calledOnce, 'the stream stays at 1x');
+
+    sandbox.stub(sound.connection, 'isStream').get(() => false);
+    service.playbackSpeed = 2;
+    assert.ok(spy.withArgs(2).calledOnce, 'an archive takes the speed');
+  });
+
   test('toggleMute returns sound to previous level', function (assert) {
     const service = this.owner
       .lookup('service:stereo')
