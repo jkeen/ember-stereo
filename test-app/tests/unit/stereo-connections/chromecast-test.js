@@ -47,10 +47,20 @@ class FakeController {
 class FakeSession {
   constructor() {
     this.loadRequest = null;
+    this.mediaSession = null;
+    this.messages = [];
     this.device = { friendlyName: 'Living Room TV' };
   }
   loadMedia(request) {
     this.loadRequest = request;
+    this.mediaSession = { mediaSessionId: 7 };
+    return Promise.resolve();
+  }
+  getMediaSession() {
+    return this.mediaSession;
+  }
+  sendMessage(namespace, message) {
+    this.messages.push({ namespace, message });
     return Promise.resolve();
   }
   getCastDevice() {
@@ -286,6 +296,53 @@ module('Unit | Connection | Chromecast', function (hooks) {
       connection.isPlaying,
       'no longer playing — position loop exits',
     );
+  });
+
+  test('playback speed goes to the receiver as a SET_PLAYBACK_RATE media message', async function (assert) {
+    let { session, access } = buildAccess();
+    let connection = build(access);
+    await settled();
+
+    connection._setPlaybackSpeed(1.5);
+    let [sent] = session.messages;
+    assert.strictEqual(sent.namespace, 'urn:x-cast:com.google.cast.media');
+    assert.strictEqual(sent.message.type, 'SET_PLAYBACK_RATE');
+    assert.strictEqual(sent.message.mediaSessionId, 7);
+    assert.strictEqual(sent.message.playbackRate, 1.5);
+
+    connection._setPlaybackSpeed(1.5);
+    assert.strictEqual(
+      session.messages.length,
+      1,
+      'an unchanged speed is not resent',
+    );
+  });
+
+  test('a speed set before the media loads is sent once it has', async function (assert) {
+    let { session, access } = buildAccess();
+    let connection = build(access);
+    session.mediaSession = null;
+    await settled();
+
+    connection._setPlaybackSpeed(2);
+    assert.strictEqual(session.messages.length, 0, 'nothing to address yet');
+
+    session.mediaSession = { mediaSessionId: 8 };
+    connection._onLoaded();
+    assert.strictEqual(session.messages.length, 1);
+    assert.strictEqual(session.messages[0].message.playbackRate, 2);
+    assert.strictEqual(session.messages[0].message.mediaSessionId, 8);
+  });
+
+  test('a sound that lost control of the session does not send a rate', async function (assert) {
+    let { session, access } = buildAccess();
+    let first = build(access);
+    await settled();
+    build(access);
+    session.messages = [];
+
+    first._setPlaybackSpeed(1.5);
+    assert.strictEqual(session.messages.length, 0);
   });
 
   test('teardown gives up ownership without ending the session', function (assert) {

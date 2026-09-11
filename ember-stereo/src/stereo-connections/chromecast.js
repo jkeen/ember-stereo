@@ -8,6 +8,8 @@ import { loadCastSdk } from '../-private/casting/google-cast-sdk-loader';
 // The receiver reports IDLE on stop as well as on finish, so only an IDLE near the end counts as 'ended'.
 const END_TOLERANCE_MS = 1500;
 
+const CAST_MEDIA_NAMESPACE = 'urn:x-cast:com.google.cast.media';
+
 /**
  * Plays through a Google Cast session, with media playing directly on the device.
  *
@@ -116,7 +118,10 @@ export default class Chromecast extends BaseSound {
     );
   }
 
+  // A freshly loaded media session starts at 1x whatever was sent before.
   _onLoaded() {
+    this._sentPlaybackSpeed = null;
+    this._sendPlaybackRate();
     this.trigger('audio-duration-changed', { sound: this });
     this.trigger('audio-ready', { sound: this });
     this.trigger('audio-loaded', { sound: this });
@@ -208,8 +213,35 @@ export default class Chromecast extends BaseSound {
     return duration * 1000;
   }
 
-  // The Cast receiver has no playback rate control.
-  _setPlaybackSpeed() {}
+  _setPlaybackSpeed(speed) {
+    this._playbackSpeed = speed;
+    this._sendPlaybackRate();
+  }
+
+  // The web sender SDK exposes no rate setter, but the receiver honors the media channel's SET_PLAYBACK_RATE message.
+  _sendPlaybackRate() {
+    let speed = this._playbackSpeed;
+    let session = this._access?.session;
+    let mediaSessionId = session?.getMediaSession?.()?.mediaSessionId;
+    if (speed == null || speed === this._sentPlaybackSpeed) {
+      return;
+    }
+    if (!this._hasControl || mediaSessionId == null) {
+      return;
+    }
+    this._sentPlaybackSpeed = speed;
+    Promise.resolve(
+      session.sendMessage(CAST_MEDIA_NAMESPACE, {
+        type: 'SET_PLAYBACK_RATE',
+        requestId: Date.now(),
+        mediaSessionId,
+        playbackRate: speed,
+      })
+    ).catch((error) => {
+      this._sentPlaybackSpeed = null;
+      this.debug(`playback rate rejected: ${this._describeError(error)}`);
+    });
+  }
 
   _setVolume(volume) {
     if (macroCondition(isTesting())) {
