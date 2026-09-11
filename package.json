@@ -60,7 +60,8 @@
   },
   "pnpm": {
     "overrides": {
-      "ember-cli-htmlbars": "^7.0.0"
+      "ember-cli-htmlbars": "^7.0.0",
+      "handlebars": "4.7.9"
     },
     "patchedDependencies": {
       "ember-gesture-modifiers@5.0.1": "patches/ember-gesture-modifiers@5.0.1.patch",
