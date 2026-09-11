@@ -965,6 +965,7 @@ export default class Stereo extends Service.extend(EmberEvented) {
       this._registerEvents(sound);
       this._updateNowPlaying(sound);
       sound._setVolume(this.volume);
+      sound._setPlaybackSpeed(this.playbackSpeed);
       debug('ember-stereo:service')(`setting current sound -> ${sound.url}`);
     } else {
       this._clearNowPlaying();

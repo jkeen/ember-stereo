@@ -498,7 +498,7 @@ export default class NativeAudio extends BaseSound {
     } else {
       this.debug(`_setPlayback: ${speed}`);
       let audio = this.audioElement;
-      audio.playbackSpeed = speed;
+      audio.playbackRate = speed;
     }
   }
 

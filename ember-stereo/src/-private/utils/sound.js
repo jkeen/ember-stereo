@@ -30,6 +30,7 @@ export default class Sound extends Evented {
   @tracked failures = [];
   @tracked _connection = null;
   @tracked _volume;
+  @tracked _playbackSpeed = null;
   @tracked _castUrl = null;
   @tracked _metadata = {};
   @tracked _debug = {};
@@ -160,6 +161,9 @@ export default class Sound extends Evented {
       }
       if (this._volume != null) {
         connection._setVolume(this._volume);
+      }
+      if (this._playbackSpeed != null) {
+        connection._setPlaybackSpeed(this._playbackSpeed);
       }
     }
 
@@ -751,6 +755,11 @@ export default class Sound extends Evented {
   _setVolume(volume) {
     this._volume = volume;
     this.connection?._setVolume(volume);
+  }
+
+  _setPlaybackSpeed(speed) {
+    this._playbackSpeed = speed;
+    this.connection?._setPlaybackSpeed(speed);
   }
 
   /**

@@ -208,6 +208,9 @@ export default class Chromecast extends BaseSound {
     return duration * 1000;
   }
 
+  // The Cast receiver has no playback rate control.
+  _setPlaybackSpeed() {}
+
   _setVolume(volume) {
     if (macroCondition(isTesting())) {
       this.debug(`skipping set volume in test env: ${volume}`);

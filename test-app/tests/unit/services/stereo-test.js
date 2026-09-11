@@ -441,6 +441,34 @@ module('Unit | Service | stereo', function (hooks) {
     );
   });
 
+  test('playback speed changes are set on the current sound', function (assert) {
+    const service = this.owner
+      .lookup('service:stereo')
+      .loadConnections(['NativeAudio']);
+
+    let sound1 = new (service.connectionLoader.get('NativeAudio'))({
+      url: '/good/1000/test.mp3',
+    });
+    let sound2 = new (service.connectionLoader.get('NativeAudio'))({
+      url: '/good/1000/test2.mp3',
+    });
+
+    let spy1 = sandbox.spy(sound1, '_setPlaybackSpeed');
+    let spy2 = sandbox.spy(sound2, '_setPlaybackSpeed');
+
+    service.currentSound = sound1;
+    assert.ok(spy1.withArgs(1).calledOnce, 'sound 1 gets the default speed');
+
+    service.playbackSpeed = 1.5;
+    assert.ok(spy1.withArgs(1.5).calledOnce, 'sound 1 gets the new speed');
+
+    service.currentSound = sound2;
+    assert.ok(
+      spy2.withArgs(1.5).calledOnce,
+      'sound 2 gets the current speed when it becomes current',
+    );
+  });
+
   test('toggleMute returns sound to previous level', function (assert) {
     const service = this.owner
       .lookup('service:stereo')
@@ -1139,6 +1167,7 @@ module('Unit | Service | stereo', function (hooks) {
         return false;
       },
       _setVolume() {},
+      _setPlaybackSpeed() {},
     });
 
     let changes = [];
