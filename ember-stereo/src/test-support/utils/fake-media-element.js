@@ -135,6 +135,9 @@ export default class FakeMediaElement extends Evented {
   }
 
   pause() {
+    if (this.paused) {
+      return;
+    }
     debug('ember-stereo:fake-element')(`${this.src} pausing`);
     this.trigger('pause', { target: this });
     this.paused = true;

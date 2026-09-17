@@ -412,6 +412,10 @@ export default class HLSSound extends BaseSound {
     return this.video;
   }
 
+  _audioIsPaused() {
+    return !!this.video?.paused;
+  }
+
   /* Public interface to sound */
 
   get currentTime() {

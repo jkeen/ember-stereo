@@ -43,6 +43,14 @@ module('Unit | Connection | base', function (hooks) {
       'is playing should be false after firing event',
     );
   });
+  test("a blocked sound is not loading, so the player can show play instead of a spinner", function (assert) {
+    assert.true(baseSound.isLoading, 'loading from the start');
+    baseSound.trigger('audio-blocked', { sound: baseSound });
+    assert.true(baseSound.isBlocked);
+    assert.false(baseSound.isLoading);
+    baseSound.trigger('audio-played');
+    assert.false(baseSound.isBlocked, 'the click clears it');
+  });
   test('base sound will eagerly accept unknown mime types', function (assert) {
     let unknownMimeType = 'http://www.example.come/audio';
     assert.true(

@@ -203,7 +203,7 @@ module('Unit | Connection | NativeAudioCasting', function (hooks) {
 
     element.webkitCurrentPlaybackTargetIsWireless = true;
     element.paused = false;
-    element.seekable = { length: 1, end: () => 120 };
+    element.seekable = { length: 1, start: () => 0, end: () => 120 };
 
     let ops = [];
     let elementPause = element.pause.bind(element);
@@ -226,8 +226,8 @@ module('Unit | Connection | NativeAudioCasting', function (hooks) {
     );
     assert.strictEqual(
       element.currentTime,
-      120,
-      'and it lands on the live edge',
+      115,
+      'and it lands the cushion behind the live edge',
     );
   });
 

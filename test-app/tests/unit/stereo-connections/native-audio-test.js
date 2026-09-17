@@ -181,6 +181,133 @@ module('Unit | Connection | Native Audio', function (hooks) {
     );
   });
 
+  test('Replaying a stream whose connection ended reconnects instead of rejoining', async function (assert) {
+    stereo.useSharedAudioAccess = true;
+
+    let sharedAudioAccess = new SharedAudioAccess().unlock();
+
+    let { connection: sound } = await stereo.load('/good/stream/stream.aac', {
+      sharedAudioAccess,
+      streamPauseGraceMs: 10000,
+    });
+
+    await sound.play();
+    let element = sound.sharedAudioAccess.requestControl(sound);
+    let loadSpy = sinon.spy(element, 'load');
+
+    sound.pause();
+    let positionBefore = sound.position;
+    element.trigger('ended', { target: element });
+    await new Promise((resolve) => setTimeout(resolve, 10));
+
+    assert.strictEqual(sound.position, positionBefore, 'a stream is not rewound when its connection ends');
+
+    await sound.play();
+
+    assert.ok(loadSpy.callCount > 0, 'the element was reloaded because its connection was gone');
+    assert.true(sound.isPlaying, 'and the stream is back');
+    sound.stop();
+  });
+
+  // What iOS does to a background tab: the element stops and forgets its media, and no event reaches the page.
+  function iosQuietlyStops(sound) {
+    let element = sound.audioElement;
+    sound._unregisterEvents(element);
+    element.pause();
+    Object.defineProperty(element, 'readyState', { get: () => 0, set() {}, configurable: true });
+    return () => delete element.readyState;
+  }
+
+  module('when iOS quietly stops the live stream', function (hooks) {
+    // The position loop this leans on runs on run loop timers, which setupStereoTest kills half a second in.
+    hooks.beforeEach(function () {
+      clearTimeout(this._stereoTimeout);
+    });
+
+    async function playLiveStream() {
+      stereo.useSharedAudioAccess = true;
+      let sharedAudioAccess = new SharedAudioAccess().unlock();
+      let { connection: sound } = await stereo.load('/good/stream/stream.aac', {
+        sharedAudioAccess,
+        streamPauseGraceMs: 10000,
+      });
+      await sound.play();
+      return sound;
+    }
+
+    test('the sound stops claiming to play', async function (assert) {
+      let sound = await playLiveStream();
+      assert.true(sound.isPlaying);
+
+      let restore = iosQuietlyStops(sound);
+      await waitUntil(() => !sound.isPlaying, { timeout: 5000 });
+      assert.false(sound.isPlaying);
+      restore();
+    });
+
+    test('pausing takes effect at once instead of doing nothing', async function (assert) {
+      let sound = await playLiveStream();
+
+      let restore = iosQuietlyStops(sound);
+      sound.pause();
+      assert.false(sound.isPlaying);
+      restore();
+    });
+
+    test('playing again brings the stream back', async function (assert) {
+      let sound = await playLiveStream();
+
+      let restore = iosQuietlyStops(sound);
+      await waitUntil(() => !sound.isPlaying, { timeout: 5000 });
+      sound._registerEvents(sound.audioElement);
+      let loadSpy = sinon.spy(sound.audioElement, 'load');
+
+      await sound.play();
+
+      assert.true(sound.isPlaying, 'playing again');
+      assert.false(sound.audioElement.paused, 'and the element agrees');
+      assert.ok(loadSpy.callCount > 0, 'because the element was reloaded rather than nudged');
+      restore();
+      sound.stop();
+    });
+  });
+
+  module('resuming a live stream at its edge', function () {
+    function elementWhoseEdgeIs(end, start = 0) {
+      return {
+        currentTime: 0,
+        seekable: { length: 1, start: () => start, end: () => end },
+      };
+    }
+
+    test('playback resumes a few seconds behind a finite edge, so the next burst has something to play through', function (assert) {
+      let sound = new NativeAudio({ url: goodUrl, timeout: false, sharedAudioAccess });
+      let element = elementWhoseEdgeIs(42);
+
+      sound._seekToLiveEdge(element);
+
+      assert.strictEqual(element.currentTime, 37);
+    });
+
+    test('a window shorter than the cushion resumes from its start', function (assert) {
+      let sound = new NativeAudio({ url: goodUrl, timeout: false, sharedAudioAccess });
+      let element = elementWhoseEdgeIs(42, 41);
+
+      sound._seekToLiveEdge(element);
+
+      assert.strictEqual(element.currentTime, 41);
+    });
+
+    test('an endless edge, as Safari reports for a live stream, is left alone', function (assert) {
+      let sound = new NativeAudio({ url: goodUrl, timeout: false, sharedAudioAccess });
+      let element = elementWhoseEdgeIs(Infinity);
+
+      sound._seekToLiveEdge(element);
+
+      assert.strictEqual(element.currentTime, 0, 'a seek to Infinity never completes');
+    });
+  });
+
   test("Don't fire audio-played events on position changes", async function (assert) {
     let { connection: sound } = await stereo.load(
       '/good/1000/position-changes.mp3',

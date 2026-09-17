@@ -367,6 +367,12 @@ export default class Sound extends Evented {
 
       await timeout(document.hidden ? 250 : 50);
 
+      // iOS stops a frozen page's element without a pause event ever reaching it.
+      if (this.isPlaying && this._audioIsPaused()) {
+        this.trigger('audio-paused', { sound: this });
+        return;
+      }
+
       let previousPosition = this._position;
       let currentPosition = this._currentPosition();
 
@@ -385,6 +391,15 @@ export default class Sound extends Evented {
       }
     }
   });
+
+  /**
+   * Whether the audio is paused, asked of the element directly.
+   * @method _audioIsPaused
+   * @private
+   */
+  _audioIsPaused() {
+    return false;
+  }
 
   /**
    * get the sound's current real time position (probably only available on certain HLS sounds)
@@ -484,7 +499,9 @@ export default class Sound extends Evented {
 
     this.on('audio-ended', () => {
       this.isPlaying = false;
-      this.position = 0;
+      if (!this.isStream) {
+        this.position = 0;
+      }
       if (audioEnded) {
         audioEnded(this);
       }
@@ -545,6 +562,7 @@ export default class Sound extends Evented {
 
     this.on('audio-blocked', () => {
       this.isBlocked = true;
+      this.isLoading = false;
     });
 
     try {

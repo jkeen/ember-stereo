@@ -47,11 +47,11 @@ export default class NativeAudioCasting extends NativeAudio {
       return;
     }
 
-    let seekable = audio.seekable;
-    if (!seekable?.length) {
+    let liveEdge = this._liveEdge(audio);
+    if (liveEdge === null) {
       return;
     }
-    this._setPosition(seekable.end(seekable.length - 1) * 1000);
+    this._setPosition(liveEdge * 1000);
   }
 
   // The cast element has no crossorigin to drop, so retrying only costs the device.

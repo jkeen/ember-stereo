@@ -28,7 +28,7 @@ const AUDIO_EVENTS = [
 const DURATION_SAMPLE_MS = 250;
 
 // Ready state values
-// const HAVE_NOTHING = 0;
+const HAVE_NOTHING = 0;
 // const HAVE_METADATA = 1;
 const HAVE_CURRENT_DATA = 2;
 // const HAVE_FUTURE_DATA = 3;
@@ -192,6 +192,9 @@ export default class NativeAudio extends BaseSound {
   }
 
   _onAudioEnded() {
+    if (this.isStream) {
+      this._streamConnectionLost = true;
+    }
     this.trigger('audio-ended', { sound: this });
   }
 
@@ -228,6 +231,9 @@ export default class NativeAudio extends BaseSound {
       }
 
       this.debug(`audio element threw error ${message}`);
+      if (this.isStream) {
+        this._streamConnectionLost = true;
+      }
       this.trigger('audio-load-error', {
         sound: this,
         error: message,
@@ -293,6 +299,7 @@ export default class NativeAudio extends BaseSound {
   });
 
   _loadAudio(audio) {
+    this._streamConnectionLost = false;
     this.defeatBrowserCaching();
     if (!isSameAudio(audio.src, this.url, { exact: true })) {
       audio.setAttribute('src', this.url);
@@ -317,17 +324,43 @@ export default class NativeAudio extends BaseSound {
   }
 
   _streamConnectionIsWarm(audio) {
-    return !!audio?.src && isSameAudio(audio.src, this.url, { exact: true });
+    return (
+      !this._streamConnectionLost &&
+      !!audio?.src &&
+      audio.readyState > HAVE_NOTHING &&
+      isSameAudio(audio.src, this.url, { exact: true })
+    );
   }
+
+  _audioIsPaused() {
+    return this._stillOwnsSharedElement && this.audioElement.paused;
+  }
+
+  static LIVE_EDGE_CUSHION_SECONDS = 5;
 
   _seekToLiveEdge(audio) {
     try {
-      if (audio.seekable?.length) {
-        audio.currentTime = audio.seekable.end(audio.seekable.length - 1);
+      let liveEdge = this._liveEdge(audio);
+      if (liveEdge !== null) {
+        audio.currentTime = liveEdge;
       }
     } catch (e) {
       this.debug('could not seek to the live edge, playing from where we are');
     }
+  }
+
+  // Safari reports a live stream's seekable end as Infinity, and a seek there never completes.
+  _liveEdge(audio) {
+    let seekable = audio.seekable;
+    if (!seekable?.length) {
+      return null;
+    }
+    let end = seekable.end(seekable.length - 1);
+    if (!Number.isFinite(end)) {
+      return null;
+    }
+    let start = seekable.start(seekable.length - 1);
+    return Math.max(start, end - NativeAudio.LIVE_EDGE_CUSHION_SECONDS);
   }
 
   _calculatePercentLoaded() {
@@ -496,8 +529,11 @@ export default class NativeAudio extends BaseSound {
     if (macroCondition(isTesting())) {
       this.debug(`skipping set volume in test env: ${speed}`);
     } else {
-      this.debug(`_setPlayback: ${speed}`);
       let audio = this.audioElement;
+      if (audio.playbackRate === speed) {
+        return;
+      }
+      this.debug(`_setPlayback: ${speed}`);
       audio.playbackRate = speed;
     }
   }
@@ -519,7 +555,11 @@ export default class NativeAudio extends BaseSound {
   pause() {
     this.debug('#pause');
     let audio = this.audioElement;
+    let alreadyPaused = audio.paused;
     audio.pause();
+    if (alreadyPaused) {
+      this._onAudioPaused();
+    }
 
     if (!this.isStream) {
       this.debug('paused a recording, so the element keeps its media');
@@ -569,6 +609,7 @@ export default class NativeAudio extends BaseSound {
     this._mediaLength.sourceReloaded();
 
     this.retryCount = this.retryCount + 1;
+    this._streamConnectionLost = false;
     this.audioElement.src = this.url;
     this.audioElement.load();
   }
