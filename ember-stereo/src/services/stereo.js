@@ -1241,7 +1241,9 @@ export default class Stereo extends Service.extend(EmberEvented) {
     this._relayEvent('audio-will-fast-forward', info);
   }
   _relayMetadataChangedEvent(info) {
-    this._updateNowPlaying(this.currentSound);
+    if (this.currentSound?.isPlaying) {
+      this._updateNowPlaying(this.currentSound);
+    }
     this._relayEvent('audio-metadata-changed', info);
   }
 
@@ -1481,6 +1483,9 @@ export default class Stereo extends Service.extend(EmberEvented) {
   }
 
   _updatePositionStateThrottled() {
+    if (!this.currentSound?.isPlaying) {
+      return;
+    }
     if (
       Date.now() - this._positionStateUpdatedAt <
       Stereo.POSITION_STATE_INTERVAL_MS

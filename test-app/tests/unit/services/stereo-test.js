@@ -849,6 +849,31 @@ module('Unit | Service | stereo', function (hooks) {
     await service.play(s2url);
   });
 
+  test('a metadata change reaches the media session only while the sound is playing', async function (assert) {
+    const service = this.owner
+      .lookup('service:stereo')
+      .loadConnections(['NativeAudio']);
+    let { sound } = await service.load('/good/10000/silence.mp3');
+    let nowPlaying = sandbox.spy(service, '_updateNowPlaying');
+
+    sound.metadata = { title: 'while paused' };
+    assert.strictEqual(
+      nowPlaying.callCount,
+      0,
+      'a paused player keeps its metadata to itself',
+    );
+
+    sound.play();
+    await waitUntil(() => sound.isPlaying);
+    nowPlaying.resetHistory();
+    sound.metadata = { title: 'while playing' };
+    assert.strictEqual(
+      nowPlaying.callCount,
+      1,
+      'a playing one announces it',
+    );
+  });
+
   test('metadata can be sent with a play and load request and it will stay with the sound', async function (assert) {
     const service = this.owner
       .lookup('service:stereo')
