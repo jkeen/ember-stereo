@@ -86,11 +86,6 @@
   "engines": {
     "node": ">= 20.19"
   },
-  "ember-addon": {
-    "paths": [
-      "../ember-stereo/"
-    ]
-  },
   "ember": {
     "edition": "octane"
   },
