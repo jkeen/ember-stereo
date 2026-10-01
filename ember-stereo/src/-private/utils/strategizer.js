@@ -13,6 +13,7 @@ const PASSTHROUGH_LOAD_OPTIONS = [
   'streamPauseGraceMs',
   'duration',
   'seekable',
+  'timeout',
 ];
 
 export default class Strategizer {

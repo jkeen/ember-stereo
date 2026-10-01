@@ -10,6 +10,7 @@ export default class Strategy {
   erroredConnection = null;
   success = false;
   tried = false;
+  timedOut = false;
 
   constructor(connectionClass, stereoUrl, config = {}) {
     this.connectionClass = connectionClass;

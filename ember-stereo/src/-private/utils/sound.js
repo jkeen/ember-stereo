@@ -15,6 +15,9 @@ const RELAYED_EVENTS = [
   'audio-load-error',
 ];
 
+const DEFAULT_LOAD_RETRIES = 1;
+const LOAD_RETRY_DELAY_MS = 1000;
+
 /**
  * An identity-stable, lazy proxy for a playable url that delegates playback to
  * a concrete connection (a `BaseSound` subclass) in `connection`.
@@ -392,7 +395,28 @@ export default class Sound extends Evented {
 
     this._clearPreviousAttempts();
 
-    for (let strategy of this.strategies) {
+    let retriesLeft = options.loadRetries ?? DEFAULT_LOAD_RETRIES;
+    let connection = await this._tryEachStrategy(this.strategies);
+
+    while (!connection && retriesLeft > 0) {
+      let retryable = this.failures.filter((strategy) => !strategy.timedOut);
+      if (isEmpty(retryable)) {
+        break;
+      }
+
+      retriesLeft--;
+      await rawTimeout(LOAD_RETRY_DELAY_MS);
+
+      this.failures = this.failures.filter((strategy) => strategy.timedOut);
+      retryable.forEach((strategy) => (strategy.tried = false));
+      connection = await this._tryEachStrategy(retryable);
+    }
+
+    return connection;
+  });
+
+  async _tryEachStrategy(strategies) {
+    for (let strategy of strategies) {
       if (!strategy.canPlay || strategy.tried) {
         continue;
       }
@@ -416,12 +440,13 @@ export default class Sound extends Evented {
       } else {
         strategy.error = error;
         strategy.erroredConnection = erroredConnection;
+        strategy.timedOut = !!erroredConnection?.isTimedOut;
         this.failures = [...this.failures, strategy];
       }
     }
 
     return null;
-  });
+  }
 
   _clearPreviousAttempts() {
     this.failures = [];
@@ -429,6 +454,7 @@ export default class Sound extends Evented {
       strategy.tried = false;
       strategy.error = null;
       strategy.success = false;
+      strategy.timedOut = false;
     });
   }
 

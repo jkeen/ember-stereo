@@ -864,10 +864,9 @@ export default class Stereo extends Service.extend(EmberEvented) {
     });
 
     if (!this._shouldSilenceErrors(options)) {
-      throw new Error(sound.error || 'stereo playback error', {
-        sound,
-        failures: [strategy],
-      });
+      throw this._failureError(sound.error || 'stereo playback error', [
+        strategy,
+      ]);
     }
 
     return {
@@ -892,7 +891,7 @@ export default class Stereo extends Service.extend(EmberEvented) {
     });
 
     if (!this._shouldSilenceErrors(options)) {
-      throw new Error(errorMessage || 'stereo load error', { failures });
+      throw this._failureError(errorMessage || 'stereo load error', failures);
     }
     return { failures, error: errorMessage };
   }
@@ -908,7 +907,7 @@ export default class Stereo extends Service.extend(EmberEvented) {
     };
 
     if (!this._shouldSilenceErrors(options)) {
-      throw new Error(errorMessage, failure);
+      throw this._failureError(errorMessage, [failure]);
     }
 
     // No strategy ran, so nothing else will record this failure on the sound.
@@ -923,6 +922,15 @@ export default class Stereo extends Service.extend(EmberEvented) {
     });
 
     return { failures: [failure], error: errorMessage };
+  }
+
+  // Error's second argument only reads `cause`, so failures have to be set on the error itself.
+  _failureError(message, failures) {
+    let error = new Error(message);
+    error.failures = makeArray(failures).map(
+      ({ url, connectionKey, error }) => ({ url, connectionKey, error }),
+    );
+    return error;
   }
 
   _errorMessageFromFailures(failures) {

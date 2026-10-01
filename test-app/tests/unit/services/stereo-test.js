@@ -150,6 +150,120 @@ module('Unit | Service | stereo', function (hooks) {
     );
   });
 
+  test('a failed load rejects with every url it tried', async function (assert) {
+    let badUrl1 = '/bad/unknown-error/first-url-bad.mp3';
+    let badUrl2 = '/bad/codec-not-supported/second-url-bad.mp3';
+
+    let service = this.owner
+      .lookup('service:stereo')
+      .loadConnections([{ name: 'NativeAudio' }]);
+
+    try {
+      await service.load([badUrl1, badUrl2]);
+      assert.ok(false, 'load should have rejected');
+    } catch (error) {
+      assert.deepEqual(
+        error.failures.map(({ connectionKey, error }) => ({
+          connectionKey,
+          error,
+        })),
+        [
+          { connectionKey: 'NativeAudio', error: 'unknown-error' },
+          { connectionKey: 'NativeAudio', error: 'codec-not-supported' },
+        ],
+      );
+      assert.equalUrls(error.failures[0].url, badUrl1);
+      assert.equalUrls(error.failures[1].url, badUrl2);
+    }
+  });
+
+  test('a load that never answers times out and moves to the next url', async function (assert) {
+    let silentUrl = '/silent/first-url.mp3';
+    let goodUrl = '/good/second-url.mp3';
+
+    let service = this.owner
+      .lookup('service:stereo')
+      .loadConnections([{ name: 'NativeAudio' }]);
+    let NativeAudio = service.connectionLoader.get('NativeAudio');
+    sandbox.stub(NativeAudio, 'canPlay').returns(true);
+    sandbox.stub(NativeAudio.prototype, 'setup').callsFake(function () {
+      if (this.url.includes('/good/')) {
+        next(() => this.trigger('audio-ready', { sound: this }));
+      }
+    });
+
+    let { sound, failures } = await service.load([silentUrl, goodUrl], {
+      timeout: 50,
+    });
+
+    assert.equalUrls(sound.url, goodUrl);
+    assert.strictEqual(failures.length, 1);
+    assert.strictEqual(failures[0].error, 'request timed out');
+    assert.true(failures[0].timedOut);
+  });
+
+  test('a quick failure is tried again before the load gives up', async function (assert) {
+    let flakyUrl = '/flaky/stream.mp3';
+    let attempts = 0;
+
+    let service = this.owner
+      .lookup('service:stereo')
+      .loadConnections([{ name: 'NativeAudio' }]);
+    let NativeAudio = service.connectionLoader.get('NativeAudio');
+    sandbox.stub(NativeAudio, 'canPlay').returns(true);
+    sandbox.stub(NativeAudio.prototype, 'setup').callsFake(function () {
+      attempts++;
+      let event = attempts === 1 ? 'audio-load-error' : 'audio-ready';
+      next(() => this.trigger(event, { sound: this, error: 'network' }));
+    });
+
+    let { sound, failures } = await service.load(flakyUrl);
+
+    assert.strictEqual(attempts, 2);
+    assert.equalUrls(sound.url, flakyUrl);
+    assert.deepEqual(failures, []);
+  });
+
+  test('a timed out url is not tried again', async function (assert) {
+    let attempts = 0;
+
+    let service = this.owner
+      .lookup('service:stereo')
+      .loadConnections([{ name: 'NativeAudio' }]);
+    let NativeAudio = service.connectionLoader.get('NativeAudio');
+    sandbox.stub(NativeAudio, 'canPlay').returns(true);
+    sandbox.stub(NativeAudio.prototype, 'setup').callsFake(() => attempts++);
+
+    let { failures } = await service.load('/silent/stream.mp3', {
+      timeout: 50,
+      silenceErrors: true,
+    });
+
+    assert.strictEqual(attempts, 1);
+    assert.true(failures[0].timedOut);
+  });
+
+  test('loadRetries: 0 gives up after the first failure', async function (assert) {
+    let attempts = 0;
+
+    let service = this.owner
+      .lookup('service:stereo')
+      .loadConnections([{ name: 'NativeAudio' }]);
+    let NativeAudio = service.connectionLoader.get('NativeAudio');
+    sandbox.stub(NativeAudio, 'canPlay').returns(true);
+    sandbox.stub(NativeAudio.prototype, 'setup').callsFake(function () {
+      attempts++;
+      next(() => this.trigger('audio-load-error', { sound: this, error: 'network' }));
+    });
+
+    await service.load('/bad/stream.mp3', {
+      loadRetries: 0,
+      silenceErrors: true,
+    });
+
+    assert.strictEqual(attempts, 1);
+  });
+
   test('#load can take a promise that resolves urls', async function (assert) {
     let service = this.owner
       .lookup('service:stereo')
@@ -570,6 +684,7 @@ module('Unit | Service | stereo', function (hooks) {
 
     await service.play('/good/1000/test-2.mp3', {
       silenceErrors: true,
+      loadRetries: 0,
       useConnections: ['NativeAudio'],
     });
     assert.strictEqual(

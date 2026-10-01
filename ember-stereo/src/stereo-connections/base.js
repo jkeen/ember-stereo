@@ -455,7 +455,7 @@ export default class Sound extends Evented {
     this.options = args.options;
     this.metadata = args.metadata ?? {};
     this.sharedAudioAccess = args.sharedAudioAccess;
-    this.timeout = 'timeout' in args ? args.timeout : 30000;
+    this.timeout = 'timeout' in args ? args.timeout : (args.options?.timeout ?? 30000);
 
     let {
       audioLoading,
@@ -584,6 +584,7 @@ export default class Sound extends Evented {
   _detectTimeouts() {
     if (this.timeout) {
       let timeout = later(() => {
+        this.isTimedOut = true;
         this.trigger('audio-load-error', {
           sound: this,
           error: 'request timed out',
