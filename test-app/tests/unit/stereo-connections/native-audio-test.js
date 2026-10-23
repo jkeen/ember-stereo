@@ -200,11 +200,18 @@ module('Unit | Connection | Native Audio', function (hooks) {
     element.trigger('ended', { target: element });
     await new Promise((resolve) => setTimeout(resolve, 10));
 
-    assert.strictEqual(sound.position, positionBefore, 'a stream is not rewound when its connection ends');
+    assert.strictEqual(
+      sound.position,
+      positionBefore,
+      'a stream is not rewound when its connection ends',
+    );
 
     await sound.play();
 
-    assert.ok(loadSpy.callCount > 0, 'the element was reloaded because its connection was gone');
+    assert.ok(
+      loadSpy.callCount > 0,
+      'the element was reloaded because its connection was gone',
+    );
     assert.true(sound.isPlaying, 'and the stream is back');
     sound.stop();
   });
@@ -214,7 +221,11 @@ module('Unit | Connection | Native Audio', function (hooks) {
     let element = sound.audioElement;
     sound._unregisterEvents(element);
     element.pause();
-    Object.defineProperty(element, 'readyState', { get: () => 0, set() {}, configurable: true });
+    Object.defineProperty(element, 'readyState', {
+      get: () => 0,
+      set() {},
+      configurable: true,
+    });
     return () => delete element.readyState;
   }
 
@@ -266,7 +277,10 @@ module('Unit | Connection | Native Audio', function (hooks) {
 
       assert.true(sound.isPlaying, 'playing again');
       assert.false(sound.audioElement.paused, 'and the element agrees');
-      assert.ok(loadSpy.callCount > 0, 'because the element was reloaded rather than nudged');
+      assert.ok(
+        loadSpy.callCount > 0,
+        'because the element was reloaded rather than nudged',
+      );
       restore();
       sound.stop();
     });
@@ -281,7 +295,11 @@ module('Unit | Connection | Native Audio', function (hooks) {
     }
 
     test('playback resumes a few seconds behind a finite edge, so the next burst has something to play through', function (assert) {
-      let sound = new NativeAudio({ url: goodUrl, timeout: false, sharedAudioAccess });
+      let sound = new NativeAudio({
+        url: goodUrl,
+        timeout: false,
+        sharedAudioAccess,
+      });
       let element = elementWhoseEdgeIs(42);
 
       sound._seekToLiveEdge(element);
@@ -290,7 +308,11 @@ module('Unit | Connection | Native Audio', function (hooks) {
     });
 
     test('a window shorter than the cushion resumes from its start', function (assert) {
-      let sound = new NativeAudio({ url: goodUrl, timeout: false, sharedAudioAccess });
+      let sound = new NativeAudio({
+        url: goodUrl,
+        timeout: false,
+        sharedAudioAccess,
+      });
       let element = elementWhoseEdgeIs(42, 41);
 
       sound._seekToLiveEdge(element);
@@ -299,12 +321,20 @@ module('Unit | Connection | Native Audio', function (hooks) {
     });
 
     test('an endless edge, as Safari reports for a live stream, is left alone', function (assert) {
-      let sound = new NativeAudio({ url: goodUrl, timeout: false, sharedAudioAccess });
+      let sound = new NativeAudio({
+        url: goodUrl,
+        timeout: false,
+        sharedAudioAccess,
+      });
       let element = elementWhoseEdgeIs(Infinity);
 
       sound._seekToLiveEdge(element);
 
-      assert.strictEqual(element.currentTime, 0, 'a seek to Infinity never completes');
+      assert.strictEqual(
+        element.currentTime,
+        0,
+        'a seek to Infinity never completes',
+      );
     });
   });
 

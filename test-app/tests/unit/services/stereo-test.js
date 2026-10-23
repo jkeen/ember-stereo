@@ -253,7 +253,9 @@ module('Unit | Service | stereo', function (hooks) {
     sandbox.stub(NativeAudio, 'canPlay').returns(true);
     sandbox.stub(NativeAudio.prototype, 'setup').callsFake(function () {
       attempts++;
-      next(() => this.trigger('audio-load-error', { sound: this, error: 'network' }));
+      next(() =>
+        this.trigger('audio-load-error', { sound: this, error: 'network' }),
+      );
     });
 
     await service.load('/bad/stream.mp3', {
@@ -982,11 +984,7 @@ module('Unit | Service | stereo', function (hooks) {
     await waitUntil(() => sound.isPlaying);
     nowPlaying.resetHistory();
     sound.metadata = { title: 'while playing' };
-    assert.strictEqual(
-      nowPlaying.callCount,
-      1,
-      'a playing one announces it',
-    );
+    assert.strictEqual(nowPlaying.callCount, 1, 'a playing one announces it');
   });
 
   test('metadata can be sent with a play and load request and it will stay with the sound', async function (assert) {
