@@ -376,6 +376,6 @@ e.default=b}),define("docs/utils/touch-utils",["exports"],function(e){Object.def
 if(o.identifier===t)return o}},e.isSimulatedMouseEvent=function(e){if(e){const t=e.sourceCapabilities&&!0===e.sourceCapabilities.firesTouchEvents,n=5===e.mozInputSource,o=!0===e.forwardedTouchEvent
 return t||n||o}return!1}}),define("docs/config/environment",[],function(){if("undefined"!=typeof FastBoot)return FastBoot.config("docs")
 try{var e="docs/config/environment",t=document.querySelector('meta[name="'+e+'"]').getAttribute("content"),n={default:JSON.parse(decodeURIComponent(t))}
-return Object.defineProperty(n,"__esModule",{value:!0}),n}catch(o){throw new Error('Could not read config from meta tag with name "'+e+'".')}}),"undefined"==typeof FastBoot&&(runningTests||require("docs/app").default.create({name:"docs",version:"0.0.0+ca56608c"}))
+return Object.defineProperty(n,"__esModule",{value:!0}),n}catch(o){throw new Error('Could not read config from meta tag with name "'+e+'".')}}),"undefined"==typeof FastBoot&&(runningTests||require("docs/app").default.create({name:"docs",version:"0.0.0+c59e49bf"}))
 
-//# sourceMappingURL=docs-572d34080bc5ce0eb790f51e896016fe.map
+//# sourceMappingURL=docs-2f55905df80fbb929f663f7b3fe0f3d2.map
